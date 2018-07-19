@@ -1,5 +1,6 @@
 from dbConfig import *
 from test import *
+from status import *
 
 @app.route('/hello', methods=['GET'])
 def hello():
