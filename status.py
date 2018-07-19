@@ -23,18 +23,11 @@ def EditStatus(cursor):
         id = data['id']
         status_detail = data['status_detail']
         path_color = data['path_color']
-        # sqlSe = "SELECT status_detail FROM hospital WHERE id=%s"
-        # cursor.execute(sqlSe,(data['id']))
-        # columns = [column[0] for column in cursor.description]
-        # result = toJson(cursor.fetchall(),columns)
-
         sqlUp = "UPDATE status SET validstatus = '0' WHERE id=%s"
         cursor.execute(sqlUp,(data['id']))
         sqlIn = "INSERT INTO status (status_detail,path_color) VALUES (%s,%s)"
         cursor.execute(sqlIn,(status_detail,path_color))
         return "success"
-        # else:
-        #     return "fail"
     except Exception as e:
         logserver(e)
         return "fail"
