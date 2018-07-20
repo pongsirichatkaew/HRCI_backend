@@ -15,6 +15,15 @@ def QryEmployee():
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
+
+        # connection = mysql.connect()
+        # cursor = connection.cursor()
+        # sqlIn = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,address_employee,salary,email,,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlIn,(status_detail,path_color))
+        # connection.commit()
+        # connection.close()
+        # return "success"
+
         return jsonify(result)
     except Exception as e:
         logserver(e)

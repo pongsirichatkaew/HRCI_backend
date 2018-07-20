@@ -1,5 +1,9 @@
 from dbConfig import *
-from status.Status import *
+from status.section import *
+from status.org_name import *
+from status.cost_center_name import *
+from status.position import *
+from status.company import *
 from employee.Employee import *
 from Appform.appform import *
 
