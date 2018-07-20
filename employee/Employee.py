@@ -7,8 +7,11 @@ def QryEmployee():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = "SELECT EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,Mobile,Email,date FROM Personal"
-        cursor.execute(sql)
+        data = request.json
+        citizenid = data['citizenid']
+        EmploymentAppNo = data['EmploymentAppNo']
+        sql = "SELECT EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,Mobile,Email,date FROM Personal WHERE ID_CardNo=%s AND EmploymentAppNo=%s"
+        cursor.execute(sql,(citizenid,EmploymentAppNo))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()

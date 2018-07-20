@@ -35,7 +35,7 @@ def EditStatus(cursor):
 @connect_sql()
 def QryStatus(cursor):
     try:
-        sql = "SELECT status_detail,path_color,id FROM status WHERE validstatus=1"
+        sql = "SELECT status_detail,path_color,id,font_color FROM status WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
