@@ -4,6 +4,7 @@ from status.org_name import *
 from status.cost_center_name import *
 from status.position import *
 from status.company import *
+from status.Status import *
 from status.employee_MD import*
 from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*
@@ -18,8 +19,11 @@ def hello():
 @connect_sql2()
 def login(cursor2):
     _data = request.json
-    username = _data['username']
-    password = _data['password']
+    source = _data['source']
+    # data_new = json.loads(decode(source))
+    data_new = source
+    username = data_new['username']
+    password = data_new['password']
     sql = "SELECT * FROM user WHERE username = %s and password = %s"
     conn = mysql2.connect()
     cursor2 = conn.cursor()
