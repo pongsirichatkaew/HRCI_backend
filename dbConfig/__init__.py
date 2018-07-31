@@ -39,6 +39,14 @@ app3.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
 mysql3 = MySQL()
 mysql3.init_app(app3)
 
+app4 = Flask(__name__)
+app4.config['MYSQL_DATABASE_USER'] = "root"
+app4.config['MYSQL_DATABASE_PASSWORD'] = "devops@Pass01"
+app4.config['MYSQL_DATABASE_DB'] = 'HRCI_Appform'
+app4.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
+mysql4 = MySQL()
+mysql4.init_app(app4)
+
 
 def connect_sql():
     def wrap(fn):
@@ -85,6 +93,22 @@ def connect_sql3():
                     # Close connection
                     connection.commit()
                     connection.close()
+                return return_val
+            return wrapper
+        return wrap
+def connect_sql4():
+        def wrap(fn):
+            @wraps(fn)
+            def wrapper(*args, **kwargs):
+                try:
+                    # Setup connection
+                    connection4 = mysql4.connect()
+                    cursor4 = connection4.cursor()
+                    return_val = fn(cursor4, *args, **kwargs)
+                finally:
+                    # Close connection
+                    connection4.commit()
+                    connection4.close()
                 return return_val
             return wrapper
         return wrap
