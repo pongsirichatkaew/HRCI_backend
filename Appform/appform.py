@@ -29,7 +29,7 @@ def QryDatbaseAppform():
         cursor.execute(sqlEm,dataInput['EmploymentAppNo'])
         columnsEm = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columnsEm)
-        
+
         sql4 = "SELECT * FROM Attachment WHERE EmploymentAppNo=%s"
         cursor.execute(sql4,dataInput['EmploymentAppNo'])
         columns4 = [column[0] for column in cursor.description]
@@ -128,7 +128,9 @@ def QryDatbaseAppform():
             sqlIn10 = "INSERT INTO Employment (EmploymentAppNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn10,(result10[0]['EmploymentAppNo'],result10[0]['CompanyName'],result10[0]['CompanyAddress'],result10[0]['PositionHeld'],result10[0]['StartSalary'],result10[0]['EndSalary'],result10[0]['StartYear'],result10[0]['EndYear'], \
             result10[0]['Responsibility'],result10[0]['ReasonOfLeaving'],result10[0]['Descriptionofwork']))
-
+        except Exception as e:
+            logserver(e)
+        try:
             sqlIn23 = "INSERT INTO TrainingCourse(EmploymentAppNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn23,(result23[0]['EmploymentAppNo'],result23[0]['Subject'],result23[0]['Place'],result23[0]['StartDate'],result23[0]['EndDate']))
         except Exception as e:
