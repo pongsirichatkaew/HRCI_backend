@@ -8,12 +8,29 @@ def QryAppform():
         connection = mysql3.connect()
         cursor = connection.cursor()
         sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id"""
+        # sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        # FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/UpdateEmpStatus', methods=['POST'])
+@connect_sql3()
+def UpdateEmpStatus(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+        status_id = data_new['status_id']
+        EmploymentAppNo = data_new['EmploymentAppNo']
+        sqlUp = "UPDATE Personal SET status_id = %s WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -23,66 +40,68 @@ def QryDatbaseAppform():
         connection = mysql3.connect()
         cursor = connection.cursor()
         dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         sqlEm = "SELECT * FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
                                        INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
                                        INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
                  WHERE EmploymentAppNo=%s"
-        cursor.execute(sqlEm,dataInput['EmploymentAppNo'])
+        cursor.execute(sqlEm,data_new['EmploymentAppNo'])
         columnsEm = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columnsEm)
 
         sql4 = "SELECT * FROM Attachment WHERE EmploymentAppNo=%s"
-        cursor.execute(sql4,dataInput['EmploymentAppNo'])
+        cursor.execute(sql4,data_new['EmploymentAppNo'])
         columns4 = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns4)
 
         sql6 = "SELECT * FROM ComputerSkill WHERE EmploymentAppNo=%s"
-        cursor.execute(sql6,dataInput['EmploymentAppNo'])
+        cursor.execute(sql6,data_new['EmploymentAppNo'])
         columns6 = [column[0] for column in cursor.description]
         result6 = toJson(cursor.fetchall(),columns6)
 
         sql9 = "SELECT * FROM Education WHERE EmploymentAppNo=%s"
-        cursor.execute(sql9,dataInput['EmploymentAppNo'])
+        cursor.execute(sql9,data_new['EmploymentAppNo'])
         columns9 = [column[0] for column in cursor.description]
         result9 = toJson(cursor.fetchall(),columns9)
 
         sql10 = "SELECT * FROM Employment WHERE EmploymentAppNo=%s"
-        cursor.execute(sql10,dataInput['EmploymentAppNo'])
+        cursor.execute(sql10,data_new['EmploymentAppNo'])
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
 
         sql11 = "SELECT * FROM Family WHERE EmploymentAppNo=%s"
-        cursor.execute(sql11,dataInput['EmploymentAppNo'])
+        cursor.execute(sql11,data_new['EmploymentAppNo'])
         columns11 = [column[0] for column in cursor.description]
         result11 = toJson(cursor.fetchall(),columns11)
 
         sql13 = "SELECT * FROM LanguagesSkill WHERE EmploymentAppNo=%s"
-        cursor.execute(sql13,dataInput['EmploymentAppNo'])
+        cursor.execute(sql13,data_new['EmploymentAppNo'])
         columns13 = [column[0] for column in cursor.description]
         result13 = toJson(cursor.fetchall(),columns13)
 
         sql14 = "SELECT * FROM Personal WHERE EmploymentAppNo=%s"
-        cursor.execute(sql14,dataInput['EmploymentAppNo'])
+        cursor.execute(sql14,data_new['EmploymentAppNo'])
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
         sql17 = "SELECT * FROM Reference WHERE EmploymentAppNo=%s"
-        cursor.execute(sql17,dataInput['EmploymentAppNo'])
+        cursor.execute(sql17,data_new['EmploymentAppNo'])
         columns17 = [column[0] for column in cursor.description]
         result17 = toJson(cursor.fetchall(),columns17)
 
         sql18 = "SELECT * FROM RefPerson WHERE EmploymentAppNo=%s"
-        cursor.execute(sql18,dataInput['EmploymentAppNo'])
+        cursor.execute(sql18,data_new['EmploymentAppNo'])
         columns18 = [column[0] for column in cursor.description]
         result18 = toJson(cursor.fetchall(),columns18)
 
         sql20 = "SELECT * FROM SpecialSkill WHERE EmploymentAppNo=%s"
-        cursor.execute(sql20,dataInput['EmploymentAppNo'])
+        cursor.execute(sql20,data_new['EmploymentAppNo'])
         columns20 = [column[0] for column in cursor.description]
         result20 = toJson(cursor.fetchall(),columns20)
 
         sql23 = "SELECT * FROM TrainingCourse WHERE EmploymentAppNo=%s"
-        cursor.execute(sql23,dataInput['EmploymentAppNo'])
+        cursor.execute(sql23,data_new['EmploymentAppNo'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
         connection.commit()
