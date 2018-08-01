@@ -97,7 +97,7 @@ def EditEmployee():
         logserver(e)
         return "fail"
 @app.route('/QryBlacklist', methods=['POST'])
-def connect_sql():
+@connect_sql()
 def QryBlacklist(cursor):
     try:
         sql = "SELECT * FROM blacklist"
