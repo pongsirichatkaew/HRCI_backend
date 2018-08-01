@@ -3,7 +3,7 @@
 from dbConfig import *
 
 @app.route('/QryContract', methods=['POST'])
-def connect_sql():
+@connect_sql()
 def QryContract(cursor):
     try:
         sql = "SELECT * FROM employee INNER JOIN company ON employee.companyid = company.companyid\
