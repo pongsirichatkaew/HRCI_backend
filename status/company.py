@@ -7,14 +7,17 @@ from dbConfig import *
 def InsertCompany(cursor):
     try:
         data = request.json
-        companyid = data['companyid']
-        companyname = data['companyname']
-        company_short_name = data['company_short_name']
-        address_company = data['address_company']
-        path_logo = data['path_logo']
-        email = data['email']
-        sql = "INSERT INTO company (companyid,companyname,company_short_name,email,address_company,path_logo) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(companyid,companyname,company_short_name,email,address_company,path_logo))
+        source = data['source']
+        new_data = source
+        companyid = new_data['companyid']
+        companyname = new_data['companyname']
+        company_short_name = new_data['company_short_name']
+        address_company = new_data['address_company']
+        path_logo = new_data['path_logo']
+        email = new_data['email']
+        phone = new_data['phone']
+        sql = "INSERT INTO company (companyid,companyname,company_short_name,email,address_company,path_logo,phone) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(companyid,companyname,company_short_name,email,address_company,path_logo,phone))
         return "success"
     except Exception as e:
         logserver(e)
@@ -43,7 +46,7 @@ def EditCompany(cursor):
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,path_logo FROM company WHERE validstatus=1"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,path_logo,phone FROM company WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
