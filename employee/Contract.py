@@ -6,11 +6,11 @@ from dbConfig import *
 @connect_sql()
 def QryContract(cursor):
     try:
-        sql = "SELECT * FROM employee INNER JOIN company ON employee.companyid = company.companyid\
-                                      INNER JOIN section ON employee.sectionid = section.sectionid\
-                                      INNER JOIN position ON employee.positionid = position.positionid\
-        "
-        cursor.execute(sql)
+        dataInput = request.json
+        sql = "SELECT * FROM employee INNER JOIN company ON company.companyid = employee.companyid\
+                                      INNER JOIN Address ON Address.ID_CardNo = employee.ID_CardNo\
+               WHERE employee.employeeid=%s"
+        cursor.execute(sql,dataInput['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
