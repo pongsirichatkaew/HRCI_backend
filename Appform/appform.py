@@ -7,12 +7,30 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = "SELECT EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,Mobile,Email,date,status_id FROM Personal"
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id"""
+        # sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        # FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/UpdateEmpStatus', methods=['POST'])
+@connect_sql3()
+def UpdateEmpStatus(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+        status_id = data_new['status_id']
+        EmploymentAppNo = data_new['EmploymentAppNo']
+        sqlUp = "UPDATE Personal SET status_id = %s WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -22,6 +40,8 @@ def QryDatbaseAppform():
         connection = mysql3.connect()
         cursor = connection.cursor()
         dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         sqlEm = "SELECT * FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
                                        INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
                                        INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
