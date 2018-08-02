@@ -9,7 +9,6 @@ from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*
 from status.Status import *
 from employee.Employee import *
-from employee.criminal import *
 from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])
