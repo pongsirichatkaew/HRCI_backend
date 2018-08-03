@@ -122,3 +122,18 @@ def QryBlacklist(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/InsertEmployeeHRCI_Management', methods=['POST'])
+@connect_sql()
+def InsertEmployeeHRCI_Management(cursor):
+    try:
+        data = request.json
+        sql = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,address_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(companyid,companyname))
+
+        sql2 = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql2,(companyid,companyname))
+
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
