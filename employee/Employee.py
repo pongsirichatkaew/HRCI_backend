@@ -44,50 +44,64 @@ def EditEmployee():
 
         # connection = mysql4.connect()
         # cursor = connection.cursor()
-        # sqlIn = "INSERT INTO Address (EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn,(dataInput[0]['EmploymentAppNo'],dataInput[0]['AddressType'],dataInput[0]['HouseNo'], \
-        #  dataInput[0]['Street'],dataInput[0]['DISTRICT_NAME'],dataInput[0]['AMPHUR_NAME'],dataInput[0]['PROVINCE_NAME'],dataInput[0]['PostCode'],dataInput[0]['Tel'],dataInput[0]['Fax']))
-        #
-        # sqlIn4 = "INSERT INTO Attachment (EmploymentAppNo,Type,PathFile) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn4,(dataInput[0]['EmploymentAppNo'],dataInput[0]['Type'],dataInput[0]['PathFile']))
-        #
-        # sqlIn6 = "INSERT INTO ComputerSkill (EmploymentAppNo,ComSkill,Level) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn6,(dataInput[0]['EmploymentAppNo'],dataInput[0]['ComSkill'],dataInput[0]['Level']))
-        #
-        # sqlIn9 = "INSERT INTO Education (EmploymentAppNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn9,(dataInput[0]['EmploymentAppNo'],dataInput[0]['EducationLevel'],dataInput[0]['Institute'],dataInput[0]['StartYear'],dataInput[0]['EndYear'],dataInput[0]['Qualification'],dataInput[0]['Major'],dataInput[0]['GradeAvg'],dataInput[0]['ExtraCurricularActivities']))
-        #
-        # sqlIn11 = "INSERT INTO Family (EmploymentAppNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn11,(dataInput[0]['EmploymentAppNo'],dataInput[0]['MemberType'],dataInput[0]['Name'],dataInput[0]['Surname'],dataInput[0]['Occupation'],dataInput[0]['Address'],dataInput[0]['Tel'],dataInput[0]['Fax']))
-        #
-        # sqlIn13 = "INSERT INTO LanguagesSkill (EmploymentAppNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn13,(dataInput[0]['EmploymentAppNo'],dataInput[0]['Languages'],dataInput[0]['Speaking'],dataInput[0]['Reading'],dataInput[0]['Writting']))
+        # i=0
+        # for i in xrange(len(result)):
+        #     sqlIn = "INSERT INTO Address (EmploymentAppNo,ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn,(result[i]['EmploymentAppNo'],result[i]['ID_CardNo'],result[i]['AddressType'],result[i]['HouseNo'],
+        #     result[i]['Street'],result[i]['DISTRICT_NAME'],result[i]['AMPHUR_NAME'],result[i]['PROVINCE_NAME'],result[i]['PostCode'],result[i]['Tel'],result[i]['Fax']))
+        # i=0
+        # for i in xrange(len(result4)):
+        #     sqlIn4 = "INSERT INTO Attachment (EmploymentAppNo,ID_CardNo,Type,PathFile) VALUES (%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn4,(result4[i]['EmploymentAppNo'],result4[i]['ID_CardNo'],result4[i]['Type'],result4[i]['PathFile']))
+        # i=0
+        # for i in xrange(len(result6)):
+        #     sqlIn6 = "INSERT INTO ComputerSkill (EmploymentAppNo,ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn6,(result6[i]['EmploymentAppNo'],result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
+        # i=0
+        # for i in xrange(len(result9)):
+        #     sqlIn9 = "INSERT INTO Education (EmploymentAppNo,ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn9,(result9[i]['EmploymentAppNo'],result9[i]['ID_CardNo'],result9[i]['EducationLevel'],result9[i]['Institute'],result9[i]['StartYear'],result9[i]['EndYear'],result9[i]['Qualification'],result9[i]['Major'],result9[i]['GradeAvg'],result9[i]['ExtraCurricularActivities']))
+        # i=0
+        # for i in xrange(len(result11)):
+        #     sqlIn11 = "INSERT INTO Family (EmploymentAppNo,ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn11,(result11[i]['EmploymentAppNo'],result11[i]['ID_CardNo'],result11[i]['MemberType'],result11[i]['Name'],result11[i]['Surname'],result11[i]['Occupation'],result11[i]['Address'],result11[i]['Tel'],result11[i]['Fax']))
+        # i=0
+        # for i in xrange(len(result13)):
+        #     sqlIn13 = "INSERT INTO LanguagesSkill (EmploymentAppNo,ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn13,(result13[i]['EmploymentAppNo'],result13[i]['ID_CardNo'],result13[i]['Languages'],result13[i]['Speaking'],result13[i]['Reading'],result13[i]['Writting']))
         #
         # sqlIn14 = """INSERT INTO Personal (EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
         # VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        # cursor.execute(sqlIn14,(dataInput[0]['EmploymentAppNo'],dataInput[0]['AppliedPosition1'],dataInput[0]['AppliedPosition2'],dataInput[0]['StartExpectedSalary'],dataInput[0]['EndExpectedSalary'],dataInput[0]['NameTh'],dataInput[0]['SurnameTh'],dataInput[0]['NicknameTh'],dataInput[0]['NameEn'],dataInput[0]['SurnameEn'],dataInput[0]['NicknameEn'],dataInput[0]['Birthdate'],dataInput[0]['BirthPlace'],dataInput[0]['BirthProvince'], \
-        # dataInput[0]['BirthCountry'],dataInput[0]['Age'],dataInput[0]['Height'],dataInput[0]['Weight'],dataInput[0]['BloodGroup'],dataInput[0]['Citizenship'],dataInput[0]['Religion'],dataInput[0]['ID_CardNo'], \
-        # dataInput[0]['IssueDate'],dataInput[0]['ExpiryDate'],dataInput[0]['MaritalStatus'],dataInput[0]['NumberOfChildren'],dataInput[0]['StudyChild'],dataInput[0]['MilitaryService'],dataInput[0]['Others'], \
-        # dataInput[0]['Worktel'],dataInput[0]['Mobile'],dataInput[0]['Email'],dataInput[0]['EmergencyPerson'],dataInput[0]['EmergencyRelation'],dataInput[0]['EmergencyAddress'],dataInput[0]['EmergencyTel'],dataInput[0]['date']))
-        #
-        # sqlIn17 = "INSERT INTO Reference (EmploymentAppNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn17,(dataInput[0]['EmploymentAppNo'],dataInput[0]['RelativeName'],dataInput[0]['RelativeSurname'],dataInput[0]['RelativePosition'],dataInput[0]['RelativeRelationship'],dataInput[0]['PhysicalHandicap'],dataInput[0]['PhysicalHandicapDetail'],dataInput[0]['KnowFrom']))
-        #
-        # sqlIn18 = "INSERT INTO RefPerson (EmploymentAppNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn18,(dataInput[0]['EmploymentAppNo'],dataInput[0]['RefName'],dataInput[0]['RefPosition'],dataInput[0]['RefAddress'],dataInput[0]['RefTel']))
-        #
-        # sqlIn20 = "INSERT INTO SpecialSkill (EmploymentAppNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn20,(dataInput[0]['EmploymentAppNo'],dataInput[0]['CarDrivingLicense'],dataInput[0]['MotorBicycleDrivingLicense'],dataInput[0]['OwnCar'],dataInput[0]['OwnMotorBicycle'], \
-        # dataInput[0]['WorkUpCountry'],dataInput[0]['StartWorkEarliest'],dataInput[0]['PhysicalDisabilityOrDisease'],dataInput[0]['DischargeFromEmployment'],dataInput[0]['DischargeFromEmploymentReason'],dataInput[0]['Arrested'],dataInput[0]['ArrestedReason']))
+        # cursor.execute(sqlIn14,(result14[0]['EmploymentAppNo'],result14[0]['AppliedPosition1'],result14[0]['AppliedPosition2'],result14[0]['StartExpectedSalary'],result14[0]['EndExpectedSalary'],result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
+        # result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],result14[0]['ID_CardNo'], \
+        # result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
+        # result14[0]['Worktel'],result14[0]['Mobile'],result14[0]['Email'],result14[0]['EmergencyPerson'],result14[0]['EmergencyRelation'],result14[0]['EmergencyAddress'],result14[0]['EmergencyTel'],result14[0]['date']))
+        # i=0
+        # for i in xrange(len(result17)):
+        #     sqlIn17 = "INSERT INTO Reference (EmploymentAppNo,ID_CardNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn17,(result17[i]['EmploymentAppNo'],result17[i]['ID_CardNo'],result17[i]['RelativeName'],result17[i]['RelativeSurname'],result17[i]['RelativePosition'],result17[i]['RelativeRelationship'],result17[i]['PhysicalHandicap'],result17[i]['PhysicalHandicapDetail'],result17[i]['KnowFrom']))
+        # i=0
+        # for i in xrange(len(result18)):
+        #     sqlIn18 = "INSERT INTO RefPerson (EmploymentAppNo,ID_CardNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn18,(result18[i]['EmploymentAppNo'],result18[i]['ID_CardNo'],result18[i]['RefName'],result18[i]['RefPosition'],result18[i]['RefAddress'],result18[i]['RefTel']))
+        # i=0
+        # for i in xrange(len(result20)):
+        #     sqlIn20 = "INSERT INTO SpecialSkill (EmploymentAppNo,ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn20,(result20[i]['EmploymentAppNo'],result20[i]['ID_CardNo'],result20[i]['CarDrivingLicense'],result20[i]['MotorBicycleDrivingLicense'],result20[i]['OwnCar'],result20[i]['OwnMotorBicycle'], \
+        #     result20[i]['WorkUpCountry'],result20[i]['StartWorkEarliest'],result20[i]['PhysicalDisabilityOrDisease'],result20[i]['DischargeFromEmployment'],result20[i]['DischargeFromEmploymentReason'],result20[i]['Arrested'],result20[i]['ArrestedReason']))
         # try:
-        #     sqlIn10 = "INSERT INTO Employment (EmploymentAppNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn10,(dataInput[0]['EmploymentAppNo'],dataInput[0]['CompanyName'],dataInput[0]['CompanyAddress'],dataInput[0]['PositionHeld'],dataInput[0]['StartSalary'],dataInput[0]['EndSalary'],dataInput[0]['StartYear'],dataInput[0]['EndYear'], \
-        #     dataInput[0]['Responsibility'],dataInput[0]['ReasonOfLeaving'],dataInput[0]['Descriptionofwork']))
+        #     i=0
+        #     for i in xrange(len(result10)):
+        #         sqlIn10 = "INSERT INTO Employment (EmploymentAppNo,ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        #         cursor.execute(sqlIn10,(result10[i]['EmploymentAppNo'],result10[i]['ID_CardNo'],result10[i]['CompanyName'],result10[i]['CompanyAddress'],result10[i]['PositionHeld'],result10[i]['StartSalary'],result10[i]['EndSalary'],result10[i]['StartYear'],result10[i]['EndYear'], \
+        #         result10[i]['Responsibility'],result10[i]['ReasonOfLeaving'],result10[i]['Descriptionofwork']))
         # except Exception as e:
         #     logserver(e)
         # try:
-        #     sqlIn23 = "INSERT INTO TrainingCourse(EmploymentAppNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn23,(dataInput[0]['EmploymentAppNo'],dataInput[0]['Subject'],dataInput[0]['Place'],dataInput[0]['StartDate'],dataInput[0]['EndDate']))
+        #     i=0
+        #     for i in xrange(len(result23)):
+        #         sqlIn23 = "INSERT INTO TrainingCourse(EmploymentAppNo,ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s,%s)"
+        #         cursor.execute(sqlIn23,(result23[i]['EmploymentAppNo'],result23[i]['ID_CardNo'],result23[i]['Subject'],result23[i]['Place'],result23[i]['StartDate'],result23[i]['EndDate']))
         # except Exception as e:
         #     logserver(e)
         # connection.commit()
