@@ -17,6 +17,66 @@ def QryAppform():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryAppform_Wait_interview', methods=['POST'])
+def QryAppform_Wait_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='1' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Come_interview', methods=['POST'])
+def QryAppform_Come_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='2' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Pass_interview', methods=['POST'])
+def QryAppform_Pass_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='3' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Notpass_interview', methods=['POST'])
+def QryAppform_Notpass_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='4' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/UpdateEmpStatus', methods=['POST'])
 @connect_sql3()
 def UpdateEmpStatus(cursor):
