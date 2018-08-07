@@ -7,24 +7,28 @@ from dbConfig import *
 def QryCriminal(cursor4):
     try:
         dataInput = request.json
-        source = dataInput['source']
-        data_new = source
+        # source = dataInput['source']
+        # data_new = source
         sql = "SELECT Name,Surname,MemberType FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother')AND EmploymentAppNo=%s"
-        cursor4.execute(sql,data_new['EmploymentAppNo'])
+        cursor4.execute(sql,dataInput['EmploymentAppNo'])
         columns = [column[0] for column in cursor4.description]
         result = toJson(cursor4.fetchall(),columns)
 
         sql2 = "SELECT NameTh,SurnameTh,ID_CardNo,Birthdate FROM Personal WHERE EmploymentAppNo=%s"
-        cursor4.execute(sql2,data_new['EmploymentAppNo'])
+        cursor4.execute(sql2,dataInput['EmploymentAppNo'])
         columns = [column[0] for column in cursor4.description]
         result2 = toJson(cursor4.fetchall(),columns)
 
         sql3 = "SELECT AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode FROM Address WHERE (AddressType ='Present'OR AddressType ='Home') AND EmploymentAppNo=%s"
-        cursor4.execute(sql3,data_new['EmploymentAppNo'])
+        cursor4.execute(sql3,dataInput['EmploymentAppNo'])
         columns = [column[0] for column in cursor4.description]
         result3 = toJson(cursor4.fetchall(),columns)
+        arr={}
+        arr["result"] = result
+        arr["result2"] = result2
+        arr["result3"] = result3
 
-        return jsonify(result,result2,result3)
+        return jsonify(arr)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -58,8 +62,12 @@ def QryAllEmployeeCrimeList(cursor4):
         cursor4.execute(sql3)
         columns = [column[0] for column in cursor4.description]
         result3 = toJson(cursor4.fetchall(),columns)
+        arr={}
+        arr["result"] = result
+        arr["result2"] = result2
+        arr["result3"] = result3
 
-        return jsonify(result,result2,result3)
+        return jsonify(arr)
     except Exception as e:
         logserver(e)
         return "fail"

@@ -52,6 +52,20 @@ def InsertBlacklist():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/DeleteBlacklist', methods=['POST'])
+def DeleteBlacklist():
+    try:
+        dataInput = request.json
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "DELETE FROM blacklist WHERE ID_CardNo=%s"
+        cursor.execute(sql,dataInput['ID_CardNo'])
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryAppform_Wait_interview', methods=['POST'])
 def QryAppform_Wait_interview():
     try:
