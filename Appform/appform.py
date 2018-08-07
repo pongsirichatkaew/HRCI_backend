@@ -214,17 +214,13 @@ def QryDatbaseAppform():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sqlblack = "SELECT citizenid FROM blacklist"
+        sqlblack = "SELECT ID_CardNo FROM blacklist"
         cursor.execute(sqlblack)
         columnsblack = [column[0] for column in cursor.description]
         resultblacklist = toJson(cursor.fetchall(),columnsblack)
-        connection.commit()
-        connection.close()
-        if result14[0]['ID_CardNo']==resultblacklist[0]['citizenid']:
+        if result14[0]['ID_CardNo']==resultblacklist[0]['ID_CardNo']:
             print("Person is blacklist")
         else:
-            connection = mysql.connect()
-            cursor = connection.cursor()
             i=0
             for i in xrange(len(result)):
                 sqlIn = "INSERT INTO Address (EmploymentAppNo,ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
