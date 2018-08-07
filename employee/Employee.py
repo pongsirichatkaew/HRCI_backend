@@ -42,7 +42,7 @@ def EditEmployee():
         result = toJson(cursor.fetchall(),columns)
         connection.close()
 
-        # connection = mysql4.connect()
+        # connection = mysql.connect()
         # cursor = connection.cursor()
         # i=0
         # for i in xrange(len(result)):
@@ -107,18 +107,6 @@ def EditEmployee():
         # connection.commit()
         # connection.close()
         return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/QryBlacklist', methods=['POST'])
-@connect_sql()
-def QryBlacklist(cursor):
-    try:
-        sql = "SELECT * FROM blacklist"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"

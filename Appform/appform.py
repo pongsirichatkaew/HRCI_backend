@@ -17,6 +17,41 @@ def QryAppform():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryBlacklist', methods=['POST'])
+@connect_sql()
+def QryBlacklist(cursor):
+    try:
+        sql = "SELECT * FROM blacklist"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/InsertBlacklist', methods=['POST'])
+def InsertBlacklist():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sql,dataInput['EmploymentAppNo'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],dataInput['createby']))
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryAppform_Wait_interview', methods=['POST'])
 def QryAppform_Wait_interview():
     try:
@@ -188,7 +223,7 @@ def QryDatbaseAppform():
         if result14[0]['ID_CardNo']==resultblacklist[0]['citizenid']:
             print("Person is blacklist")
         else:
-            connection = mysql4.connect()
+            connection = mysql.connect()
             cursor = connection.cursor()
             i=0
             for i in xrange(len(result)):
