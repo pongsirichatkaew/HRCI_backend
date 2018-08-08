@@ -242,6 +242,10 @@ def QryDatbaseAppform():
                 result[i]['Street'],result[i]['DISTRICT_NAME'],result[i]['AMPHUR_NAME'],result[i]['PROVINCE_NAME'],result[i]['PostCode'],result[i]['Tel'],result[i]['Fax']))
             i=0
             for i in xrange(len(result4)):
+                url = result4[i]['PathFile']
+                image_name = result4[i]['EmploymentAppNo']
+                Path = "pig/" + image_name
+                wget.download(url,Path)
                 sqlIn4 = "INSERT INTO Attachment (EmploymentAppNo,ID_CardNo,Type,PathFile) VALUES (%s,%s,%s,%s)"
                 cursor.execute(sqlIn4,(result4[i]['EmploymentAppNo'],result4[i]['ID_CardNo'],result4[i]['Type'],result4[i]['PathFile']))
             i=0

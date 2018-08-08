@@ -48,6 +48,12 @@ def QryEmployeeList(cursor):
 @connect_sql4()
 def QryAllEmployeeCrimeList(cursor4):
     try:
+        # sql = "SELECT Family.Name,Family.Surname,Family.MemberType,Personal.NameTh,Personal.SurnameTh,Personal.ID_CardNo,Personal.Birthdate,Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode FROM Personal INNER JOIN Address ON Personal.EmploymentAppNo = Address.EmploymentAppNo\
+        #                               INNER JOIN Family ON Personal.EmploymentAppNo = Family.EmploymentAppNo\
+        # "
+        # cursor4.execute(sql)
+        # columns = [column[0] for column in cursor4.description]
+        # result = toJson(cursor4.fetchall(),columns)
         sql = "SELECT Name,Surname,MemberType FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother')"
         cursor4.execute(sql)
         columns = [column[0] for column in cursor4.description]
@@ -63,9 +69,20 @@ def QryAllEmployeeCrimeList(cursor4):
         columns = [column[0] for column in cursor4.description]
         result3 = toJson(cursor4.fetchall(),columns)
         arr={}
+        allresult = []
         arr["result"] = result
         arr["result2"] = result2
         arr["result3"] = result3
+        # i=0
+        # # test = result+result2
+        # # print(result)
+        # for i in xrange(len(arr["result"][i])):
+        #     test = arr["result"][i]+arr["result2"][i]
+
+        # for j in xrange(len(arr["result2"])):
+        #     arr['result2'][j]
+        # for k in xrange(len(arr["result3"])):
+        #     arr['result3'][k]
 
         return jsonify(arr)
     except Exception as e:
