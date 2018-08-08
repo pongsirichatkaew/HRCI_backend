@@ -13,7 +13,6 @@ import string
 import random
 
 import requests
-import urllib
 import wget
 
 
