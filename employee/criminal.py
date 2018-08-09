@@ -48,43 +48,37 @@ def QryEmployeeList(cursor):
 @connect_sql4()
 def QryAllEmployeeCrimeList(cursor4):
     try:
-        # sql = "SELECT Family.Name,Family.Surname,Family.MemberType,Personal.NameTh,Personal.SurnameTh,Personal.ID_CardNo,Personal.Birthdate,Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode FROM Personal INNER JOIN Address ON Personal.EmploymentAppNo = Address.EmploymentAppNo\
-        #                               INNER JOIN Family ON Personal.EmploymentAppNo = Family.EmploymentAppNo\
-        # "
+        # sql = "SELECT Name,Surname,MemberType,EmploymentAppNo FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother') AND EmploymentAppNo"
         # cursor4.execute(sql)
         # columns = [column[0] for column in cursor4.description]
         # result = toJson(cursor4.fetchall(),columns)
-        sql = "SELECT Name,Surname,MemberType FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother')"
-        cursor4.execute(sql)
+        #
+        # sql2 = "SELECT NameTh,SurnameTh,ID_CardNo,Birthdate,EmploymentAppNo FROM Personal"
+        # cursor4.execute(sql2)
+        # columns = [column[0] for column in cursor4.description]
+        # result2 = toJson(cursor4.fetchall(),columns)
+        #
+        # sql3 = "SELECT AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,EmploymentAppNo FROM Address WHERE (AddressType ='Present'OR AddressType ='Home')"
+        # cursor4.execute(sql3)
+        # columns = [column[0] for column in cursor4.description]
+        # result3 = toJson(cursor4.fetchall(),columns)
+        # arr={}
+        # arr["result"] = result
+        # arr["result2"] = result2
+        # arr["result3"] = result3
+        sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,
+        homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,
+        Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
+        FROM Personal
+        LEFT JOIN Address ON Address.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN Family ON Family.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
+        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father'"""
+        cursor4.execute(sql4)
         columns = [column[0] for column in cursor4.description]
-        result = toJson(cursor4.fetchall(),columns)
-
-        sql2 = "SELECT NameTh,SurnameTh,ID_CardNo,Birthdate FROM Personal"
-        cursor4.execute(sql2)
-        columns = [column[0] for column in cursor4.description]
-        result2 = toJson(cursor4.fetchall(),columns)
-
-        sql3 = "SELECT AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode FROM Address WHERE (AddressType ='Present'OR AddressType ='Home')"
-        cursor4.execute(sql3)
-        columns = [column[0] for column in cursor4.description]
-        result3 = toJson(cursor4.fetchall(),columns)
-        arr={}
-        allresult = []
-        arr["result"] = result
-        arr["result2"] = result2
-        arr["result3"] = result3
-        # i=0
-        # # test = result+result2
-        # # print(result)
-        # for i in xrange(len(arr["result"][i])):
-        #     test = arr["result"][i]+arr["result2"][i]
-
-        # for j in xrange(len(arr["result2"])):
-        #     arr['result2'][j]
-        # for k in xrange(len(arr["result3"])):
-        #     arr['result3'][k]
-
-        return jsonify(arr)
+        result4 = toJson(cursor4.fetchall(),columns)
+        return jsonify(result4)
     except Exception as e:
         logserver(e)
         return "fail"
