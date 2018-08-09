@@ -55,27 +55,39 @@ def TestgenEM():
         logserver(e)
         return "fail"
 @app.route('/login', methods=['POST'])
-@connect_sql2()
-def login(cursor2):
+def login():
     _data = request.json
     username = _data['username']
     password = _data['password']
+    connection = mysql2.connect()
+    cursor = connection.cursor()
     sql = "SELECT * FROM user WHERE username = %s and password = %s"
-    conn = mysql2.connect()
-    cursor2 = conn.cursor()
-    cursor2.execute(sql, (username, hashlib.sha512(password).hexdigest()))
-    data = cursor2.fetchall()
-    columns = [column[0] for column in cursor2.description]
+    cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
+    data = cursor.fetchall()
+    columns = [column[0] for column in cursor.description]
     _output = toJson(data, columns)
+    connection.commit()
+    connection.close()
 
-    result = {}
-    if len(_output) != 0:
-        result['message'] = 'login success'
-        result['userid'] = _output[0]['userid']
-        result['username'] = _output[0]['username']
-    else:
-        result['message'] = 'login fail'
-    return jsonify(result)
+    connection = mysql.connect()
+    cursor = connection.cursor()
+    sql2 = "SELECT * FROM Admin"
+    cursor.execute(sql2)
+    data2 = cursor.fetchall()
+    columns2 = [column[0] for column in cursor.description]
+    _output2 = toJson(data2, columns2)
+    connection.commit()
+    connection.close()
+
+    # result = {}
+    # if len(_output) != 0:
+    #     result['message'] = 'login success'
+    #     result['userid'] = _output[0]['userid']
+    #     result['username'] = _output[0]['username']
+    #     result['username'] = _output2[0]['username']
+    # else:
+    #     result['message'] = 'login fail'
+    return jsonify(_output2[0]['username'])
 
 
 if __name__ == '__main__':

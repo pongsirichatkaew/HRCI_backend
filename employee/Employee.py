@@ -126,3 +126,17 @@ def InsertEmployeeHRCI_Management():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/EditCost_employee_ga', methods=['POST'])
+@connect_sql()
+def EditCost_employee_ga(cursor):
+    try:
+        dataInput = request.json
+        sqlUp = "UPDATE employee_ga SET validstatus = '0' WHERE id=%s"
+        cursor.execute(sqlUp,(dataInput['employeeid']))
+        sqlIn = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(dataInput['employeeid'],dataInput['phone_depreciate'],dataInput['notebook_depreciate'],dataInput['notebook_depreciate'],dataInput['limit_phone'],dataInput['chair_table'],dataInput['pc'],dataInput['notebook'],dataInput['office_equipment'],dataInput['ms'],dataInput['car_ticket'],dataInput['band_car'],dataInput['color'],\
+        dataInput['regis_car_number'],dataInput['other'],dataInput['description']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
