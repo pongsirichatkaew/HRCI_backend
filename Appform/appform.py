@@ -312,3 +312,102 @@ def QryDatbaseAppform():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryAppform_One_person', methods=['POST'])
+def QryAppform_One_person():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        sqlEm = "SELECT * FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
+                                           INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
+                                           INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
+                                           INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
+                     WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sqlEm,dataInput['EmploymentAppNo'])
+        columnsEm = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columnsEm)
+
+        sql4 = "SELECT * FROM Attachment INNER JOIN Personal ON Personal.EmploymentAppNo=Attachment.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql4,dataInput['EmploymentAppNo'])
+        columns4 = [column[0] for column in cursor.description]
+        result4 = toJson(cursor.fetchall(),columns4)
+
+        sql6 = "SELECT * FROM ComputerSkill INNER JOIN Personal ON Personal.EmploymentAppNo=ComputerSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql6,dataInput['EmploymentAppNo'])
+        columns6 = [column[0] for column in cursor.description]
+        result6 = toJson(cursor.fetchall(),columns6)
+
+        sql9 = "SELECT * FROM Education INNER JOIN Personal ON Personal.EmploymentAppNo=Education.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql9,dataInput['EmploymentAppNo'])
+        columns9 = [column[0] for column in cursor.description]
+        result9 = toJson(cursor.fetchall(),columns9)
+
+        sql10 = "SELECT * FROM Employment INNER JOIN Personal ON Personal.EmploymentAppNo=Employment.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql10,dataInput['EmploymentAppNo'])
+        columns10 = [column[0] for column in cursor.description]
+        result10 = toJson(cursor.fetchall(),columns10)
+
+        sql11 = "SELECT * FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql11,dataInput['EmploymentAppNo'])
+        columns11 = [column[0] for column in cursor.description]
+        result11 = toJson(cursor.fetchall(),columns11)
+
+        sql13 = "SELECT * FROM LanguagesSkill INNER JOIN Personal ON Personal.EmploymentAppNo=LanguagesSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql13,dataInput['EmploymentAppNo'])
+        columns13 = [column[0] for column in cursor.description]
+        result13 = toJson(cursor.fetchall(),columns13)
+
+        sql14 = "SELECT * FROM Personal \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql14,dataInput['EmploymentAppNo'])
+        columns14 = [column[0] for column in cursor.description]
+        result14 = toJson(cursor.fetchall(),columns14)
+
+        sql17 = "SELECT * FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql17,dataInput['EmploymentAppNo'])
+        columns17 = [column[0] for column in cursor.description]
+        result17 = toJson(cursor.fetchall(),columns17)
+
+        sql18 = "SELECT * FROM RefPerson INNER JOIN Personal ON Personal.EmploymentAppNo=RefPerson.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql18,dataInput['EmploymentAppNo'])
+        columns18 = [column[0] for column in cursor.description]
+        result18 = toJson(cursor.fetchall(),columns18)
+
+        sql20 = "SELECT * FROM SpecialSkill INNER JOIN Personal ON Personal.EmploymentAppNo=SpecialSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql20,dataInput['EmploymentAppNo'])
+        columns20 = [column[0] for column in cursor.description]
+        result20 = toJson(cursor.fetchall(),columns20)
+
+        sql23 = "SELECT * FROM TrainingCourse INNER JOIN Personal ON Personal.EmploymentAppNo=TrainingCourse.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql23,dataInput['EmploymentAppNo'])
+        columns23 = [column[0] for column in cursor.description]
+        result23 = toJson(cursor.fetchall(),columns23)
+        connection.commit()
+        connection.close()
+        arr={}
+        arr["Address"] = result
+        arr["Attachment"] = result4
+        arr["ComputerSkill"] = result6
+        arr["Education"] = result9
+        arr["Employment"] = result10
+        arr["Family"] = result11
+        arr["LanguagesSkill"] = result13
+        arr["Personal"] = result14
+        arr["Reference"] = result17
+        arr["RefPerson"] = result18
+        arr["SpecialSkill"] = result20
+        arr["TrainingCourse"] = result23
+        return jsonify(arr)
+    except Exception as e:
+        logserver(e)
+        return "fail"
