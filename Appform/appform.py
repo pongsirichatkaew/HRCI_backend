@@ -256,9 +256,9 @@ def QryDatbaseAppform():
                 sqlIn6 = "INSERT INTO ComputerSkill (EmploymentAppNo,ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s,%s)"
                 cursor.execute(sqlIn6,(result6[i]['EmploymentAppNo'],result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
             i=0
-            for i in xrange(len(result6)):
-                sqlInContract = "INSERT INTO Contract (EmploymentAppNo) VALUES (%s)"
-                cursor.execute(sqlInContract,result6[i]['EmploymentAppNo'])
+            for i in xrange(len(result14)):
+                sqlInContract = "INSERT INTO Contract (ID_CardNo) VALUES (%s)"
+                cursor.execute(sqlInContract,result14[0]['ID_CardNo'])
             i=0
             for i in xrange(len(result9)):
                 sqlIn9 = "INSERT INTO Education (EmploymentAppNo,ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
