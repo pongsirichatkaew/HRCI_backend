@@ -56,39 +56,41 @@ def TestgenEM():
         return "fail"
 @app.route('/login', methods=['POST'])
 def login():
-    _data = request.json
-    username = _data['username']
-    password = _data['password']
-    connection = mysql2.connect()
-    cursor = connection.cursor()
-    sql = "SELECT * FROM user WHERE username = %s and password = %s"
-    cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
-    data = cursor.fetchall()
-    columns = [column[0] for column in cursor.description]
-    _output = toJson(data, columns)
-    connection.commit()
-    connection.close()
+    try:
+        _data = request.json
+        username = _data['username']
+        password = _data['password']
+        connection = mysql2.connect()
+        cursor = connection.cursor()
+        sql = "SELECT * FROM user WHERE username = %s and password = %s"
+        cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
+        data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        _output = toJson(data, columns)
+        connection.commit()
+        connection.close()
 
-    connection = mysql.connect()
-    cursor = connection.cursor()
-    sql2 = "SELECT * FROM Admin"
-    cursor.execute(sql2)
-    data2 = cursor.fetchall()
-    columns2 = [column[0] for column in cursor.description]
-    _output2 = toJson(data2, columns2)
-    connection.commit()
-    connection.close()
-
-    # result = {}
-    # if len(_output) != 0:
-    #     result['message'] = 'login success'
-    #     result['userid'] = _output[0]['userid']
-    #     result['username'] = _output[0]['username']
-    #     result['username'] = _output2[0]['username']
-    # else:
-    #     result['message'] = 'login fail'
-    return jsonify(_output2[0]['username'])
-
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql2 = "SELECT * FROM Admin WHERE user_email=%s"
+        cursor.execute(sql2,_output[0]['username'])
+        data2 = cursor.fetchall()
+        columns2 = [column[0] for column in cursor.description]
+        _output2 = toJson(data2, columns2)
+        connection.commit()
+        connection.close()
+        result={}
+        result['message'] = 'login success'
+        result['userid'] = _output[0]['userid']
+        result['username'] = _output[0]['username']
+        result['department'] = _output[0]['department']
+        result['user_email'] = _output2[0]['user_email']
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        result2={}
+        result2['message'] = 'login fail'
+        return jsonify(result2)
 
 if __name__ == '__main__':
     app.run(debug=True,host='0.0.0.0',threaded=True,port=5000)
