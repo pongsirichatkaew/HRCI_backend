@@ -7,10 +7,13 @@ from dbConfig import *
 def InsertPosition(cursor):
     try:
         data = request.json
-        position_id = data['position_id']
-        position_detail = data['position_detail']
-        sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sql,(position_id,position_detail))
+        source = data['source']
+        data_new = source
+        position_id = data_new['position_id']
+        position_detail = data_new['position_detail']
+        validstatus = data_new['validstatus']
+        sql = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(position_id,position_detail,validstatus))
         return "success"
     except Exception as e:
         logserver(e)
@@ -20,13 +23,16 @@ def InsertPosition(cursor):
 def EditPosition(cursor):
     try:
         data = request.json
-        id = data['id']
-        position_id = data['position_id']
-        position_detail = data['position_detail']
-        sqlUp = "UPDATE position SET validstatus = '0' WHERE id=%s"
-        cursor.execute(sqlUp,(data['id']))
-        sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sqlIn,(position_id,position_detail))
+        source = data['source']
+        data_new = source
+        id = data_new['id']
+        position_id = data_new['position_id']
+        position_detail = data_new['position_detail']
+        validstatus = data_new['validstatus']
+        sqlUp = "UPDATE position SET position_id = %s, position_detail = %s, validstatus = %s WHERE id = %s"
+        cursor.execute(sqlUp,(position_id, position_detail, validstatus, id))
+        # sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
+        # cursor.execute(sqlIn,(position_id,position_detail))
         return "success"
     except Exception as e:
         logserver(e)
@@ -35,7 +41,7 @@ def EditPosition(cursor):
 @connect_sql()
 def QryPosition(cursor):
     try:
-        sql = "SELECT position_id,position_detail,id FROM position WHERE validstatus=1"
+        sql = "SELECT position_id,position_detail,id,validstatus FROM position"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
