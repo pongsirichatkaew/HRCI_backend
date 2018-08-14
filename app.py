@@ -83,8 +83,7 @@ def login():
         result['message'] = 'login success'
         result['userid'] = _output[0]['userid']
         result['username'] = _output[0]['username']
-        result['department'] = _output[0]['department']
-        result['user_email'] = _output2[0]['user_email']
+        result['permission'] = _output2[0]['permission']
         return jsonify(result)
     except Exception as e:
         logserver(e)
