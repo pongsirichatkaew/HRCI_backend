@@ -7,12 +7,137 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = "SELECT EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,Mobile,Email,date,status_id FROM Personal ORDER BY EmploymentAppNo DESC"
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryBlacklist', methods=['POST'])
+@connect_sql()
+def QryBlacklist(cursor):
+    try:
+        sql = "SELECT * FROM blacklist"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/InsertBlacklist', methods=['POST'])
+def InsertBlacklist():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sql,dataInput['EmploymentAppNo'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],dataInput['createby']))
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteBlacklist', methods=['POST'])
+def DeleteBlacklist():
+    try:
+        dataInput = request.json
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "DELETE FROM blacklist WHERE ID_CardNo=%s"
+        cursor.execute(sql,dataInput['ID_CardNo'])
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Wait_interview', methods=['POST'])
+def QryAppform_Wait_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='1' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Come_interview', methods=['POST'])
+def QryAppform_Come_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='2' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Pass_interview', methods=['POST'])
+def QryAppform_Pass_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='3' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_Notpass_interview', methods=['POST'])
+def QryAppform_Notpass_interview():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='4' ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/UpdateEmpStatus', methods=['POST'])
+@connect_sql3()
+def UpdateEmpStatus(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+        status_id = data_new['status_id']
+        EmploymentAppNo = data_new['EmploymentAppNo']
+        sqlUp = "UPDATE Personal SET status_id = %s WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -22,219 +147,267 @@ def QryDatbaseAppform():
         connection = mysql3.connect()
         cursor = connection.cursor()
         dataInput = request.json
-        sql = "SELECT * FROM Address WHERE EmploymentAppNo=%s"
-        cursor.execute(sql,dataInput['EmploymentAppNo'])
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
+        source = dataInput['source']
+        data_new = source
+        sqlEm = "SELECT * FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
+                                       INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
+                                       INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
+                                       INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
+                 WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sqlEm,data_new['EmploymentAppNo'])
+        columnsEm = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columnsEm)
 
-        sql2 = "SELECT * FROM Admin"
-        cursor.execute(sql2)
-        columns2 = [column[0] for column in cursor.description]
-        result2 = toJson(cursor.fetchall(),columns2)
-
-        sql3 = "SELECT * FROM amphures"
-        cursor.execute(sql3)
-        columns3 = [column[0] for column in cursor.description]
-        result3 = toJson(cursor.fetchall(),columns3)
-
-        sql4 = "SELECT * FROM Attachment"
-        cursor.execute(sql4)
+        sql4 = "SELECT * FROM Attachment INNER JOIN Personal ON Personal.EmploymentAppNo=Attachment.EmploymentAppNo \
+         WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql4,data_new['EmploymentAppNo'])
         columns4 = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns4)
 
-        sql5 = "SELECT * FROM buddhism_geo"
-        cursor.execute(sql5)
-        columns5 = [column[0] for column in cursor.description]
-        result5 = toJson(cursor.fetchall(),columns5)
-
-        sql6 = "SELECT * FROM ComputerSkill"
-        cursor.execute(sql6)
+        sql6 = "SELECT * FROM ComputerSkill INNER JOIN Personal ON Personal.EmploymentAppNo=ComputerSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql6,data_new['EmploymentAppNo'])
         columns6 = [column[0] for column in cursor.description]
         result6 = toJson(cursor.fetchall(),columns6)
 
-        sql7 = "SELECT * FROM districts"
-        cursor.execute(sql7)
-        columns7 = [column[0] for column in cursor.description]
-        result7 = toJson(cursor.fetchall(),columns7)
-
-        sql8 = "SELECT * FROM districts2"
-        cursor.execute(sql8)
-        columns8 = [column[0] for column in cursor.description]
-        result8 = toJson(cursor.fetchall(),columns8)
-
-        sql9 = "SELECT * FROM Education"
-        cursor.execute(sql9)
+        sql9 = "SELECT * FROM Education INNER JOIN Personal ON Personal.EmploymentAppNo=Education.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql9,data_new['EmploymentAppNo'])
         columns9 = [column[0] for column in cursor.description]
         result9 = toJson(cursor.fetchall(),columns9)
 
-        sql10 = "SELECT * FROM Employment"
-        cursor.execute(sql10)
+        sql10 = "SELECT * FROM Employment INNER JOIN Personal ON Personal.EmploymentAppNo=Employment.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql10,data_new['EmploymentAppNo'])
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
 
-        sql11 = "SELECT * FROM Family"
-        cursor.execute(sql11)
+        sql11 = "SELECT * FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql11,data_new['EmploymentAppNo'])
         columns11 = [column[0] for column in cursor.description]
         result11 = toJson(cursor.fetchall(),columns11)
 
-        sql12 = "SELECT * FROM geography"
-        cursor.execute(sql12)
-        columns12 = [column[0] for column in cursor.description]
-        result12 = toJson(cursor.fetchall(),columns12)
-
-        sql13 = "SELECT * FROM LanguagesSkill"
-        cursor.execute(sql13)
+        sql13 = "SELECT * FROM LanguagesSkill INNER JOIN Personal ON Personal.EmploymentAppNo=LanguagesSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql13,data_new['EmploymentAppNo'])
         columns13 = [column[0] for column in cursor.description]
         result13 = toJson(cursor.fetchall(),columns13)
 
-        sql14 = "SELECT * FROM Personal"
-        cursor.execute(sql14)
+        sql14 = "SELECT * FROM Personal \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql14,data_new['EmploymentAppNo'])
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
-        sql15 = "SELECT * FROM position"
-        cursor.execute(sql15)
-        columns15 = [column[0] for column in cursor.description]
-        result15 = toJson(cursor.fetchall(),columns15)
-
-        sql16 = "SELECT * FROM provinces"
-        cursor.execute(sql16)
-        columns16 = [column[0] for column in cursor.description]
-        result16 = toJson(cursor.fetchall(),columns16)
-
-        sql17 = "SELECT * FROM Reference"
-        cursor.execute(sql17)
+        sql17 = "SELECT * FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql17,data_new['EmploymentAppNo'])
         columns17 = [column[0] for column in cursor.description]
         result17 = toJson(cursor.fetchall(),columns17)
 
-        sql18 = "SELECT * FROM RefPerson"
-        cursor.execute(sql18)
+        sql18 = "SELECT * FROM RefPerson INNER JOIN Personal ON Personal.EmploymentAppNo=RefPerson.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql18,data_new['EmploymentAppNo'])
         columns18 = [column[0] for column in cursor.description]
         result18 = toJson(cursor.fetchall(),columns18)
 
-        sql19 = "SELECT * FROM Result"
-        cursor.execute(sql19)
-        columns19 = [column[0] for column in cursor.description]
-        result19 = toJson(cursor.fetchall(),columns19)
-
-        sql20 = "SELECT * FROM SpecialSkill"
-        cursor.execute(sql20)
+        sql20 = "SELECT * FROM SpecialSkill INNER JOIN Personal ON Personal.EmploymentAppNo=SpecialSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql20,data_new['EmploymentAppNo'])
         columns20 = [column[0] for column in cursor.description]
         result20 = toJson(cursor.fetchall(),columns20)
 
-        sql21 = "SELECT * FROM status"
-        cursor.execute(sql21)
-        columns21 = [column[0] for column in cursor.description]
-        result21 = toJson(cursor.fetchall(),columns21)
-
-        sql22 = "SELECT * FROM temples"
-        cursor.execute(sql22)
-        columns22 = [column[0] for column in cursor.description]
-        result22 = toJson(cursor.fetchall(),columns22)
-
-        sql23 = "SELECT * FROM TrainingCourse"
-        cursor.execute(sql23)
+        sql23 = "SELECT * FROM TrainingCourse INNER JOIN Personal ON Personal.EmploymentAppNo=TrainingCourse.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql23,data_new['EmploymentAppNo'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
-
-        sql24 = "SELECT * FROM TypeOfAttachment	"
-        cursor.execute(sql24)
-        columns24 = [column[0] for column in cursor.description]
-        result24 = toJson(cursor.fetchall(),columns24)
-
-        sql25 = "SELECT * FROM zipcodes"
-        cursor.execute(sql25)
-        columns25 = [column[0] for column in cursor.description]
-        result25 = toJson(cursor.fetchall(),columns25)
-        connection.close()
-
-        connection = mysql3.connect()
-        cursor = connection.cursor()
-        sqlIn = "INSERT INTO Address (EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['EmploymentAppNo'],result[0]['AddressType'],result[0]['HouseNo'],result[0]['Street'],result[0]['DISTRICT_ID'],result[0]['AMPHUR_ID'],result[0]['PROVINCE_ID'],result[0]['PostCode'],result[0]['Tel'],result[0]['Fax']))
-
-        sqlIn2 = "INSERT INTO admin (username,password) VALUES (%s,%s)"
-        cursor.execute(sqlIn2,(result2[0]['username'],result2[0]['password']))
-
-        sqlIn3 = "INSERT INTO amphures (AMPHUR_CODE,AMPHUR_NAME,GEO_ID,PROVINCE_ID) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sqlIn3,(result3[0]['AMPHUR_CODE'],result3[0]['AMPHUR_NAME'],result3[0]['GEO_ID'],result3[0]['PROVINCE_ID']))
-
-        sqlIn4 = "INSERT INTO Attachment (EmploymentAppNo,Type,PathFile) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn4,(result4[0]['EmploymentAppNo'],result4[0]['Type'],result4[0]['PathFile']))
-
-        sqlIn5 = "INSERT INTO buddhism_geo (bgeo_name) VALUES (%s)"
-        cursor.execute(sqlIn5,(result5[0]['bgeo_name']))
-
-        sqlIn6 = "INSERT INTO ComputerSkill (EmploymentAppNo,ComSkill,Level) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn6,(result6[0]['EmploymentAppNo'],result6[0]['ComSkill'],result6[0]['Level']))
-
-        sqlIn7 = "INSERT INTO districts (DISTRICT_CODE,DISTRICT_NAME,AMPHUR_ID,PROVINCE_ID,GEO_ID) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn7,(result7[0]['DISTRICT_CODE'],result7[0]['DISTRICT_NAME'],result7[0]['AMPHUR_ID'],result7[0]['PROVINCE_ID'],result7[0]['GEO_ID']))
-
-        sqlIn8 = "INSERT INTO districts2 (DISTRICT_CODE,DISTRICT_NAME,AMPHUR_ID,PROVINCE_ID,GEO_ID) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn8,(result8[0]['DISTRICT_CODE'],result8[0]['DISTRICT_NAME'],result8[0]['AMPHUR_ID'],result8[0]['PROVINCE_ID'],result8[0]['GEO_ID']))
-
-        sqlIn9 = "INSERT INTO Education (EmploymentAppNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn9,(result9[0]['EmploymentAppNo'],result9[0]['EducationLevel'],result9[0]['Institute'],result9[0]['StartYear'],result9[0]['EndYear'],result9[0]['Qualification'],result9[0]['Major'],result9[0]['GradeAvg'],result9[0]['ExtraCurricularActivities']))
-
-        sqlIn10 = "INSERT INTO Employment (EmploymentAppNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn10,(result10[0]['EmploymentAppNo'],result10[0]['CompanyName'],result10[0]['CompanyAddress'],result10[0]['PositionHeld'],result10[0]['StartSalary'],result10[0]['EndSalary'],result10[0]['StartYear'],result10[0]['EndYear'], \
-        result10[0]['Responsibility'],result10[0]['ReasonOfLeaving'],result10[0]['Descriptionofwork']))
-
-        sqlIn11 = "INSERT INTO Family (EmploymentAppNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn11,(result11[0]['EmploymentAppNo'],result11[0]['MemberType'],result11[0]['Name'],result11[0]['Surname'],result11[0]['Occupation'],result11[0]['Address'],result11[0]['Tel'],result11[0]['Fax']))
-
-        sqlIn12 = "INSERT INTO GEO_NAME (GEO_NAME) VALUES (%s)"
-        cursor.execute(sqlIn12,(result12[0]['GEO_NAME']))
-
-        sqlIn13 = "INSERT INTO LanguagesSkill (EmploymentAppNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn13,(result12[0]['EmploymentAppNo'],result12[0]['Languages'],result12[0]['Speaking'],result12[0]['Reading'],result12[0]['Writting']))
-
-        sqlIn14 = """INSERT INTO Personal (EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTe,date,status_id) \
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        cursor.execute(sqlIn14,(result14[0]['EmploymentAppNo'],result14[0]['AppliedPosition1'],result14[0]['AppliedPosition2'],result14[0]['StartExpectedSalary'],result14[0]['EndExpectedSalary'],result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
-        result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],result14[0]['ID_CardNo'], \
-        result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
-        result14[0]['Worktel'],result14[0]['Mobile'],result14[0]['Email'],result14[0]['EmergencyPerson'],result14[0]['EmergencyRelation'],result14[0]['EmergencyAddress'],result14[0]['EmergencyTe'],result14[0]['date'],result14[0]['status_id']))
-
-        sqlIn15 = "INSERT INTO position (positionname,showPosition) VALUES (%s,%s)"
-        cursor.execute(sqlIn15,(result15[0]['positionname'],result15[0]['showPosition']))
-
-        sqlIn16 = "INSERT INTO provinces (PROVINCE_CODE,PROVINCE_NAME,GEO_ID) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn16,(result16[0]['PROVINCE_CODE'],result16[0]['PROVINCE_NAME'],result16[0]['GEO_ID']))
-
-        sqlIn17 = "INSERT INTO Reference (EmploymentAppNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn17,(result17[0]['EmploymentAppNo'],result17[0]['RelativeName'],result17[0]['RelativeSurname'],result17[0]['RelativePosition'],result17[0]['RelativeRelationship'],result17[0]['PhysicalHandicap'],result17[0]['PhysicalHandicapDetail'],result17[0]['KnowFrom']))
-
-        sqlIn18 = "INSERT INTO RefPerson (EmploymentAppNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn18,(result18[0]['EmploymentAppNo'],result18[0]['RefName'],result18[0]['RefPosition'],result18[0]['RefAddress'],result18[0]['RefTel']))
-
-        sqlIn19 = "INSERT INTO Result (EmploymentAppNo,InterviewDate,IsInterview,IsPass,KnowFrom,Position,Department,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn19,(result19[0]['EmploymentAppNo'],result19[0]['InterviewDate'],result19[0]['IsInterview'],result19[0]['IsPass'],result19[0]['KnowFrom'],result19[0]['Position'],result19[0]['Department'],result19[0]['StartDate'],result19[0]['EndDate']))
-
-        sqlIn20 = "INSERT INTO SpecialSkill (EmploymentAppNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn20,(result20[0]['EmploymentAppNo'],result20[0]['CarDrivingLicense'],result20[0]['MotorBicycleDrivingLicense'],result20[0]['OwnCar'],result20[0]['OwnMotorBicycle'], \
-        result20[0]['WorkUpCountry'],result20[0]['StartWorkEarliest'],result20[0]['PhysicalDisabilityOrDisease'],result20[0]['DischargeFromEmployment'],result20[0]['DischargeFromEmploymentReason'],result20[0]['Arrested'],result20[0]['ArrestedReason']))
-
-        sqlIn21 = "INSERT INTO status (status_name) VALUES (%s)"
-        cursor.execute(sqlIn21,(result21[0]['status_name']))
-
-        sqlIn22 = "INSERT INTO temples (t_name,t_sect,t_num,t_moo,t_soi,t_road,district,amphur,province,geography,budd_geo,zipcode,t_phone1,t_phone2,	fax,website,email,googleMap) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn22,(result22[0]['t_name'],result22[0]['t_sect'],result22[0]['t_num'],result22[0]['t_moo'],result22[0]['t_soi'],result22[0]['t_road'],result22[0]['district'],result22[0]['amphur'], \
-        result22[0]['province'],result22[0]['geography'],result22[0]['budd_geo'],result22[0]['zipcode'],result22[0]['t_phone1'],result22[0]['t_phone2'],result22[0]['fax'],result22[0]['website'],result22[0]['email'],result22[0]['googleMap']))
-
-        sqlIn23 = "INSERT INTO TrainingCourse (EmploymentAppNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn23,(result23[0]['EmploymentAppNo'],result23[0]['Subject'],result23[0]['Place'],result23[0]['StartDate'],result23[0]['EndDate']))
-
-        sqlIn24 = "INSERT INTO TypeOfAttachment (Type) VALUES (%s)"
-        cursor.execute(sqlIn24,(result24[0]['Type']))
-
-        sqlIn25 = "INSERT INTO zipcodes (district_code,zipcode) VALUES (%s)"
-        cursor.execute(sqlIn25,(result25[0]['district_code'],result25[0]['zipcode']))
         connection.commit()
         connection.close()
 
-        return "success"
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlblack = "SELECT ID_CardNo FROM blacklist"
+        cursor.execute(sqlblack)
+        columnsblack = [column[0] for column in cursor.description]
+        resultblacklist = toJson(cursor.fetchall(),columnsblack)
+        if result14[0]['ID_CardNo']==resultblacklist[0]['ID_CardNo']:
+            print("Person is blacklist")
+        else:
+            i=0
+            for i in xrange(len(result)):
+                sqlIn = "INSERT INTO Address (EmploymentAppNo,ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn,(result[i]['EmploymentAppNo'],result[i]['ID_CardNo'],result[i]['AddressType'],result[i]['HouseNo'],
+                result[i]['Street'],result[i]['DISTRICT_NAME'],result[i]['AMPHUR_NAME'],result[i]['PROVINCE_NAME'],result[i]['PostCode'],result[i]['Tel'],result[i]['Fax']))
+            i=0
+            for i in xrange(len(result4)):
+                type = result4[i]['PathFile']
+                typefile = type[-4:]
+                typename = type[46:-4]
+                url = 'http://career.inet.co.th/'+result4[i]['PathFile']
+                image_name = result4[i]['EmploymentAppNo']+typename+typefile
+                Path = "pig/" + image_name
+                wget.download(url,Path)
+                sqlIn4 = "INSERT INTO Attachment (EmploymentAppNo,ID_CardNo,Type,PathFile) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sqlIn4,(result4[i]['EmploymentAppNo'],result4[i]['ID_CardNo'],result4[i]['Type'],result4[i]['PathFile']))
+            i=0
+            for i in xrange(len(result6)):
+                sqlIn6 = "INSERT INTO ComputerSkill (EmploymentAppNo,ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sqlIn6,(result6[i]['EmploymentAppNo'],result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
+            i=0
+            for i in xrange(len(result14)):
+                sqlInContract = "INSERT INTO Contract (ID_CardNo) VALUES (%s)"
+                cursor.execute(sqlInContract,result14[0]['ID_CardNo'])
+            i=0
+            for i in xrange(len(result9)):
+                sqlIn9 = "INSERT INTO Education (EmploymentAppNo,ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn9,(result9[i]['EmploymentAppNo'],result9[i]['ID_CardNo'],result9[i]['EducationLevel'],result9[i]['Institute'],result9[i]['StartYear'],result9[i]['EndYear'],result9[i]['Qualification'],result9[i]['Major'],result9[i]['GradeAvg'],result9[i]['ExtraCurricularActivities']))
+            i=0
+            for i in xrange(len(result11)):
+                sqlIn11 = "INSERT INTO Family (EmploymentAppNo,ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn11,(result11[i]['EmploymentAppNo'],result11[i]['ID_CardNo'],result11[i]['MemberType'],result11[i]['Name'],result11[i]['Surname'],result11[i]['Occupation'],result11[i]['Address'],result11[i]['Tel'],result11[i]['Fax']))
+            i=0
+            for i in xrange(len(result13)):
+                sqlIn13 = "INSERT INTO LanguagesSkill (EmploymentAppNo,ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn13,(result13[i]['EmploymentAppNo'],result13[i]['ID_CardNo'],result13[i]['Languages'],result13[i]['Speaking'],result13[i]['Reading'],result13[i]['Writting']))
+
+            sqlIn14 = """INSERT INTO Personal (EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor.execute(sqlIn14,(result14[0]['EmploymentAppNo'],result14[0]['AppliedPosition1'],result14[0]['AppliedPosition2'],result14[0]['StartExpectedSalary'],result14[0]['EndExpectedSalary'],result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
+            result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],result14[0]['ID_CardNo'], \
+            result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
+            result14[0]['Worktel'],result14[0]['Mobile'],result14[0]['Email'],result14[0]['EmergencyPerson'],result14[0]['EmergencyRelation'],result14[0]['EmergencyAddress'],result14[0]['EmergencyTel'],result14[0]['date']))
+            i=0
+            for i in xrange(len(result17)):
+                sqlIn17 = "INSERT INTO Reference (EmploymentAppNo,ID_CardNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn17,(result17[i]['EmploymentAppNo'],result17[i]['ID_CardNo'],result17[i]['RelativeName'],result17[i]['RelativeSurname'],result17[i]['RelativePosition'],result17[i]['RelativeRelationship'],result17[i]['PhysicalHandicap'],result17[i]['PhysicalHandicapDetail'],result17[i]['KnowFrom']))
+            i=0
+            for i in xrange(len(result18)):
+                sqlIn18 = "INSERT INTO RefPerson (EmploymentAppNo,ID_CardNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn18,(result18[i]['EmploymentAppNo'],result18[i]['ID_CardNo'],result18[i]['RefName'],result18[i]['RefPosition'],result18[i]['RefAddress'],result18[i]['RefTel']))
+            i=0
+            for i in xrange(len(result20)):
+                sqlIn20 = "INSERT INTO SpecialSkill (EmploymentAppNo,ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn20,(result20[i]['EmploymentAppNo'],result20[i]['ID_CardNo'],result20[i]['CarDrivingLicense'],result20[i]['MotorBicycleDrivingLicense'],result20[i]['OwnCar'],result20[i]['OwnMotorBicycle'], \
+                result20[i]['WorkUpCountry'],result20[i]['StartWorkEarliest'],result20[i]['PhysicalDisabilityOrDisease'],result20[i]['DischargeFromEmployment'],result20[i]['DischargeFromEmploymentReason'],result20[i]['Arrested'],result20[i]['ArrestedReason']))
+            try:
+                i=0
+                for i in xrange(len(result10)):
+                    sqlIn10 = "INSERT INTO Employment (EmploymentAppNo,ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlIn10,(result10[i]['EmploymentAppNo'],result10[i]['ID_CardNo'],result10[i]['CompanyName'],result10[i]['CompanyAddress'],result10[i]['PositionHeld'],result10[i]['StartSalary'],result10[i]['EndSalary'],result10[i]['StartYear'],result10[i]['EndYear'], \
+                    result10[i]['Responsibility'],result10[i]['ReasonOfLeaving'],result10[i]['Descriptionofwork']))
+            except Exception as e:
+                logserver(e)
+            try:
+                i=0
+                for i in xrange(len(result23)):
+                    sqlIn23 = "INSERT INTO TrainingCourse(EmploymentAppNo,ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlIn23,(result23[i]['EmploymentAppNo'],result23[i]['ID_CardNo'],result23[i]['Subject'],result23[i]['Place'],result23[i]['StartDate'],result23[i]['EndDate']))
+            except Exception as e:
+                logserver(e)
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAppform_One_person', methods=['POST'])
+def QryAppform_One_person():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
+                                           INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
+                                           INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
+                                           INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
+                     WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sqlEm,data_new['EmploymentAppNo'])
+        columnsEm = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columnsEm)
+
+        sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.EmploymentAppNo=Attachment.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql4,data_new['EmploymentAppNo'])
+        columns4 = [column[0] for column in cursor.description]
+        result4 = toJson(cursor.fetchall(),columns4)
+
+        sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON Personal.EmploymentAppNo=ComputerSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql6,data_new['EmploymentAppNo'])
+        columns6 = [column[0] for column in cursor.description]
+        result6 = toJson(cursor.fetchall(),columns6)
+
+        sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN Personal ON Personal.EmploymentAppNo=Education.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql9,data_new['EmploymentAppNo'])
+        columns9 = [column[0] for column in cursor.description]
+        result9 = toJson(cursor.fetchall(),columns9)
+
+        sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.EmploymentAppNo=Employment.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql10,data_new['EmploymentAppNo'])
+        columns10 = [column[0] for column in cursor.description]
+        result10 = toJson(cursor.fetchall(),columns10)
+
+        sql11 = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql11,data_new['EmploymentAppNo'])
+        columns11 = [column[0] for column in cursor.description]
+        result11 = toJson(cursor.fetchall(),columns11)
+
+        sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.EmploymentAppNo=LanguagesSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql13,data_new['EmploymentAppNo'])
+        columns13 = [column[0] for column in cursor.description]
+        result13 = toJson(cursor.fetchall(),columns13)
+
+        sql14 = "SELECT * FROM Personal \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql14,data_new['EmploymentAppNo'])
+        columns14 = [column[0] for column in cursor.description]
+        result14 = toJson(cursor.fetchall(),columns14)
+
+        sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql17,data_new['EmploymentAppNo'])
+        columns17 = [column[0] for column in cursor.description]
+        result17 = toJson(cursor.fetchall(),columns17)
+
+        sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN Personal ON Personal.EmploymentAppNo=RefPerson.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql18,data_new['EmploymentAppNo'])
+        columns18 = [column[0] for column in cursor.description]
+        result18 = toJson(cursor.fetchall(),columns18)
+
+        sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN Personal ON Personal.EmploymentAppNo=SpecialSkill.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql20,data_new['EmploymentAppNo'])
+        columns20 = [column[0] for column in cursor.description]
+        result20 = toJson(cursor.fetchall(),columns20)
+
+        sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN Personal ON Personal.EmploymentAppNo=TrainingCourse.EmploymentAppNo \
+        WHERE Personal.EmploymentAppNo=%s"
+        cursor.execute(sql23,data_new['EmploymentAppNo'])
+        columns23 = [column[0] for column in cursor.description]
+        result23 = toJson(cursor.fetchall(),columns23)
+        connection.commit()
+        connection.close()
+        arr={}
+        arr["Address"] = result
+        arr["Attachment"] = result4
+        arr["ComputerSkill"] = result6
+        arr["Education"] = result9
+        arr["Employment"] = result10
+        arr["Family"] = result11
+        arr["LanguagesSkill"] = result13
+        arr["Personal"] = result14
+        arr["Reference"] = result17
+        arr["RefPerson"] = result18
+        arr["SpecialSkill"] = result20
+        arr["TrainingCourse"] = result23
+        return jsonify(arr)
     except Exception as e:
         logserver(e)
         return "fail"
