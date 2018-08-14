@@ -3,8 +3,8 @@
 from dbConfig import *
 
 @app.route('/QryCriminal', methods=['POST'])
-@connect_sql4()
-def QryCriminal(cursor4):
+@connect_sql()
+def QryCriminal(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
@@ -37,18 +37,18 @@ def QryCriminal(cursor4):
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
         WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.EmploymentAppNo = %s """
-        cursor4.execute(sql,data_new['EmploymentAppNo'])
-        columns = [column[0] for column in cursor4.description]
-        result = toJson(cursor4.fetchall(),columns)
+        cursor.execute(sql,data_new['EmploymentAppNo'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
 @app.route('/QryEmployeeList', methods=['POST'])
-@connect_sql4()
+@connect_sql()
 def QryEmployeeList(cursor):
     try:
-        sql = "SELECT EmploymentAppNo,NameTh,SurnameTh,NicknameTh FROM Personal"
+        sql = "SELECT NameTh,SurnameTh,NicknameTh FROM Personal"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -57,8 +57,8 @@ def QryEmployeeList(cursor):
         logserver(e)
         return "fail"
 @app.route('/QryAllEmployeeCrimeList', methods=['POST'])
-@connect_sql4()
-def QryAllEmployeeCrimeList(cursor4):
+@connect_sql()
+def QryAllEmployeeCrimeList(cursor):
     try:
         # sql = "SELECT Name,Surname,MemberType,EmploymentAppNo FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother') AND EmploymentAppNo"
         # cursor4.execute(sql)
@@ -87,9 +87,9 @@ def QryAllEmployeeCrimeList(cursor4):
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
         WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father'"""
-        cursor4.execute(sql4)
-        columns = [column[0] for column in cursor4.description]
-        result4 = toJson(cursor4.fetchall(),columns)
+        cursor.execute(sql4)
+        columns = [column[0] for column in cursor.description]
+        result4 = toJson(cursor.fetchall(),columns)
         return jsonify(result4)
     except Exception as e:
         logserver(e)
