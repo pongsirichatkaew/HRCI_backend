@@ -3,7 +3,7 @@
 from dbConfig import *
 
 @app.route('/QryContract', methods=['POST'])
-@connect_sql()
+def connect_sql():
 def QryContract(cursor):
     try:
         dataInput = request.json

@@ -7,5 +7,3 @@ flask_socketio
 moment
 Werkzeug
 Flask-Mail
-wget
-requests

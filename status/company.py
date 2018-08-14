@@ -10,14 +10,16 @@ def InsertCompany(cursor):
         source = data['source']
         new_data = source
         companyid = new_data['companyid']
+        acronym = new_data['acronym']
         companyname = new_data['companyname']
         company_short_name = new_data['company_short_name']
         address_company = new_data['address_company']
-        path_logo = new_data['path_logo']
+        validstatus = new_data['validstatus']
         email = new_data['email']
         phone = new_data['phone']
-        sql = "INSERT INTO company (companyid,companyname,company_short_name,email,address_company,path_logo,phone) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(companyid,companyname,company_short_name,email,address_company,path_logo,phone))
+        imageName = new_data['imageName']
+        sql = "INSERT INTO company (companyid,acronym,companyname,company_short_name,email,address_company,phone,validstatus,imageName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(companyid,acronym,companyname,company_short_name,email,address_company,phone,validstatus,imageName))
         return "success"
     except Exception as e:
         logserver(e)
@@ -27,17 +29,22 @@ def InsertCompany(cursor):
 def EditCompany(cursor):
     try:
         data = request.json
-        id = data['id']
-        companyid = data['companyid']
-        companyname = data['companyname']
-        company_short_name = data['company_short_name']
-        email = data['email']
-        address_company = data['address_company']
-        path_logo = data['path_logo']
-        sqlUp = "UPDATE company SET validstatus = '0' WHERE id=%s"
-        cursor.execute(sqlUp,(data['id']))
-        sqlIn = "INSERT INTO company (companyid,companyname,company_short_name,email,address_company,path_logo) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(companyid,companyname,company_short_name,email,address_company,path_logo))
+        source = data['source']
+        new_data = source
+        id = new_data['id']
+        companyid = new_data['companyid']
+        acronym = new_data['acronym']
+        companyname = new_data['companyname']
+        company_short_name = new_data['company_short_name']
+        email = new_data['email']
+        phone = new_data['phone']
+        address_company = new_data['address_company']
+        validstatus = new_data['validstatus']
+        imageName = new_data['imageName']
+        sqlUp = "UPDATE company SET companyid=%s,acronym=%s,companyname=%s,company_short_name=%s,email=%s,address_company=%s,phone=%s,validstatus=%s,imageName=%s WHERE id=%s"
+        cursor.execute(sqlUp,(companyid,acronym,companyname,company_short_name,email,address_company,phone,validstatus,imageName,id))
+        # sqlIn = "INSERT INTO company (companyid,companyname,company_short_name,email,address_company,path_logo) VALUES (%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlIn,(companyid,companyname,company_short_name,email,address_company,path_logo))
         return "success"
     except Exception as e:
         logserver(e)
@@ -46,7 +53,7 @@ def EditCompany(cursor):
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,path_logo,phone FROM company WHERE validstatus=1"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
