@@ -330,6 +330,8 @@ def QryAppform_One_person():
         connection = mysql3.connect()
         cursor = connection.cursor()
         dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
                                            INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
                                            INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
