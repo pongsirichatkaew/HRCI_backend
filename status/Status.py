@@ -31,12 +31,12 @@ def EditStatus(cursor):
         path_color = data_new['path_color']
         font_color = data_new['font_color']
         validstatus = data_new['active']
-        # sqlUp = "UPDATE status SET validstatus = '0' WHERE id=%s"
+        # sqlUp = "UPDATE status SET validstatus = '1' WHERE id=%s"
         # cursor.execute(sqlUp,(data['id']))
         sqlUp = "UPDATE status SET status_detail = %s, path_color = %s, font_color = %s, validstatus = %s WHERE id = %s"
         cursor.execute(sqlUp,(status_detail, path_color, font_color, validstatus, id))
-        # sqlIn = "INSERT INTO status (status_detail,path_color) VALUES (%s,%s)"
-        # cursor.execute(sqlIn,(status_detail,path_color))
+        # sqlIn = "INSERT INTO status (status_detail,path_color,font_color) VALUES (%s,%s,%s)"
+        # cursor.execute(sqlIn,(status_detail,path_color,font_color))
         return "success"
     except Exception as e:
         logserver(e)
