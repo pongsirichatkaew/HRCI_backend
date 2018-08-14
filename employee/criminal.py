@@ -7,28 +7,40 @@ from dbConfig import *
 def QryCriminal(cursor4):
     try:
         dataInput = request.json
-        # source = dataInput['source']
-        # data_new = source
-        sql = "SELECT Name,Surname,MemberType FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother')AND EmploymentAppNo=%s"
-        cursor4.execute(sql,dataInput['EmploymentAppNo'])
+        source = dataInput['source']
+        data_new = source
+        # sql = "SELECT Name,Surname,MemberType FROM Family WHERE (MemberType ='Father'OR MemberType ='Mother')AND EmploymentAppNo=%s"
+        # cursor4.execute(sql,dataInput['EmploymentAppNo'])
+        # columns = [column[0] for column in cursor4.description]
+        # result = toJson(cursor4.fetchall(),columns)
+        #
+        # sql2 = "SELECT NameTh,SurnameTh,ID_CardNo,Birthdate FROM Personal WHERE EmploymentAppNo=%s"
+        # cursor4.execute(sql2,dataInput['EmploymentAppNo'])
+        # columns = [column[0] for column in cursor4.description]
+        # result2 = toJson(cursor4.fetchall(),columns)
+        #
+        # sql3 = "SELECT AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode FROM Address WHERE (AddressType ='Present'OR AddressType ='Home') AND EmploymentAppNo=%s"
+        # cursor4.execute(sql3,dataInput['EmploymentAppNo'])
+        # columns = [column[0] for column in cursor4.description]
+        # result3 = toJson(cursor4.fetchall(),columns)
+        # arr={}
+        # arr["result"] = result
+        # arr["result2"] = result2
+        # arr["result3"] = result3
+        # return jsonify(arr)
+        sql ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,
+        homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,
+        Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
+        FROM Personal
+        LEFT JOIN Address ON Address.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN Family ON Family.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
+        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.EmploymentAppNo = %s """
+        cursor4.execute(sql,data_new['EmploymentAppNo'])
         columns = [column[0] for column in cursor4.description]
         result = toJson(cursor4.fetchall(),columns)
-
-        sql2 = "SELECT NameTh,SurnameTh,ID_CardNo,Birthdate FROM Personal WHERE EmploymentAppNo=%s"
-        cursor4.execute(sql2,dataInput['EmploymentAppNo'])
-        columns = [column[0] for column in cursor4.description]
-        result2 = toJson(cursor4.fetchall(),columns)
-
-        sql3 = "SELECT AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode FROM Address WHERE (AddressType ='Present'OR AddressType ='Home') AND EmploymentAppNo=%s"
-        cursor4.execute(sql3,dataInput['EmploymentAppNo'])
-        columns = [column[0] for column in cursor4.description]
-        result3 = toJson(cursor4.fetchall(),columns)
-        arr={}
-        arr["result"] = result
-        arr["result2"] = result2
-        arr["result3"] = result3
-
-        return jsonify(arr)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
