@@ -13,7 +13,7 @@ def QryContract(cursor):
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN section ON employee.section_id = section.sect_id\
                                       INNER JOIN position ON employee.position_id = position.position_id\
-                                      INNER JOIN Address ON employee.employeeid = Address.EmploymentAppNo\
+                                      INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
         WHERE employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])

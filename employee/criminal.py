@@ -32,12 +32,12 @@ def QryCriminal(cursor):
         homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,
         Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
         FROM Personal
-        LEFT JOIN Address ON Address.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN Family ON Family.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
-        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.EmploymentAppNo = %s """
-        cursor.execute(sql,data_new['EmploymentAppNo'])
+        LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
+        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.ID_CardNo = %s """
+        cursor.execute(sql,data_new['ID_CardNo'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -48,7 +48,7 @@ def QryCriminal(cursor):
 @connect_sql()
 def QryEmployeeList(cursor):
     try:
-        sql = "SELECT NameTh,SurnameTh,NicknameTh FROM Personal"
+        sql = "SELECT NameTh,SurnameTh,NicknameTh,ID_CardNo FROM Personal"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -82,10 +82,10 @@ def QryAllEmployeeCrimeList(cursor):
         homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,
         Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
         FROM Personal
-        LEFT JOIN Address ON Address.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN Family ON Family.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.EmploymentAppNo = Personal.EmploymentAppNo
-        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.EmploymentAppNo = Personal.EmploymentAppNo
+        LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
         WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father'"""
         cursor.execute(sql4)
         columns = [column[0] for column in cursor.description]
