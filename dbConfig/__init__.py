@@ -13,6 +13,7 @@ import string
 import random
 
 import wget
+import base64
 
 
 app = Flask(__name__)

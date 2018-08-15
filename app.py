@@ -14,9 +14,15 @@ from employee.criminal import *
 from employee.Contract import *
 from Appform.appform import *
 
-@app.route('/hello', methods=['GET'])
+@app.route('/hello', methods=['POST'])
 def hello():
     return 'hello'
+
+@app.route('/testbase64', methods=['POST'])
+def testbase64():
+      data = base64.b64encode('http://career.inet.co.th/assets/attachment/2018062800691/2018062800691_siriporn.jpg')
+      print(data)
+      return jsonify(data)
 
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
