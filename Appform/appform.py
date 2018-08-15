@@ -258,7 +258,7 @@ def QryDatbaseAppform():
             i=0
             for i in xrange(len(result14)):
                 sqlInContract = "INSERT INTO Contract (ID_CardNo,Start_contract,End_contract,salary_thai) VALUES (%s,%s,%s,%s)"
-                cursor.execute(sqlInContract,result14[0]['ID_CardNo'],data_new['Start_contract'],data_new['End_contract'],data_new['salary_thai'])
+                cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['Start_contract'],data_new['End_contract'],data_new['salary_thai']))
             i=0
             for i in xrange(len(result9)):
                 sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -308,16 +308,42 @@ def QryDatbaseAppform():
             except Exception as e:
                 logserver(e)
 
-            # sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            # cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            # data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation'])
-            #
-            # sqlEm_ga = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            # cursor.execute(sqlEm_ga,(employeeid,data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],data_new['regis_car_number'],data_new['other'],data_new['description']))
-            #
-            # sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            # cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            # data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation'])
+            sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
+            cursor.execute(sqlcompafirst,data_new['companyid'])
+            columnscompafirst = [column[0] for column in cursor.description]
+            resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
+
+            sqlEmployee = "SELECT employeeid FROM employee WHERE companyid=%s ORDER BY employeeid DESC LIMIT 1"
+            cursor.execute(sqlEmployee,data_new['companyid'])
+            columnsEmployee = [column[0] for column in cursor.description]
+            resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+
+            now = datetime.now()
+            date = str(int(now.year)+543)
+            form_employee = date[2:]
+            type = resultEmployee[0]['employeeid']
+            codelast = int(str(type[-3:]))+1
+            if   codelast<=9:
+                 codelast=str(codelast)
+                 codesumlast="00"+codelast
+            elif codelast<=99:
+                 codelast=str(codelast)
+                 codesumlast="0"+codelast
+            else:
+                 codesumlast=str(codelast)
+            first_character = resultcompafirst[0]['acronym']
+            employeeid = str(result2[0]['first_com'])+form_employee+codesumlast
+
+            sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation']))
+
+            sqlEm_ga = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEm_ga,(employeeid,data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],data_new['regis_car_number'],data_new['other'],data_new['description']))
+
+            sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation']))
         connection.commit()
         connection.close()
         return "Success"
