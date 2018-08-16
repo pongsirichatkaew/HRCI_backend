@@ -7,7 +7,7 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
+        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
         FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
@@ -309,12 +309,12 @@ def QryDatbaseAppform():
                 logserver(e)
 
             sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
-            cursor.execute(sqlcompafirst,data_new['companyid'])
+            cursor.execute(sqlcompafirst,data_new['company_id'])
             columnscompafirst = [column[0] for column in cursor.description]
             resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
 
-            sqlEmployee = "SELECT employeeid FROM employee WHERE companyid=%s ORDER BY employeeid DESC LIMIT 1"
-            cursor.execute(sqlEmployee,data_new['companyid'])
+            sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
+            cursor.execute(sqlEmployee,data_new['company_id'])
             columnsEmployee = [column[0] for column in cursor.description]
             resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
 
@@ -332,18 +332,18 @@ def QryDatbaseAppform():
             else:
                  codesumlast=str(codelast)
             first_character = resultcompafirst[0]['acronym']
-            employeeid = str(result2[0]['first_com'])+form_employee+codesumlast
+            employeeid = first_character+form_employee+codesumlast
 
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract']))
 
             sqlEm_ga = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEm_ga,(employeeid,data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],data_new['regis_car_number'],data_new['other'],data_new['description']))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],data_new['EndWork_probation']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract']))
         connection.commit()
         connection.close()
         return "Success"

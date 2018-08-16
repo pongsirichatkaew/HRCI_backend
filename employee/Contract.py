@@ -15,6 +15,7 @@ def QryContract(cursor):
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
+                                      INNER JOIN Contract ON employee.citizenid = Contract.ID_CardNo\
         WHERE employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
