@@ -7,19 +7,49 @@ from dbConfig import *
 def QryContract(cursor):
     try:
         dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        employeeid = ['employeeid']
+        # source = dataInput['source']
+        # data_new = source
+        # employeeid = ['employeeid']
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
-                                      INNER JOIN section ON employee.section_id = section.sect_id\
-                                      INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
-                                      INNER JOIN Contract ON employee.citizenid = Contract.ID_CardNo\
         WHERE employeeid=%s"
-        cursor.execute(sql,data_new['employeeid'])
+        cursor.execute(sql,dataInput['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        tranImage = result[0]['imageName']
+        # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
+        #     encoded_Image = base64.b64encode(image_file.read())
+        tranExpiryDate_idcard = result[0]['ExpiryDate']
+        idcard_expi = tranExpiryDate_idcard.split("-")
+        tranExpiryDate_idcard_Date = str(int(idcard_expi[0]))
+        tranExpiryDate_idcard_Year = str(int(idcard_expi[2])+543)
+        tranExpiryDate_idcard_Mounth = int(idcard_expi[1])
+        if   tranExpiryDate_idcard_Mounth==1:
+             tranExpiryDate_idcard_Mounth="มกราคม"
+        elif tranExpiryDate_idcard_Mounth==2:
+             tranExpiryDate_idcard_Mounth="กุมภาพันธ์"
+        elif tranExpiryDate_idcard_Mounth==3:
+             tranExpiryDate_idcard_Mounth="มีนาคม"
+        elif tranExpiryDate_idcard_Mounth==4:
+             tranExpiryDate_idcard_Mounth="เมษายน"
+        elif tranExpiryDate_idcard_Mounth==5:
+             tranExpiryDate_idcard_Mounth="พฤษภาคม"
+        elif tranExpiryDate_idcard_Mounth==6:
+             tranExpiryDate_idcard_Mounth="มิถุนายน"
+        elif tranExpiryDate_idcard_Mounth==7:
+             tranExpiryDate_idcard_Mounth="กรกฏาคม"
+        elif tranExpiryDate_idcard_Mounth==8:
+             tranExpiryDate_idcard_Mounth="สิงหาคม"
+        elif tranExpiryDate_idcard_Mounth==9:
+             tranExpiryDate_idcard_Mounth="กันยายน"
+        elif tranExpiryDate_idcard_Mounth==10:
+             tranExpiryDate_idcard_Mounth="ตุลาคม"
+        elif tranExpiryDate_idcard_Mounth==11:
+             tranExpiryDate_idcard_Mounth="พฤศจิกายน"
+        else:
+             tranExpiryDate_idcard_Mounth="ธันวาคม"
+
         sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position FROM employee_MD  INNER JOIN company ON employee_MD.company_id = company.companyid\
         WHERE companyid=%s"
         cursor.execute(sql2,result[0]['company_id'])
@@ -42,15 +72,30 @@ def QryContract(cursor):
              codesumlast="0"+tranCon
         else:
              codesumlast=str(tranCon_id)
-
-        # arr={}
-        # arr["result"] = result
-        # arr["result2"] = result2
-        # arr["result3"] = codesumlast
-        result[0]['name_md'] = result2[0]['name_md']
-        result[0]['surname_md'] = result2[0]['surname_md']
-        result[0]['position'] = result2[0]['position']
-        return jsonify(result)
+        now = datetime.now()
+        date = str(int(now.year)+543)
+        resultlast={}
+        resultlast["Name"] = result[0]['NameTh']
+        resultlast["Now_year"] = date
+        resultlast["HouseNo"] = result[0]['HouseNo']
+        resultlast["Street"] = result[0]['Street']
+        resultlast["DISTRICT"] = result[0]['DISTRICT_ID']
+        resultlast["AMPHUR"] = result[0]['AMPHUR_ID']
+        resultlast["PROVINCE"] = result[0]['PROVINCE_ID']
+        resultlast["PostCode"] = result[0]['PostCode']
+        resultlast["Surname"] = result[0]['SurnameTh']
+        resultlast["citizenid"] = result[0]['ID_CardNo']
+        resultlast["salary"] = result[0]['salary']
+        resultlast["Shot_name_company"] = result[0]['company_short_name']
+        resultlast["Name_company"] = result[0]['companyname']
+        resultlast["Address_company"] = result[0]['address_company']
+        resultlast["Employee_MD"] = result2
+        resultlast["Contract_id"] = codesumlast
+        resultlast["Contract"] = result3
+        resultlast['ExpiryDate_idcard_Date'] = tranExpiryDate_idcard_Date
+        resultlast['ExpiryDate_idcard_Year'] = tranExpiryDate_idcard_Year
+        resultlast['ExpiryDate_idcard_Mounth'] = tranExpiryDate_idcard_Mounth
+        return jsonify(resultlast)
     except Exception as e:
         logserver(e)
 @app.route('/QryListContract', methods=['POST'])
