@@ -7,14 +7,14 @@ from dbConfig import *
 def QryContract(cursor):
     try:
         dataInput = request.json
-        # source = dataInput['source']
-        # data_new = source
-        # employeeid = ['employeeid']
+        source = dataInput['source']
+        data_new = source
+        employeeid = ['employeeid']
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
         WHERE employeeid=%s"
-        cursor.execute(sql,dataInput['employeeid'])
+        cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         tranImage = result[0]['imageName']
