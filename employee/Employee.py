@@ -7,8 +7,33 @@ def QryEmployee():
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM employee WHERE validstatus='1'"
+        sql = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                WHERE employee.validstatus='1'"
         cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmployee_one_person', methods=['POST'])
+def QryEmployee_one_person():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        sql = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                WHERE employee.employeeid=%s"
+        cursor.execute(sql,dataInput['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()

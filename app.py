@@ -14,7 +14,7 @@ from employee.criminal import *
 from employee.Contract import *
 from Appform.appform import *
 
-@app.route('/hello', methods=['POST'])
+@app.route('/hello', methods=['GET'])
 def hello():
     return 'hello'
 
