@@ -9,12 +9,12 @@ def InsertAdmin(cursor):
         data = request.json
         source = data['source']
         data_new = source
-        org_name_id = data_new['org_name_id']
-        org_name_detail = data_new['org_name_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sql = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql,(org_name_id,org_name_detail,email,validstatus))
+        employeeid = data_new['employeeid']
+        username = data_new['username']
+        name = data_new['name']
+        permission = data_new['permission']
+        sql = "INSERT INTO Admin (employeeid,username,name,permission) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(employeeid,username,name,permission))
         return "success"
     except Exception as e:
         logserver(e)
@@ -27,14 +27,14 @@ def EditAdmin(cursor):
         source = data['source']
         data_new = source
         id = data_new['id']
-        org_name_id = data_new['org_name_id']
-        org_name_detail = data_new['org_name_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE org_name SET org_name_id=%s,org_name_detail=%s,email=%s,validstatus=%s WHERE id=%s"
-        cursor.execute(sqlUp,(org_name_id,org_name_detail,email,validstatus,id))
-        # sqlIn = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn,(org_name_id,org_name_detail,email))
+        employeeid = data_new['employeeid']
+        username = data_new['username']
+        name = data_new['name']
+        permission = data_new['permission']
+        sqlUp = "UPDATE Admin SET showAdmin=%s WHERE id=%s"
+        cursor.execute(sqlUp,('0',id))
+        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,showAdmin) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(employeeid,username,name,permission,'1'))
         return "success"
     except Exception as e:
         logserver(e)
@@ -43,7 +43,7 @@ def EditAdmin(cursor):
 @connect_sql()
 def QryAdmin(cursor):
     try:
-        sql = "SELECT org_name_id,org_name_detail,id,email,validstatus FROM org_name"
+        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE showAdmin = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
