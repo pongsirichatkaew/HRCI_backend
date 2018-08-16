@@ -18,6 +18,14 @@ from Appform.appform import *
 def hello():
     return 'hello'
 
+@app.route('/testbase64', methods=['POST'])
+def testbase64():
+    # with open('https://www.kroger.com/product/images/medium/front/0000000003283', 'rb') as image_file:
+    #     encoded_string = base64.b64encode(image_file.read())
+    # return jsonify(encoded_string)
+    with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
+        encoded_string = base64.b64encode(image_file.read())
+    return jsonify(encoded_string)
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
     try:
