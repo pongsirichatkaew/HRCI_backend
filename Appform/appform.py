@@ -7,8 +7,8 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -71,8 +71,8 @@ def QryAppform_Wait_interview():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='1' ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='1' ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -86,8 +86,8 @@ def QryAppform_Come_interview():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='2' ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='2' ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -101,8 +101,8 @@ def QryAppform_Pass_interview():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='3' ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='3' ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -116,8 +116,8 @@ def QryAppform_Notpass_interview():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status.status_name
-        FROM Personal INNER JOIN status ON Personal.status_id = status.status_id WHERE status.status_id='4' ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='4' ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -135,7 +135,7 @@ def UpdateEmpStatus(cursor):
         data_new = source
         status_id = data_new['status_id']
         EmploymentAppNo = data_new['EmploymentAppNo']
-        sqlUp = "UPDATE Personal SET status_id = %s WHERE EmploymentAppNo = %s"
+        sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
         cursor.execute(sqlUp,(status_id, EmploymentAppNo))
         return "success"
     except Exception as e:
