@@ -56,7 +56,7 @@ def QryContract(cursor):
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
 
-        sql3 = "SELECT contract_id,Start_contract,End_contract,salary_thai FROM Contract WHERE ID_CardNo=%s"
+        sql3 = "SELECT contract_id,Start_contract,End_contract,salary_thai,Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
@@ -82,7 +82,7 @@ def QryContract(cursor):
         resultlast["DISTRICT"] = result[0]['DISTRICT_ID']
         resultlast["AMPHUR"] = result[0]['AMPHUR_ID']
         resultlast["PROVINCE"] = result[0]['PROVINCE_ID']
-        resultlast["Authority_Distrinct"] = result[0]['Authority_Distrinct_Id_Card']
+        resultlast["Authority_Distrinct"] = result3[0]['Authority_Distrinct_Id_Card']
         resultlast["PostCode"] = result[0]['PostCode']
         resultlast["Surname"] = result[0]['SurnameTh']
         resultlast["citizenid"] = result[0]['ID_CardNo']
