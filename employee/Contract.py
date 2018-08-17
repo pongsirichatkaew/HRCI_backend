@@ -82,6 +82,7 @@ def QryContract(cursor):
         resultlast["DISTRICT"] = result[0]['DISTRICT_ID']
         resultlast["AMPHUR"] = result[0]['AMPHUR_ID']
         resultlast["PROVINCE"] = result[0]['PROVINCE_ID']
+        resultlast["Authority_Distrinct"] = result[0]['Authority_Distrinct_Id_Card']
         resultlast["PostCode"] = result[0]['PostCode']
         resultlast["Surname"] = result[0]['SurnameTh']
         resultlast["citizenid"] = result[0]['ID_CardNo']
