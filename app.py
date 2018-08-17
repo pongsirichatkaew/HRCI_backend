@@ -4,6 +4,7 @@ from status.org_name import *
 from status.cost_center_name import *
 from status.position import *
 from status.company import *
+from status.Admin import *
 from status.employee_MD import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*

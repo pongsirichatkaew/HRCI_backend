@@ -33,10 +33,10 @@ def EditStatus(cursor):
         validstatus = data_new['active']
         # sqlUp = "UPDATE status SET validstatus = '1' WHERE id=%s"
         # cursor.execute(sqlUp,(data['id']))
-        sqlUp = "UPDATE status SET status_detail = %s, path_color = %s, font_color = %s, validstatus = %s WHERE id = %s"
-        cursor.execute(sqlUp,(status_detail, path_color, font_color, validstatus, id))
-        # sqlIn = "INSERT INTO status (status_detail,path_color,font_color) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn,(status_detail,path_color,font_color))
+        sqlUp = "UPDATE status SET valid = %s WHERE id = %s"
+        cursor.execute(sqlUp,('0', id))
+        sqlIn = "INSERT INTO status (status_detail,path_color,font_color,validstatus) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(status_detail,path_color,font_color,validstatus))
         return "success"
     except Exception as e:
         logserver(e)
@@ -45,7 +45,7 @@ def EditStatus(cursor):
 @connect_sql()
 def QryStatus(cursor):
     try:
-        sql = "SELECT id,status_detail,path_color,id,font_color,validstatus FROM status"
+        sql = "SELECT id,status_detail,path_color,id,font_color,validstatus FROM status WHERE valid = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -57,7 +57,7 @@ def QryStatus(cursor):
 @connect_sql()
 def QryStatusAppForm(cursor):
     try:
-        sql = "SELECT id,status_detail,path_color,id,font_color FROM status WHERE validstatus = 1"
+        sql = "SELECT id,status_detail,path_color,font_color,validstatus FROM status WHERE valid = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
