@@ -12,9 +12,9 @@ from datetime import datetime
 import string
 import random
 
+import os
 import wget
 import base64
-
 
 app = Flask(__name__)
 CORS(app)

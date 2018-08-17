@@ -6,20 +6,27 @@ from dbConfig import *
 @connect_sql()
 def InsertCompany(cursor):
     try:
-        data = request.json
-        source = data['source']
-        new_data = source
-        companyid = new_data['companyid']
-        acronym = new_data['acronym']
-        companyname = new_data['companyname']
-        company_short_name = new_data['company_short_name']
-        address_company = new_data['address_company']
-        validstatus = new_data['validstatus']
-        email = new_data['email']
-        phone = new_data['phone']
-        imageName = new_data['imageName']
-        sql = "INSERT INTO company (companyid,acronym,companyname,company_short_name,email,address_company,phone,validstatus,imageName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(companyid,acronym,companyname,company_short_name,email,address_company,phone,validstatus,imageName))
+        # dataInput = request.json
+        # sqlQry = "SELECT companyid FROM company ORDER BY companyid DESC LIMIT 1"
+        # cursor3.execute(sqlQry)
+        # columns = [column[0] for column in cursor3.description]
+        # result = toJson(cursor3.fetchall(),columns)
+        # company_id_last=result[0]['companyid']+1
+
+        currentTime = datetime.datetime.today().strftime('%Y%m%d%H%M%S%f')
+        path = 'uploads/users/' + request.form['userId']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+    	  file.save(os.path.join(path, currentTime + '_profile_img.png'))
+          userLogSaveFile(request.form['userId'], currentTime + '_profile_img.png')
+        else:
+          return 'file is not allowed'
+
+        # sql = "INSERT INTO company (companyid,acronym,companyname,company_short_name,email,address_company,phone,imageName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(company_id_last,result['acronym'],result['companyname'],result['company_short_name'],result['email'],result['address_company'],result['phone'],imageName))
         return "success"
     except Exception as e:
         logserver(e)
