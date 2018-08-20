@@ -15,8 +15,8 @@ def InsertStatus(cursor):
         result = toJson(cursor3.fetchall(),columns)
         status_id_last=result[0]['status_id']+1
 
-        sql = "INSERT INTO status (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        cursor3.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color']))
+        sql = "INSERT INTO status (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditStatus(cursor):
         sqlUp = "UPDATE status SET validstatus=0 WHERE status_id=%s"
         cursor3.execute(sqlUp,(data_new['status_id']))
 
-        sqlIn = "INSERT INTO status (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        cursor3.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color']))
+        sqlIn = "INSERT INTO status (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -54,6 +54,22 @@ def QryStatus(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/DeleteStatus', methods=['POST'])
+def DeleteStatus():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE status SET validstatus=0,createby=%s WHERE status_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['status_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/InsertStatus_Appform', methods=['POST'])
 @connect_sql3()
 def InsertStatus_Appform(cursor3):
@@ -67,8 +83,8 @@ def InsertStatus_Appform(cursor3):
         result = toJson(cursor3.fetchall(),columns)
         status_id_last=result[0]['status_id']+1
 
-        sql = "INSERT INTO status_hrci (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        cursor3.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color']))
+        sql = "INSERT INTO status_hrci (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -88,8 +104,8 @@ def EditStatus_Appform(cursor3):
         sqlUp = "UPDATE status_hrci SET validstatus=0 WHERE status_id=%s"
         cursor3.execute(sqlUp,(data_new['status_id']))
 
-        sqlIn = "INSERT INTO status_hrci (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        cursor3.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color']))
+        sqlIn = "INSERT INTO status_hrci (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -103,6 +119,22 @@ def QryStatus_Appform(cursor3):
         columns = [column[0] for column in cursor3.description]
         result = toJson(cursor3.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteStatus_Appform', methods=['POST'])
+def DeleteStatus_Appform():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE status_hrci SET validstatus=0,createby=%s WHERE status_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['status_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
