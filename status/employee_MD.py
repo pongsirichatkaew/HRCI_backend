@@ -9,14 +9,14 @@ def InsertEmployee_MD(cursor):
         data = request.json
         source = data['source']
         data_new = source
-        employeeid = data_new['employeeid']
-        name_md = data_new['name_md']
-        surname_md = data_new['surname_md']
-        email_md = data_new['email_md']
-        position = data_new['position']
-        validstatus = data_new['validstatus']
-        sql = "INSERT INTO employee_MD (employeeid,name_md,surname_md,email_md,validstatus,position) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(employeeid,name_md,surname_md,email_md,validstatus,position))
+        sqlQry = "SELECT employee_md_id FROM employee_MD ORDER BY employee_md_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        employee_md_id_last=result[0]['employee_md_id']+1
+
+        sql = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -25,20 +25,19 @@ def InsertEmployee_MD(cursor):
 @connect_sql()
 def EditEmployee_MD(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        id = data_new['id']
-        employeeid = data_new['employeeid']
-        name_md = data_new['name_md']
-        surname_md = data_new['surname_md']
-        position = data_new['position']
-        email_md = data_new['email_md']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE employee_MD SET employeeid = %s,name_md  = %s,surname_md  = %s,email_md  = %s,validstatus  = %s,position  = %s  WHERE id=%s"
-        cursor.execute(sqlUp,(employeeid,name_md,surname_md,email_md,validstatus,position,id))
-        # sqlIn = "INSERT INTO employee_MD (employeeid,name_md,surname_md,email_md) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sqlIn,(employeeid,name_md,surname_md,email_md))
+        sqlQry = "SELECT employee_md_id FROM employee_MD WHERE employee_md_id=%s"
+        cursor3.execute(sqlQry,data_new['employee_md_id'])
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE employee_MD SET validstatus=0 WHERE employee_md_id=%s"
+        cursor3.execute(sqlUp,(data_new['employee_md_id']))
+
+        sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -47,7 +46,7 @@ def EditEmployee_MD(cursor):
 @connect_sql()
 def QryEmployee_MD(cursor):
     try:
-        sql = "SELECT email_md,surname_md,name_md,employeeid,id,validstatus,position FROM employee_MD"
+        sql = "SELECT email_md,surname_md,name_md,employeeid,employee_md_id,company_id,position FROM employee_MD WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
