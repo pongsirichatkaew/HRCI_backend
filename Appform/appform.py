@@ -7,7 +7,7 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
+        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail, status_hrci.status_id
         FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
