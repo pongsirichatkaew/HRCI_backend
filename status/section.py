@@ -10,13 +10,13 @@ def InsertSection(cursor):
         source = dataInput['source']
         data_new = source
         sqlQry = "SELECT sect_id FROM section ORDER BY sect_id DESC LIMIT 1"
-        cursor3.execute(sqlQry)
-        columns = [column[0] for column in cursor3.description]
-        result = toJson(cursor3.fetchall(),columns)
+        cursor.execute(sqlQry)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
         sect_id_last=result[0]['sect_id']+1
 
         sql = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
-        cursor3.execute(sql,(sect_id_last,data_new['sect_detail']))
+        cursor.execute(sql,(sect_id_last,data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -29,15 +29,15 @@ def EditSection(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT sect_id FROM section WHERE sect_id=%s"
-        cursor3.execute(sql,(data_new['sect_id']))
-        columns = [column[0] for column in cursor3.description]
-        result = toJson(cursor3.fetchall(),columns)
+        cursor.execute(sql,(data_new['sect_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
         sqlUp = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
-        cursor3.execute(sqlUp,(data_new['sect_id']))
+        cursor.execute(sqlUp,(data_new['sect_id']))
 
         sqlIn = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
-        cursor3.execute(sqlIn,(result[0]['sect_id'],data_new['sect_detail']))
+        cursor.execute(sqlIn,(result[0]['sect_id'],data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -46,7 +46,7 @@ def EditSection(cursor):
 @connect_sql()
 def QrySection(cursor):
     try:
-        sql = "SELECT sect_id,sect_detail FROM section WHERE validstatus=1"
+        sql = "SELECT sect_id,sect_detail,id FROM section WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
