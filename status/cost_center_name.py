@@ -6,15 +6,17 @@ from dbConfig import *
 @connect_sql()
 def InsertCost_center(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        cost_center_name_id = data_new['cost_center_name_id']
-        cost_detail = data_new['cost_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql,(cost_center_name_id,cost_detail,email,validstatus))
+        sqlQry = "SELECT cost_center_name_id FROM cost_center_name ORDER BY cost_center_name_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        cost_center_name_id_last=result[0]['cost_center_name_id']+1
+
+        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
+        cursor3.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -23,18 +25,19 @@ def InsertCost_center(cursor):
 @connect_sql()
 def EditCost_center(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        id = data_new['id']
-        cost_center_name_id = data_new['cost_center_name_id']
-        cost_detail = data_new['cost_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE cost_center_name SET cost_center_name_id = %s, cost_detail = %s, email = %s,  validstatus = %s WHERE id = %s"
-        cursor.execute(sqlUp,(cost_center_name_id, cost_detail, email, validstatus, id))
-        # sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn,(cost_center_name_id,cost_detail,email))
+        sql = "SELECT cost_center_name_id FROM cost_center_name WHERE cost_center_name_id=%s"
+        cursor3.execute(sql,(data_new['cost_center_name_id']))
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE cost_center_name SET validstatus=0 WHERE cost_center_name_id=%s"
+        cursor3.execute(sqlUp,(data_new['cost_center_name_id']))
+
+        sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -43,7 +46,7 @@ def EditCost_center(cursor):
 @connect_sql()
 def QryCost_center(cursor):
     try:
-        sql = "SELECT id,cost_center_name_id,cost_detail,email,validstatus FROM cost_center_name"
+        sql = "SELECT cost_center_name_id,cost_detail,email FROM cost_center_name WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

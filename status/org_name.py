@@ -6,15 +6,17 @@ from dbConfig import *
 @connect_sql()
 def InsertOrg_name(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        org_name_id = data_new['org_name_id']
-        org_name_detail = data_new['org_name_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sql = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql,(org_name_id,org_name_detail,email,validstatus))
+        sqlQry = "SELECT org_name_id FROM org_name ORDER BY org_name_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        org_name_id_last=result[0]['org_name_id']+1
+
+        sql = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
+        cursor3.execute(sql,(org_name_id_last,data_new['org_name_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -23,18 +25,19 @@ def InsertOrg_name(cursor):
 @connect_sql()
 def EditOrg_name(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        id = data_new['id']
-        org_name_id = data_new['org_name_id']
-        org_name_detail = data_new['org_name_detail']
-        email = data_new['email']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE org_name SET org_name_id=%s,org_name_detail=%s,email=%s,validstatus=%s WHERE id=%s"
-        cursor.execute(sqlUp,(org_name_id,org_name_detail,email,validstatus,id))
-        # sqlIn = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn,(org_name_id,org_name_detail,email))
+        sql = "SELECT org_name_id FROM org_name WHERE org_name_id=%s"
+        cursor3.execute(sql,(data_new['org_name_id']))
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE org_name SET validstatus=0 WHERE org_name_id=%s"
+        cursor3.execute(sqlUp,(data_new['org_name_id']))
+
+        sqlIn = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['org_name_id'],data_new['org_name_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -43,7 +46,7 @@ def EditOrg_name(cursor):
 @connect_sql()
 def QryOrg_name(cursor):
     try:
-        sql = "SELECT org_name_id,org_name_detail,id,email,validstatus FROM org_name"
+        sql = "SELECT org_name_id,org_name_detail,email FROM org_name WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

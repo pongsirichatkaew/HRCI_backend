@@ -6,28 +6,18 @@ from dbConfig import *
 @connect_sql()
 def InsertPosition(cursor):
     try:
-        data = request.json
-        # source = data['source']
-        # data_new = source
-        # position_detail = data_new['position_detail']
-        #Gen position_id________________________________________________________
-        sql_last_position_id = "SELECT position_id FROM position WHERE validstatus = 1 ORDER BY position_id DESC LIMIT 1"
-        cursor.execute(sql_last_position_id)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        last_position2 = int(result[0]['position_id'])+1
-        # if   last_position2<=9:
-        #      last_position2=str(last_position2)
-        #      last_position2="00"+last_position2
-        # elif last_position2<=99:
-        #      last_position2=str(last_position2)
-        #      last_position2="0"+last_position2
-        # else:
-        #      last_position2=str(last_position2)
-        # sql_insert_position = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        # cursor.execute(sql_insert_position,(new_position_id,position_detail))
-        return jsonify(last_position2)
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlQry = "SELECT position_id FROM position ORDER BY position_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        position_id_last=result[0]['position_id']+1
 
+        sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
+        cursor3.execute(sql,(position_id_last,data_new['position_detail']))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -35,17 +25,19 @@ def InsertPosition(cursor):
 @connect_sql()
 def EditPosition(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        id = data_new['id']
-        position_id = data_new['position_id']
-        position_detail = data_new['position_detail']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE position SET position_id = %s, position_detail = %s, validstatus = %s WHERE id = %s"
-        cursor.execute(sqlUp,(position_id, position_detail, validstatus, id))
-        # sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        # cursor.execute(sqlIn,(position_id,position_detail))
+        sql = "SELECT position_id FROM position WHERE position_id=%s"
+        cursor3.execute(sql,(data_new['position_id']))
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE position SET validstatus=0 WHERE status_id=%s"
+        cursor3.execute(sqlUp,(data_new['position_id']))
+
+        sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['position_id'],data_new['position_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -54,10 +46,10 @@ def EditPosition(cursor):
 @connect_sql()
 def QryPosition(cursor):
     try:
-        sql = "SELECT position_id,position_detail,id FROM position WHERE validstatus =1"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
+        sql = "SELECT position_id,position_detail FROM position WHERE validstatus = 1"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
         return jsonify(result)
     except Exception as e:
         logserver(e)

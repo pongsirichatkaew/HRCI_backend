@@ -6,14 +6,17 @@ from dbConfig import *
 @connect_sql()
 def InsertSection(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        sect_id = data_new['sect_id']
-        sect_detail = data_new['sect_detail']
-        validstatus = data_new['validstatus']
-        sql = "INSERT INTO section (sect_id,sect_detail,validstatus) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(sect_id,sect_detail,validstatus))
+        sqlQry = "SELECT sect_id FROM section ORDER BY sect_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        sect_id_last=result[0]['sect_id']+1
+
+        sql = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
+        cursor3.execute(sql,(sect_id_last,data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -22,17 +25,19 @@ def InsertSection(cursor):
 @connect_sql()
 def EditSection(cursor):
     try:
-        data = request.json
-        source = data['source']
+        dataInput = request.json
+        source = dataInput['source']
         data_new = source
-        id = data_new['id']
-        sect_id = data_new['sect_id']
-        sect_detail = data_new['sect_detail']
-        validstatus = data_new['validstatus']
-        sqlUp = "UPDATE section SET sect_id = %s, sect_detail = %s, validstatus = %s  WHERE id = %s"
-        cursor.execute(sqlUp,(sect_id,sect_detail,validstatus,id))
-        # sqlIn = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
-        # cursor.execute(sqlIn,(sect_id,sect_detail))
+        sql = "SELECT sect_id FROM section WHERE sect_id=%s"
+        cursor3.execute(sql,(data_new['sect_id']))
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
+        cursor3.execute(sqlUp,(data_new['sect_id']))
+
+        sqlIn = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
+        cursor3.execute(sqlIn,(result[0]['sect_id'],data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -41,7 +46,7 @@ def EditSection(cursor):
 @connect_sql()
 def QrySection(cursor):
     try:
-        sql = "SELECT sect_id,sect_detail,id,validstatus FROM section"
+        sql = "SELECT sect_id,sect_detail FROM section WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
