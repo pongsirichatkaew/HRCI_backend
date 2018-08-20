@@ -15,8 +15,8 @@ def InsertPosition(cursor):
         result = toJson(cursor.fetchall(),columns)
         position_id_last=result[0]['position_id']+1
 
-        sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sql,(position_id_last,data_new['position_detail']))
+        sql = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(position_id_last,data_new['position_detail'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditPosition(cursor):
         sqlUp = "UPDATE position SET validstatus=0 WHERE status_id=%s"
         cursor.execute(sqlUp,(data_new['position_id']))
 
-        sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail']))
+        sqlIn = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -51,6 +51,22 @@ def QryPosition(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeletePosition', methods=['POST'])
+def DeletePosition():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE position SET validstatus=0,createby=%s WHERE position_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['position_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
