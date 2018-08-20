@@ -21,7 +21,7 @@ def QryAppform():
 @connect_sql()
 def QryBlacklist(cursor):
     try:
-        sql = "SELECT * FROM blacklist"
+        sql = "SELECT * FROM blacklist WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -35,8 +35,10 @@ def InsertBlacklist():
         connection = mysql3.connect()
         cursor = connection.cursor()
         dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
-        cursor.execute(sql,dataInput['EmploymentAppNo'])
+        cursor.execute(sql,data_new['EmploymentAppNo'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.commit()
@@ -45,7 +47,7 @@ def InsertBlacklist():
         connection = mysql.connect()
         cursor = connection.cursor()
         sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],dataInput['createby']))
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby']))
 
         sqlemployee = "DELETE FROM employee WHERE citizenid=%s"
         cursor.execute(sqlemployee,result[0]['ID_CardNo'])
@@ -64,11 +66,13 @@ def InsertBlacklist():
 @app.route('/DeleteBlacklist', methods=['POST'])
 def DeleteBlacklist():
     try:
-        dataInput = request.json
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "DELETE FROM blacklist WHERE ID_CardNo=%s"
-        cursor.execute(sql,dataInput['ID_CardNo'])
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE blacklist SET validstatus=0,createby=%s WHERE ID_CardNo=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['ID_CardNo']))
         connection.commit()
         connection.close()
         return "Success"
@@ -95,9 +99,10 @@ def QryAppform_by_status():
         return "fail"
 
 @app.route('/UpdateEmpStatus', methods=['POST'])
-@connect_sql3()
-def UpdateEmpStatus(cursor):
+def UpdateEmpStatus():
     try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
         data = request.json
         source = data['source']
         data_new = source
@@ -105,6 +110,16 @@ def UpdateEmpStatus(cursor):
         EmploymentAppNo = data_new['EmploymentAppNo']
         sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
         cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new[0]['create_by']))
+        connection.commit()
+        connection.close()
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -196,7 +211,7 @@ def QryDatbaseAppform():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sqlblack = "SELECT ID_CardNo FROM blacklist"
+        sqlblack = "SELECT ID_CardNo FROM blacklist WHERE validstatus=1"
         cursor.execute(sqlblack)
         columnsblack = [column[0] for column in cursor.description]
         resultblacklist = toJson(cursor.fetchall(),columnsblack)
