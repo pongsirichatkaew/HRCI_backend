@@ -46,6 +46,15 @@ def InsertBlacklist():
         cursor = connection.cursor()
         sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],dataInput['createby']))
+
+        sqlemployee = "DELETE FROM employee WHERE citizenid=%s"
+        cursor.execute(sqlemployee,result[0]['ID_CardNo'])
+
+        sqlemployee_ga = "DELETE FROM employee_ga WHERE citizenid=%s"
+        cursor.execute(sqlemployee_ga,result[0]['ID_CardNo'])
+
+        sqlEmp_pro = "DELETE FROM Emp_probation WHERE citizenid=%s"
+        cursor.execute(sqlEmp_pro,result[0]['ID_CardNo'])
         connection.commit()
         connection.close()
         return "Success"
@@ -66,14 +75,17 @@ def DeleteBlacklist():
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/QryAppform_Wait_interview', methods=['POST'])
-def QryAppform_Wait_interview():
+@app.route('/QryAppform_by_status', methods=['POST'])
+def QryAppform_by_status():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
+        dataInput = request.json
+        source = data['source']
+        data_new = source
         sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
-        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='1' ORDER BY Personal.EmploymentAppNo DESC"""
-        cursor.execute(sql)
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id=%s ORDER BY Personal.EmploymentAppNo DESC"""
+        cursor.execute(sql,data_new['status_id'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
@@ -81,51 +93,7 @@ def QryAppform_Wait_interview():
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/QryAppform_Come_interview', methods=['POST'])
-def QryAppform_Come_interview():
-    try:
-        connection = mysql3.connect()
-        cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
-        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='2' ORDER BY Personal.EmploymentAppNo DESC"""
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/QryAppform_Pass_interview', methods=['POST'])
-def QryAppform_Pass_interview():
-    try:
-        connection = mysql3.connect()
-        cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
-        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='3' ORDER BY Personal.EmploymentAppNo DESC"""
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/QryAppform_Notpass_interview', methods=['POST'])
-def QryAppform_Notpass_interview():
-    try:
-        connection = mysql3.connect()
-        cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail
-        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id='4' ORDER BY Personal.EmploymentAppNo DESC"""
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
+
 @app.route('/UpdateEmpStatus', methods=['POST'])
 @connect_sql3()
 def UpdateEmpStatus(cursor):
@@ -338,8 +306,8 @@ def QryDatbaseAppform():
             cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract']))
 
-            sqlEm_ga = "INSERT INTO employee_ga (employeeid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEm_ga,(employeeid,data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],data_new['regis_car_number'],data_new['other'],data_new['description']))
+            sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEm_ga,(employeeid,result14[0]['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],data_new['regis_car_number'],data_new['other'],data_new['description']))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
