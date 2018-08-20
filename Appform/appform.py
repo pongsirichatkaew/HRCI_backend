@@ -223,17 +223,20 @@ def QryDatbaseAppform():
                 sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(result[i]['ID_CardNo'],result[i]['AddressType'],result[i]['HouseNo'],
                 result[i]['Street'],result[i]['DISTRICT_NAME'],result[i]['AMPHUR_NAME'],result[i]['PROVINCE_NAME'],result[i]['PostCode'],result[i]['Tel'],result[i]['Fax']))
-            i=0
-            for i in xrange(len(result4)):
-                type = result4[i]['PathFile']
-                typefile = type[-4:]
-                typename = type[46:-4]
-                url = 'http://career.inet.co.th/'+result4[i]['PathFile']
-                image_name = result4[i]['EmploymentAppNo']+typename+typefile
-                Path = "pig/" + image_name
-                wget.download(url,Path)
-                sqlIn4 = "INSERT INTO Attachment (ID_CardNo,Type,PathFile) VALUES (%s,%s,%s)"
-                cursor.execute(sqlIn4,(result4[i]['ID_CardNo'],result4[i]['Type'],result4[i]['PathFile']))
+            try:
+                i=0
+                for i in xrange(len(result4)):
+                    type = result4[i]['PathFile']
+                    typefile = type[-4:]
+                    typename = type[46:-4]
+                    url = 'http://career.inet.co.th/'+result4[i]['PathFile']
+                    image_name = result4[i]['EmploymentAppNo']+typename+typefile
+                    Path = "pig/" + image_name
+                    wget.download(url,Path)
+                    sqlIn4 = "INSERT INTO Attachment (ID_CardNo,Type,PathFile) VALUES (%s,%s,%s)"
+                    cursor.execute(sqlIn4,(result4[i]['ID_CardNo'],result4[i]['Type'],result4[i]['PathFile']))
+            except Exception as e:
+                logserver(e)
             i=0
             for i in xrange(len(result6)):
                 sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
