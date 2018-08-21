@@ -46,8 +46,8 @@ def InsertBlacklist():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby']))
+        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions']))
 
         sqlemployee = "DELETE FROM employee WHERE citizenid=%s"
         cursor.execute(sqlemployee,result[0]['ID_CardNo'])
@@ -378,11 +378,17 @@ def QryAppform_One_person():
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
 
-        sql11 = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
-        WHERE Personal.EmploymentAppNo=%s"
-        cursor.execute(sql11,data_new['EmploymentAppNo'])
-        columns11 = [column[0] for column in cursor.description]
-        result11 = toJson(cursor.fetchall(),columns11)
+        sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
+        WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.EmploymentAppNo=%s"
+        cursor.execute(sqlfa,data_new['EmploymentAppNo'])
+        columnsfa = [column[0] for column in cursor.description]
+        resultfa = toJson(cursor.fetchall(),columnsfa)
+
+        sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
+        WHERE Family.MemberType = 'BrotherSister' AND Personal.EmploymentAppNo=%s"
+        cursor.execute(sqlbro,data_new['EmploymentAppNo'])
+        columnsbro = [column[0] for column in cursor.description]
+        resultbro = toJson(cursor.fetchall(),columnsbro)
 
         sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.EmploymentAppNo=LanguagesSkill.EmploymentAppNo \
         WHERE Personal.EmploymentAppNo=%s"
@@ -441,7 +447,8 @@ def QryAppform_One_person():
         arr["ComputerSkill"] = result6
         arr["Education"] = result9
         arr["Employment"] = result10
-        arr["Family"] = result11
+        arr['fatherAndmother'] = resultfa
+        arr['BrotherSister'] = resultbro
         arr["LanguagesSkill"] = result13
         arr["Personal"] = result14
         arr["Reference"] = result17

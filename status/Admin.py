@@ -31,9 +31,9 @@ def EditAdmin(cursor):
         username = data_new['username']
         name = data_new['name']
         permission = data_new['permission']
-        sqlUp = "UPDATE Admin SET showAdmin=%s WHERE id=%s"
+        sqlUp = "UPDATE Admin SET validstatus=%s WHERE id=%s"
         cursor.execute(sqlUp,('0',id))
-        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,showAdmin) VALUES (%s,%s,%s,%s,%s)"
+        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(employeeid,username,name,permission,'1'))
         return "success"
     except Exception as e:
@@ -43,11 +43,28 @@ def EditAdmin(cursor):
 @connect_sql()
 def QryAdmin(cursor):
     try:
-        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE showAdmin = 1"
+        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE validstatus = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteAdmin', methods=['POST'])
+@connect_sql()
+def DeleteAdmin(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql_OldTimeAdmin = "UPDATE Admin SET validstatus=0 WHERE employeeid=%s"
+        cursor.execute(sql_OldTimeAdmin,(data_new['employeeid']))
+
+        sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],0))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
