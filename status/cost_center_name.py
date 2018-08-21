@@ -15,8 +15,8 @@ def InsertCost_center(cursor):
         result = toJson(cursor.fetchall(),columns)
         cost_center_name_id_last=result[0]['cost_center_name_id']+1
 
-        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email']))
+        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditCost_center(cursor):
         sqlUp = "UPDATE cost_center_name SET validstatus=0 WHERE cost_center_name_id=%s"
         cursor.execute(sqlUp,(data_new['cost_center_name_id']))
 
-        sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email']))
+        sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -51,6 +51,22 @@ def QryCost_center(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteCost_center', methods=['POST'])
+def DeleteCost_center():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE cost_center_name SET validstatus=0,createby=%s WHERE cost_center_name_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['cost_center_name_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"

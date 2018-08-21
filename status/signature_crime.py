@@ -6,12 +6,17 @@ from dbConfig import *
 @connect_sql()
 def InsertSignature_crime(cursor):
     try:
-        data = request.json
-        name_signature_crime = data['name_signature_crime']
-        surname_signature_crime = data['surname_signature_crime']
-        position_signature_crime = data['position_signature_crime']
-        sql = "INSERT INTO signature_crime (name_signature_crime,surname_signature_crime,position_signature_crime) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(name_signature_crime,surname_signature_crime,position_signature_crime))
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlQry = "SELECT name_signature_crime_id FROM signature_crime ORDER BY name_signature_crime_id DESC LIMIT 1"
+        cursor3.execute(sqlQry)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        name_signature_crime_id_last=result[0]['name_signature_crime_id']+1
+
+        sql = "INSERT INTO signature_crime (name_signature_crime_id,name_signature_crime,surname_signature_crime,position_signature_crime	,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sql,(name_signature_crime_id_last,data_new['name_signature_crime'],data_new['surname_signature_crime'],data_new['position_signature_crime'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -20,15 +25,19 @@ def InsertSignature_crime(cursor):
 @connect_sql()
 def EditSignature_crime(cursor):
     try:
-        data = request.json
-        id = data['id']
-        name_signature_crime = data['name_signature_crime']
-        surname_signature_crime = data['surname_signature_crime']
-        position_signature_crime = data['position_signature_crime']
-        sqlUp = "UPDATE signature_crime SET validstatus = '0' WHERE id=%s"
-        cursor.execute(sqlUp,(data['id']))
-        sqlIn = "INSERT INTO signature_crime (name_signature_crime,surname_signature_crime,position_signature_crime) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(name_signature_crime,surname_signature_crime,position_signature_crime))
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlQry = "SELECT name_signature_crime_id FROM signature_crime WHERE name_signature_crime_id=%s"
+        cursor3.execute(sqlQry,data_new['name_signature_crime_id'])
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+
+        sqlUp = "UPDATE signature_crime SET validstatus=0 WHERE name_signature_crime_id=%s"
+        cursor3.execute(sqlUp,(data_new['name_signature_crime_id']))
+
+        sql = "INSERT INTO signature_crime (name_signature_crime_id,name_signature_crime,surname_signature_crime,position_signature_crime	,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor3.execute(sql,(result[0]['name_signature_crime_id'],data_new['name_signature_crime'],data_new['surname_signature_crime'],data_new['position_signature_crime'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -37,11 +46,27 @@ def EditSignature_crime(cursor):
 @connect_sql()
 def QrySignature_crime(cursor):
     try:
-        sql = "SELECT name_signature_crime,surname_signature_crime,id,position_signature_crime FROM signature_crime WHERE validstatus=1"
+        sql = "SELECT name_signature_crime,surname_signature_crime,name_signature_crime_id,position_signature_crime FROM signature_crime WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteSignature_crime', methods=['POST'])
+def DeleteSignature_crime():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE signature_crime SET validstatus=0,createby=%s WHERE name_signature_crime_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['name_signature_crime_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"

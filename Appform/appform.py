@@ -7,8 +7,8 @@ def QryAppform():
     try:
         connection = mysql3.connect()
         cursor = connection.cursor()
-        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail, status_hrci.status_id
-        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id ORDER BY Personal.EmploymentAppNo DESC"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail, status_hrci.status_id, status_hrci.path_color, status_hrci.font_color
+        FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.validstatus = 1 ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -396,6 +396,16 @@ def QryAppform_One_person():
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
+        sqlPath = "SELECT PathFile FROM Attachment \
+        WHERE EmploymentAppNo=%s AND Type='profile_image'"
+        cursor.execute(sqlPath,data_new['EmploymentAppNo'])
+        columnsPath = [column[0] for column in cursor.description]
+        resulPath = toJson(cursor.fetchall(),columnsPath)
+        test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
+        # with open(test, 'rb') as image_file:
+        #     encoded_Image = base64.b64encode(image_file.read())
+        encoded_Image = base64.b64encode(test)
+
         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
         WHERE Personal.EmploymentAppNo=%s"
         cursor.execute(sql17,data_new['EmploymentAppNo'])
@@ -424,6 +434,7 @@ def QryAppform_One_person():
         arr={}
         arr["Address"] = result
         arr["Attachment"] = result4
+        arr["Image_profile"] = encoded_Image
         arr["ComputerSkill"] = result6
         arr["Education"] = result9
         arr["Employment"] = result10

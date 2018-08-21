@@ -15,8 +15,8 @@ def InsertEmployee_MD(cursor):
         result = toJson(cursor.fetchall(),columns)
         employee_md_id_last=result[0]['employee_md_id']+1
 
-        sql = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md']))
+        sql = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditEmployee_MD(cursor):
         sqlUp = "UPDATE employee_MD SET validstatus=0 WHERE employee_md_id=%s"
         cursor.execute(sqlUp,(data_new['employee_md_id']))
 
-        sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md']))
+        sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -51,6 +51,22 @@ def QryEmployee_MD(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeleteEmployee_MD', methods=['POST'])
+def DeleteEmployee_MD():
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE employee_MD SET validstatus=0,createby=%s WHERE employee_md_id=%s"
+        cursor3.execute(sqlUp,(data_new['createby'],data_new['employee_md_id']))
+        connection.commit()
+        connection.close()
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
