@@ -24,9 +24,24 @@ def testbase64():
     # with open('https://www.kroger.com/product/images/medium/front/0000000003283', 'rb') as image_file:
     #     encoded_string = base64.b64encode(image_file.read())
     # return jsonify(encoded_string)
-    with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
-        encoded_string = base64.b64encode(image_file.read())
-    return jsonify(encoded_string)
+    # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
+    #     encoded_string = base64.b64encode(image_file.read())
+    # return jsonify(encoded_string)
+    connection = mysql3.connect()
+    cursor = connection.cursor()
+    dataInput = request.json
+    sqlPath = "SELECT PathFile FROM Attachment \
+    WHERE EmploymentAppNo=%s AND Type='profile_image'"
+    cursor.execute(sqlPath,dataInput['EmploymentAppNo'])
+    columnsPath = [column[0] for column in cursor.description]
+    resulPath = toJson(cursor.fetchall(),columnsPath)
+    connection.commit()
+    connection.close()
+    test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
+    # with open(test, 'rb') as image_file:
+    #     encoded_Image = base64.b64encode(image_file.read())
+    encoded_Image = base64.b64encode(test)
+    return jsonify(encoded_Image)
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
     try:
