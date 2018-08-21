@@ -62,11 +62,11 @@ def DeletePosition(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimePosition = "UPDATE position SET validstatus=0 WHERE position_id=%s"
-        cursor.execute(sql_OldTimePosition,(data_new['position_id']))
+        sql_OldTimePosition = "UPDATE position SET validstatus=0,createby=%s WHERE position_id=%s"
+        cursor.execute(sql_OldTimePosition,(data_new['createby'],data_new['position_id']))
 
-        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
-        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0))
+        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0,data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)

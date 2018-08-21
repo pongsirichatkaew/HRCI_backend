@@ -62,11 +62,11 @@ def DeleteOrgname(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeOrgname = "UPDATE org_name SET validstatus=0 WHERE org_name_id=%s"
-        cursor.execute(sql_OldTimeOrgname,(data_new['org_name_id']))
+        sql_OldTimeOrgname = "UPDATE org_name SET validstatus=0,createby=%s WHERE org_name_id=%s"
+        cursor.execute(sql_OldTimeOrgname,(data_new['createby'],data_new['org_name_id']))
 
-        sql_NewTimeOrgname = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeOrgname,(data_new['org_name_id'],data_new['org_name_detail'],data_new['email'],0))
+        sql_NewTimeOrgname = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeOrgname,(data_new['org_name_id'],data_new['org_name_detail'],data_new['email'],0,data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
