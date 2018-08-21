@@ -33,7 +33,7 @@ def EditPosition(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE position SET validstatus=0 WHERE status_id=%s"
+        sqlUp = "UPDATE position SET validstatus=0 WHERE position_id=%s"
         cursor.execute(sqlUp,(data_new['position_id']))
 
         sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
@@ -51,6 +51,23 @@ def QryPosition(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/DeletePosition', methods=['POST'])
+@connect_sql()
+def DeletePosition(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql_OldTimePosition = "UPDATE position SET validstatus=0 WHERE position_id=%s"
+        cursor.execute(sql_OldTimePosition,(data_new['position_id']))
+
+        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
+        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"

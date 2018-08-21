@@ -54,3 +54,20 @@ def QryOrg_name(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/DeleteOrgname', methods=['POST'])
+@connect_sql()
+def DeleteOrgname(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql_OldTimeOrgname = "UPDATE org_name SET validstatus=0 WHERE org_name_id=%s"
+        cursor.execute(sql_OldTimeOrgname,(data_new['org_name_id']))
+
+        sql_NewTimeOrgname = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeOrgname,(data_new['org_name_id'],data_new['org_name_detail'],data_new['email'],0))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
