@@ -14,13 +14,14 @@ def InsertCompany(cursor):
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/' + companyid_last
+        path2 = companyid_last
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
             file = request.files['file']
         if file:
             file.save(os.path.join(path, currentTime + '_company_img.png'))
-            path_image = path+'/'+currentTime+'_company_img.png'
+            path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -38,13 +39,14 @@ def EditCompany(cursor):
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/' + companyid_last
+        path2 = companyid_last
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
             file = request.files['file']
         if file:
             file.save(os.path.join(path, currentTime + '_company_img.png'))
-            path_image = path+'/'+currentTime+'_company_img.png'
+            path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -61,13 +63,7 @@ def QryCompany(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        Image_path=result[7]['imageName']
-        # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
-        #     encoded_Image = base64.b64encode(image_file.read())
-        resultlast={}
-        resultlast['result'] = result
-        resultlast['Image_path'] = Image_path
-        return jsonify(resultlast)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -88,3 +84,7 @@ def DeleteCompany(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/userGetFile/<path>/>/<fileName>', methods=['GET'])
+def userGetFile(path, fileName):
+    return send_from_directory('../uploads/' + path, fileName)
