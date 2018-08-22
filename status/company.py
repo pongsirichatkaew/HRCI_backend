@@ -5,31 +5,34 @@ from dbConfig import *
 @app.route('/InsertCompany', methods=['POST'])
 @connect_sql()
 def InsertCompany(cursor):
-    try:
-        sqlQry = "SELECT companyid FROM company ORDER BY companyid DESC LIMIT 1"
-        cursor.execute(sqlQry)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        companyid_last=result[0]['companyid']+1
+    # try:
+    sqlQry = "SELECT companyid FROM company ORDER BY companyid DESC LIMIT 1"
+    cursor.execute(sqlQry)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
+    companyid_last=str(result[0]['companyid']+1)
 
-        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
-        path = 'uploads/' + companyid_last
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if request.method == 'POST':
-            file = request.files['file']
-        if file:
-    	  file.save(os.path.join(path, currentTime + '_company_img.png'))
-          path_image = str(path+currentTime+'_company_img.png')
-        else:
-          return 'file is not allowed'
+    currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
+    path = 'uploads/' + companyid_last
+    if not os.path.exists(path):
+        os.makedirs(path)
+    if request.method == 'POST':
+        file = request.files['file']
+    if file:
+        file.save(os.path.join(path, currentTime + '_company_img.png'))
+        path_image = path+'/'+currentTime+'_company_img.png'
+    else:
+      return 'file is not allowed'
 
-        sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(request.form['acronym'],companyid_last,request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby']))
-        return "success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+    sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+    cursor.execute(sql,(request.form['acronym'],companyid_last,request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby']))
+
+        # sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(request.form['acronym'],companyid_last,request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby']))
+    return "success"
+    # except Exception as e:
+    #     logserver(e)
+    #     return "fail"
 @app.route('/EditCompany', methods=['POST'])
 @connect_sql()
 def EditCompany(cursor):
