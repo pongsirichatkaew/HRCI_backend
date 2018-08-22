@@ -64,7 +64,10 @@ def QryCompany(cursor):
         Image_path=result[7]['imageName']
         # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
         #     encoded_Image = base64.b64encode(image_file.read())
-        return jsonify(Image_path)
+        resultlast={}
+        resultlast['result'] = result
+        resultlast['Image_path'] = Image_path
+        return jsonify(resultlast)
     except Exception as e:
         logserver(e)
         return "fail"
