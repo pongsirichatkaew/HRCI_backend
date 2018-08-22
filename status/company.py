@@ -6,18 +6,30 @@ from dbConfig import *
 @connect_sql()
 def InsertCompany(cursor):
     try:
-        data = request.json
-        source = data['source']
-        data_new = source
+        # data = request.json
+        # source = data['source']
+        # data_new = source
 
-        sqlQry = "SELECT companyid FROM company ORDER BY companyid DESC LIMIT 1"
-        cursor.execute(sqlQry)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        companyid_last=result[0]['companyid']+1
+        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
+        path = 'uploads/' + request.form['userId']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+    	  file.save(os.path.join(path, currentTime + '_profile_img.png'))
+          userLogSaveFile(request.form['userId'], currentTime + '_profile_img.png')
+        else:
+          return 'file is not allowed'
 
-        sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(data_new['acronym'],companyid_last,data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],data_new['imageName']))
+        # sqlQry = "SELECT companyid FROM company ORDER BY companyid DESC LIMIT 1"
+        # cursor.execute(sqlQry)
+        # columns = [column[0] for column in cursor.description]
+        # result = toJson(cursor.fetchall(),columns)
+        # companyid_last=result[0]['companyid']+1
+
+        # sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(data_new['acronym'],companyid_last,data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],data_new['imageName']))
         return "success"
     except Exception as e:
         logserver(e)
