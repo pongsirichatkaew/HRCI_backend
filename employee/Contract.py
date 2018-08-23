@@ -16,7 +16,7 @@ def QryContract(cursor):
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        tranImage = result[0]['imageName']
+        tranImage = 'uploads/'+result[0]['imageName']
         with open(tranImage, 'rb') as image_file:
             encoded_Image = base64.b64encode(image_file.read())
         tranExpiryDate_idcard = result[0]['ExpiryDate']
@@ -49,8 +49,8 @@ def QryContract(cursor):
         else:
              tranExpiryDate_idcard_Mounth="ธันวาคม"
 
-        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position FROM employee_MD  INNER JOIN company ON employee_MD.company_id = company.companyid\
-        WHERE companyid=%s"
+        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id FROM employee_MD  INNER JOIN company ON employee_MD.companyid = company.companyid\
+        WHERE employee_MD.companyid=%s"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
