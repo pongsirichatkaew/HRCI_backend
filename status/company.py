@@ -38,8 +38,8 @@ def EditCompany(cursor):
         cursor.execute(sqlUp,(request.form['createby'],request.form['companyid']))
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
-        path = 'uploads/' + companyid_last
-        path2 = companyid_last
+        path = 'uploads/' + request.form['companyid']
+        path2 = request.form['companyid']
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
@@ -59,7 +59,7 @@ def EditCompany(cursor):
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company WHERE validstatus =1"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company WHERE validstatus =1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -85,6 +85,10 @@ def DeleteCompany(cursor):
         logserver(e)
         return "fail"
 
-@app.route('/userGetFile/<path>/>/<fileName>', methods=['GET'])
+@app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):
+    # current_app.logger.info('userGetFile')
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
     return send_from_directory('../uploads/' + path, fileName)
+    # return "ssss"
