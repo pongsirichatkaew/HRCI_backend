@@ -164,10 +164,6 @@ def InsertEmployeeHRCI_Management(cursor):
                 sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
                 cursor.execute(sqlIn6,(request.form[i]['ID_CardNo'],request.form[i]['ComSkill'],request.form[i]['Level']))
             i=0
-            for i in xrange(len(result14)):
-                sqlInContract = "INSERT INTO Contract (ID_CardNo,Start_contract,End_contract,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlInContract,(request.form['ID_CardNo'],request.form['Start_contract'],request.form['End_contract'],request.form['salary_thai'],request.form['Authority_Distrinct_Id_Card']))
-            i=0
             for i in xrange(len(request.form['EducationLevel'])):
                 sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn9,(request.form[i]['ID_CardNo'],request.form[i]['EducationLevel'],request.form[i]['Institute'],request.form[i]['StartYear'],request.form[i]['EndYear'],request.form[i]['Qualification'],request.form[i]['Major'],request.form[i]['GradeAvg'],\
