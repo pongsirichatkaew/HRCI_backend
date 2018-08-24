@@ -82,62 +82,62 @@ def QryEmployee_one_person(cursor):
                                            INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
                                            INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
                      WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sqlEm,resultEmployee['citizenid'])
+        cursor.execute(sqlEm,resultEmployee[0]['citizenid'])
         columnsEm = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columnsEm)
 
         sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.ID_CardNo=Attachment.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql4,resultEmployee['citizenid'])
+        cursor.execute(sql4,resultEmployee[0]['citizenid'])
         columns4 = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns4)
 
         sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON Personal.ID_CardNo=ComputerSkill.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql6,resultEmployee['citizenid'])
+        cursor.execute(sql6,resultEmployee[0]['citizenid'])
         columns6 = [column[0] for column in cursor.description]
         result6 = toJson(cursor.fetchall(),columns6)
 
         sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN Personal ON Personal.ID_CardNo=Education.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql9,resultEmployee['citizenid'])
+        cursor.execute(sql9,resultEmployee[0]['citizenid'])
         columns9 = [column[0] for column in cursor.description]
         result9 = toJson(cursor.fetchall(),columns9)
 
         sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.ID_CardNo=Employment.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql10,resultEmployee['citizenid'])
+        cursor.execute(sql10,resultEmployee[0]['citizenid'])
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
 
         sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
         WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.ID_CardNo=%s"
-        cursor.execute(sqlfa,resultEmployee['citizenid'])
+        cursor.execute(sqlfa,resultEmployee[0]['citizenid'])
         columnsfa = [column[0] for column in cursor.description]
         resultfa = toJson(cursor.fetchall(),columnsfa)
 
         sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
         WHERE Family.MemberType = 'BrotherSister' AND Personal.ID_CardNo=%s"
-        cursor.execute(sqlbro,resultEmployee['citizenid'])
+        cursor.execute(sqlbro,resultEmployee[0]['citizenid'])
         columnsbro = [column[0] for column in cursor.description]
         resultbro = toJson(cursor.fetchall(),columnsbro)
 
         sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.ID_CardNo=LanguagesSkill.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql13,resultEmployee['citizenid'])
+        cursor.execute(sql13,resultEmployee[0]['citizenid'])
         columns13 = [column[0] for column in cursor.description]
         result13 = toJson(cursor.fetchall(),columns13)
 
         sql14 = "SELECT * FROM Personal \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql14,resultEmployee['citizenid'])
+        cursor.execute(sql14,resultEmployee[0]['citizenid'])
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
         # try:
         #     sqlPath = "SELECT PathFile FROM Attachment \
         #     WHERE ID_CardNo=%s AND Type='profile_image'"
-        #     cursor.execute(sqlPath,resultEmployee['citizenid'])
+        #     cursor.execute(sqlPath,resultEmployee[0]['citizenid'])
         #     columnsPath = [column[0] for column in cursor.description]
         #     resulPath = toJson(cursor.fetchall(),columnsPath)
         #     test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
@@ -149,25 +149,25 @@ def QryEmployee_one_person(cursor):
 
         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql17,resultEmployee['citizenid'])
+        cursor.execute(sql17,resultEmployee[0]['citizenid'])
         columns17 = [column[0] for column in cursor.description]
         result17 = toJson(cursor.fetchall(),columns17)
 
         sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN Personal ON Personal.ID_CardNo=RefPerson.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql18,resultEmployee['citizenid'])
+        cursor.execute(sql18,resultEmployee[0]['citizenid'])
         columns18 = [column[0] for column in cursor.description]
         result18 = toJson(cursor.fetchall(),columns18)
 
         sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN Personal ON Personal.ID_CardNo=SpecialSkill.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql20,resultEmployee['citizenid'])
+        cursor.execute(sql20,resultEmployee[0]['citizenid'])
         columns20 = [column[0] for column in cursor.description]
         result20 = toJson(cursor.fetchall(),columns20)
 
         sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN Personal ON Personal.ID_CardNo=TrainingCourse.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
-        cursor.execute(sql23,resultEmployee['citizenid'])
+        cursor.execute(sql23,resultEmployee[0]['citizenid'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
         arr={}
