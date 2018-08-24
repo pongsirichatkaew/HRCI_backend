@@ -55,6 +55,28 @@ def EditCompany(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/EditCompany_data', methods=['POST'])
+@connect_sql()
+def EditCompany_data(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+
+        sql = "SELECT imageName FROM company WHERE companyid=%s"
+        cursor.execute(sql,data_new['companyid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlUp = "UPDATE company SET validstatus=0,createby=%s WHERE companyid=%s"
+        cursor.execute(sqlUp,(data_new['createby'],data_new['companyid']))
+
+        sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(data_new['acronym'],data_new['companyid'],data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],result[0]['imageName'],data_new['createby']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryCompany', methods=['POST'])
 @connect_sql()
 def QryCompany(cursor):
