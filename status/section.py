@@ -15,8 +15,8 @@ def InsertSection(cursor):
         result = toJson(cursor.fetchall(),columns)
         sect_id_last=result[0]['sect_id']+1
 
-        sql = "INSERT INTO section (sect_id,sect_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(sect_id_last,data_new['sect_detail'],data_new['createby']))
+        sql = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
+        cursor.execute(sql,(sect_id_last,data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditSection(cursor):
         sqlUp = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
         cursor.execute(sqlUp,(data_new['sect_id']))
 
-        sqlIn = "INSERT INTO section (sect_id,sect_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['sect_id'],data_new['sect_detail'],data_new['createby']))
+        sqlIn = "INSERT INTO section (sect_id,sect_detail) VALUES (%s,%s)"
+        cursor.execute(sqlIn,(result[0]['sect_id'],data_new['sect_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -55,18 +55,19 @@ def QrySection(cursor):
         logserver(e)
         return "fail"
 @app.route('/DeleteSection', methods=['POST'])
-def DeleteSection():
+@connect_sql()
+def DeleteSection(cursor):
     try:
-        connection = mysql.connect()
-        cursor = connection.cursor()
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlUp = "UPDATE section SET validstatus=0,createby=%s WHERE sect_id=%s"
-        cursor3.execute(sqlUp,(data_new['createby'],data_new['sect_id']))
-        connection.commit()
-        connection.close()
-        return "Success"
+
+        sql_OldTimeSection = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
+        cursor.execute(sql_OldTimeSection,(data_new['sect_id']))
+
+        sql_NewTimeSection = "INSERT INTO section (sect_id,sect_detail,validstatus) VALUES (%s,%s,%s)"
+        cursor.execute(sql_NewTimeSection,(data_new['sect_id'],data_new['sect_detail'],0))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"

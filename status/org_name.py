@@ -15,8 +15,8 @@ def InsertOrg_name(cursor):
         result = toJson(cursor.fetchall(),columns)
         org_name_id_last=result[0]['org_name_id']+1
 
-        sql = "INSERT INTO org_name (org_name_id,org_name_detail,email,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql,(org_name_id_last,data_new['org_name_detail'],data_new['email'],data_new['createby']))
+        sql = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(org_name_id_last,data_new['org_name_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -36,8 +36,8 @@ def EditOrg_name(cursor):
         sqlUp = "UPDATE org_name SET validstatus=0 WHERE org_name_id=%s"
         cursor.execute(sqlUp,(data_new['org_name_id']))
 
-        sqlIn = "INSERT INTO org_name (org_name_id,org_name_detail,email,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['org_name_id'],data_new['org_name_detail'],data_new['email'],data_new['createby']))
+        sqlIn = "INSERT INTO org_name (org_name_id,org_name_detail,email) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['org_name_id'],data_new['org_name_detail'],data_new['email']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -62,12 +62,12 @@ def DeleteOrgname(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeOrgname = "UPDATE org_name SET validstatus=0,createby=%s WHERE org_name_id=%s"
-        cursor.execute(sql_OldTimeOrgname,(data_new['createby'],data_new['org_name_id']))
+        sql_OldTimeOrgname = "UPDATE org_name SET validstatus=0 WHERE org_name_id=%s"
+        cursor.execute(sql_OldTimeOrgname,(data_new['org_name_id']))
 
-        sql_NewTimeOrgname = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeOrgname,(data_new['org_name_id'],data_new['org_name_detail'],data_new['email'],0,data_new['createby']))
+        sql_NewTimeOrgname = "INSERT INTO org_name (org_name_id,org_name_detail,email,validstatus) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeOrgname,(data_new['org_name_id'],data_new['org_name_detail'],data_new['email'],0))
         return "success"
     except Exception as e:
-        logserver(e)
-        return "fail"
+            logserver(e)
+            return "fail"

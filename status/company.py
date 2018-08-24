@@ -106,6 +106,18 @@ def DeleteCompany(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryCompanyname', methods=['POST'])
+@connect_sql()
+def QryCompanyname(cursor):
+    try:
+        sql = "SELECT companyid,companyname FROM company WHERE validstatus=1"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):

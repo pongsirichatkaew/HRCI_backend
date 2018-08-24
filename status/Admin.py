@@ -9,13 +9,10 @@ def InsertAdmin(cursor):
         data = request.json
         source = data['source']
         data_new = source
-        employeeid = data_new['employeeid']
-        username = data_new['username']
-        name = data_new['name']
-        permission = data_new['permission']
-        createby = data_new['createby']
-        sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(employeeid,username,name,permission,createby))
+        # sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby']))
+        sql = "INSERT INTO Admin (employeeid,username,name,permission) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -27,16 +24,14 @@ def EditAdmin(cursor):
         data = request.json
         source = data['source']
         data_new = source
-        id = data_new['id']
-        employeeid = data_new['employeeid']
-        username = data_new['username']
-        name = data_new['name']
-        permission = data_new['permission']
-        createby = data_new['createby']
-        sqlUp = "UPDATE Admin SET validstatus=%s WHERE id=%s"
-        cursor.execute(sqlUp,('0',id))
-        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(employeeid,username,name,permission,createby,'1'))
+
+        sqlUp = "UPDATE Admin SET validstatus=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,('0',data_new['employeeid']))
+
+        # sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlIn,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],'1'))
+        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],'1'))
         return "success"
     except Exception as e:
         logserver(e)
@@ -76,8 +71,10 @@ def DeleteAdmin(cursor):
         sql_OldTimeAdmin = "UPDATE Admin SET validstatus=0 WHERE employeeid=%s"
         cursor.execute(sql_OldTimeAdmin,(data_new['employeeid']))
 
-        sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],0))
+        # sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],0))
+        sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],0))
         return "success"
     except Exception as e:
         logserver(e)
