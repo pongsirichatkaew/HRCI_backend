@@ -2,6 +2,45 @@
 # -*- coding: utf-8 -*-
 from dbConfig import *
 
+@app.route('/InsertEmployee_resign', methods=['POST'])
+@connect_sql()
+def InsertEmployee_resign(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT name_th,surname_th,citizenid,start_work FROM employee WHERE employeeid=%s"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlemployee = "UPDATE employee SET validstatus=0 WHERE employeeid=%s"
+        cursor.execute(sqlemployee,data_new['employeeid'])
+
+        sqlemployee_ga = "UPDATE employee_ga SET validstatus=0 WHERE employeeid=%s"
+        cursor.execute(sqlemployee_ga,data_new['employeeid'])
+
+        sqlEmp_pro = "UPDATE Emp_probation SET validstatus=0 WHERE employeeid=%s"
+        cursor.execute(sqlEmp_pro,data_new['employeeid'])
+
+        sqlIn4 = "INSERT INTO employee_resign (employeeid,name_th,surname_th,ID_CardNo,star_work,issue_date,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(data_new['employeeid'],result[0]['name_th'],result[0]['surname_th'],result[0]['citizenid'],result[0]['start_work'],data_new['issue_date'],data_new['createby'],data_new['Descriptions']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmployee_resign', methods=['POST'])
+@connect_sql()
+def QryEmployee_resign(cursor):
+    try:
+        sql = "SELECT * FROM employee_resign"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee', methods=['POST'])
 def QryEmployee():
     try:
@@ -43,16 +82,11 @@ def QryEmployee_one_person():
         return "fail"
 @app.route('/EditEmployee', methods=['POST'])
 @connect_sql()
-def EditEmployee():
+def EditEmployee(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
-        sqlQryEM = "SELECT * FROM employee WHERE employeeid=%s"
-        cursor.execute(sqlQryEM,(data_new['employeeid']))
-        columns = [column[0] for column in cursor.description]
-        resultsqlQryEM = toJson(cursor.fetchall(),columns)
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(resultsqlQryEM['employeeid'],resultsqlQryEM['ID_CardNo'],resultsqlQryEM['NameTh'],resultsqlQryEM['NameEn'],resultsqlQryEM['SurnameTh'],resultsqlQryEM['SurnameEn'],resultsqlQryEM['NicknameEn'],resultsqlQryEM['salary'],resultsqlQryEM['email'],resultsqlQryEM['phone_company'],resultsqlQryEM['position_id'],\
