@@ -96,7 +96,7 @@ def login():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql2 = "SELECT * FROM Admin WHERE user_email=%s"
+        sql2 = "SELECT * FROM Admin WHERE username=%s"
         cursor.execute(sql2,_output[0]['username'])
         data2 = cursor.fetchall()
         columns2 = [column[0] for column in cursor.description]
