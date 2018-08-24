@@ -170,8 +170,6 @@ def QryEmployee_one_person(cursor):
         cursor.execute(sql23,resultEmployee['citizenid'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
-        connection.commit()
-        connection.close()
         arr={}
         arr["Address"] = result
         arr["employee"] = resultEmployee
