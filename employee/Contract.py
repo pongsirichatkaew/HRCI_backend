@@ -9,7 +9,6 @@ def QryContract(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        employeeid = ['employeeid']
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
@@ -17,9 +16,9 @@ def QryContract(cursor):
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        tranImage = result[0]['imageName']
-        # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
-        #     encoded_Image = base64.b64encode(image_file.read())
+        tranImage = 'uploads/'+result[0]['imageName']
+        with open(tranImage, 'rb') as image_file:
+            encoded_Image = base64.b64encode(image_file.read())
         tranExpiryDate_idcard = result[0]['ExpiryDate']
         idcard_expi = tranExpiryDate_idcard.split("-")
         tranExpiryDate_idcard_Date = str(int(idcard_expi[0]))
@@ -50,8 +49,8 @@ def QryContract(cursor):
         else:
              tranExpiryDate_idcard_Mounth="ธันวาคม"
 
-        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position FROM employee_MD  INNER JOIN company ON employee_MD.company_id = company.companyid\
-        WHERE companyid=%s"
+        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id FROM employee_MD  INNER JOIN company ON employee_MD.companyid = company.companyid\
+        WHERE employee_MD.companyid=%s"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
@@ -79,6 +78,7 @@ def QryContract(cursor):
         resultlast["Now_year"] = date
         resultlast["HouseNo"] = result[0]['HouseNo']
         resultlast["Street"] = result[0]['Street']
+        resultlast['Path_logo_company'] = encoded_Image
         resultlast["DISTRICT"] = result[0]['DISTRICT_ID']
         resultlast["AMPHUR"] = result[0]['AMPHUR_ID']
         resultlast["PROVINCE"] = result[0]['PROVINCE_ID']

@@ -258,9 +258,9 @@ def QryDatbaseAppform():
                 sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn13,(result13[i]['ID_CardNo'],result13[i]['Languages'],result13[i]['Speaking'],result13[i]['Reading'],result13[i]['Writting']))
 
-            sqlIn14 = """INSERT INTO Personal (EmploymentAppNo,AppliedPosition1,AppliedPosition2,StartExpectedSalary,EndExpectedSalary,NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-            cursor.execute(sqlIn14,(result14[0]['EmploymentAppNo'],result14[0]['AppliedPosition1'],result14[0]['AppliedPosition2'],result14[0]['StartExpectedSalary'],result14[0]['EndExpectedSalary'],result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],\
+            sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor.execute(sqlIn14,(result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],\
             result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
             result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],result14[0]['ID_CardNo'], \
             result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
@@ -402,15 +402,18 @@ def QryAppform_One_person():
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
-        sqlPath = "SELECT PathFile FROM Attachment \
-        WHERE EmploymentAppNo=%s AND Type='profile_image'"
-        cursor.execute(sqlPath,data_new['EmploymentAppNo'])
-        columnsPath = [column[0] for column in cursor.description]
-        resulPath = toJson(cursor.fetchall(),columnsPath)
-        test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
-        # with open(test, 'rb') as image_file:
-        #     encoded_Image = base64.b64encode(image_file.read())
-        encoded_Image = base64.b64encode(test)
+        try:
+            sqlPath = "SELECT PathFile FROM Attachment \
+            WHERE EmploymentAppNo=%s AND Type='profile_image'"
+            cursor.execute(sqlPath,data_new['EmploymentAppNo'])
+            columnsPath = [column[0] for column in cursor.description]
+            resulPath = toJson(cursor.fetchall(),columnsPath)
+            test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
+            # with open(test, 'rb') as image_file:
+            #     encoded_Image = base64.b64encode(image_file.read())
+            encoded_Image = base64.b64encode(test)
+        except Exception as e:
+            encoded_Image="No images"
 
         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
         WHERE Personal.EmploymentAppNo=%s"

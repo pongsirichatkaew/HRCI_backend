@@ -14,13 +14,14 @@ def InsertCompany(cursor):
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/' + companyid_last
+        path2 = companyid_last
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
             file = request.files['file']
         if file:
             file.save(os.path.join(path, currentTime + '_company_img.png'))
-            path_image = path+'/'+currentTime+'_company_img.png'
+            path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -37,14 +38,15 @@ def EditCompany(cursor):
         cursor.execute(sqlUp,(request.form['createby'],request.form['companyid']))
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
-        path = 'uploads/' + companyid_last
+        path = 'uploads/' + request.form['companyid']
+        path2 = request.form['companyid']
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
             file = request.files['file']
         if file:
             file.save(os.path.join(path, currentTime + '_company_img.png'))
-            path_image = path+'/'+currentTime+'_company_img.png'
+            path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -53,11 +55,33 @@ def EditCompany(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/EditCompany_data', methods=['POST'])
+@connect_sql()
+def EditCompany_data(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+
+        sql = "SELECT imageName FROM company WHERE companyid=%s"
+        cursor.execute(sql,data_new['companyid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlUp = "UPDATE company SET validstatus=0,createby=%s WHERE companyid=%s"
+        cursor.execute(sqlUp,(data_new['createby'],data_new['companyid']))
+
+        sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(data_new['acronym'],data_new['companyid'],data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],result[0]['imageName'],data_new['createby']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryCompany', methods=['POST'])
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company WHERE validstatus =1"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company WHERE validstatus =1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -82,3 +106,11 @@ def DeleteCompany(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
+def userGetFile(path, fileName):
+    # current_app.logger.info('userGetFile')
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory('../uploads/' + path, fileName)
+    # return "ssss"

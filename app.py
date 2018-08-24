@@ -82,8 +82,10 @@ def TestgenEM():
 def login():
     try:
         _data = request.json
-        username = _data['username']
-        password = _data['password']
+        source = _data['source']
+        data_new = source
+        username = data_new['username']
+        password = data_new['password']
         connection = mysql2.connect()
         cursor = connection.cursor()
         sql = "SELECT * FROM user WHERE username = %s and password = %s"
@@ -96,7 +98,7 @@ def login():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql2 = "SELECT * FROM Admin WHERE user_email=%s"
+        sql2 = "SELECT * FROM Admin WHERE username=%s"
         cursor.execute(sql2,_output[0]['username'])
         data2 = cursor.fetchall()
         columns2 = [column[0] for column in cursor.description]
