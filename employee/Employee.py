@@ -416,7 +416,7 @@ def InsertEmployeeHRCI_Management(cursor):
 @connect_sql()
 def Insert_img_employee(cursor):
     try:
-        sqlQry = "SELECT citizenid FROM employee WHERE validstatus=1"
+        sqlQry = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
         cursor.execute(sqlQry,request.form['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
