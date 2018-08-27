@@ -108,6 +108,7 @@ def login():
         result={}
         result['message'] = 'login success'
         result['userid'] = _output[0]['userid']
+        result['name'] = _output[0]['name']
         result['username'] = _output[0]['username']
         result['permission'] = _output2[0]['permission']
         return jsonify(result)
