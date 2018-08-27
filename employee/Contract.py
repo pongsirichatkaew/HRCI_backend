@@ -49,8 +49,7 @@ def QryContract(cursor):
         else:
              tranExpiryDate_idcard_Mounth="ธันวาคม"
 
-        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id FROM employee_MD  INNER JOIN company ON employee_MD.companyid = company.companyid\
-        WHERE employee_MD.companyid=%s"
+        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
