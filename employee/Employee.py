@@ -84,7 +84,7 @@ def QryEmployee_one_person(cursor):
         result = toJson(cursor.fetchall(),columnsEm)
 
         sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.ID_CardNo=Attachment.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Attachment.validstatus=1"
+        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
         cursor.execute(sql4,resultEmployee[0]['citizenid'])
         columns4 = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns4)
@@ -102,7 +102,7 @@ def QryEmployee_one_person(cursor):
         result9 = toJson(cursor.fetchall(),columns9)
 
         sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.ID_CardNo=Employment.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
         cursor.execute(sql10,resultEmployee[0]['citizenid'])
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
@@ -120,13 +120,13 @@ def QryEmployee_one_person(cursor):
         resultbro = toJson(cursor.fetchall(),columnsbro)
 
         sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.ID_CardNo=LanguagesSkill.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND LanguagesSkill.validstatus=1"
+        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
         cursor.execute(sql13,resultEmployee[0]['citizenid'])
         columns13 = [column[0] for column in cursor.description]
         result13 = toJson(cursor.fetchall(),columns13)
 
         sql14 = "SELECT * FROM Personal \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE ID_CardNo=%s AND validstatus=1"
         cursor.execute(sql14,resultEmployee[0]['citizenid'])
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
@@ -171,7 +171,7 @@ def QryEmployee_one_person(cursor):
         arr["Address"] = result
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
-        arr["Image_profile"] = encoded_Image
+        # arr["Image_profile"] = encoded_Image
         arr["ComputerSkill"] = result6
         arr["Education"] = result9
         arr["Employment"] = result10
