@@ -12,7 +12,7 @@ def QryContract(cursor):
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
-        WHERE employeeid=%s AND company.validstatus=1"
+        WHERE employee.employeeid=%s AND employee.validstatus=1 AND company.validstatus=1 AND Address.validstatus=1 AND Personal.validstatus=1"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -49,7 +49,7 @@ def QryContract(cursor):
         else:
              tranExpiryDate_idcard_Mounth="ธันวาคม"
 
-        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s"
+        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s AND employee_MD.validstatus=1 AND company.validstatus=1 AND position.validstatus=1"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)

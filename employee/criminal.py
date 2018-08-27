@@ -17,7 +17,7 @@ def QryCriminal(cursor):
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.ID_CardNo = %s """
+        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.ID_CardNo = %s AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 """
         cursor.execute(sql,data_new['ID_CardNo'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -29,7 +29,7 @@ def QryCriminal(cursor):
 @connect_sql()
 def QryEmployeeList(cursor):
     try:
-        sql = "SELECT NameTh,SurnameTh,NicknameTh,ID_CardNo FROM Personal"
+        sql = "SELECT NameTh,SurnameTh,NicknameTh,ID_CardNo FROM Personal WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -49,7 +49,7 @@ def QryAllEmployeeCrimeList(cursor):
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father'"""
+        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 """
         cursor.execute(sql4)
         columns = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns)
