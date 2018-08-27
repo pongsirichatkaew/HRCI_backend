@@ -60,6 +60,24 @@ def QryEmployee():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/EditEmployee_ga', methods=['POST'])
+@connect_sql()
+def EditEmployee_ga(cursor):
+    try:
+        data = request.json
+        source = data['source']
+        data_new = source
+
+        sqlUp = "UPDATE employee_ga SET validstatus=0,createby=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['createby'],data_new['employeeid']))
+
+        sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEm_ga,(employeeid,result14[0]['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
+        data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee_one_person', methods=['POST'])
 @connect_sql()
 def QryEmployee_one_person(cursor):
@@ -195,7 +213,7 @@ def EditEmployee(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -391,6 +409,33 @@ def InsertEmployeeHRCI_Management(cursor):
             request.form['email'],request.form['phone_company'],request.form['position_id'],\
             request.form['section_id'],request.form['org_name_id'],request.form['cost_center_name_id'],request.form['company_id'],request.form['Start_contract'],request.form['End_contract'],request.form['createby']))
         return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Insert_img_employee', methods=['POST'])
+@connect_sql()
+def Insert_img_employee(cursor):
+    try:
+        sqlQry = "SELECT citizenid FROM employee WHERE validstatus=1"
+        cursor.execute(sqlQry,request.form['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
+        path = 'uploads/employee/' + request.form['employeeid']
+        path2 = request.form['employeeid']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+            file.save(os.path.join(path, currentTime + '_employee_img.png'))
+            path_image = path2+'/'+currentTime+'_employee_img.png'
+        else:
+            return 'file is not allowed'
+        sql = "INSERT INTO Attachment(ID_CardNo,Type,PathFile) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(result['citizenid'],companyid_last,request.form['Type'],path_image))
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
