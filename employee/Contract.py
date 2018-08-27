@@ -12,7 +12,7 @@ def QryContract(cursor):
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
-        WHERE employeeid=%s"
+        WHERE employeeid=%s AND company.validstatus=1"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -109,7 +109,7 @@ def QryListContract(cursor):
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
                                       INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
-        "
+        WHERE employee.validstatus=1 AND company.validstatus=1 AND section.validstatus=1 AND position.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
