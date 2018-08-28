@@ -50,7 +50,7 @@ def EditEmployee_Deputy_Manager_Hr(cursor):
 @connect_sql()
 def QryEmployee_Deputy_Manager_Hr(cursor):
     try:
-        sql = "SELECT employee_Deputy_Manager_Hr.id, employee_Deputy_Manager_Hr.employee_Deputy_Manager_Hr_id, employee_Deputy_Manager_Hr.employeeid, company.companyid,company.companyname, employee_Deputy_Manager_Hr.name_Deputy_Manager_Hr, employee_Deputy_Manager_Hr.surname_Deputy_Manager_Hr, position.position_id,position.position_detail, employee_Deputy_Manager_Hr.email_Deputy_Manager_Hr FROM employee_Deputy_Manager_Hr INNER JOIN company ON employee_Deputy_Manager_Hr.companyid = company.companyid INNER JOIN position ON employee_Deputy_Manager_Hr.position_id = position.position_id WHERE employee_Deputy_Manager_Hr.validstatus =1"
+        sql = "SELECT employee_Deputy_Manager_Hr.id, employee_Deputy_Manager_Hr.employee_Deputy_Manager_Hr_id, employee_Deputy_Manager_Hr.employeeid, company.companyid,company.companyname, employee_Deputy_Manager_Hr.name_Deputy_Manager_Hr, employee_Deputy_Manager_Hr.surname_Deputy_Manager_Hr, position.position_id,position.position_detail, employee_Deputy_Manager_Hr.email_Deputy_Manager_Hr FROM employee_Deputy_Manager_Hr INNER JOIN company ON employee_Deputy_Manager_Hr.companyid = company.companyid INNER JOIN position ON employee_Deputy_Manager_Hr.position_id = position.position_id WHERE employee_Deputy_Manager_Hr.validstatus =1 AND company.validstatus = 1 AND position.validstatus = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

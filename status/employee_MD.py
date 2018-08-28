@@ -50,7 +50,7 @@ def EditEmployee_MD(cursor):
 @connect_sql()
 def QryEmployee_MD(cursor):
     try:
-        sql = "SELECT employee_MD.employee_md_id,employee_MD.employeeid,employee_MD.companyid,company.companyname,employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail,employee_MD.email_md FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.validstatus = 1"
+        sql = "SELECT employee_MD.employee_md_id,employee_MD.employeeid,employee_MD.companyid,company.companyname,employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail,employee_MD.email_md FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.validstatus = 1 AND company.validstatus = 1 AND position.validstatus = 1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
