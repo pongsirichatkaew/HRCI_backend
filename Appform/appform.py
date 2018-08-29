@@ -116,7 +116,7 @@ def UpdateEmpStatus():
         connection = mysql.connect()
         cursor = connection.cursor()
         sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new[0]['create_by']))
+        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['create_by']))
         connection.commit()
         connection.close()
 
