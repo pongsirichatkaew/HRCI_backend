@@ -49,6 +49,66 @@ def QryContract(cursor):
         else:
              tranExpiryDate_idcard_Mounth="ธันวาคม"
 
+        tranExpiryDate_start_work = result[0]['start_work']
+        start_work_expi = tranExpiryDate_start_work.split("-")
+        tranExpiryDate_start_work_Date = str(int(start_work_expi[0]))
+        tranExpiryDate_start_work_Year = str(int(start_work_expi[2])+543)
+        tranExpiryDate_start_work_Mounth = int(start_work_expi[1])
+        if   tranExpiryDate_start_work_Mounth==1:
+             tranExpiryDate_start_work_Mounth="มกราคม"
+        elif tranExpiryDate_start_work_Mounth==2:
+             tranExpiryDate_start_work_Mounth="กุมภาพันธ์"
+        elif tranExpiryDate_start_work_Mounth==3:
+             tranExpiryDate_start_work_Mounth="มีนาคม"
+        elif tranExpiryDate_start_work_Mounth==4:
+             tranExpiryDate_start_work_Mounth="เมษายน"
+        elif tranExpiryDate_start_work_Mounth==5:
+             tranExpiryDate_start_work_Mounth="พฤษภาคม"
+        elif tranExpiryDate_start_work_Mounth==6:
+             tranExpiryDate_start_work_Mounth="มิถุนายน"
+        elif tranExpiryDate_start_work_Mounth==7:
+             tranExpiryDate_start_work_Mounth="กรกฏาคม"
+        elif tranExpiryDate_start_work_Mounth==8:
+             tranExpiryDate_start_work_Mounth="สิงหาคม"
+        elif tranExpiryDate_start_work_Mounth==9:
+             tranExpiryDate_start_work_Mounth="กันยายน"
+        elif tranExpiryDate_start_work_Mounth==10:
+             tranExpiryDate_start_work_Mounth="ตุลาคม"
+        elif tranExpiryDate_start_work_Mounth==11:
+             tranExpiryDate_start_work_Mounth="พฤศจิกายน"
+        else:
+             tranExpiryDate_start_work_Mounth="ธันวาคม"
+
+        tranExpiryDate_EndWork_probation_ = result[0]['EndWork_probation']
+        EndWork_probation_expi = tranExpiryDate_EndWork_probation.split("-")
+        tranExpiryDate_EndWork_probation_Date = str(int(EndWork_probation_expi[0]))
+        tranExpiryDate_EndWork_probation_Year = str(int(EndWork_probation_expi[2])+543)
+        tranExpiryDate_EndWork_probation_Mounth = int(EndWork_probation_expi[1])
+        if   tranExpiryDate_EndWork_probation_Mounth==1:
+             tranExpiryDate_EndWork_probation_Mounth="มกราคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==2:
+             tranExpiryDate_EndWork_probation_Mounth="กุมภาพันธ์"
+        elif tranExpiryDate_EndWork_probation_Mounth==3:
+             tranExpiryDate_EndWork_probation_Mounth="มีนาคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==4:
+             tranExpiryDate_EndWork_probation_Mounth="เมษายน"
+        elif tranExpiryDate_EndWork_probation_Mounth==5:
+             tranExpiryDate_EndWork_probation_Mounth="พฤษภาคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==6:
+             tranExpiryDate_EndWork_probation_Mounth="มิถุนายน"
+        elif tranExpiryDate_EndWork_probation_Mounth==7:
+             tranExpiryDate_EndWork_probation_Mounth="กรกฏาคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==8:
+             tranExpiryDate_EndWork_probation_Mounth="สิงหาคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==9:
+             tranExpiryDate_EndWork_probation_Mounth="กันยายน"
+        elif tranExpiryDate_EndWork_probation_Mounth==10:
+             tranExpiryDate_EndWork_probation_Mounth="ตุลาคม"
+        elif tranExpiryDate_EndWork_probation_Mounth==11:
+             tranExpiryDate_EndWork_probation_Mounth="พฤศจิกายน"
+        else:
+             tranExpiryDate_EndWork_probation_Mounth="ธันวาคม"
+
         sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s AND employee_MD.validstatus=1 AND company.validstatus=1 AND position.validstatus=1"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
@@ -95,6 +155,12 @@ def QryContract(cursor):
         resultlast['ExpiryDate_idcard_Date'] = tranExpiryDate_idcard_Date
         resultlast['ExpiryDate_idcard_Year'] = tranExpiryDate_idcard_Year
         resultlast['ExpiryDate_idcard_Mounth'] = tranExpiryDate_idcard_Mounth
+        resultlast['start_work_Date'] = tranExpiryDate_start_work_Date
+        resultlast['start_work_Year'] = tranExpiryDate_start_work_Year
+        resultlast['start_work_Mounth'] = tranExpiryDate_start_work_Mounth
+        resultlast['EndWork_probation_Date'] = tranExpiryDate_EndWork_probation_Date
+        resultlast['EndWork_probation_Year'] = tranExpiryDate_EndWork_probation_Year
+        resultlast['EndWork_probation_Mounth'] = tranExpiryDate_EndWork_probation_Mounth
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)
