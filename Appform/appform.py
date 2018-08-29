@@ -298,7 +298,8 @@ def QryDatbaseAppform():
             cursor.execute(sqlcompafirst,data_new['company_id'])
             columnscompafirst = [column[0] for column in cursor.description]
             resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
-
+            coun_length =len(resultcompafirst[0]['acronym'])
+            coun_company = str(resultcompafirst[0]['acronym'])
             try:
                 sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
                 cursor.execute(sqlEmployee,data_new['company_id'])
@@ -306,13 +307,13 @@ def QryDatbaseAppform():
                 resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
                 Emp_last = resultEmployee[0]['employeeid']
             except Exception as e:
-                Emp_last = "---000"
+                Emp_last = coun_company+"000"
 
             now = datetime.now()
             date = str(int(now.year)+543)
             form_employee = date[2:]
             type = Emp_last
-            codelast = int(str(type[-3:]))+1
+            codelast = int(str(type[-coun_length:]))+1
             if   codelast<=9:
                  codelast=str(codelast)
                  codesumlast="00"+codelast
