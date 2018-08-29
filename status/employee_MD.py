@@ -91,3 +91,30 @@ def DeleteEmployee_MD(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmployeeid_hrci', methods=['POST'])
+@connect_sql2()
+def QryEmployeeid_hrci(cursor2):
+    try:
+        sql = "SELECT code FROM hrci  WHERE workstatus='Active' "
+        cursor2.execute(sql)
+        columns = [column[0] for column in cursor2.description]
+        result = toJson(cursor2.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmployee_hrci_by_employeeid', methods=['POST'])
+@connect_sql2()
+def QryEmployee_hrci_by_employeeid(cursor2):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT thainame,email FROM hrci  WHERE workstatus='Active'AND code=%s "
+        cursor2.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor2.description]
+        result = toJson(cursor2.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
