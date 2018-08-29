@@ -94,6 +94,7 @@ def QryEmployee_one_person(cursor):
         cursor.execute(sqlEmployee,data_new['employeeid'])
         columnsEmployee = [column[0] for column in cursor.description]
         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+        decodesalary = base64.b64decode(resultEmployee[0]['salary'])
 
         sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
         WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Address.validstatus=1"
@@ -190,6 +191,7 @@ def QryEmployee_one_person(cursor):
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         # arr["Image_profile"] = encoded_Image
+        arr["Decodesalary"] = decodesalary
         arr["ComputerSkill"] = result6
         arr["Education"] = result9
         arr["Employment"] = result10
@@ -382,8 +384,9 @@ def InsertEmployeeHRCI_Management(cursor):
             except Exception as e:
                 logserver(e)
 
+            encodedsalary = base64.b64encode(data_new['salary'])
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],data_new['salary'],data_new['email'],\
+            cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
             data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
 
@@ -393,7 +396,7 @@ def InsertEmployeeHRCI_Management(cursor):
             data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],data_new['salary'],\
+            cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,\
             data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
         return "Success"
