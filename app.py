@@ -27,7 +27,7 @@ def testbase64():
     # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
     #     encoded_string = base64.b64encode(image_file.read())
     # return jsonify(encoded_string)
-    connection = mysql3.connect()
+    connection = mysql4.connect()
     cursor = connection.cursor()
     dataInput = request.json
     sqlPath = "SELECT PathFile FROM Attachment \

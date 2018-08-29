@@ -299,15 +299,19 @@ def QryDatbaseAppform():
             columnscompafirst = [column[0] for column in cursor.description]
             resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
 
-            sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
-            cursor.execute(sqlEmployee,data_new['company_id'])
-            columnsEmployee = [column[0] for column in cursor.description]
-            resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+            try:
+                sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
+                cursor.execute(sqlEmployee,data_new['company_id'])
+                columnsEmployee = [column[0] for column in cursor.description]
+                resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+                Emp_last = resultEmployee[0]['employeeid']
+            except Exception as e:
+                Emp_last = "---000"
 
             now = datetime.now()
             date = str(int(now.year)+543)
             form_employee = date[2:]
-            type = resultEmployee[0]['employeeid']
+            type = Emp_last
             codelast = int(str(type[-3:]))+1
             if   codelast<=9:
                  codelast=str(codelast)
@@ -319,9 +323,10 @@ def QryDatbaseAppform():
                  codesumlast=str(codelast)
             first_character = resultcompafirst[0]['acronym']
             employeeid = first_character+form_employee+codesumlast
+            encodedsalary = base64.b64encode(data_new['salary'])
 
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
 
             sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -329,7 +334,7 @@ def QryDatbaseAppform():
             data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
         connection.commit()
         connection.close()
