@@ -101,26 +101,53 @@ def QryAppform_by_status():
 @app.route('/UpdateEmpStatus', methods=['POST'])
 def UpdateEmpStatus():
     try:
-        connection = mysql3.connect()
-        cursor = connection.cursor()
         data = request.json
         source = data['source']
         data_new = source
         status_id = data_new['status_id']
         EmploymentAppNo = data_new['EmploymentAppNo']
-        sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
-        cursor.execute(sqlUp,(status_id, EmploymentAppNo))
-        connection.commit()
-        connection.close()
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['create_by']))
+        sqlblack = "SELECT ID_CardNo FROM blacklist WHERE validstatus=1"
+        cursor.execute(sqlblack)
+        columnsblack = [column[0] for column in cursor.description]
+        resultblacklist = toJson(cursor.fetchall(),columnsblack)
         connection.commit()
         connection.close()
 
-        return "success"
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sqlqryIDcard,EmploymentAppNo)
+        columnsIDcard = [column[0] for column in cursor.description]
+        resultIDcard = toJson(cursor.fetchall(),columnsIDcard)
+        connection.commit()
+        connection.close()
+
+        if resultIDcard[0]['ID_CardNo']==resultblacklist[0]['ID_CardNo']:
+            connection = mysql3.connect()
+            cursor = connection.cursor()
+            sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
+            cursor.execute(sqlUp,(EmploymentAppNo))
+            connection.commit()
+            connection.close()
+            return "Blacklist"
+        else:
+            connection = mysql3.connect()
+            cursor = connection.cursor()
+            sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
+            cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+            connection.commit()
+            connection.close()
+
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
+            cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['create_by']))
+            connection.commit()
+            connection.close()
+            return "success"
     except Exception as e:
         logserver(e)
         return "fail"
