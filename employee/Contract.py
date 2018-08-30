@@ -115,10 +115,41 @@ def QryContract(cursor):
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
 
-        sql3 = "SELECT contract_id,Start_contract,End_contract,salary_thai,Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
+        sql3 = "SELECT contract_id,contract_date,salary_thai,Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
+
+        tranExpiryDate_contract_date = result3[0]['contract_date']
+        EndWork_contract_date_expi = tranExpiryDate_contract_date.split("-")
+        tranExpiryDate_contract_date_Date = str(int(EndWork_contract_date_expi[0]))
+        tranExpiryDate_contract_date_Year = str(int(EndWork_contract_date_expi[2])+543)
+        tranExpiryDate_contract_date_Mounth = int(EndWork_contract_date_expi[1])
+        if   tranExpiryDate_contract_date_Mounth==1:
+             tranExpiryDate_contract_date_Mounth="มกราคม"
+        elif tranExpiryDate_contract_date_Mounth==2:
+             tranExpiryDate_contract_date_Mounth="กุมภาพันธ์"
+        elif tranExpiryDate_contract_date_Mounth==3:
+             tranExpiryDate_contract_date_Mounth="มีนาคม"
+        elif tranExpiryDate_contract_date_Mounth==4:
+             tranExpiryDate_contract_date_Mounth="เมษายน"
+        elif tranExpiryDate_contract_date_Mounth==5:
+             tranExpiryDate_contract_date_Mounth="พฤษภาคม"
+        elif tranExpiryDate_contract_date_Mounth==6:
+             tranExpiryDate_contract_date_Mounth="มิถุนายน"
+        elif tranExpiryDate_contract_date_Mounth==7:
+             tranExpiryDate_contract_date_Mounth="กรกฏาคม"
+        elif tranExpiryDate_contract_date_Mounth==8:
+             tranExpiryDate_contract_date_Mounth="สิงหาคม"
+        elif tranExpiryDate_contract_date_Mounth==9:
+             tranExpiryDate_contract_date_Mounth="กันยายน"
+        elif tranExpiryDate_contract_date_Mounth==10:
+             tranExpiryDate_contract_date_Mounth="ตุลาคม"
+        elif tranExpiryDate_contract_date_Mounth==11:
+             tranExpiryDate_contract_date_Mounth="พฤศจิกายน"
+        else:
+             tranExpiryDate_contract_date_Mounth="ธันวาคม"
+
         tranCon_id = result3[0]['contract_id']
         if   tranCon_id<=9:
              tranCon=str(tranCon_id)
@@ -163,6 +194,9 @@ def QryContract(cursor):
         resultlast['EndWork_probation_Date'] = tranExpiryDate_EndWork_probation_Date
         resultlast['EndWork_probation_Year'] = tranExpiryDate_EndWork_probation_Year
         resultlast['EndWork_probation_Mounth'] = tranExpiryDate_EndWork_probation_Mounth
+        resultlast['EndWork_contract_date_Date'] = tranExpiryDate_contract_date_Date
+        resultlast['EndWork_contract_date_Year'] = tranExpiryDate_contract_date_Year
+        resultlast['EndWork_contract_date_Mounth'] = tranExpiryDate_contract_date_Mounth
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)
@@ -183,6 +217,26 @@ def QryListContract(cursor):
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Update_Contract_date', methods=['POST'])
+@connect_sql()
+def Update_Contract_date(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlUp = "UPDATE Contract SET contract_date=%s WHERE ID_CardNo=%s"
+        cursor.execute(sqlUp,(data_new['contract_date'],result['citizenid']))
+
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"

@@ -63,6 +63,38 @@ def InsertBlacklist():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/InsertBlacklist_Appform', methods=['POST'])
+def InsertBlacklist_Appform():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sql,data_new['EmploymentAppNo'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
+        cursor.execute(sqlUp,data_new['EmploymentAppNo'])
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions']))
+
+        sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn4,(data['EmploymentAppNo'],data['status_id'],data['create_by']))
+
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/DeleteBlacklist', methods=['POST'])
 def DeleteBlacklist():
     try:
@@ -272,8 +304,8 @@ def QryDatbaseAppform():
                 cursor.execute(sqlIn6,(result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
             i=0
             for i in xrange(len(result14)):
-                sqlInContract = "INSERT INTO Contract (ID_CardNo,Start_contract,End_contract,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['Start_contract'],data_new['End_contract'],data_new['salary_thai'],data_new['Authority_Distrinct_Id_Card']))
+                sqlInContract = "INSERT INTO Contract (ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s)"
+                cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['salary_thai'],data_new['Authority_Distrinct_Id_Card']))
             i=0
             for i in xrange(len(result9)):
                 sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
