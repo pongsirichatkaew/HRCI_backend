@@ -16,6 +16,7 @@ def QryContract(cursor):
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        decodesalary = base64.b64decode(result[0]['salary'])
         tranImage = 'uploads/'+result[0]['imageName']
         with open(tranImage, 'rb') as image_file:
             encoded_Image = base64.b64encode(image_file.read())
@@ -79,7 +80,7 @@ def QryContract(cursor):
         else:
              tranExpiryDate_start_work_Mounth="ธันวาคม"
 
-        tranExpiryDate_EndWork_probation_ = result[0]['EndWork_probation']
+        tranExpiryDate_EndWork_probation = result[0]['EndWork_probation']
         EndWork_probation_expi = tranExpiryDate_EndWork_probation.split("-")
         tranExpiryDate_EndWork_probation_Date = str(int(EndWork_probation_expi[0]))
         tranExpiryDate_EndWork_probation_Year = str(int(EndWork_probation_expi[2])+543)
@@ -152,6 +153,7 @@ def QryContract(cursor):
         resultlast["Employee_MD"] = result2
         resultlast["Contract_id"] = codesumlast
         resultlast["Contract"] = result3
+        resultlast["Decodesalary"] = decodesalary
         resultlast['ExpiryDate_idcard_Date'] = tranExpiryDate_idcard_Date
         resultlast['ExpiryDate_idcard_Year'] = tranExpiryDate_idcard_Year
         resultlast['ExpiryDate_idcard_Mounth'] = tranExpiryDate_idcard_Mounth
