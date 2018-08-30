@@ -63,6 +63,38 @@ def InsertBlacklist():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/InsertBlacklist_Appform', methods=['POST'])
+def InsertBlacklist_Appform():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sql,data_new['EmploymentAppNo'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
+        cursor.execute(sqlUp,data_new['EmploymentAppNo'])
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions']))
+
+        sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn4,(data['EmploymentAppNo'],data['status_id'],data['create_by']))
+
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/DeleteBlacklist', methods=['POST'])
 def DeleteBlacklist():
     try:
@@ -101,26 +133,55 @@ def QryAppform_by_status():
 @app.route('/UpdateEmpStatus', methods=['POST'])
 def UpdateEmpStatus():
     try:
+        data = request.json
+        # source = data['source']
+        # data_new = source
+        status_id = data['status_id']
+        EmploymentAppNo = data['EmploymentAppNo']
+
         connection = mysql3.connect()
         cursor = connection.cursor()
-        data = request.json
-        source = data['source']
-        data_new = source
-        status_id = data_new['status_id']
-        EmploymentAppNo = data_new['EmploymentAppNo']
-        sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
-        cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+        sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
+        cursor.execute(sqlqryIDcard,EmploymentAppNo)
+        columnsIDcard = [column[0] for column in cursor.description]
+        resultIDcard = toJson(cursor.fetchall(),columnsIDcard)
         connection.commit()
         connection.close()
+        try:
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sqlblack = "SELECT ID_CardNo FROM blacklist WHERE ID_CardNo=%s AND validstatus=1"
+            cursor.execute(sqlblack,resultIDcard[0]['ID_CardNo'])
+            columnsblack = [column[0] for column in cursor.description]
+            resultblacklist = toJson(cursor.fetchall(),columnsblack)
+            connection.commit()
+            connection.close()
 
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new[0]['create_by']))
-        connection.commit()
-        connection.close()
+            if len(resultblacklist) != 0:
+               connection = mysql3.connect()
+               cursor = connection.cursor()
+               sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
+               cursor.execute(sqlUp,EmploymentAppNo)
+               connection.commit()
+               connection.close()
+               return "Blacklist"
+            else:
+               connection = mysql3.connect()
+               cursor = connection.cursor()
+               sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
+               cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+               connection.commit()
+               connection.close()
 
-        return "success"
+               connection = mysql.connect()
+               cursor = connection.cursor()
+               sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
+               cursor.execute(sqlIn4,(data['EmploymentAppNo'],data['status_id'],data['create_by']))
+               connection.commit()
+               connection.close()
+               return "Success"
+        except Exception as e:
+            logserver(e)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -243,8 +304,8 @@ def QryDatbaseAppform():
                 cursor.execute(sqlIn6,(result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
             i=0
             for i in xrange(len(result14)):
-                sqlInContract = "INSERT INTO Contract (ID_CardNo,Start_contract,End_contract,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['Start_contract'],data_new['End_contract'],data_new['salary_thai'],data_new['Authority_Distrinct_Id_Card']))
+                sqlInContract = "INSERT INTO Contract (ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s)"
+                cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['salary_thai'],data_new['Authority_Distrinct_Id_Card']))
             i=0
             for i in xrange(len(result9)):
                 sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -298,17 +359,22 @@ def QryDatbaseAppform():
             cursor.execute(sqlcompafirst,data_new['company_id'])
             columnscompafirst = [column[0] for column in cursor.description]
             resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
-
-            sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
-            cursor.execute(sqlEmployee,data_new['company_id'])
-            columnsEmployee = [column[0] for column in cursor.description]
-            resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+            coun_length =len(resultcompafirst[0]['acronym'])
+            coun_company = str(resultcompafirst[0]['acronym'])
+            try:
+                sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
+                cursor.execute(sqlEmployee,data_new['company_id'])
+                columnsEmployee = [column[0] for column in cursor.description]
+                resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+                Emp_last = resultEmployee[0]['employeeid']
+            except Exception as e:
+                Emp_last = coun_company+"000"
 
             now = datetime.now()
             date = str(int(now.year)+543)
             form_employee = date[2:]
-            type = resultEmployee[0]['employeeid']
-            codelast = int(str(type[-3:]))+1
+            type = Emp_last
+            codelast = int(str(type[-coun_length:]))+1
             if   codelast<=9:
                  codelast=str(codelast)
                  codesumlast="00"+codelast
@@ -319,9 +385,10 @@ def QryDatbaseAppform():
                  codesumlast=str(codelast)
             first_character = resultcompafirst[0]['acronym']
             employeeid = first_character+form_employee+codesumlast
+            encodedsalary = base64.b64encode(data_new['salary'])
 
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
 
             sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -329,7 +396,7 @@ def QryDatbaseAppform():
             data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],data_new['salary'],data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM_pro,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
         connection.commit()
         connection.close()
