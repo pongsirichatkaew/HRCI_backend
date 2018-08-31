@@ -194,12 +194,13 @@ def QryContract(cursor):
         resultlast['EndWork_probation_Date'] = tranExpiryDate_EndWork_probation_Date
         resultlast['EndWork_probation_Year'] = tranExpiryDate_EndWork_probation_Year
         resultlast['EndWork_probation_Mounth'] = tranExpiryDate_EndWork_probation_Mounth
-        resultlast['EndWork_contract_date_Date'] = tranExpiryDate_contract_date_Date
-        resultlast['EndWork_contract_date_Year'] = tranExpiryDate_contract_date_Year
-        resultlast['EndWork_contract_date_Mounth'] = tranExpiryDate_contract_date_Mounth
+        resultlast['Start_contract_date_Date'] = tranExpiryDate_contract_date_Date
+        resultlast['Start_contract_date_Year'] = tranExpiryDate_contract_date_Year
+        resultlast['Start_contract_date_Mounth'] = tranExpiryDate_contract_date_Mounth
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)
+        return "fail"
 @app.route('/QryListContract', methods=['POST'])
 @connect_sql()
 def QryListContract(cursor):
