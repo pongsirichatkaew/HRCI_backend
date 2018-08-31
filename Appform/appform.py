@@ -104,7 +104,7 @@ def DeleteBlacklist():
         source = dataInput['source']
         data_new = source
         sqlUp = "UPDATE blacklist SET validstatus=0,createby=%s WHERE ID_CardNo=%s"
-        cursor3.execute(sqlUp,(data_new['createby'],data_new['ID_CardNo']))
+        cursor.execute(sqlUp,(data_new['createby'],data_new['cardNo']))
         connection.commit()
         connection.close()
         return "Success"
