@@ -227,15 +227,13 @@ def Update_Contract_date(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        
         sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
         sqlUp = "UPDATE Contract SET contract_date=%s WHERE ID_CardNo=%s"
-        cursor.execute(sqlUp,(data_new['contract_date'],result['citizenid']))
-
+        cursor.execute(sqlUp,(data_new['contract_date'],result[0]['citizenid']))
         return "success"
     except Exception as e:
         logserver(e)
