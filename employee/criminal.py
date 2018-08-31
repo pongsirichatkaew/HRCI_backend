@@ -29,7 +29,7 @@ def QryCriminal(cursor):
 @connect_sql()
 def QryEmployeeList(cursor):
     try:
-        sql = "SELECT NameTh,SurnameTh,NicknameTh,ID_CardNo FROM Personal WHERE validstatus=1"
+        sql = "SELECT * FROM employee WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
