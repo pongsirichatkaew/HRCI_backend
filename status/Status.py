@@ -10,14 +10,14 @@ def InsertStatus(cursor):
         source = dataInput['source']
         data_new = source
 
-        sqlQry = "SELECT status_id FROM status WHERE validstatus=1 ORDER BY status_id DESC LIMIT 1"
+        sqlQry = "SELECT status_id FROM status ORDER BY status_id DESC LIMIT 1"
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         status_id_last=result[0]['status_id']+1
 
         sql = "INSERT INTO status (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor3.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
+        cursor.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
         # sql = "INSERT INTO status (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
         # cursor.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color']))
         return "success"
@@ -92,7 +92,7 @@ def InsertStatus_Appform(cursor3):
         source = dataInput['source']
         data_new = source
 
-        sqlQry = "SELECT status_id FROM status_hrci WHERE validstatus=1 ORDER BY status_id DESC LIMIT 1"
+        sqlQry = "SELECT status_id FROM status_hrci ORDER BY status_id DESC LIMIT 1"
         cursor3.execute(sqlQry)
         columns = [column[0] for column in cursor3.description]
         result = toJson(cursor3.fetchall(),columns)

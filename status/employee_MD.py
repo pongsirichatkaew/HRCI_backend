@@ -17,8 +17,8 @@ def InsertEmployee_MD(cursor):
 
         # sql = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         # cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md'],data_new['createby']))
-        sql = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md']))
+        sql = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(employee_md_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -40,8 +40,8 @@ def EditEmployee_MD(cursor):
 
         # sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,company_id,name_md,surname_md,position,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         # cursor.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['company_id'],data_new['name_md'],data_new['surname_md'],data_new['position'],data_new['email_md'],data_new['createby']))
-        sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md']))
+        sqlIn = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['employee_md_id'],data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -85,8 +85,8 @@ def DeleteEmployee_MD(cursor):
         sql_OldTimeEmployee_MD = "UPDATE employee_MD SET validstatus=0 WHERE employee_md_id=%s"
         cursor.execute(sql_OldTimeEmployee_MD,(data_new['employee_md_id']))
 
-        sql_NewTimeEmployee_MD = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md,validstatus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeEmployee_MD,(data_new['employee_md_id'],data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md'],0))
+        sql_NewTimeEmployee_MD = "INSERT INTO employee_MD (employee_md_id,employeeid,companyid,name_md,surname_md,position_id,email_md,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeEmployee_MD,(data_new['employee_md_id'],data_new['employeeid'],data_new['companyid'],data_new['name_md'],data_new['surname_md'],data_new['position_id'],data_new['email_md'],data_new['createby'],0))
         return "success"
     except Exception as e:
         logserver(e)
@@ -107,14 +107,22 @@ def QryEmployeeid_hrci(cursor2):
 @connect_sql2()
 def QryEmployee_hrci_by_employeeid(cursor2):
     try:
-        dataInput = request.json
-        source = dataInput['source']
+        data_new = request.json
+        source = data_new['source']
         data_new = source
         sql = "SELECT thainame,email FROM hrci  WHERE workstatus='Active'AND code=%s "
         cursor2.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor2.description]
         result = toJson(cursor2.fetchall(),columns)
-        return jsonify(result)
+        test = result[0]['thainame']
+        typename = test.split(" ")
+        name = typename[0]
+        surname = typename[1]
+        resultlast={}
+        resultlast['email'] = result[0]['email']
+        resultlast['name'] = name
+        resultlast['surname'] = surname
+        return jsonify(resultlast)
     except Exception as e:
         logserver(e)
         return "fail"

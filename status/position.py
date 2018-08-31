@@ -15,10 +15,10 @@ def InsertPosition(cursor):
         result = toJson(cursor.fetchall(),columns)
         position_id_last=result[0]['position_id']+1
 
-        # sql = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
-        # cursor.execute(sql,(position_id_last,data_new['position_detail'],data_new['createby']))
-        sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sql,(position_id_last,data_new['position_detail']))
+        sql = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(position_id_last,data_new['position_detail'],data_new['createby']))
+        # sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
+        # cursor.execute(sql,(position_id_last,data_new['position_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -38,10 +38,10 @@ def EditPosition(cursor):
         sqlUp = "UPDATE position SET validstatus=0 WHERE position_id=%s"
         cursor.execute(sqlUp,(data_new['position_id']))
 
-        # sqlIn = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
-        # cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail'],data_new['createby']))
-        sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail']))
+        sqlIn = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail'],data_new['createby']))
+        # sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
+        # cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -69,10 +69,10 @@ def DeletePosition(cursor):
         sql_OldTimePosition = "UPDATE position SET validstatus=0 WHERE position_id=%s"
         cursor.execute(sql_OldTimePosition,(data_new['position_id']))
 
-        # sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0,data_new['createby']))
-        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
-        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0))
+        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0,data_new['createby']))
+        # sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
+        # cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0))
         return "success"
     except Exception as e:
         logserver(e)

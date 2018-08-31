@@ -17,8 +17,8 @@ def InsertCost_center(cursor):
 
         # sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
         # cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby']))
-        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email']))
+        sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -40,8 +40,8 @@ def EditCost_center(cursor):
 
         # sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
         # cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email'],data_new['createby']))
-        sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email']))
+        sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -69,8 +69,8 @@ def DeleteCost_center(cursor):
         sql_OldTimeCost_center = "UPDATE cost_center_name SET validstatus=0 WHERE cost_center_name_id=%s"
         cursor.execute(sql_OldTimeCost_center,(data_new['cost_center_name_id']))
 
-        sql_NewTimeCost_center = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,validstatus) VALUES (%s,%s,%s)"
-        cursor.execute(sql_NewTimeCost_center,(data_new['cost_center_name_id'],data_new['cost_detail'],0))
+        sql_NewTimeCost_center = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,createby,validstatus) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeCost_center,(data_new['cost_center_name_id'],data_new['cost_detail'],data_new['createby'],0))
         return "success"
     except Exception as e:
         logserver(e)

@@ -15,10 +15,10 @@ def InsertEmployee_Deputy_Manager_Hr(cursor):
         result = toJson(cursor.fetchall(),columns)
         employee_Deputy_Manager_Hr_id_last=result[0]['employee_Deputy_Manager_Hr_id']+1
 
-        # sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,company_id,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_Deputy_Manager_Hr,email_Deputy_Manager_Hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sql,(employee_Deputy_Manager_Hr_id_last,data_new['employeeid'],data_new['company_id'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_Deputy_Manager_Hr'],data_new['email_Deputy_Manager_Hr'],data_new['createby']))
-        sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(employee_Deputy_Manager_Hr_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr']))
+        sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(employee_Deputy_Manager_Hr_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr'],data_new['createby']))
+        # sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(employee_Deputy_Manager_Hr_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -38,10 +38,10 @@ def EditEmployee_Deputy_Manager_Hr(cursor):
         sqlUp = "UPDATE employee_Deputy_Manager_Hr SET validstatus=0 WHERE employee_Deputy_Manager_Hr_id=%s"
         cursor.execute(sqlUp,(data_new['employee_Deputy_Manager_Hr_id']))
 
-        # sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_Deputy_Manager_Hr,email_Deputy_Manager_Hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sql,(result[0]['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_Deputy_Manager_Hr'],data_new['email_Deputy_Manager_Hr'],data_new['createby']))
-        sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(result[0]['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr']))
+        sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(result[0]['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr'],data_new['createby']))
+        # sql = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sql,(result[0]['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -85,8 +85,8 @@ def DeleteEmployee_Deputy_Manager_Hr(cursor):
         sql_OldTimeEmployee_Deputy_Manager_Hr = "UPDATE employee_Deputy_Manager_Hr SET validstatus=0 WHERE employee_Deputy_Manager_Hr_id=%s"
         cursor.execute(sql_OldTimeEmployee_Deputy_Manager_Hr,(data_new['employee_Deputy_Manager_Hr_id']))
 
-        sql_NewTimeEmployee_Deputy_Manager_Hr = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr,validstatus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeEmployee_Deputy_Manager_Hr,(data_new['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr'],0))
+        sql_NewTimeEmployee_Deputy_Manager_Hr = "INSERT INTO employee_Deputy_Manager_Hr (employee_Deputy_Manager_Hr_id,employeeid,companyid,name_Deputy_Manager_Hr,surname_Deputy_Manager_Hr,position_id,email_Deputy_Manager_Hr,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_NewTimeEmployee_Deputy_Manager_Hr,(data_new['employee_Deputy_Manager_Hr_id'],data_new['employeeid'],data_new['companyid'],data_new['name_Deputy_Manager_Hr'],data_new['surname_Deputy_Manager_Hr'],data_new['position_id'],data_new['email_Deputy_Manager_Hr'],data_new['createby'],0))
         return "success"
     except Exception as e:
         logserver(e)
