@@ -87,7 +87,7 @@ def InsertBlacklist_Appform():
         cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions']))
 
         sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn4,(data['EmploymentAppNo'],data['status_id'],data['create_by']))
+        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['createby']))
 
         connection.commit()
         connection.close()
@@ -119,7 +119,7 @@ def QryAppform_by_status():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail, status_hrci.font_color, status_hrci.path_color
+        sql = """SELECT Personal.EmploymentAppNo, Personal.AppliedPosition1, Personal.AppliedPosition2, Personal.StartExpectedSalary, Personal.EndExpectedSalary, Personal.NameTh, Personal.SurnameTh, Personal.Mobile, Personal.Email, Personal.date, status_hrci.status_detail, status_hrci.status_id, status_hrci.font_color, status_hrci.path_color
         FROM Personal INNER JOIN status_hrci ON Personal.status_id_hrci = status_hrci.status_id WHERE status_hrci.status_id=%s AND status_hrci.validstatus = 1 ORDER BY Personal.EmploymentAppNo DESC"""
         cursor.execute(sql,data_new['status_id'])
         columns = [column[0] for column in cursor.description]
@@ -134,10 +134,10 @@ def QryAppform_by_status():
 def UpdateEmpStatus():
     try:
         data = request.json
-        # source = data['source']
-        # data_new = source
-        status_id = data['status_id']
-        EmploymentAppNo = data['EmploymentAppNo']
+        source = data['source']
+        data_new = source
+        status_id = data_new['status_id']
+        EmploymentAppNo = data_new['EmploymentAppNo']
 
         connection = mysql3.connect()
         cursor = connection.cursor()
@@ -176,10 +176,10 @@ def UpdateEmpStatus():
                connection = mysql.connect()
                cursor = connection.cursor()
                sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
-               cursor.execute(sqlIn4,(data['EmploymentAppNo'],data['status_id'],data['create_by']))
+               cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['create_by']))
                connection.commit()
                connection.close()
-               return "Success"
+               return "success"
         except Exception as e:
             logserver(e)
     except Exception as e:
