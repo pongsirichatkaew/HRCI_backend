@@ -425,8 +425,20 @@ def Insert_img_employee(cursor):
         else:
             return 'file is not allowed'
         sql = "INSERT INTO Attachment(ID_CardNo,Type,PathFile) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(result['citizenid'],companyid_last,request.form['Type'],path_image))
+        cursor.execute(sql,(result['citizenid'],request.form['Type'],path_image))
         return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_type_image', methods=['POST'])
+@connect_sql()
+def Qry_type_image(cursor):
+    try:
+        sql = "SELECT * FROM Type_upload_image"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
