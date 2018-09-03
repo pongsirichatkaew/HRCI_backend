@@ -76,8 +76,6 @@ def InsertBlacklist_Appform():
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
-        cursor.execute(sqlUp,data_new['EmploymentAppNo'])
         connection.commit()
         connection.close()
 
@@ -89,6 +87,22 @@ def InsertBlacklist_Appform():
         sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
         cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['status_id'],data_new['createby']))
 
+        connection.commit()
+        connection.close()
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/UpdateStatusBlacklist_appform', methods=['POST'])
+def UpdateStatusBlacklist_appform():
+    try:
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE Personal SET status_id_hrci=5 WHERE EmploymentAppNo=%s"
+        cursor.execute(sqlUp,data_new['EmploymentAppNo'])
         connection.commit()
         connection.close()
         return "Success"
