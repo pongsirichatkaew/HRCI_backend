@@ -19,29 +19,25 @@ from Appform.appform import *
 def hello():
     return 'hello'
 
-@app.route('/testbase64', methods=['POST'])
-def testbase64():
-    # with open('https://www.kroger.com/product/images/medium/front/0000000003283', 'rb') as image_file:
-    #     encoded_string = base64.b64encode(image_file.read())
-    # return jsonify(encoded_string)
-    # with open('C:\\work\\HRCI_Fornt\\static\\img\\14434602881204.png', 'rb') as image_file:
-    #     encoded_string = base64.b64encode(image_file.read())
-    # return jsonify(encoded_string)
-    connection = mysql4.connect()
-    cursor = connection.cursor()
+@app.route('/unit_process', methods=['POST'])
+def unit_process():
     dataInput = request.json
-    sqlPath = "SELECT PathFile FROM Attachment \
-    WHERE EmploymentAppNo=%s AND Type='profile_image'"
-    cursor.execute(sqlPath,dataInput['EmploymentAppNo'])
-    columnsPath = [column[0] for column in cursor.description]
-    resulPath = toJson(cursor.fetchall(),columnsPath)
-    connection.commit()
-    connection.close()
-    test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
-    # with open(test, 'rb') as image_file:
-    #     encoded_Image = base64.b64encode(image_file.read())
-    encoded_Image = base64.b64encode(test)
-    return jsonify(encoded_Image)
+    saraly = dataInput['salary']
+    thai_number = ("ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า")
+    unit = ("", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน")
+    length = len(saraly) > 1
+    result = ''
+    for index, current in enumerate(map(int, saraly)):
+        if current:
+            if index:
+                result = unit[index] + result
+            if length and current == 1 and index == 0:
+                result += 'เอ็ด'
+            elif index == 1 and current == 2:
+                result = 'ยี่' + result
+            elif index != 1 or current != 1:
+                result = thai_number[current] + result
+    return jsonify(result)
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
     try:

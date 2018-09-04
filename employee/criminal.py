@@ -104,3 +104,93 @@ def QryAllEmployee_by_month(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+# @app.route('/export', methods=['POST'])
+# # from flask import send_file
+# # import xlsxwriter
+# def export():
+#     params = request.get_json()
+#     print params['startdate']
+#     startdate = datetime.strptime(params['startdate'], "%Y-%m-%d")
+#     enddate = datetime.strptime(params['enddate'], "%Y-%m-%d")
+#     days = []
+#     for dt in daterange(startdate, enddate):
+#         days.append(dt.strftime("%Y-%m-%d"))
+#     datedata = []
+#     try:
+#         conn = mysql.connect()
+#         cursor = conn.cursor()
+#         print "connect DB"
+#     except Exception as e:
+#         print "can't connect database", e
+#
+#     for i in days:
+#         querydate = '%s %%' % i
+#         # print querydate
+#         try:
+#             query_string = "SELECT * FROM bill INNER JOIN bill_status ON bill.b_id = bill_status.b_id WHERE bill_status.create_at LIKE '%s' AND bill_status.status = 'Approved';" % querydate
+#             cursor.execute(query_string)
+#         except Exception as e:
+#             print "Error:", e
+#         data = cursor.fetchall()
+#         # print data
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(data, columns)
+#         # print len(result)
+#         if result != []:
+#             datedata.append(result)
+#
+#     workbook = xlsxwriter.Workbook('Bill_list.xlsx')
+#     # Create a format to use in the merged range.
+#
+#     merge_format = workbook.add_format({
+#         'bold': 1.5,
+#         'align': 'center',
+#         'valign': 'vcenter',
+#         'font_size': '14'
+#     })
+#     cell_format = workbook.add_format({'bold': True,'align': 'center',
+#         'valign': 'vcenter'})
+#     data_format = workbook.add_format({'text_wrap': True})
+#     # data_format.set_text_wrap()
+#     worksheet = workbook.add_worksheet()
+#
+#
+#     for (r, row) in enumerate(datedata):
+#         # print datedata[r]['b_vendorname']
+#         for c, col in enumerate(row):
+#             # worksheet.write(r, c, col)
+#             worksheet.merge_range('A1:J1', 'รายชื่อผู้วางบิล', merge_format)
+#             for i in range(1,10):
+#                 worksheet.set_column(c+i, c+i, 20, data_format)
+#             worksheet.write('A2', 'ลำดับ', cell_format)
+#             worksheet.write('B2', 'บริษัท', cell_format)
+#             worksheet.write('C2', 'เลข invoice', cell_format)
+#             worksheet.write('D2', 'ที่อยู่', cell_format)
+#             worksheet.write('E2', 'อีเมล', cell_format)
+#             worksheet.write('F2', 'รายละเอียด', cell_format)
+#             worksheet.write('G2', 'ธนาคาร', cell_format)
+#             worksheet.write('H2', 'ราคา', cell_format)
+#             worksheet.write('I2', 'ภาษีหัก ณ ที่จ่าย', cell_format)
+#             worksheet.write('J2', 'ราคาสุทธิ', cell_format)
+#
+#             worksheet.write('A'+str(r+3), r+1)
+#             worksheet.write('B' + str(r + 3), row[0]['b_vendorname'], data_format)
+#             worksheet.write('C' + str(r + 3), row[0]['b_invoice'], data_format)
+#             worksheet.write('D' + str(r + 3), row[0]['b_vendoraddress'], data_format)
+#             worksheet.write('E' + str(r + 3), row[0]['b_vendoremail'], data_format)
+#             worksheet.write('F' + str(r + 3), row[0]['b_detail'], data_format)
+#             worksheet.write('G' + str(r + 3), row[0]['bank_name'], data_format)
+#             worksheet.write('H' + str(r + 3), row[0]['b_price'], data_format)
+#             worksheet.write('I' + str(r + 3), row[0]['b_tax'], data_format)
+#             worksheet.write('J' + str(r + 3), row[0]['b_totalprice'], data_format)
+#
+#     workbook.close()
+#     conn.close()
+#     # return "Success"
+#     directory = '/code/'
+#     filename = 'Bill_list.xlsx'
+#     path = directory + filename
+#     return send_file(path,
+#                           mimetype='application/vnd.ms-excel',
+#                             as_attachment=True,
+#                             attachment_filename=filename)
