@@ -139,32 +139,28 @@ def export():
     data_format = workbook.add_format({'text_wrap': True})
     data_format.set_text_wrap()
     worksheet = workbook.add_worksheet()
-    for (r, row) in enumerate(result):
-        print row['homeAmphur']
-        for c, col in enumerate(row):
-            worksheet.write(r, c, col)
-            worksheet.merge_range('A1:J1', 'รายชื่อผู้ตรวจสอบประวัติอาชญากรรม', merge_format)
-            for i in range(1,10):
-                worksheet.set_column(c+i, c+i, 20, data_format)
-            worksheet.write('A2', 'ลำดับ', cell_format)
-            worksheet.write('B2', 'ชื่อ-ชื่อสกุล', cell_format)
-            worksheet.write('C2', 'เลขบัตรประจำตัวประชาชน', cell_format)
-            worksheet.write('D2', 'วัน/เดือน/ปีเกิด', cell_format)
-            worksheet.write('E2', 'ชื่อบิดา-มารดา', cell_format)
-            worksheet.write('F2', 'ที่อยู่ปัจจุบันและภูมิลำเนา', cell_format)
-
-        worksheet.write('A'+str(r+3), r+1)
-        worksheet.write('B' + str(r + 3),row['NameTh'] + ' ' + row['SurnameTh'], data_format)
-        worksheet.write('C' + str(r + 3),row['ID_CardNo'], data_format)
-        worksheet.write('D' + str(r + 3),row['Birthdate'], data_format)
-        worksheet.write('E' + str(r + 3),row['fatherName'] + ' ' + row['fatherSurname'] + '\n' + row['motherName'] + ' ' + row['motherSurname'], data_format)
-        worksheet.write('F' + str(r + 3),'ที่อยู่ปัจจุบัน : บ้านเลขที่ ' + row['HouseNo'] + ' ถนน ' + row['Street'] + ' อำเภอ/เขต ' \
-        + row['DISTRICT_ID'] + ' ตำบล/แขวง ' + row['AMPHUR_ID'] + ' จังหวัด ' + row['PROVINCE_ID'] + ' รหัสไปรษณีย์ ' +\
-        row['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ ' + row['homeHouseNo'] + ' ถนน ' + row['homeStreet'] + ' อำเภอ/เขต ' + \
-        row['homeDistrict'] + ' ตำบล/แขวง ' + row['homeAmphur'] + ' จังหวัด ' + row['homeProvince'] + ' รหัสไปรษณีย์ ' + row['homePostCode'], data_format)
+    worksheet.merge_range('A1:J1', 'รายชื่อผู้ตรวจสอบประวัติอาชญากรรม'.decode('utf-8'), merge_format)
+    worksheet.write('A2', 'ลำดับ'.decode('utf-8'), cell_format)
+    worksheet.write('B2', 'ชื่อ-ชื่อสกุล'.decode('utf-8'), cell_format)
+    worksheet.write('C2', 'เลขบัตรประจำตัวประชาชน'.decode('utf-8'), cell_format)
+    worksheet.write('D2', 'วัน/เดือน/ปีเกิด'.decode('utf-8'), cell_format)
+    worksheet.write('E2', 'ชื่อบิดา-มารดา'.decode('utf-8'), cell_format)
+    worksheet.write('F2', 'ที่อยู่ปัจจุบันและภูมิลำเนา'.decode('utf-8'), cell_format)
+    i=0
+    for i in xrange(len(result)):
+        worksheet.write('A'+str(i+3), i+1)
+        worksheet.write('B' + str(i + 3),result[i]['NameTh'] + ' ' + result[i]['SurnameTh'], data_format)
+        worksheet.write('C' + str(i + 3),result[i]['ID_CardNo'], data_format)
+        worksheet.write('D' + str(i + 3),result[i]['Birthdate'], data_format)
+        worksheet.write('E' + str(i + 3),result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname'], data_format)
+        worksheet.write('F' + str(i + 3),'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
+        + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
+        result[i]['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ '.decode('utf-8') + result[i]['homeHouseNo'] + ' ถนน '.decode('utf-8') + result[i]['homeStreet'] + ' อำเภอ/เขต '.decode('utf-8') + \
+        result[i]['homeDistrict'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['homeAmphur'] + ' จังหวัด '.decode('utf-8') + result[i]['homeProvince'] + ' รหัสไปรษณีย์ '.decode('utf-8') + result[i]['homePostCode'], data_format)
     workbook.close()
-    conn.close()
-    return "Success"
+    connection.commit()
+    connection.close()
+    # return "Success"
     directory = '/code/'
     filename = 'Criminal.xlsx'
     path = directory + filename
