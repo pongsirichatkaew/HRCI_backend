@@ -129,7 +129,7 @@ def EditStatus_Appform(cursor3):
 @connect_sql3()
 def QryStatus_Appform(cursor3):
     try:
-        sql = "SELECT id,status_id,status_detail,path_color,font_color,validstatus FROM status_hrci WHERE validstatus = 1"
+        sql = "SELECT id,status_id,status_detail,path_color,font_color,validstatus FROM status_hrci WHERE validstatus = 1 ORDER BY status_id DESC"
         cursor3.execute(sql)
         columns = [column[0] for column in cursor3.description]
         result = toJson(cursor3.fetchall(),columns)
