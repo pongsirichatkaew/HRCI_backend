@@ -309,10 +309,31 @@ def QryDatbaseAppform():
         for i in xrange(len(result6)):
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
             cursor.execute(sqlIn6,(result6[i]['ID_CardNo'],result6[i]['ComSkill'],result6[i]['Level']))
+
+        salary = data_new['salary']
+        salary= (str(salary)[::-1])
+        thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
+        unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
+        length = len(salary) > 1
+        resultSalary = ""
+        for index, current in enumerate(map(int, salary)):
+            # print index
+            # print "test"
+            print current
+            if current:
+                if index:
+                   resultSalary = unit[index] + resultSalary
+                if length and current == 1 and index == 0:
+                    resultSalary += 'เอ็ด'
+                elif index == 1 and current == 2:
+                    resultSalary = 'ยี่' + resultSalary
+                elif index != 1 or current != 1:
+                    resultSalary = thai_number[current] + resultSalary
+
         i=0
         for i in xrange(len(result14)):
             sqlInContract = "INSERT INTO Contract (ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s)"
-            cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],data_new['salary_thai'],data_new['Authority_Distrinct_Id_Card']))
+            cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],resultSalary,data_new['Authority_Distrinct_Id_Card']))
         i=0
         for i in xrange(len(result9)):
             sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"

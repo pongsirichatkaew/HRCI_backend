@@ -18,26 +18,6 @@ from Appform.appform import *
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'hello'
-
-@app.route('/unit_process', methods=['POST'])
-def unit_process():
-    dataInput = request.json
-    saraly = dataInput['salary']
-    thai_number = ("ศูนย์", "หนึ่ง", "สอง", "สาม", "สี่", "ห้า", "หก", "เจ็ด", "แปด", "เก้า")
-    unit = ("", "สิบ", "ร้อย", "พัน", "หมื่น", "แสน", "ล้าน")
-    length = len(saraly) > 1
-    result = ''
-    for index, current in enumerate(map(int, saraly)):
-        if current:
-            if index:
-                result = unit[index] + result
-            if length and current == 1 and index == 0:
-                result += 'เอ็ด'
-            elif index == 1 and current == 2:
-                result = 'ยี่' + result
-            elif index != 1 or current != 1:
-                result = thai_number[current] + result
-    return jsonify(result)
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
     try:
