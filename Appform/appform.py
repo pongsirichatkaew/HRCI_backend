@@ -168,6 +168,11 @@ def UpdateEmpStatus():
             cursor.execute(sqlblack,resultIDcard[0]['ID_CardNo'])
             columnsblack = [column[0] for column in cursor.description]
             resultblacklist = toJson(cursor.fetchall(),columnsblack)
+
+            sqlemployee = "SELECT citizenid FROM employee WHERE citizenid=%s AND validstatus=1"
+            cursor.execute(sqlemployee,resultIDcard[0]['ID_CardNo'])
+            columnsemployee = [column[0] for column in cursor.description]
+            resultemployee = toJson(cursor.fetchall(),columnsemployee)
             connection.commit()
             connection.close()
 
@@ -179,6 +184,8 @@ def UpdateEmpStatus():
                connection.commit()
                connection.close()
                return "Blacklist"
+            elif len(resultemployee) != 0:
+               return "Employee"
             else:
                connection = mysql3.connect()
                cursor = connection.cursor()
