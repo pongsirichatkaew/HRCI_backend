@@ -150,7 +150,6 @@ def UpdateEmpStatus():
         data = request.json
         source = data['source']
         data_new = source
-        status_id = data_new['status_id']
         EmploymentAppNo = data_new['EmploymentAppNo']
 
         connection = mysql3.connect()
@@ -185,12 +184,18 @@ def UpdateEmpStatus():
                connection.close()
                return "Blacklist"
             elif len(resultemployee) != 0:
+               connection = mysql3.connect()
+               cursor = connection.cursor()
+               sqlUp = "UPDATE Personal SET status_id_hrci=0 WHERE EmploymentAppNo=%s"
+               cursor.execute(sqlUp,EmploymentAppNo)
+               connection.commit()
+               connection.close()
                return "Employee"
             else:
                connection = mysql3.connect()
                cursor = connection.cursor()
                sqlUp = "UPDATE Personal SET status_id_hrci = %s WHERE EmploymentAppNo = %s"
-               cursor.execute(sqlUp,(status_id, EmploymentAppNo))
+               cursor.execute(sqlUp,(data_new['status_id'], EmploymentAppNo))
                connection.commit()
                connection.close()
 
@@ -324,9 +329,6 @@ def QryDatbaseAppform():
         length = len(salary) > 1
         resultSalary = ""
         for index, current in enumerate(map(int, salary)):
-            # print index
-            # print "test"
-            print current
             if current:
                 if index:
                    resultSalary = unit[index] + resultSalary
@@ -409,8 +411,12 @@ def QryDatbaseAppform():
         date = str(int(now.year)+543)
         form_employee = date[2:]
         type = Emp_last
+        if coun_length==0:
+           coun_length=2
+        else:
+           coun_length=coun_length
         codelast = int(str(type[-coun_length:]))+1
-        if   codelast<=9:
+        if  codelast<=9:
             codelast=str(codelast)
             codesumlast="00"+codelast
         elif codelast<=99:
@@ -418,9 +424,10 @@ def QryDatbaseAppform():
             codesumlast="0"+codelast
         else:
             codesumlast=str(codelast)
-            first_character = resultcompafirst[0]['acronym']
-            employeeid = first_character+form_employee+codesumlast
-            encodedsalary = base64.b64encode(data_new['salary'])
+        first_character = resultcompafirst[0]['acronym']
+        employeeid = first_character+form_employee+codesumlast
+        encodedsalary = base64.b64encode(data_new['salary'])
+
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
