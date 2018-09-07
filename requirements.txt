@@ -8,3 +8,4 @@ moment
 Werkzeug
 Flask-Mail
 wget
+xlsxwriter

@@ -4,6 +4,7 @@ from status.org_name import *
 from status.cost_center_name import *
 from status.position import *
 from status.company import *
+from status.Admin import *
 from status.employee_MD import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
@@ -17,7 +18,6 @@ from Appform.appform import *
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'hello'
-
 @app.route('/TestgenEM', methods=['POST'])
 def TestgenEM():
     try:
@@ -58,8 +58,10 @@ def TestgenEM():
 def login():
     try:
         _data = request.json
-        username = _data['username']
-        password = _data['password']
+        source = _data['source']
+        data_new = source
+        username = data_new['username']
+        password = data_new['password']
         connection = mysql2.connect()
         cursor = connection.cursor()
         sql = "SELECT * FROM user WHERE username = %s and password = %s"
@@ -72,7 +74,7 @@ def login():
 
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql2 = "SELECT * FROM Admin WHERE user_email=%s"
+        sql2 = "SELECT * FROM Admin WHERE username=%s"
         cursor.execute(sql2,_output[0]['username'])
         data2 = cursor.fetchall()
         columns2 = [column[0] for column in cursor.description]
@@ -82,6 +84,7 @@ def login():
         result={}
         result['message'] = 'login success'
         result['userid'] = _output[0]['userid']
+        result['name'] = _output[0]['name']
         result['username'] = _output[0]['username']
         result['permission'] = _output2[0]['permission']
         return jsonify(result)
