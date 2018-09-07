@@ -9,3 +9,5 @@ Werkzeug
 Flask-Mail
 wget
 xlsxwriter
+gevent
+gevent-websocket

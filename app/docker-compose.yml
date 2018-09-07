@@ -1,17 +1,17 @@
 version: '2'
 
 services:
-    hrci_back:
-        image: hrci_back
+    hrci_back_dev:
+        image: hrci_back_dev
         ports:
-            - "5000:5000"
+            - "3000:5000"
         environment:
-            - ISENV=pro
+            - ISENV=dev
         volumes:
             - ./:/code
         restart: always
         networks:
-            - backend-network
+            - code-network-dev
 networks:
-    backend-network:
+    code-network-dev:
         driver: bridge
