@@ -158,9 +158,12 @@ def export():
     connection.commit()
     connection.close()
     # return "Success"
-    directory = '/code/'
+    directory = '../'
     filename = 'Criminal.xlsx'
     path = directory + filename
+    # path = "/code/"
+    print os.getcwd()
+    # print path
     return send_file(path,
                           mimetype='application/vnd.ms-excel',
                             as_attachment=True,
