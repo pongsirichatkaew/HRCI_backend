@@ -124,8 +124,8 @@ def DeleteBlacklist():
         try:
              connection = mysql3.connect()
              cursor = connection.cursor()
-             sqlUp = "UPDATE Personal SET status_id_hrci=1 WHERE ID_CardNo=%s"
-             cursor.execute(sqlUp,data_new['cardNo'])
+             sqlUpAppform = "UPDATE Personal SET status_id_hrci=1 WHERE ID_CardNo=%s"
+             cursor.execute(sqlUpAppform,data_new['cardNo'])
              connection.commit()
              connection.close()
         except Exception as e:
