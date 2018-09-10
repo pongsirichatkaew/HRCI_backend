@@ -530,7 +530,8 @@ def QryAppform_One_person():
             test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
             # with open(test, 'rb') as image_file:
             #     encoded_Image = base64.b64encode(image_file.read())
-            encoded_Image = base64.b64encode(test)
+            # encoded_Image = base64.b64encode(test)
+            encoded_Image = test
         except Exception as e:
             encoded_Image="No images"
 
