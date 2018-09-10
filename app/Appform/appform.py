@@ -32,20 +32,21 @@ def QryBlacklist(cursor):
 @app.route('/InsertBlacklist', methods=['POST'])
 def InsertBlacklist():
     try:
-        connection = mysql3.connect()
+        connection = mysql.connect()
         cursor = connection.cursor()
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE EmploymentAppNo=%s"
-        cursor.execute(sql,data_new['EmploymentAppNo'])
+        sqlqry = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sqlqry,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        resultsqlqry = toJson(cursor.fetchall(),columns)
+
+        sql = "SELECT NameTh,SurnameTh,ID_CardNo,Mobile FROM Personal WHERE ID_CardNo=%s AND validstatus=1"
+        cursor.execute(sql,resultsqlqry[0]['citizenid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        connection.commit()
-        connection.close()
 
-        connection = mysql.connect()
-        cursor = connection.cursor()
         sqlIn4 = "INSERT INTO blacklist (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn4,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions']))
 
@@ -121,6 +122,15 @@ def DeleteBlacklist():
         cursor.execute(sqlUp,(data_new['createby'],data_new['cardNo']))
         connection.commit()
         connection.close()
+        try:
+             connection = mysql3.connect()
+             cursor = connection.cursor()
+             sqlUpAppform = "UPDATE Personal SET status_id_hrci=1 WHERE ID_CardNo=%s"
+             cursor.execute(sqlUpAppform,data_new['cardNo'])
+             connection.commit()
+             connection.close()
+        except Exception as e:
+            logserver(e)
         return "Success"
     except Exception as e:
         logserver(e)
