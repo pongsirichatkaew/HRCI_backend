@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from dbConfig import *
 
+
 @app.route('/QryCriminal', methods=['POST'])
 @connect_sql()
 def QryCriminal(cursor):
