@@ -18,6 +18,8 @@ import os
 import wget
 import base64
 import xlsxwriter
+from werkzeug import secure_filename
+from openpyxl import load_workbook
 
 app = Flask(__name__)
 CORS(app)
@@ -141,3 +143,8 @@ def id_generator():
 def converterDate (output):
     if isinstance(output, datetime.date):
         return output.__str__()
+def toDict(data,columns):
+    results = {}
+    for row in data:
+        results = dict(zip(columns, row))
+    return results

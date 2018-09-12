@@ -11,3 +11,4 @@ wget
 xlsxwriter
 gevent
 gevent-websocket
+openpyxl
