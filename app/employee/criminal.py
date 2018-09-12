@@ -108,49 +108,55 @@ def QryAllEmployee_by_month(cursor):
 @app.route('/export_criminal_by_month', methods=['POST'])
 @connect_sql()
 def export_criminal_by_month(cursor):
-    # try:
+    try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
         year=str(data_new['year'])
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
-        sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,employee.start_work as start_work,position.position_detail as position_detail, \
-        section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,company.companyname,
-        homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
-        Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
-        FROM Personal
-        LEFT JOIN employee ON employee.citizenid = Personal.ID_CardNo
-        LEFT JOIN position ON position.position_id = employee.position_id
-		LEFT JOIN section ON section.sect_id = employee.section_id
-        LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
-        LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
-        LEFT JOIN company ON company.companyid = employee.company_id
-        LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
-        LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
-        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
-        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 AND position.validstatus=1 AND \
-        section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND company.validstatus=1 AND \
-        employee.create_at LIKE '""" + year + """-""" + month + """%' AND employee.company_id='"""+companyid +"""'"""
+        try:
+            sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,employee.start_work as start_work,position.position_detail as position_detail, \
+            section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,company.companyname,
+            homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
+            Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
+            FROM Personal
+            LEFT JOIN employee ON employee.citizenid = Personal.ID_CardNo
+            LEFT JOIN position ON position.position_id = employee.position_id
+    		LEFT JOIN section ON section.sect_id = employee.section_id
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+            LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+            LEFT JOIN company ON company.companyid = employee.company_id
+            LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
+            LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
+            LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
+            LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
+            WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 AND position.validstatus=1 AND \
+            section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND company.validstatus=1 AND \
+            employee.create_at LIKE '""" + year + """-""" + month + """%' AND employee.company_id='"""+companyid +"""'"""
 
-        cursor.execute(sql4)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        companyname_ = result[0]['companyname'].decode('utf-8')
+            cursor.execute(sql4)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            companyname_ = result[0]['companyname']
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
 
         isSuccess = True
         reasonCode = 200
         reasonText = ""
         now = datetime.now()
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
-        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal.xlsx'))
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal_by.xlsx'))
 
-        wb = load_workbook('../Template/Template_Criminal.xlsx')
+        wb = load_workbook('../Template/Template_Criminal_by.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
-            offset = 3
+            sheet['B'+str(4)] = year + '/' + month
+            sheet['C'+str(4)] = companyname_
+            offset = 6
             i = 0
             for i in xrange(len(result)):
                 sheet['A'+str(offset + i)] = i+1
@@ -170,11 +176,9 @@ def export_criminal_by_month(cursor):
         displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
         displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
         return jsonify(toDict(displayData,displayColumns))
-
-
-    # except Exception as e:
-    #     logserver(e)
-    #     return "fail"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route("/ExportToExcel", methods=['POST'])
 @connect_sql()
 def ExportToExcel(cursor):
