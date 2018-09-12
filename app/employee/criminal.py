@@ -139,45 +139,39 @@ def export_criminal_by_month(cursor):
         result = toJson(cursor.fetchall(),columns)
         companyname_ = result[0]['companyname'].decode('utf-8')
 
-        workbook = xlsxwriter.Workbook('Criminal_'+month+'_'+companyname_+'.xlsx')
-        merge_format = workbook.add_format({
-            'bold': 1.5,
-            'align': 'center',
-            'valign': 'vcenter',
-            'font_size': '14'
-        })
-        cell_format = workbook.add_format({'bold': True,'align': 'center',
-            'valign': 'vcenter'})
-        data_format = workbook.add_format({'text_wrap': True})
-        data_format.set_text_wrap()
-        worksheet = workbook.add_worksheet()
-        worksheet.merge_range('A1:J1', 'รายชื่อผู้ตรวจสอบประวัติอาชญากรรม'+'_'+month+'_'+companyname_+'_'.decode('utf-8'), merge_format)
-        worksheet.write('A2', 'ลำดับ'.decode('utf-8'), cell_format)
-        worksheet.write('B2', 'ชื่อ-ชื่อสกุล'.decode('utf-8'), cell_format)
-        worksheet.write('C2', 'เลขบัตรประจำตัวประชาชน'.decode('utf-8'), cell_format)
-        worksheet.write('D2', 'วัน/เดือน/ปีเกิด'.decode('utf-8'), cell_format)
-        worksheet.write('E2', 'ชื่อบิดา-มารดา'.decode('utf-8'), cell_format)
-        worksheet.write('F2', 'ที่อยู่ปัจจุบันและภูมิลำเนา'.decode('utf-8'), cell_format)
-        i=0
-        for i in xrange(len(result)):
-            worksheet.write('A'+str(i+3), i+1)
-            worksheet.write('B' + str(i + 3),result[i]['NameTh'] + ' ' + result[i]['SurnameTh'], data_format)
-            worksheet.write('C' + str(i + 3),result[i]['ID_CardNo'], data_format)
-            worksheet.write('D' + str(i + 3),result[i]['Birthdate'], data_format)
-            worksheet.write('E' + str(i + 3),result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname'], data_format)
-            worksheet.write('F' + str(i + 3),'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
-            + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
-            result[i]['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ '.decode('utf-8') + result[i]['homeHouseNo'] + ' ถนน '.decode('utf-8') + result[i]['homeStreet'] + ' อำเภอ/เขต '.decode('utf-8') + \
-            result[i]['homeDistrict'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['homeAmphur'] + ' จังหวัด '.decode('utf-8') + result[i]['homeProvince'] + ' รหัสไปรษณีย์ '.decode('utf-8') + result[i]['homePostCode'], data_format)
-        workbook.close()
-        # return "Success"
-        directory = '/code/'
-        filename = 'Criminal_'+month+'_'+companyname_+'.xlsx'
-        path = directory + filename
-        return send_file(path,
-                              mimetype='application/vnd.ms-excel',
-                                as_attachment=True,
-                                attachment_filename=filename)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal.xlsx'))
+
+        wb = load_workbook('../Template/Template_Criminal.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['NameTh'] + ' ' + result[i]['SurnameTh']
+                sheet['C'+str(offset + i)] = result[i]['ID_CardNo']
+                sheet['D'+str(offset + i)] = result[i]['Birthdate']
+                sheet['E'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
+                sheet['F'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
+                + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
+                result[i]['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ '.decode('utf-8') + result[i]['homeHouseNo'] + ' ถนน '.decode('utf-8') + result[i]['homeStreet'] + ' อำเภอ/เขต '.decode('utf-8') + \
+                result[i]['homeDistrict'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['homeAmphur'] + ' จังหวัด '.decode('utf-8') + result[i]['homeProvince'] + ' รหัสไปรษณีย์ '.decode('utf-8') + result[i]['homePostCode']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+
+
     # except Exception as e:
     #     logserver(e)
     #     return "fail"

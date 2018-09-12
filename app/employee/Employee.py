@@ -41,6 +41,19 @@ def QryEmployee_resign(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/UpdateStatus_Employee', methods=['POST'])
+@connect_sql()
+def UpdateStatus_Employee(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE employee SET validstatus=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['validstatus'],data_new['employeeid']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee', methods=['POST'])
 def QryEmployee():
     try:
