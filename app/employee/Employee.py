@@ -459,29 +459,68 @@ def Qry_type_image(cursor):
 @app.route('/Export_Employee_by_month', methods=['POST'])
 @connect_sql()
 def Export_Employee_by_month(cursor):
-    # try:
+    try:
         dataInput = request.json
-        # source = dataInput['source']
-        # data_new = source
-        year=str(dataInput['year'])
-        month=str(dataInput['month'])
-        companyid=str(dataInput['companyid'])
-        sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                      LEFT JOIN position ON position.position_id = employee.position_id\
-                                      LEFT JOIN section ON section.sect_id = employee.section_id\
-                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                      LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
-                                      LEFT JOIN status ON status.status_id = employee.validstatus\
-        WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
-        employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
-    # except Exception as e:
-    #     logserver(e)
-    #     return "fail"
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        companyid=str(data_new['companyid'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
+                                          LEFT JOIN status ON status.status_id = employee.validstatus\
+            WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
+            employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            companyname_ = result[0]['companyname']
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_by.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_by.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['B'+str(3)] = year + '/' + month
+            sheet['C'+str(3)] = companyname_
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['C'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['D'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['E'+str(offset + i)] = result[i]['email']
+                sheet['F'+str(offset + i)] = result[i]['position_detail']
+                sheet['G'+str(offset + i)] = result[i]['sect_detail']
+                sheet['H'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['I'+str(offset + i)] = result[i]['cost_detail']
+                sheet['J'+str(offset + i)] = result[i]['Mobile']
+                sheet['K'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Qry_Employee_by_month', methods=['POST'])
 @connect_sql()
 def Qry_Employee_by_month(cursor):
@@ -493,7 +532,7 @@ def Qry_Employee_by_month(cursor):
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
         sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,\
-        employee.start_work,employee.validstatus,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        employee.start_work,employee.validstatus,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
