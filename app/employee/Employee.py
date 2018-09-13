@@ -532,7 +532,7 @@ def Qry_Employee_by_month(cursor):
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
         sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,\
-        employee.start_work,employee.validstatus,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        employee.start_work,employee.validstatus,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name,status.path_color,status.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
