@@ -30,9 +30,9 @@ def datetime_process():
         next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
         next_3_m2 = str(next_3_m)
         end_date = next_3_m2.split("-")
-        Day_e = end_date[0]
+        Day_e = end_date[2]
         Mon_e =end_date[1]
-        year_e = end_date[2]
+        year_e = end_date[0]
         End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
         return End_probation_date
     # except Exception as e:
