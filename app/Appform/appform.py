@@ -418,8 +418,8 @@ def QryDatbaseAppform():
             Emp_last = coun_company+"000"
 
         now = datetime.now()
-        date = str(int(now.year)+543)
-        form_employee = date[2:]
+        date_n = str(int(now.year)+543)
+        form_employee = date_n[2:]
         type = Emp_last
         if coun_length==0:
            coun_length=2
@@ -441,16 +441,15 @@ def QryDatbaseAppform():
         date1 = data_new['Start_contract']
         star_date = date1.split("-")
         Day_s = int(star_date[0])
-        Mon_s =int(star_date[1])
+        Mon_s = int(star_date[1])
         year_s = int(star_date[2])
-        next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
-        next_3_m2 = str(next_3_m)
+        next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+        next_3_m2 = str(next_3_mm)
         end_date = next_3_m2.split("-")
         Day_e = end_date[2]
         Mon_e =end_date[1]
         year_e = end_date[0]
         End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(employeeid,result14[0]['ID_CardNo'],result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
