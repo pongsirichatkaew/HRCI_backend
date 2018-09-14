@@ -584,7 +584,7 @@ def Export_Employee_All_company(cursor):
         if len(result) > 0:
 
             sheet = wb['Sheet1']
-            sheet['B'+str(3)] = year + '/' + month
+            sheet['C'+str(3)] = year + '/' + month
             offset = 6
             i = 0
             for i in xrange(len(result)):
