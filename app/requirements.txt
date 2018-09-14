@@ -12,3 +12,4 @@ xlsxwriter
 gevent
 gevent-websocket
 openpyxl
+python-dateutil
