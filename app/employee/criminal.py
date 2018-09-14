@@ -76,17 +76,7 @@ def QryAllEmployee_by_month(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
-        # print companyid
-        # sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,
-        # homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
-        # Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
-        # FROM Personal
-        # LEFT JOIN employee ON employee.citizenid = Personal.ID_CardNo
-        # LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
-        # LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
-        # LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
-        # LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        # WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 AND employee.create_at LIKE '""" + year + """-""" + month + """%' AND employee.company_id='"""+companyid +"""'"""
+
         sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,employee.start_work as start_work,position.position_detail as position_detail, \
         section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,company.company_short_name,
         homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
@@ -175,8 +165,7 @@ def export_criminal_by_month(cursor):
                 sheet['E'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
                 sheet['F'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
                 + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
-                result[i]['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ '.decode('utf-8') + result[i]['homeHouseNo'] + ' ถนน '.decode('utf-8') + result[i]['homeStreet'] + ' อำเภอ/เขต '.decode('utf-8') + \
-                result[i]['homeDistrict'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['homeAmphur'] + ' จังหวัด '.decode('utf-8') + result[i]['homeProvince'] + ' รหัสไปรษณีย์ '.decode('utf-8') + result[i]['homePostCode']
+                result[i]['PostCode'] 
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -192,22 +181,33 @@ def export_criminal_by_month(cursor):
 @connect_sql()
 def ExportToExcel(cursor):
     try:
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,
-        homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+
+        sql4 ="""SELECT Personal.*,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,employee.start_work as start_work,position.position_detail as position_detail, \
+        section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,company.company_short_name,
+        homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
         Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
         FROM Personal
+        LEFT JOIN employee ON employee.citizenid = Personal.ID_CardNo
+        LEFT JOIN position ON position.position_id = employee.position_id
+        LEFT JOIN section ON section.sect_id = employee.section_id
+        LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+        LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+        LEFT JOIN company ON company.companyid = employee.company_id
         LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
-        LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Present' and Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1  """
+        WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND Personal.validstatus=1 AND Address.validstatus=1 AND Family.validstatus=1 AND position.validstatus=1 AND \
+        section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND company.validstatus=1 AND \
+        employee.create_at LIKE '""" + year + """-""" + month + """%'"""
         cursor.execute(sql4)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        connection.commit()
-        connection.close()
 
         isSuccess = True
         reasonCode = 200
@@ -220,18 +220,19 @@ def ExportToExcel(cursor):
         if len(result) > 0:
 
             sheet = wb['Sheet1']
-            offset = 3
+            sheet['C'+str(3)] = year + '/' + month
+            offset = 5
             i = 0
             for i in xrange(len(result)):
                 sheet['A'+str(offset + i)] = i+1
-                sheet['B'+str(offset + i)] = result[i]['NameTh'] + ' ' + result[i]['SurnameTh']
-                sheet['C'+str(offset + i)] = result[i]['ID_CardNo']
-                sheet['D'+str(offset + i)] = result[i]['Birthdate']
-                sheet['E'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
-                sheet['F'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
+                sheet['B'+str(offset + i)] = result[i]['company_short_name']
+                sheet['C'+str(offset + i)] = result[i]['NameTh'] + ' ' + result[i]['SurnameTh']
+                sheet['D'+str(offset + i)] = result[i]['ID_CardNo']
+                sheet['E'+str(offset + i)] = result[i]['Birthdate']
+                sheet['F'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
+                sheet['G'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
                 + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
-                result[i]['PostCode'] + '\n' + 'ภูมิลำเนาเดิม : บ้านเลขที่ '.decode('utf-8') + result[i]['homeHouseNo'] + ' ถนน '.decode('utf-8') + result[i]['homeStreet'] + ' อำเภอ/เขต '.decode('utf-8') + \
-                result[i]['homeDistrict'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['homeAmphur'] + ' จังหวัด '.decode('utf-8') + result[i]['homeProvince'] + ' รหัสไปรษณีย์ '.decode('utf-8') + result[i]['homePostCode']
+                result[i]['PostCode']
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
