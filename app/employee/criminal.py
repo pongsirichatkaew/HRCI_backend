@@ -216,7 +216,7 @@ def ExportToExcel(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal.xlsx'))
 
-        wb = load_workbook('../../Template/Template_Criminal.xlsx')
+        wb = load_workbook('Template/Template_Criminal.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']

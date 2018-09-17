@@ -124,5 +124,5 @@ def userGetFile(path, fileName):
     # current_app.logger.info('userGetFile')
     # current_app.logger.info(path)
     # current_app.logger.info(fileName)
-    return send_from_directory('../uploads/' + path, fileName)
+    return send_from_directory('uploads/' + path, fileName)
     # return "ssss"
