@@ -165,7 +165,7 @@ def export_criminal_by_month(cursor):
                 sheet['E'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
                 sheet['F'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
                 + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
-                result[i]['PostCode'] 
+                result[i]['PostCode']
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -216,7 +216,7 @@ def ExportToExcel(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal.xlsx'))
 
-        wb = load_workbook('../Template/Template_Criminal.xlsx')
+        wb = load_workbook('../../Template/Template_Criminal.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
