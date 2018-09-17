@@ -9,8 +9,8 @@ services:
             - ISENV=pro
         volumes:
             - ./:/code
-            -"/home/ubuntu/HRCI/uploads:/app/uploads"
-            -"/home/ubuntu/HRCI/Template:/app/Template"
+            - "/home/ubuntu/pro/HRCI/uploads:/app/uploads"
+            - "/home/ubuntu/pro/HRCI/Template:/app/Template"
         restart: always
         networks:
             - backend-network
