@@ -4,16 +4,13 @@ from flask import Flask, request, jsonify, current_app, abort, send_from_directo
 from flask_cors import CORS, cross_origin
 from functools import wraps
 from flask import send_file
-
 from flaskext.mysql import MySQL
-
 import hashlib
 import base64
 import datetime
 from datetime import datetime, date
 import string
 import random
-
 import os
 import wget
 import base64
