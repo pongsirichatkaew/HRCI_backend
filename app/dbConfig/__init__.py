@@ -4,16 +4,13 @@ from flask import Flask, request, jsonify, current_app, abort, send_from_directo
 from flask_cors import CORS, cross_origin
 from functools import wraps
 from flask import send_file
-
 from flaskext.mysql import MySQL
-
 import hashlib
 import base64
 import datetime
 from datetime import datetime, date
 import string
 import random
-
 import os
 import wget
 import base64
@@ -42,9 +39,9 @@ mysql2.init_app(app2)
 
 app3 = Flask(__name__)
 app3.config['MYSQL_DATABASE_USER'] = "root"
-app3.config['MYSQL_DATABASE_PASSWORD'] = "devops@Pass01"
-app3.config['MYSQL_DATABASE_DB'] = 'HRCI'
-app3.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
+app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
+app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
+app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
 mysql3 = MySQL()
 mysql3.init_app(app3)
 
