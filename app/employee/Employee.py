@@ -624,3 +624,39 @@ def Export_Employee_All_company(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_Province', methods=['POST'])
+@connect_sql3()
+def Qry_Province(cursor3):
+    try:
+        sql = "SELECT PROVINCE_NAME FROM provinces ORDER BY PROVINCE_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Districts', methods=['POST'])
+@connect_sql3()
+def Qry_Districts(cursor3):
+    try:
+        sql = "SELECT DISTRICT_NAME FROM districts ORDER BY DISTRICT_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Amphurs', methods=['POST'])
+@connect_sql3()
+def Qry_Amphurs(cursor3):
+    try:
+        sql = "SELECT AMPHUR_NAME FROM amphures ORDER BY AMPHUR_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
