@@ -41,6 +41,19 @@ def QryEmployee_resign(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/UpdateStatus_Employee', methods=['POST'])
+@connect_sql()
+def UpdateStatus_Employee(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlUp = "UPDATE employee SET validstatus=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['validstatus'],data_new['employeeid']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee', methods=['POST'])
 def QryEmployee():
     try:
@@ -385,11 +398,24 @@ def InsertEmployeeHRCI_Management(cursor):
             except Exception as e:
                 logserver(e)
 
+            date1 = data_new['Start_contract']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s =int(star_date[1])
+            year_s = int(star_date[2])
+            next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+            next_3_m2 = str(next_3_m)
+            end_date = next_3_m2.split("-")
+            Day_e = end_date[2]
+            Mon_e =end_date[1]
+            year_e = end_date[0]
+            End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+
             encodedsalary = base64.b64encode(data_new['salary'])
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
             data_new['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
             sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEm_ga,(data_new['employeeid'],data_new['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],\
@@ -399,7 +425,7 @@ def InsertEmployeeHRCI_Management(cursor):
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,\
             data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],data_new['End_contract'],data_new['createby']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -439,6 +465,197 @@ def Qry_type_image(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Employee_by_month', methods=['POST'])
+@connect_sql()
+def Export_Employee_by_month(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        companyid=str(data_new['companyid'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
+                                          LEFT JOIN status ON status.status_id = employee.validstatus\
+            WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
+            employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            companyname_ = result[0]['companyname']
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_by.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_by.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['B'+str(3)] = year + '/' + month
+            sheet['C'+str(3)] = companyname_
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['C'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['D'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['E'+str(offset + i)] = result[i]['email']
+                sheet['F'+str(offset + i)] = result[i]['position_detail']
+                sheet['G'+str(offset + i)] = result[i]['sect_detail']
+                sheet['H'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['I'+str(offset + i)] = result[i]['cost_detail']
+                sheet['J'+str(offset + i)] = result[i]['Mobile']
+                sheet['K'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Employee_by_month', methods=['POST'])
+@connect_sql()
+def Qry_Employee_by_month(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        companyid=str(data_new['companyid'])
+        sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,\
+        employee.start_work,employee.validstatus,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name,status.path_color,status.font_color,status.status_detail FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
+                                      LEFT JOIN status ON status.status_id = employee.validstatus\
+        WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
+        employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Employee_All_company', methods=['POST'])
+@connect_sql()
+def Export_Employee_All_company(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
+                                          LEFT JOIN status ON status.status_id = employee.validstatus\
+            WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
+            employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_All.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['C'+str(3)] = year + '/' + month
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['E'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['F'+str(offset + i)] = result[i]['email']
+                sheet['G'+str(offset + i)] = result[i]['position_detail']
+                sheet['H'+str(offset + i)] = result[i]['sect_detail']
+                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['J'+str(offset + i)] = result[i]['cost_detail']
+                sheet['K'+str(offset + i)] = result[i]['Mobile']
+                sheet['L'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Province', methods=['POST'])
+@connect_sql3()
+def Qry_Province(cursor3):
+    try:
+        sql = "SELECT PROVINCE_NAME FROM provinces ORDER BY PROVINCE_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Districts', methods=['POST'])
+@connect_sql3()
+def Qry_Districts(cursor3):
+    try:
+        sql = "SELECT DISTRICT_NAME FROM districts ORDER BY DISTRICT_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Amphurs', methods=['POST'])
+@connect_sql3()
+def Qry_Amphurs(cursor3):
+    try:
+        sql = "SELECT AMPHUR_NAME FROM amphures ORDER BY AMPHUR_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
         return jsonify(result)
     except Exception as e:
         logserver(e)
