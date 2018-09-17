@@ -9,6 +9,8 @@ services:
             - ISENV=dev
         volumes:
             - ./:/code
+            - "/home/ubuntu/pro/HRCI/uploads:/app/uploads"
+            - "/home/ubuntu/pro/HRCI/Template:/app/Template"
         restart: always
         networks:
             - code-network-dev
