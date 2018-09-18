@@ -19,5 +19,5 @@ networks:
     backend-network:
         driver: bridge
 volumes:
-    upload:
+    uploads:
         external: True
