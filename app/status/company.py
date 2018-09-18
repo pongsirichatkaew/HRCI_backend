@@ -119,10 +119,10 @@ def QryCompanyname(cursor):
         logserver(e)
         return "fail"
 
-@app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
-def userGetFile(path, fileName):
-    # current_app.logger.info('userGetFile')
-    # current_app.logger.info(path)
-    # current_app.logger.info(fileName)
-    return send_from_directory('uploads/' + path, fileName)
-    # return "ssss"
+# @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
+# def userGetFile(path, fileName):
+#     # current_app.logger.info('userGetFile')
+#     # current_app.logger.info(path)
+#     # current_app.logger.info(fileName)
+#     return send_from_directory('uploads/' + path, fileName)
+#     # return "ssss"
