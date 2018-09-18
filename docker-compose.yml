@@ -10,7 +10,8 @@ services:
             - ISENV=pro
         volumes:
             - ./:/code
-            - uploads:/app/uploads"
+            # - uploads:/app/uploads"
+            - "/home/ubuntu/dev/HRCI/uploads:/app/uploads"
             # - Template:/app/Template
         restart: always
         networks:
@@ -18,6 +19,6 @@ services:
 networks:
     backend-network:
         driver: bridge
-volumes:
-    uploads:
-        external: True
+# volumes:
+#     uploads:
+#         external: True
