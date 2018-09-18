@@ -11,7 +11,7 @@ services:
         volumes:
             - ./:/code
             - uploads:/app/uploads"
-            - Template:/app/Template
+            # - Template:/app/Template
         restart: always
         networks:
             - backend-network
