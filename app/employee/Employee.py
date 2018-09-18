@@ -503,7 +503,7 @@ def Export_Employee_by_month(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_by.xlsx'))
 
-        wb = load_workbook('../Template/Template_Employee_by.xlsx')
+        wb = load_workbook('Template/Template_Employee_by.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
@@ -593,7 +593,7 @@ def Export_Employee_All_company(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_All.xlsx'))
 
-        wb = load_workbook('../Template/Template_Employee_All.xlsx')
+        wb = load_workbook('Template/Template_Employee_All.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
