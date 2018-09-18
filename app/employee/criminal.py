@@ -149,7 +149,7 @@ def export_criminal_by_month(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal_by.xlsx'))
 
-        wb = load_workbook('Template/Template_Criminal_by.xlsx')
+        wb = load_workbook('../app/Template/Template_Criminal_by.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
@@ -216,7 +216,7 @@ def ExportToExcel(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Criminal.xlsx'))
 
-        wb = load_workbook('Template/Template_Criminal.xlsx')
+        wb = load_workbook('../app/Template/Template_Criminal.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
