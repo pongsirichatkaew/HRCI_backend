@@ -53,6 +53,10 @@ app4.config['MYSQL_DATABASE_HOST'] = '203.154.58.87'
 mysql4 = MySQL()
 mysql4.init_app(app4)
 
+CORS(app2)
+CORS(app3)
+CORS(app4)
+
 
 def connect_sql():
     def wrap(fn):
