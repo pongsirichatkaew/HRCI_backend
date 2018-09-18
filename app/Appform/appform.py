@@ -120,6 +120,8 @@ def DeleteBlacklist():
         data_new = source
         sqlUp = "UPDATE blacklist SET validstatus=0,createby=%s WHERE ID_CardNo=%s"
         cursor.execute(sqlUp,(data_new['createby'],data_new['cardNo']))
+        connection.commit()
+        connection.close()
         try:
              connection = mysql3.connect()
              cursor = connection.cursor()
@@ -129,8 +131,6 @@ def DeleteBlacklist():
              connection.close()
         except Exception as e:
             logserver(e)
-        connection.commit()
-        connection.close()
         return "Success"
     except Exception as e:
         logserver(e)
