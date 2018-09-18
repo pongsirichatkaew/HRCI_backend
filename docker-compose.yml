@@ -10,7 +10,7 @@ services:
             - ISENV=pro
         volumes:
             - ./:/code
-            - uploads:/app/uploads
+            - uploads:/app/uploads"
             - Template:/app/Template
         restart: always
         networks:
@@ -19,5 +19,5 @@ networks:
     backend-network:
         driver: bridge
 volumes:
-  upload:
-    external: True
+    upload:
+        external: True
