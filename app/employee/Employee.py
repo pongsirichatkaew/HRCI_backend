@@ -319,6 +319,42 @@ def EditEmployee(cursor):
                 cursor.execute(sqlIn23,(data_new[i]['ID_CardNo'],data_new[i]['Subject'],data_new[i]['Place'],data_new[i]['StartDate'],data_new[i]['EndDate']))
         except Exception as e:
             logserver(e)
+
+        date1 = data_new['Start_contract']
+        star_date = date1.split("-")
+        Day_s = int(star_date[0])
+        Mon_s =int(star_date[1])
+        year_s = int(star_date[2])
+        next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+        next_3_m2 = str(next_3_m)
+        end_date = next_3_m2.split("-")
+        Day_e = end_date[2]
+        Mon_e =end_date[1]
+        year_e = end_date[0]
+        End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+        # encodedsalary = base64.b64encode(data_new['salary'])
+
+        sql_qry_Em = "SELECT salary,position_id,section_id,org_name_id,cost_center_name_id,company_id FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql_qry_Em,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result_qry_EM = toJson(cursor.fetchall(),columns)
+
+        sql_Up_EM = "UPDATE employee SET validstatus=0 WHERE citizenid=%s"
+        cursor.execute(sql_Up_EM,(result[0]['citizenid']))
+
+        sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],result_qry_EM[0]['salary'],data_new['email'],\
+        data_new['phone_company'],result_qry_EM[0]['position_id'],\
+        result_qry_EM[0]['section_id'],result_qry_EM[0]['org_name_id'],result_qry_EM[0]['cost_center_name_id'],result_qry_EM[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+
+        sql_Up_EM_pro = "UPDATE Emp_probation SET validstatus=0 WHERE citizenid=%s"
+        cursor.execute(sql_Up_EM_pro,(result[0]['citizenid']))
+
+        sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],result_qry_EM[0]['salary'],data_new['email'],\
+        data_new['phone_company'],result_qry_EM[0]['position_id'],\
+        result_qry_EM[0]['section_id'],result_qry_EM[0]['org_name_id'],result_qry_EM[0]['cost_center_name_id'],result_qry_EM[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -657,6 +693,24 @@ def Qry_Amphurs(cursor3):
         columns = [column[0] for column in cursor3.description]
         result = toJson(cursor3.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Edit_Employee_GA', methods=['POST'])
+@connect_sql()
+def Edit_Employee_GA(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlEmp_GA = "UPDATE employee_ga SET validstatus=0 WHERE employeeid=%s"
+        cursor.execute(sqlEmp_GA,data_new['employeeid'])
+
+        sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEm_ga,(data_new['employeeid'],data_new['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],\
+        data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
+        data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
