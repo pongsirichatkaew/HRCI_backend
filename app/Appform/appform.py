@@ -402,6 +402,9 @@ def QryDatbaseAppform():
         except Exception as e:
                 logserver(e)
 
+        now = datetime.now()
+        date_n = str(int(now.year)+543)
+        form_employee = date_n[2:]
         sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
         cursor.execute(sqlcompafirst,data_new['company_id'])
         columnscompafirst = [column[0] for column in cursor.description]
@@ -414,12 +417,15 @@ def QryDatbaseAppform():
             columnsEmployee = [column[0] for column in cursor.description]
             resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
             Emp_last = resultEmployee[0]['employeeid']
+            form_employee2 = Emp_last[coun_length:]
+            form_employee3 = form_employee2[:-3]
+            if form_employee3==form_employee:
+                Emp_last = resultEmployee[0]['employeeid']
+            else:
+                Emp_last = coun_company+"000"
         except Exception as e:
             Emp_last = coun_company+"000"
 
-        now = datetime.now()
-        date_n = str(int(now.year)+543)
-        form_employee = date_n[2:]
         type = Emp_last
         if coun_length==0:
            coun_length=2

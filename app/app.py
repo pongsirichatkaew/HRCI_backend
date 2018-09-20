@@ -19,22 +19,52 @@ from Appform.appform import *
 def hello():
     return 'hello'
 @app.route('/TestgenEM', methods=['POST'])
-def datetime_process():
+@connect_sql()
+def TestgenEM(cursor):
     # try:
-        dataInput = request.json
-        date1 = dataInput['date']
-        star_date = date1.split("-")
-        Day_s = int(star_date[0])
-        Mon_s =int(star_date[1])
-        year_s = int(star_date[2])
-        next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
-        next_3_m2 = str(next_3_m)
-        end_date = next_3_m2.split("-")
-        Day_e = end_date[2]
-        Mon_e =end_date[1]
-        year_e = end_date[0]
-        End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-        return End_probation_date
+    dataInput = request.json
+    now = datetime.now()
+    date_n = str(int(now.year)+543)
+    form_employee = date_n[2:]
+    sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
+    cursor.execute(sqlcompafirst,dataInput['company_id'])
+    columnscompafirst = [column[0] for column in cursor.description]
+    resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
+    coun_length =len(resultcompafirst[0]['acronym'])
+    coun_company = str(resultcompafirst[0]['acronym'])
+    try:
+        sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
+        cursor.execute(sqlEmployee,dataInput['company_id'])
+        columnsEmployee = [column[0] for column in cursor.description]
+        resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+        Emp_last = resultEmployee[0]['employeeid']
+        form_employee2 = Emp_last[coun_length:]
+        form_employee3 = form_employee2[:-3]
+        if form_employee3==form_employee:
+            Emp_last = resultEmployee[0]['employeeid']
+        else:
+            Emp_last = coun_company+"000"
+    except Exception as e:
+        Emp_last = coun_company+"000"
+
+    type = Emp_last
+    if coun_length==0:
+       coun_length=2
+    else:
+       coun_length=coun_length
+    codelast = int(str(type[-coun_length:]))+1
+    if  codelast<=9:
+        codelast=str(codelast)
+        codesumlast="00"+codelast
+    elif codelast<=99:
+        codelast=str(codelast)
+        codesumlast="0"+codelast
+    else:
+        codesumlast=str(codelast)
+    first_character = resultcompafirst[0]['acronym']
+    employeeid = first_character+form_employee+codesumlast
+    # print employeeid
+    return jsonify(employeeid)
     # except Exception as e:
     #     logserver(e)
     #     return "fail"
