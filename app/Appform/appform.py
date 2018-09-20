@@ -402,9 +402,19 @@ def QryDatbaseAppform():
         except Exception as e:
                 logserver(e)
 
-        now = datetime.now()
-        date_n = str(int(now.year)+543)
-        form_employee = date_n[2:]
+        companyid__ = int(data_new['company_id'])
+        if companyid__==1:
+            now = datetime.now()
+            date_n = str(int(now.year))
+            form_employee = date_n
+        elif companyid__==21:
+            now = datetime.now()
+            date_n = str(int(now.year))
+            form_employee = date_n[2:]
+        else:
+            now = datetime.now()
+            date_n = str(int(now.year)+543)
+            form_employee = date_n[2:]
         sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
         cursor.execute(sqlcompafirst,data_new['company_id'])
         columnscompafirst = [column[0] for column in cursor.description]
@@ -417,31 +427,69 @@ def QryDatbaseAppform():
             columnsEmployee = [column[0] for column in cursor.description]
             resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
             Emp_last = resultEmployee[0]['employeeid']
-            form_employee2 = Emp_last[coun_length:]
-            form_employee3 = form_employee2[:-3]
-            if form_employee3==form_employee:
-                Emp_last = resultEmployee[0]['employeeid']
+            if companyid__!=1:
+                form_employee2 = Emp_last[coun_length:]
+                form_employee3 = form_employee2[:-3]
+                if form_employee3==form_employee:
+                    Emp_last = resultEmployee[0]['employeeid']
+                else:
+                    Emp_last = coun_company+"000"
             else:
-                Emp_last = coun_company+"000"
+                form_employee2 = Emp_last[coun_length:]
+                form_employee3 = form_employee2[:-4]
+                if form_employee3==form_employee:
+                    Emp_last = resultEmployee[0]['employeeid']
+                else:
+                    Emp_last = coun_company+"000"
         except Exception as e:
-            Emp_last = coun_company+"000"
-
+            if companyid__!=1:
+                Emp_last = coun_company+"000"
+            else:
+               Emp_last = coun_company+"000"
         type = Emp_last
-        if coun_length==0:
-           coun_length=2
+        if  coun_length==0:
+            coun_length=2
+        elif coun_length==1:
+            coun_length=3
         else:
-           coun_length=coun_length
-        codelast = int(str(type[-coun_length:]))+1
-        if  codelast<=9:
-            codelast=str(codelast)
-            codesumlast="00"+codelast
-        elif codelast<=99:
-            codelast=str(codelast)
-            codesumlast="0"+codelast
+            coun_length=coun_length+2
+        if companyid__!=1:
+            codelast = int(str(type[coun_length:]))+1
         else:
-            codesumlast=str(codelast)
+            codelast = str(int(str(type[coun_length:]))+1)
+            codelast = codelast[2:]
+            if codelast=="":
+               codelast=1
+            else:
+                codelast=codelast
+        if companyid__!=1:
+            if  codelast<=9:
+                codelast=str(codelast)
+                codesumlast="00"+codelast
+            elif codelast<=99:
+                codelast=str(codelast)
+                codesumlast="0"+codelast
+            else:
+                codesumlast=str(codelast)
+        else:
+            if  codelast<=9:
+                codelast=str(codelast)
+                codesumlast="000"+codelast
+            elif codelast<=99:
+                codelast=str(codelast)
+                codesumlast="00"+codelast
+            elif codelast<=999:
+                codelast=str(codelast)
+                codesumlast="0"+codelast
+            else:
+                codesumlast=str(codelast)
         first_character = resultcompafirst[0]['acronym']
-        employeeid = first_character+form_employee+codesumlast
+        if companyid__==1:
+            employeeid = first_character+form_employee+codesumlast
+        elif companyid__==21:
+            employeeid = first_character+form_employee+codesumlast
+        else:
+            employeeid = first_character+form_employee+codesumlast
         encodedsalary = base64.b64encode(data_new['salary'])
 
         date1 = data_new['Start_contract']
