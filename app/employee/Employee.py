@@ -332,28 +332,28 @@ def EditEmployee(cursor):
         Mon_e =end_date[1]
         year_e = end_date[0]
         End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-        # encodedsalary = base64.b64encode(data_new['salary'])
+        encodedsalary = base64.b64encode(data_new['salary'])
 
-        sql_qry_Em = "SELECT salary,position_id,section_id,org_name_id,cost_center_name_id,company_id FROM employee WHERE employeeid=%s AND validstatus=1"
-        cursor.execute(sql_qry_Em,data_new['employeeid'])
-        columns = [column[0] for column in cursor.description]
-        result_qry_EM = toJson(cursor.fetchall(),columns)
+        # sql_qry_Em = "SELECT salary,position_id,section_id,org_name_id,cost_center_name_id,company_id FROM employee WHERE employeeid=%s AND validstatus=1"
+        # cursor.execute(sql_qry_Em,data_new['employeeid'])
+        # columns = [column[0] for column in cursor.description]
+        # result_qry_EM = toJson(cursor.fetchall(),columns)
 
         sql_Up_EM = "UPDATE employee SET validstatus=0 WHERE citizenid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid']))
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],result_qry_EM[0]['salary'],data_new['email'],\
-        data_new['phone_company'],result_qry_EM[0]['position_id'],\
-        result_qry_EM[0]['section_id'],result_qry_EM[0]['org_name_id'],result_qry_EM[0]['cost_center_name_id'],result_qry_EM[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+        cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
+        data_new['phone_company'],data_new[0]['position_id'],\
+        data_new[0]['section_id'],data_new[0]['org_name_id'],data_new[0]['cost_center_name_id'],data_new[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
         sql_Up_EM_pro = "UPDATE Emp_probation SET validstatus=0 WHERE citizenid=%s"
         cursor.execute(sql_Up_EM_pro,(result[0]['citizenid']))
 
         sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],result_qry_EM[0]['salary'],data_new['email'],\
-        data_new['phone_company'],result_qry_EM[0]['position_id'],\
-        result_qry_EM[0]['section_id'],result_qry_EM[0]['org_name_id'],result_qry_EM[0]['cost_center_name_id'],result_qry_EM[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
+        data_new['phone_company'],data_new[0]['position_id'],\
+        data_new[0]['section_id'],data_new[0]['org_name_id'],data_new[0]['cost_center_name_id'],data_new[0]['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
         return "Success"
     except Exception as e:
@@ -711,6 +711,21 @@ def Edit_Employee_GA(cursor):
         data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
         data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
         return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Employee_GA', methods=['POST'])
+@connect_sql()
+def Qry_Employee_GA(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT * FROM employee_ga WHERE employeeid=%s"
+        cursor3.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
