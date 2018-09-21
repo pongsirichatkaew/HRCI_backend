@@ -349,10 +349,28 @@ def QryDatbaseAppform():
                 elif index != 1 or current != 1:
                     resultSalary = thai_number[current] + resultSalary
 
-        i=0
-        for i in xrange(len(result14)):
-            sqlInContract = "INSERT INTO Contract (ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s)"
-            cursor.execute(sqlInContract,(result14[0]['ID_CardNo'],resultSalary,data_new['Authority_Distrinct_Id_Card']))
+        now_contract = datetime.now()
+        date_contract = str(int(now_contract.year)+543)
+        date_sub_contract = date_contract[2:]
+        try:
+            sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 ORDER BY contract_id DESC LIMIT 1"
+            cursor.execute(sql_contract_id,dataInput['company_id'])
+            columns = [column[0] for column in cursor.description]
+            resultsql_contract_id = toJson(cursor.fetchall(),columns)
+            year_contract = resultsql_contract_id[0]['year']
+            contract_id_ = resultsql_contract_id[0]['contract_id']
+            year_sub_con = year_contract[2:]
+            if year_sub_con==date_sub_contract:
+                contract_id_ = resultsql_contract_id[0]['contract_id']
+            else:
+                contract_id_ = 0
+        except Exception as e:
+            contract_id_ = 0
+        contract_id_last = int(contract_id_)+1
+
+        sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,result14[0]['ID_CardNo'],resultSalary,data_new['Authority_Distrinct_Id_Card']))
+
         i=0
         for i in xrange(len(result9)):
             sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
