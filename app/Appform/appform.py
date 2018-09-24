@@ -549,6 +549,16 @@ def QryAppform_One_person():
         source = dataInput['source']
         data_new = source
         try:
+            sqlEm = "SELECT Address.EmploymentAppNo,Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
+                                               INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
+                                               INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
+                                               INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
+                         WHERE Personal.EmploymentAppNo=%s AND Address.AddressType='Present'"
+            cursor.execute(sqlEm,data_new['EmploymentAppNo'])
+            columnsEm = [column[0] for column in cursor.description]
+            result_home = toJson(cursor.fetchall(),columnsEm)
+            test = result_home[0]['AddressType']
+
             sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
                                                INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
                                                INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
@@ -558,25 +568,23 @@ def QryAppform_One_person():
             columnsEm = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columnsEm)
         except Exception as e:
-            sqlEm = "SELECT Address.EmploymentAppNo,Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
-                                               INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
-                                               INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
-                                               INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
-                         WHERE Personal.EmploymentAppNo=%s AND Address.AddressType='Home'"
+            sqlEm = "SELECT EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax FROM Address WHERE EmploymentAppNo=%s AND AddressType='Home'"
             cursor.execute(sqlEm,data_new['EmploymentAppNo'])
             columnsEm = [column[0] for column in cursor.description]
             result_home = toJson(cursor.fetchall(),columnsEm)
 
-            sqlUp_present = "UPDATE Address SET EmploymentAppNo=%s,AddressType=%s,HouseNo=%s,Street=%s,DISTRICT_ID=%s,AMPHUR_ID=%s,PROVINCE_ID=%s,PostCode=%s,Tel=%s,Fax=%s  WHERE Personal.EmploymentAppNo=%s AND Address.AddressType='Present'"
-            cursor.execute(sqlUp_present,(result_home[0]['EmploymentAppNo'],result_home[0]['AddressType'],result_home[0]['HouseNo'],result_home[0]['Street'],\
-            result_home[0]['DISTRICT_ID'],result_home[0]['AMPHUR_ID'],result_home[0]['PROVINCE_ID'],result_home[0]['PostCode'],result_home[0]['Tel'],result_home[0]['Fax'],data_new['EmploymentAppNo']))
+            Address_Type_Present = "Present"
 
-            sqlEm2 = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
+            sqlIn = "INSERT INTO Address (EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(result_home[0]['EmploymentAppNo'],Address_Type_Present,result_home[0]['HouseNo'],
+            result_home[0]['Street'],result_home[0]['DISTRICT_ID'],result_home[0]['AMPHUR_ID'],result_home[0]['PROVINCE_ID'],result_home[0]['PostCode'],result_home[0]['Tel'],result_home[0]['Fax']))
+
+            sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
                                                INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
                                                INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
                                                INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
                          WHERE Personal.EmploymentAppNo=%s"
-            cursor.execute(sqlEm2,data_new['EmploymentAppNo'])
+            cursor.execute(sqlEm,data_new['EmploymentAppNo'])
             columnsEm = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columnsEm)
 
