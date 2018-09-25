@@ -122,8 +122,8 @@ def TestgenEM(cursor):
     date_contract = str(int(now_contract.year)+543)
     date_sub_contract = date_contract[2:]
     try:
-        sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 ORDER BY contract_id DESC LIMIT 1"
-        cursor.execute(sql_contract_id,data_new['company_id'])
+        sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
+        cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
         columns = [column[0] for column in cursor.description]
         resultsql_contract_id = toJson(cursor.fetchall(),columns)
         year_contract = resultsql_contract_id[0]['year']
