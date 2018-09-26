@@ -208,6 +208,7 @@ def ExportToExcel(cursor):
             cursor.execute(sql4)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
+            companyname_ = result[0]['company_short_name']
         except Exception as e:
             logserver(e)
             return "No_Data"
