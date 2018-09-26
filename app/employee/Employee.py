@@ -239,37 +239,39 @@ def EditEmployee(cursor):
         i=0
         for i in xrange(len(data_new['AddressType'])):
             sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn,(data_new[i]['ID_CardNo'],data_new[i]['AddressType'],data_new[i]['HouseNo'],
-            data_new[i]['Street'],data_new[i]['DISTRICT_NAME'],data_new[i]['AMPHUR_NAME'],data_new[i]['PROVINCE_NAME'],data_new[i]['PostCode'],data_new[i]['Tel'],data_new[i]['Fax']))
+            cursor.execute(sqlIn,(data_new['AddressType'][i]['ID_CardNo'],data_new['AddressType'][i]['AddressType'],data_new['AddressType'][i]['HouseNo'],
+            data_new['AddressType'][i]['Street'],data_new['AddressType'][i]['DISTRICT_NAME'],\
+            data_new['AddressType'][i]['AMPHUR_NAME'],data_new['AddressType'][i]['PROVINCE_NAME'],data_new['AddressType'][i]['PostCode'],data_new['AddressType'][i]['Tel'],data_new['AddressType'][i]['Fax']))
 
         sqlI6de = "DELETE FROM ComputerSkill WHERE ID_CardNo=%s"
         cursor.execute(sqlI6de,result[0]['citizenid'])
         i=0
         for i in xrange(len(data_new['ComSkill'])):
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
-            cursor.execute(sqlIn6,(data_new[i]['ID_CardNo'],data_new[i]['ComSkill'],data_new[i]['Level']))
+            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level']))
 
         sqlI9de = "DELETE FROM Education WHERE ID_CardNo=%s"
         cursor.execute(sqlI9de,result[0]['citizenid'])
         i=0
         for i in xrange(len(data_new['EducationLevel'])):
             sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn9,(data_new[i]['ID_CardNo'],data_new[i]['EducationLevel'],data_new[i]['Institute'],data_new[i]['StartYear'],data_new[i]['EndYear'],data_new[i]['Qualification'],\
-            data_new[i]['Major'],data_new[i]['GradeAvg'],data_new[i]['ExtraCurricularActivities']))
+            cursor.execute(sqlIn9,(data_new['EducationLevel'][i]['ID_CardNo'],data_new['EducationLevel'][i]['EducationLevel'],data_new['EducationLevel'][i]['Institute'],data_new['EducationLevel'][i]['StartYear'],data_new['EducationLevel'][i]['EndYear'],data_new['EducationLevel'][i]['Qualification'],\
+            data_new['EducationLevel'][i]['Major'],data_new['EducationLevel'][i]['GradeAvg'],data_new['EducationLevel'][i]['ExtraCurricularActivities']))
 
         sql_Up_Family = "UPDATE Family SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Family,(result[0]['citizenid']))
         i=0
         for i in xrange(len(data_new['MemberType'])):
             sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn11,(data_new[i]['ID_CardNo'],data_new[i]['MemberType'],data_new[i]['Name'],data_new[i]['Surname'],data_new[i]['Occupation'],data_new[i]['Address'],data_new[i]['Tel'],data_new[i]['Fax']))
+            cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
+            data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
 
         sqlI13de = "DELETE FROM LanguagesSkill WHERE ID_CardNo=%s"
         cursor.execute(sqlI13de,result[0]['citizenid'])
         i=0
         for i in xrange(len(data_new['Languages'])):
             sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn13,(data_new[i]['ID_CardNo'],data_new[i]['Languages'],data_new[i]['Speaking'],data_new[i]['Reading'],data_new[i]['Writting']))
+            cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['Languages'],data_new['Languages'][i]['Speaking'],data_new['Languages'][i]['Reading'],data_new['Languages'][i]['Writting']))
 
         sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
@@ -286,14 +288,15 @@ def EditEmployee(cursor):
         i=0
         for i in xrange(len(data_new['RelativeName'])):
             sqlIn17 = "INSERT INTO Reference (ID_CardNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn17,(data_new[i]['ID_CardNo'],data_new[i]['RelativeName'],data_new[i]['RelativeSurname'],data_new[i]['RelativePosition'],data_new[i]['RelativeRelationship'],data_new[i]['PhysicalHandicap'],data_new[i]['PhysicalHandicapDetail'],data_new[i]['KnowFrom']))
+            cursor.execute(sqlIn17,(data_new['RelativeName'][i]['ID_CardNo'],data_new['RelativeName'][i]['RelativeName'],data_new['RelativeName'][i]['RelativeSurname'],data_new['RelativeName'][i]['RelativePosition'],data_new['RelativeName'][i]['RelativeRelationship'],\
+            data_new['RelativeName'][i]['PhysicalHandicap'],data_new['RelativeName'][i]['PhysicalHandicapDetail'],data_new['RelativeName'][i]['KnowFrom']))
 
         sqlI8de = "DELETE FROM RefPerson WHERE ID_CardNo=%s"
         cursor.execute(sqlI8de,result[0]['citizenid'])
         i=0
         for i in xrange(len(data_new['RefName'])):
             sqlIn18 = "INSERT INTO RefPerson (ID_CardNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn18,(data_new[i]['ID_CardNo'],data_new[i]['RefName'],data_new[i]['RefPosition'],data_new[i]['RefAddress'],data_new[i]['RefTel']))
+            cursor.execute(sqlIn18,(data_new['RefName'][i]['ID_CardNo'],data_new['RefName'][i]['RefName'],data_new['RefName'][i]['RefPosition'],data_new['RefName'][i]['RefAddress'],data_new['RefName'][i]['RefTel']))
 
         sql_Up_SpecialSkill = "UPDATE SpecialSkill SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_SpecialSkill,(result[0]['citizenid']))
@@ -306,8 +309,9 @@ def EditEmployee(cursor):
             i=0
             for i in xrange(len(data_new['CompanyName'])):
                 sqlIn10 = "INSERT INTO Employment (ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn10,(data_new[i]['ID_CardNo'],data_new[i]['CompanyName'],data_new[i]['CompanyAddress'],data_new[i]['PositionHeld'],data_new[i]['StartSalary'],data_new[i]['EndSalary'],data_new[i]['StartYear'],data_new[i]['EndYear'], \
-                data[i]['Responsibility'],data_new[i]['ReasonOfLeaving'],data_new[i]['Descriptionofwork']))
+                cursor.execute(sqlIn10,(data_new['CompanyName'][i]['ID_CardNo'],data_new['CompanyName'][i]['CompanyName'],data_new['CompanyName'][i]['CompanyAddress'],data_new['CompanyName'][i]['PositionHeld'],data_new['CompanyName'][i]['StartSalary'],\
+                data_new['CompanyName'][i]['EndSalary'],data_new['CompanyName'][i]['StartYear'],data_new['CompanyName'][i]['EndYear'], \
+                data_new['CompanyName'][i]['Responsibility'],data_new['CompanyName'][i]['ReasonOfLeaving'],data_new['CompanyName'][i]['Descriptionofwork']))
         except Exception as e:
             logserver(e)
         try:
@@ -316,7 +320,7 @@ def EditEmployee(cursor):
             i=0
             for i in xrange(len(data_new['Subject'])):
                 sqlIn23 = "INSERT INTO TrainingCourse(ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn23,(data_new[i]['ID_CardNo'],data_new[i]['Subject'],data_new[i]['Place'],data_new[i]['StartDate'],data_new[i]['EndDate']))
+                cursor.execute(sqlIn23,(data_new['Subject'][i]['ID_CardNo'],data_new['Subject'][i]['Subject'],data_new['Subject'][i]['Place'],data_new['Subject'][i]['StartDate'],data_new['Subject'][i]['EndDate']))
         except Exception as e:
             logserver(e)
 
@@ -652,6 +656,7 @@ def Export_Employee_All_company(cursor):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
+            companyname_ = result[0]['company_short_name']
         except Exception as e:
             logserver(e)
             return "No_Data"

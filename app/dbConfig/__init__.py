@@ -21,6 +21,7 @@ from dateutil.relativedelta import relativedelta
 
 app = Flask(__name__)
 CORS(app)
+# app.config['ALLOWED_EXTENSIONS'] = set(['xls', 'xlsm', 'xlsx', 'csv', 'txt', 'xml'])
 
 app.config['MYSQL_DATABASE_USER'] = "root"
 app.config['MYSQL_DATABASE_PASSWORD'] = "devops@Pass01"
@@ -150,3 +151,6 @@ def toDict(data,columns):
     for row in data:
         results = dict(zip(columns, row))
     return results
+# def allowed_file(filename):
+#     return '.' in filename and \
+#     filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']

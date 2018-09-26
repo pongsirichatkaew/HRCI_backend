@@ -21,100 +21,26 @@ def hello():
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
-    # try:
-    # dataInput = request.json
-    # companyid__ = int(dataInput['company_id'])
-    # if companyid__==1:
-    #     now = datetime.now()
-    #     date_n = str(int(now.year))
-    #     form_employee = date_n
-    # elif companyid__==21:
-    #     now = datetime.now()
-    #     date_n = str(int(now.year))
-    #     form_employee = date_n[2:]
-    # else:
-    #     now = datetime.now()
-    #     date_n = str(int(now.year)+543)
-    #     form_employee = date_n[2:]
-    # sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
-    # cursor.execute(sqlcompafirst,dataInput['company_id'])
-    # columnscompafirst = [column[0] for column in cursor.description]
-    # resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
-    # coun_length =len(resultcompafirst[0]['acronym'])
-    # coun_company = str(resultcompafirst[0]['acronym'])
-    # try:
-    #     sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s ORDER BY employeeid DESC LIMIT 1"
-    #     cursor.execute(sqlEmployee,dataInput['company_id'])
-    #     columnsEmployee = [column[0] for column in cursor.description]
-    #     resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
-    #     Emp_last = resultEmployee[0]['employeeid']
-    #     if companyid__!=1:
-    #         form_employee2 = Emp_last[coun_length:]
-    #         form_employee3 = form_employee2[:-3]
-    #         if form_employee3==form_employee:
-    #             Emp_last = resultEmployee[0]['employeeid']
-    #         else:
-    #             Emp_last = coun_company+"000"
-    #     else:
-    #         form_employee2 = Emp_last[coun_length:]
-    #         form_employee3 = form_employee2[:-4]
-    #         if form_employee3==form_employee:
-    #             Emp_last = resultEmployee[0]['employeeid']
-    #         else:
-    #             Emp_last = coun_company+"000"
-    # except Exception as e:
-    #     if companyid__!=1:
-    #         Emp_last = coun_company+"000"
-    #     else:
-    #        Emp_last = coun_company+"000"
-    # type = Emp_last
-    # if  coun_length==0:
-    #     coun_length=2
-    # elif coun_length==1:
-    #     coun_length=3
-    # else:
-    #     coun_length=coun_length+2
-    # if companyid__!=1:
-    #     codelast = int(str(type[coun_length:]))+1
-    # else:
-    #     codelast = str(int(str(type[coun_length:]))+1)
-    #     codelast = codelast[2:]
-    #     if codelast=="":
-    #        codelast=1
-    #     else:
-    #         codelast=codelast
-    # if companyid__!=1:
-    #     if  codelast<=9:
-    #         codelast=str(codelast)
-    #         codesumlast="00"+codelast
-    #     elif codelast<=99:
-    #         codelast=str(codelast)
-    #         codesumlast="0"+codelast
-    #     else:
-    #         codesumlast=str(codelast)
-    # else:
-    #     if  codelast<=9:
-    #         codelast=str(codelast)
-    #         codesumlast="000"+codelast
-    #     elif codelast<=99:
-    #         codelast=str(codelast)
-    #         codesumlast="00"+codelast
-    #     elif codelast<=999:
-    #         codelast=str(codelast)
-    #         codesumlast="0"+codelast
-    #     else:
-    #         codesumlast=str(codelast)
-    # first_character = resultcompafirst[0]['acronym']
-    # if companyid__==1:
-    #     employeeid = first_character+form_employee+codesumlast
-    # elif companyid__==21:
-    #     employeeid = first_character+form_employee+codesumlast
-    # else:
-    #     employeeid = first_character+form_employee+codesumlast
-    # return jsonify(employeeid)
-    # except Exception as e:
-    #     logserver(e)
-    #     return "fail"
+    # def uploadmutifile():
+    # path = "uploads/"
+    #     try:
+    #         file = request.files.getlist('file')
+    #         for idx, fileList in enumerate(file):
+    #             fileName = fileList.filename
+    #             fileType = fileName.split('.')[-1]
+    #             fileList.filename = 'U' + "test" + '' + request.form['source_id']  + '' + str(idx + 1) + '.' + fileType
+    #             try:
+    #                 os.remove(os.path.join(path, fileList.filename))
+    #             except OSError:
+    #                 pass
+    #             if file and allowed_file(fileList.filename):
+    #                 fileList.save(os.path.join(path, fileList.filename))
+    #             else:
+    #                 return jsonify({"status": "file is not allowed"})
+    #         return jsonify({"status": "success"})
+    #     except Exception as e:
+    #         current_app.logger.info("Error in file: " + str(e))
+    #         return jsonify({"status": "Error in file upload"})
     dataInput = request.json
     source = dataInput['source']
     data_new = source
