@@ -721,10 +721,10 @@ def Qry_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM employee_ga WHERE employeeid=%s"
-        cursor3.execute(sql,data_new['employeeid'])
-        columns = [column[0] for column in cursor3.description]
-        result = toJson(cursor3.fetchall(),columns)
+        sql = "SELECT * FROM employee_ga WHERE employeeid=%s AND validstatus = 1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
     except Exception as e:
         logserver(e)
