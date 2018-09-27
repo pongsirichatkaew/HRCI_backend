@@ -346,6 +346,15 @@ def EditEmployee(cursor):
         sql_Up_EM = "UPDATE employee SET validstatus=0 WHERE citizenid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid']))
 
+        try:
+            sql = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['company_id']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            return "Duplicate_employeeid"
+        except Exception as e:
+            pass
+
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
         data_new['phone_company'],data_new[0]['position_id'],\
