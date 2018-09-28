@@ -234,102 +234,23 @@ def EditEmployee(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        # sql_Up_Address = "UPDATE Address SET validstatus=0 WHERE ID_CardNo=%s"
-        # cursor.execute(sql_Up_Address,(result[0]['citizenid']))
-        # i=0
-        # for i in xrange(len(data_new['AddressType'])):
-        #     sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn,(data_new['AddressType'][i]['ID_CardNo'],data_new['AddressType'][i]['AddressType'],data_new['AddressType'][i]['HouseNo'],
-        #     data_new['AddressType'][i]['Street'],data_new['AddressType'][i]['DISTRICT_NAME'],\
-        #     data_new['AddressType'][i]['AMPHUR_NAME'],data_new['AddressType'][i]['PROVINCE_NAME'],data_new['AddressType'][i]['PostCode'],data_new['AddressType'][i]['Tel'],data_new['AddressType'][i]['Fax']))
-        #
-        # sqlI6de = "DELETE FROM ComputerSkill WHERE ID_CardNo=%s"
-        # cursor.execute(sqlI6de,result[0]['citizenid'])
-        # i=0
-        # for i in xrange(len(data_new['ComSkill'])):
-        #     sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
-        #     cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level']))
-        #
-        # sqlI9de = "DELETE FROM Education WHERE ID_CardNo=%s"
-        # cursor.execute(sqlI9de,result[0]['citizenid'])
-        # i=0
-        # for i in xrange(len(data_new['EducationLevel'])):
-        #     sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn9,(data_new['EducationLevel'][i]['ID_CardNo'],data_new['EducationLevel'][i]['EducationLevel'],data_new['EducationLevel'][i]['Institute'],data_new['EducationLevel'][i]['StartYear'],data_new['EducationLevel'][i]['EndYear'],data_new['EducationLevel'][i]['Qualification'],\
-        #     data_new['EducationLevel'][i]['Major'],data_new['EducationLevel'][i]['GradeAvg'],data_new['EducationLevel'][i]['ExtraCurricularActivities']))
-        #
-        # sql_Up_Family = "UPDATE Family SET validstatus=0 WHERE ID_CardNo=%s"
-        # cursor.execute(sql_Up_Family,(result[0]['citizenid']))
-        # i=0
-        # for i in xrange(len(data_new['MemberType'])):
-        #     sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
-        #     data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
-        #
-        # sqlI13de = "DELETE FROM LanguagesSkill WHERE ID_CardNo=%s"
-        # cursor.execute(sqlI13de,result[0]['citizenid'])
-        # i=0
-        # for i in xrange(len(data_new['Languages'])):
-        #     sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['Languages'],data_new['Languages'][i]['Speaking'],data_new['Languages'][i]['Reading'],data_new['Languages'][i]['Writting']))
+        sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
+        cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
+
+        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
+        data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'], \
+        data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
+        data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['Others'], \
+        data_new['Worktel'],data_new['Mobile'],data_new['Email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],data_new['date']))
 
         # sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
         # cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
-        # sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
-        # VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        # sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,ID_CardNo,Mobile) \
+        # VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
         # cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
-        # data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'], \
-        # data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
-        # data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['Others'], \
-        # data_new['Worktel'],data_new['Mobile'],data_new['Email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],data_new['date']))
-
-        sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
-        cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
-        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,ID_CardNo,Mobile) \
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"""
-        cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
-        data_new['SurnameEn'],data_new['NicknameEn'],data_new['ID_CardNo'],data_new['Mobile']))
-
-        # sqlI7de = "DELETE FROM Reference WHERE ID_CardNo=%s"
-        # cursor.execute(sqlI7de,result[0]['citizenid'])
-        # i=0
-        # for i in xrange(len(data_new['RelativeName'])):
-        #     sqlIn17 = "INSERT INTO Reference (ID_CardNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn17,(data_new['RelativeName'][i]['ID_CardNo'],data_new['RelativeName'][i]['RelativeName'],data_new['RelativeName'][i]['RelativeSurname'],data_new['RelativeName'][i]['RelativePosition'],data_new['RelativeName'][i]['RelativeRelationship'],\
-        #     data_new['RelativeName'][i]['PhysicalHandicap'],data_new['RelativeName'][i]['PhysicalHandicapDetail'],data_new['RelativeName'][i]['KnowFrom']))
-        #
-        # sqlI8de = "DELETE FROM RefPerson WHERE ID_CardNo=%s"
-        # cursor.execute(sqlI8de,result[0]['citizenid'])
-        # i=0
-        # for i in xrange(len(data_new['RefName'])):
-        #     sqlIn18 = "INSERT INTO RefPerson (ID_CardNo,RefName,RefPosition,RefAddress,RefTel) VALUES (%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn18,(data_new['RefName'][i]['ID_CardNo'],data_new['RefName'][i]['RefName'],data_new['RefName'][i]['RefPosition'],data_new['RefName'][i]['RefAddress'],data_new['RefName'][i]['RefTel']))
-        #
-        # sql_Up_SpecialSkill = "UPDATE SpecialSkill SET validstatus=0 WHERE ID_CardNo=%s"
-        # cursor.execute(sql_Up_SpecialSkill,(result[0]['citizenid']))
-        # sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn20,(data_new[i]['ID_CardNo'],data_new[i]['CarDrivingLicense'],data_new[i]['MotorBicycleDrivingLicense'],data_new[i]['OwnCar'],data_new[i]['OwnMotorBicycle'], \
-        # data[i]['WorkUpCountry'],data_new[i]['StartWorkEarliest'],data_new[i]['PhysicalDisabilityOrDisease'],data[i]['DischargeFromEmployment'],data_new[i]['DischargeFromEmploymentReason'],data_new[i]['Arrested'],data_new[i]['ArrestedReason']))
-        # try:
-        #     sqlI10de = "DELETE FROM Employment WHERE ID_CardNo=%s"
-        #     cursor.execute(sqlI10de,result[0]['citizenid'])
-        #     i=0
-        #     for i in xrange(len(data_new['CompanyName'])):
-        #         sqlIn10 = "INSERT INTO Employment (ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        #         cursor.execute(sqlIn10,(data_new['CompanyName'][i]['ID_CardNo'],data_new['CompanyName'][i]['CompanyName'],data_new['CompanyName'][i]['CompanyAddress'],data_new['CompanyName'][i]['PositionHeld'],data_new['CompanyName'][i]['StartSalary'],\
-        #         data_new['CompanyName'][i]['EndSalary'],data_new['CompanyName'][i]['StartYear'],data_new['CompanyName'][i]['EndYear'], \
-        #         data_new['CompanyName'][i]['Responsibility'],data_new['CompanyName'][i]['ReasonOfLeaving'],data_new['CompanyName'][i]['Descriptionofwork']))
-        # except Exception as e:
-        #     logserver(e)
-        # try:
-        #     sqlI23de = "DELETE FROM TrainingCourse WHERE ID_CardNo=%s"
-        #     cursor.execute(sqlI23de,result[0]['citizenid'])
-        #     i=0
-        #     for i in xrange(len(data_new['Subject'])):
-        #         sqlIn23 = "INSERT INTO TrainingCourse(ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
-        #         cursor.execute(sqlIn23,(data_new['Subject'][i]['ID_CardNo'],data_new['Subject'][i]['Subject'],data_new['Subject'][i]['Place'],data_new['Subject'][i]['StartDate'],data_new['Subject'][i]['EndDate']))
-        # except Exception as e:
-        #     logserver(e)
+        # data_new['SurnameEn'],data_new['NicknameEn'],data_new['ID_CardNo'],data_new['Mobile']))
 
         date1 = data_new['Start_contract']
         star_date = date1.split("-")
@@ -353,14 +274,14 @@ def EditEmployee(cursor):
         sql_Up_EM = "UPDATE employee SET validstatus=0 WHERE citizenid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid']))
 
-        try:
-            sql = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['company_id']))
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-            return "Duplicate_employeeid"
-        except Exception as e:
-            pass
+        # try:
+        #     sql = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+        #     cursor.execute(sql,(data_new['employeeid'],data_new['company_id']))
+        #     columns = [column[0] for column in cursor.description]
+        #     result = toJson(cursor.fetchall(),columns)
+        #     return "Duplicate_employeeid"
+        # except Exception as e:
+        #     pass
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
@@ -375,6 +296,233 @@ def EditEmployee(cursor):
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_AddressType', methods=['POST'])
+@connect_sql()
+def EditEmployee_AddressType(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql_Up_Address = "UPDATE Address SET validstatus=0 WHERE ID_CardNo=%s"
+        cursor.execute(sql_Up_Address,(result[0]['citizenid']))
+        i=0
+        for i in xrange(len(data_new['AddressType'])):
+            sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['AddressType'][i]['ID_CardNo'],data_new['AddressType'][i]['AddressType'],data_new['AddressType'][i]['HouseNo'],
+            data_new['AddressType'][i]['Street'],data_new['AddressType'][i]['DISTRICT_NAME'],\
+            data_new['AddressType'][i]['AMPHUR_NAME'],data_new['AddressType'][i]['PROVINCE_NAME'],data_new['AddressType'][i]['PostCode'],data_new['AddressType'][i]['Tel'],data_new['AddressType'][i]['Fax']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_ComputerSkill', methods=['POST'])
+@connect_sql()
+def EditEmployee_ComputerSkill(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlI6de = "DELETE FROM ComputerSkill WHERE ID_CardNo=%s"
+        cursor.execute(sqlI6de,result[0]['citizenid'])
+        i=0
+        for i in xrange(len(data_new['ComSkill'])):
+            sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
+            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_Education', methods=['POST'])
+@connect_sql()
+def EditEmployee_Education(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlI9de = "DELETE FROM Education WHERE ID_CardNo=%s"
+        cursor.execute(sqlI9de,result[0]['citizenid'])
+        i=0
+        for i in xrange(len(data_new['EducationLevel'])):
+            sqlIn9 = "INSERT INTO Education (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn9,(data_new['EducationLevel'][i]['ID_CardNo'],data_new['EducationLevel'][i]['EducationLevel'],data_new['EducationLevel'][i]['Institute'],data_new['EducationLevel'][i]['StartYear'],data_new['EducationLevel'][i]['EndYear'],data_new['EducationLevel'][i]['Qualification'],\
+            data_new['EducationLevel'][i]['Major'],data_new['EducationLevel'][i]['GradeAvg'],data_new['EducationLevel'][i]['ExtraCurricularActivities']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_Family', methods=['POST'])
+@connect_sql()
+def EditEmployee_Family(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql_Up_Family = "UPDATE Family SET validstatus=0 WHERE ID_CardNo=%s"
+        cursor.execute(sql_Up_Family,(result[0]['citizenid']))
+        i=0
+        for i in xrange(len(data_new['MemberType'])):
+            sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
+            data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_LanguagesSkill', methods=['POST'])
+@connect_sql()
+def EditEmployee_LanguagesSkill(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlI13de = "DELETE FROM LanguagesSkill WHERE ID_CardNo=%s"
+        cursor.execute(sqlI13de,result[0]['citizenid'])
+        i=0
+        for i in xrange(len(data_new['Languages'])):
+            sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['Languages'],data_new['Languages'][i]['Speaking'],data_new['Languages'][i]['Reading'],data_new['Languages'][i]['Writting']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_SpecialSkill', methods=['POST'])
+@connect_sql()
+def EditEmployee_SpecialSkill(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql_Up_SpecialSkill = "UPDATE SpecialSkill SET validstatus=0 WHERE ID_CardNo=%s"
+        cursor.execute(sql_Up_SpecialSkill,(result[0]['citizenid']))
+
+        sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn20,(data_new[i]['ID_CardNo'],data_new[i]['CarDrivingLicense'],data_new[i]['MotorBicycleDrivingLicense'],data_new[i]['OwnCar'],data_new[i]['OwnMotorBicycle'], \
+        data[i]['WorkUpCountry'],data_new[i]['StartWorkEarliest'],data_new[i]['PhysicalDisabilityOrDisease'],data[i]['DischargeFromEmployment'],data_new[i]['DischargeFromEmploymentReason'],data_new[i]['Arrested'],data_new[i]['ArrestedReason']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_Employment', methods=['POST'])
+@connect_sql()
+def EditEmployee_Employment(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        try:
+            sqlI10de = "DELETE FROM Employment WHERE ID_CardNo=%s"
+            cursor.execute(sqlI10de,result[0]['citizenid'])
+            i=0
+            for i in xrange(len(data_new['CompanyName'])):
+                sqlIn10 = "INSERT INTO Employment (ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn10,(data_new['CompanyName'][i]['ID_CardNo'],data_new['CompanyName'][i]['CompanyName'],data_new['CompanyName'][i]['CompanyAddress'],data_new['CompanyName'][i]['PositionHeld'],data_new['CompanyName'][i]['StartSalary'],\
+                data_new['CompanyName'][i]['EndSalary'],data_new['CompanyName'][i]['StartYear'],data_new['CompanyName'][i]['EndYear'], \
+                data_new['CompanyName'][i]['Responsibility'],data_new['CompanyName'][i]['ReasonOfLeaving'],data_new['CompanyName'][i]['Descriptionofwork']))
+        except Exception as e:
+            pass
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_TrainingCourse', methods=['POST'])
+@connect_sql()
+def EditEmployee_TrainingCourse(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        try:
+            sqlI23de = "DELETE FROM TrainingCourse WHERE ID_CardNo=%s"
+            cursor.execute(sqlI23de,result[0]['citizenid'])
+            i=0
+            for i in xrange(len(data_new['Subject'])):
+                sqlIn23 = "INSERT INTO TrainingCourse(ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn23,(data_new['Subject'][i]['ID_CardNo'],data_new['Subject'][i]['Subject'],data_new['Subject'][i]['Place'],data_new['Subject'][i]['StartDate'],data_new['Subject'][i]['EndDate']))
+        except Exception as e:
+            pass
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_Employeeid', methods=['POST'])
+@connect_sql()
+def EditEmployee_Employeeid(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        try:
+            sql = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['company_id']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            return "Duplicate_employeeid"
+        except Exception as e:
+            sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            cursor.execute(sqlUp,(data_new['employeeid'],data_new['employeeid']))
+
+            sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['employeeid']))
         return "Success"
     except Exception as e:
         logserver(e)
