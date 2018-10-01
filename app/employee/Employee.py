@@ -110,6 +110,11 @@ def QryEmployee_one_person(cursor):
         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
         decodesalary = base64.b64decode(resultEmployee[0]['salary'])
 
+        sqlEmployee_email = "SELECT email FROM employee WHERE employee.employeeid=%s AND employee.validstatus=1"
+        cursor.execute(sqlEmployee_email,data_new['employeeid'])
+        columnsEmployeeEmail = [column[0] for column in cursor.description]
+        resultEmployee_Email = toJson(cursor.fetchall(),columnsEmployeeEmail)
+
         sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
         WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Address.validstatus=1"
         cursor.execute(sqlEm,resultEmployee[0]['citizenid'])
@@ -205,6 +210,7 @@ def QryEmployee_one_person(cursor):
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         # arr["Image_profile"] = encoded_Image
+        arr["EmailEmp"] = resultEmployee_Email
         arr["Decodesalary"] = decodesalary
         arr["ComputerSkill"] = result6
         arr["Education"] = result9
@@ -234,16 +240,21 @@ def EditEmployee(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
+        sql_Select_Personal = "SELECT * FROM Personal WHERE ID_CardNo=%s AND validstatus=1"
+        cursor.execute(sql_Select_Personal,data_new['ID_CardNo'])
+        columns = [column[0] for column in cursor.description]
+        result_Personal = toJson(cursor.fetchall(),columns)
+
         sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
-        data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'], \
-        data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
-        data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['Others'], \
-        data_new['Worktel'],data_new['Mobile'],data_new['Email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],data_new['date']))
+        data_new['SurnameEn'],data_new['NicknameEn'],result_Personal[0]['Birthdate'],result_Personal[0]['BirthPlace'],result_Personal[0]['BirthProvince'], \
+        result_Personal[0]['BirthCountry'],result_Personal[0]['Age'],result_Personal[0]['Height'],result_Personal[0]['Weight'],result_Personal[0]['BloodGroup'],result_Personal[0]['Citizenship'],result_Personal[0]['Religion'],result_Personal[0]['ID_CardNo'], \
+        result_Personal[0]['IssueDate'],result_Personal[0]['ExpiryDate'],result_Personal[0]['MaritalStatus'],result_Personal[0]['NumberOfChildren'],result_Personal[0]['StudyChild'],result_Personal[0]['MilitaryService'],result_Personal[0]['Others'], \
+        result_Personal[0]['Worktel'],data_new['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
 
         # sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
         # cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
@@ -284,7 +295,7 @@ def EditEmployee(cursor):
         #     pass
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
+        cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
@@ -292,9 +303,40 @@ def EditEmployee(cursor):
         cursor.execute(sql_Up_EM_pro,(result[0]['citizenid']))
 
         sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
+        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_Personal', methods=['POST'])
+@connect_sql()
+def EditEmployee_Personal(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql_Select_Personal = "SELECT * FROM Personal WHERE ID_CardNo=%s AND validstatus=1"
+        cursor.execute(sql_Select_Personal,(result[0]['citizenid']))
+        columns = [column[0] for column in cursor.description]
+        result_Personal = toJson(cursor.fetchall(),columns)
+
+        sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
+        cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
+
+        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
+        EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
+         data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
+         result_Personal[0]['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
 
         return "Success"
     except Exception as e:
@@ -512,17 +554,18 @@ def EditEmployee_Employeeid(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         try:
-            sql = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['company_id']))
+            sql2 = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+            cursor.execute(sql2,(data_new['employeeid'],data_new['company_id']))
             columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
+            result2 = toJson(cursor.fetchall(),columns)
+            employeeid__ = result2[0]['employeeid']
             return "Duplicate_employeeid"
         except Exception as e:
             sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
-            cursor.execute(sqlUp,(data_new['employeeid'],data_new['employeeid']))
+            cursor.execute(sqlUp,(data_new['employeeid'],data_new['Old_EmpId']))
 
             sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
-            cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['employeeid']))
+            cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['Old_EmpId']))
         return "Success"
     except Exception as e:
         logserver(e)
