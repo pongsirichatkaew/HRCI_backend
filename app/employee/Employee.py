@@ -561,6 +561,10 @@ def EditEmployee_Employeeid(cursor):
             employeeid__ = result2[0]['employeeid']
             return "Duplicate_employeeid"
         except Exception as e:
+
+            insert_emp_log = "INSERT INTO employee_id_log (old_employeeid,new_employeeid,create_by) VALUES (%s,%s,%s)"
+            cursor.execute(insert_emp_log,(data_new['Old_EmpId'],data_new['employeeid']data_new['createby']))
+
             sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['Old_EmpId']))
 
