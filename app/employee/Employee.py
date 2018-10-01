@@ -568,6 +568,9 @@ def EditEmployee_Employeeid(cursor):
             sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['Old_EmpId']))
 
+            sqlUp_gA = "UPDATE employee_ga SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            cursor.execute(sqlUp_gA,(data_new['employeeid'],data_new['Old_EmpId']))
+
             sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
             cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['Old_EmpId']))
         return "Success"
@@ -630,7 +633,7 @@ def InsertEmployeeHRCI_Management(cursor):
             i=0
             for i in xrange(len(data_new['BrotherAndSister'])):
                 sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn11,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['broAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
+                cursor.execute(sqlIn11,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['BroAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
                 data_new['BrotherAndSister'][i]['BroAndSisTel'],data_new['BrotherAndSister'][i]['BroAndSisFax'],data_new['BrotherAndSister'][i]['BroAndSisAddress']))
             # i=0
             # for i in xrange(len(data_new['MemberType'])):
@@ -695,7 +698,7 @@ def InsertEmployeeHRCI_Management(cursor):
             End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
 
             # salary ='15000'
-            encodedsalary = base64.b64encode(Salary)
+            encodedsalary = base64.b64encode(data_new['Salary'])
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
             data_new['phone_company'],data_new['position_id'],\
