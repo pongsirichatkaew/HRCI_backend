@@ -44,25 +44,34 @@ def TestgenEM(cursor):
     dataInput = request.json
     source = dataInput['source']
     data_new = source
-    now_contract = datetime.now()
-    date_contract = str(int(now_contract.year)+543)
-    date_sub_contract = date_contract[2:]
     try:
-        sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
-        cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
-        columns = [column[0] for column in cursor.description]
-        resultsql_contract_id = toJson(cursor.fetchall(),columns)
-        year_contract = resultsql_contract_id[0]['year']
-        contract_id_ = resultsql_contract_id[0]['contract_id']
-        year_sub_con = year_contract[2:]
-        if year_sub_con==date_sub_contract:
-            contract_id_ = resultsql_contract_id[0]['contract_id']
-        else:
-            contract_id_ = 0
+        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+        open_path_ = urllib.urlopen(encoded_Image)
+        htmlSource = open_path_.read()
+        open_path_.close()
+        test= htmlSource.decode('utf-8')
+        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.jpg")
     except Exception as e:
-        contract_id_ = 0
-    contract_id_last = int(contract_id_)+1
-    return jsonify(contract_id_last)
+        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+    # now_contract = datetime.now()
+    # date_contract = str(int(now_contract.year)+543)
+    # date_sub_contract = date_contract[2:]
+    # try:
+    #     sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
+    #     cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
+    #     columns = [column[0] for column in cursor.description]
+    #     resultsql_contract_id = toJson(cursor.fetchall(),columns)
+    #     year_contract = resultsql_contract_id[0]['year']
+    #     contract_id_ = resultsql_contract_id[0]['contract_id']
+    #     year_sub_con = year_contract[2:]
+    #     if year_sub_con==date_sub_contract:
+    #         contract_id_ = resultsql_contract_id[0]['contract_id']
+    #     else:
+    #         contract_id_ = 0
+    # except Exception as e:
+    #     contract_id_ = 0
+    # contract_id_last = int(contract_id_)+1
+    return jsonify(encoded_Image)
 @app.route('/login', methods=['POST'])
 def login():
     try:

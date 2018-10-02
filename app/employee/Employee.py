@@ -169,18 +169,15 @@ def QryEmployee_one_person(cursor):
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
 
-        # try:
-        #     sqlPath = "SELECT PathFile FROM Attachment \
-        #     WHERE ID_CardNo=%s AND Type='profile_image'"
-        #     cursor.execute(sqlPath,resultEmployee[0]['citizenid'])
-        #     columnsPath = [column[0] for column in cursor.description]
-        #     resulPath = toJson(cursor.fetchall(),columnsPath)
-        #     test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
-        #     # with open(test, 'rb') as image_file:
-        #     #     encoded_Image = base64.b64encode(image_file.read())
-        #     encoded_Image = base64.b64encode(test)
-        # except Exception as e:
-        #     encoded_Image="No images"
+        try:
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            open_path_ = urllib.urlopen(encoded_Image)
+            htmlSource = open_path_.read()
+            open_path_.close()
+            test= htmlSource.decode('utf-8')
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.jpg")
+        except Exception as e:
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
 
         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
         WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
@@ -209,7 +206,7 @@ def QryEmployee_one_person(cursor):
         arr["Address"] = result
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
-        # arr["Image_profile"] = encoded_Image
+        arr["Image_profile"] = encoded_Image
         arr["EmailEmp"] = resultEmployee_Email
         arr["Decodesalary"] = decodesalary
         arr["ComputerSkill"] = result6

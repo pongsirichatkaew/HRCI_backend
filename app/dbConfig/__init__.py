@@ -15,6 +15,7 @@ import os
 import wget
 import base64
 import xlsxwriter
+import urllib
 from werkzeug import secure_filename
 from openpyxl import load_workbook
 from dateutil.relativedelta import relativedelta
