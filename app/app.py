@@ -45,14 +45,11 @@ def TestgenEM(cursor):
     source = dataInput['source']
     data_new = source
     try:
-        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
-        open_path_ = urllib.urlopen(encoded_Image)
-        htmlSource = open_path_.read()
-        open_path_.close()
-        test= htmlSource.decode('utf-8')
-        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.jpg")
+        ID_CardNo=data_new['ID_CardNo']
+        ID_CardNo_split = ID_CardNo.split("-")
+        ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[4]
     except Exception as e:
-        encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+        ID_CardNo=data_new['ID_CardNo']
     # now_contract = datetime.now()
     # date_contract = str(int(now_contract.year)+543)
     # date_sub_contract = date_contract[2:]
@@ -71,7 +68,7 @@ def TestgenEM(cursor):
     # except Exception as e:
     #     contract_id_ = 0
     # contract_id_last = int(contract_id_)+1
-    return jsonify(encoded_Image)
+    return jsonify(ID_CardNo)
 @app.route('/login', methods=['POST'])
 def login():
     try:
