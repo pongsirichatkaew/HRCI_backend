@@ -333,7 +333,7 @@ def EditEmployee_Personal(cursor):
         EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
          data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
-         result_Personal[0]['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
+         data_new['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
 
         return "Success"
     except Exception as e:
@@ -354,12 +354,38 @@ def EditEmployee_AddressType(cursor):
 
         sql_Up_Address = "UPDATE Address SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Address,(result[0]['citizenid']))
-        i=0
-        for i in xrange(len(data_new['AddressType'])):
+        if data_new['AddressTypeHome']=='Home':
             sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn,(data_new['AddressType'][i]['ID_CardNo'],data_new['AddressType'][i]['AddressType'],data_new['AddressType'][i]['HouseNo'],
-            data_new['AddressType'][i]['Street'],data_new['AddressType'][i]['DISTRICT_NAME'],\
-            data_new['AddressType'][i]['AMPHUR_NAME'],data_new['AddressType'][i]['PROVINCE_NAME'],data_new['AddressType'][i]['PostCode'],data_new['AddressType'][i]['Tel'],data_new['AddressType'][i]['Fax']))
+            cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypeHome'],data_new['HomeNo'],
+            data_new['HomeStreet'],data_new['HomeAmphur'],data_new['HomeDistrict'],data_new['HomeProvince'],data_new['HomePostCode'],data_new['HomeTel'],data_new['HomeFax']))
+        if data_new['AddressTypePresent']=='Present':
+            sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypePresent'],data_new['PresentNo'],
+            data_new['PresentStreet'],data_new['PresentAmphur'],data_new['PresentDistrict'],data_new['PresentProvince'],data_new['PresentPostCode'],data_new['PresentTel'],data_new['PresentFax']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/EditEmployee_EmergencyContact', methods=['POST'])
+@connect_sql()
+def EditEmployee_EmergencyContact(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql_Select_Personal = "SELECT * FROM Personal WHERE ID_CardNo=%s AND validstatus=1"
+        cursor.execute(sql_Select_Personal,(result[0]['citizenid']))
+        columns = [column[0] for column in cursor.description]
+        result_Personal = toJson(cursor.fetchall(),columns)
+
+        sqlUp_EmerContact = "UPDATE Personal SET EmergencyPerson=%s,EmergencyRelation=%s,EmergencyAddress=%s,EmergencyTel=%s WHERE ID_CardNo=%s AND validstatus=1"
+        cursor.execute(sqlUp_EmerContact,(data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],result[0]['citizenid']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -428,11 +454,26 @@ def EditEmployee_Family(cursor):
 
         sql_Up_Family = "UPDATE Family SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Family,(result[0]['citizenid']))
+
+        if data_new['MemberTypeDad']=='Father':
+            sqlIn = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['ID_CardNoDad'],data_new['MemberTypeDad'],data_new['FatherName'],
+            data_new['FatherSurName'],data_new['FatherJob'],data_new['FatherTel'],data_new['FatherFax'],data_new['FatherAddress']))
+        if data_new['MemberTypeMom']=='Mother':
+            sqlIn = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['ID_CardNoMom'],data_new['MemberTypeMom'],data_new['MotherName'],
+            data_new['MotherSurname'],data_new['MotherJob'],data_new['Mothertel'],data_new['MotherFax'],data_new['MotherAddress']))
+
         i=0
-        for i in xrange(len(data_new['MemberType'])):
+        for i in xrange(len(data_new['BrotherAndSister'])):
             sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
-            data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
+            cursor.execute(sqlIn11,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['BroAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
+            data_new['BrotherAndSister'][i]['BroAndSisTel'],data_new['BrotherAndSister'][i]['BroAndSisFax'],data_new['BrotherAndSister'][i]['BroAndSisAddress']))
+        # i=0
+        # for i in xrange(len(data_new['MemberType'])):
+        #     sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
+        #     data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
 
         return "Success"
     except Exception as e:
@@ -456,7 +497,7 @@ def EditEmployee_LanguagesSkill(cursor):
         i=0
         for i in xrange(len(data_new['Languages'])):
             sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['Languages'],data_new['Languages'][i]['Speaking'],data_new['Languages'][i]['Reading'],data_new['Languages'][i]['Writting']))
+            cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['languageskill'],data_new['Languages'][i]['languagespeak'],data_new['Languages'][i]['languageread'],data_new['Languages'][i]['languagewrite']))
 
         return "Success"
     except Exception as e:
@@ -478,9 +519,13 @@ def EditEmployee_SpecialSkill(cursor):
         sql_Up_SpecialSkill = "UPDATE SpecialSkill SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_SpecialSkill,(result[0]['citizenid']))
 
-        sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn20,(data_new[i]['ID_CardNo'],data_new[i]['CarDrivingLicense'],data_new[i]['MotorBicycleDrivingLicense'],data_new[i]['OwnCar'],data_new[i]['OwnMotorBicycle'], \
-        data[i]['WorkUpCountry'],data_new[i]['StartWorkEarliest'],data_new[i]['PhysicalDisabilityOrDisease'],data[i]['DischargeFromEmployment'],data_new[i]['DischargeFromEmploymentReason'],data_new[i]['Arrested'],data_new[i]['ArrestedReason']))
+        # sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlIn20,(data_new[i]['ID_CardNo'],data_new[i]['CarDrivingLicense'],data_new[i]['MotorBicycleDrivingLicense'],data_new[i]['OwnCar'],data_new[i]['OwnMotorBicycle'], \
+        # data[i]['WorkUpCountry'],data_new[i]['StartWorkEarliest'],data_new[i]['PhysicalDisabilityOrDisease'],data[i]['DischargeFromEmployment'],data_new[i]['DischargeFromEmploymentReason'],data_new[i]['Arrested'],data_new[i]['ArrestedReason']))
+
+        sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn20,(data_new['ID_CardNo'],data_new['CarDrivingLicense'],data_new['MotorBicycleDrivingLicense'],data_new['OwnCar'],data_new['OwnMotorBicycle'], \
+        data_new['WorkUpCountry'],data_new['PhysicalDisabilityOrDisease'],data_new['DischargeFromEmployment'],data_new['DischargeFromEmploymentReason'],data_new['Arrested'],data_new['ArrestedReason']))
 
         return "Success"
     except Exception as e:
@@ -914,6 +959,30 @@ def Export_Employee_All_company(cursor):
 def Qry_Province(cursor3):
     try:
         sql = "SELECT PROVINCE_ID, PROVINCE_NAME FROM provinces ORDER BY PROVINCE_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Al_Amphurs', methods=['POST'])
+@connect_sql3()
+def Qry_Al_Amphurs(cursor3):
+    try:
+        sql = "SELECT AMPHUR_ID, AMPHUR_NAME FROM amphures ORDER BY AMPHUR_NAME ASC"
+        cursor3.execute(sql)
+        columns = [column[0] for column in cursor3.description]
+        result = toJson(cursor3.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_Al_Districts', methods=['POST'])
+@connect_sql3()
+def Qry_Al_Districts(cursor3):
+    try:
+        sql = "SELECT DISTRICT_NAME FROM districts ORDER BY DISTRICT_NAME ASC"
         cursor3.execute(sql)
         columns = [column[0] for column in cursor3.description]
         result = toJson(cursor3.fetchall(),columns)
