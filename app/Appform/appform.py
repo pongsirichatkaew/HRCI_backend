@@ -324,7 +324,7 @@ def QryDatbaseAppform():
         try:
             ID_CardNo = result[0]['ID_CardNo']
             ID_CardNo_split = ID_CardNo.split("-")
-            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[4]
+            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[3]+ID_CardNo_split[4]
         except Exception as e:
             ID_CardNo = result[0]['ID_CardNo']
 
@@ -391,7 +391,7 @@ def QryDatbaseAppform():
         contract_id_last = int(contract_id_)+1
 
         sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,result14[0]['ID_CardNo'],resultSalary,data_new['Authority_Distrinct_Id_Card']))
+        cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,ID_CardNo,resultSalary,data_new['Authority_Distrinct_Id_Card']))
 
         i=0
         for i in xrange(len(result9)):
@@ -410,7 +410,7 @@ def QryDatbaseAppform():
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14,(result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],\
         result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
-        result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],result14[0]['ID_CardNo'], \
+        result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],ID_CardNo, \
         result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
         result14[0]['Worktel'],result14[0]['Mobile'],result14[0]['Email'],result14[0]['EmergencyPerson'],result14[0]['EmergencyRelation'],result14[0]['EmergencyAddress'],result14[0]['EmergencyTel'],result14[0]['date']))
         i=0
