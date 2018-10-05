@@ -83,7 +83,7 @@ def InsertBlacklist_Appform():
         try:
             ID_CardNo=result[0]['ID_CardNo']
             ID_CardNo_split = ID_CardNo.split("-")
-            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[4]
+            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[3]+ID_CardNo_split[4]
         except Exception as e:
             ID_CardNo=result[0]['ID_CardNo']
 
@@ -181,7 +181,7 @@ def UpdateEmpStatus():
         try:
             ID_CardNo=resultIDcard[0]['ID_CardNo']
             ID_CardNo_split = ID_CardNo.split("-")
-            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[4]
+            ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[3]+ID_CardNo_split[4]
         except Exception as e:
             ID_CardNo=resultIDcard[0]['ID_CardNo']
 
