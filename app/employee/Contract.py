@@ -164,6 +164,7 @@ def QryContract(cursor):
              codesumlast=str(tranCon_id)
         now = datetime.now()
         date = str(int(now.year)+543)
+        decodesalary = "{:,}".format(decodesalary)
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
