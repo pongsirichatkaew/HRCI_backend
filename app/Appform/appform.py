@@ -455,7 +455,7 @@ def QryDatbaseAppform():
             now = datetime.now()
             date_n = str(int(now.year)+543)
             form_employee = date_n[2:]
-        sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
+        sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s AND validstatus=1"
         cursor.execute(sqlcompafirst,data_new['company_id'])
         columnscompafirst = [column[0] for column in cursor.description]
         resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
