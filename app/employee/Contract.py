@@ -116,7 +116,7 @@ def QryContract(cursor):
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
 
-        sql3 = "SELECT contract_id,contract_date,salary_thai,Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
+        sql3 = "SELECT contract_id,contract_date,Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
@@ -165,6 +165,24 @@ def QryContract(cursor):
              codesumlast=str(tranCon_id)
         now = datetime.now()
         date = str(int(now.year)+543)
+
+        salary = decodesalary
+        salary= (str(salary)[::-1])
+        thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
+        unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
+        length = len(salary) > 1
+        resultSalary = ""
+        for index, current in enumerate(map(int, salary)):
+            if current:
+                if index:
+                   resultSalary = unit[index] + resultSalary
+                if length and current == 1 and index == 0:
+                    resultSalary += 'เอ็ด'
+                elif index == 1 and current == 2:
+                    resultSalary = 'ยี่' + resultSalary
+                elif index != 1 or current != 1:
+                    resultSalary = thai_number[current] + resultSalary
+
         decodesalary = "{:,}".format(int(decodesalary))
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
@@ -187,6 +205,7 @@ def QryContract(cursor):
         resultlast["Employee_MD"] = result2
         resultlast["Contract_id"] = codesumlast
         resultlast["Contract"] = result3
+        resultlast["salary_thai"] = resultSalary
         resultlast["Decodesalary"] = decodesalary
         resultlast['ExpiryDate_idcard_Date'] = tranExpiryDate_idcard_Date
         resultlast['ExpiryDate_idcard_Year'] = tranExpiryDate_idcard_Year

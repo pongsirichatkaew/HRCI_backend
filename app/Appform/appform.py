@@ -354,22 +354,22 @@ def QryDatbaseAppform():
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
             cursor.execute(sqlIn6,(ID_CardNo,result6[i]['ComSkill'],result6[i]['Level']))
 
-        salary = data_new['salary']
-        salary= (str(salary)[::-1])
-        thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
-        unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
-        length = len(salary) > 1
-        resultSalary = ""
-        for index, current in enumerate(map(int, salary)):
-            if current:
-                if index:
-                   resultSalary = unit[index] + resultSalary
-                if length and current == 1 and index == 0:
-                    resultSalary += 'เอ็ด'
-                elif index == 1 and current == 2:
-                    resultSalary = 'ยี่' + resultSalary
-                elif index != 1 or current != 1:
-                    resultSalary = thai_number[current] + resultSalary
+        # salary = data_new['salary']
+        # salary= (str(salary)[::-1])
+        # thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
+        # unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
+        # length = len(salary) > 1
+        # resultSalary = ""
+        # for index, current in enumerate(map(int, salary)):
+        #     if current:
+        #         if index:
+        #            resultSalary = unit[index] + resultSalary
+        #         if length and current == 1 and index == 0:
+        #             resultSalary += 'เอ็ด'
+        #         elif index == 1 and current == 2:
+        #             resultSalary = 'ยี่' + resultSalary
+        #         elif index != 1 or current != 1:
+        #             resultSalary = thai_number[current] + resultSalary
 
         now_contract = datetime.now()
         date_contract = str(int(now_contract.year)+543)
@@ -390,8 +390,8 @@ def QryDatbaseAppform():
             contract_id_ = 0
         contract_id_last = int(contract_id_)+1
 
-        sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,salary_thai,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,ID_CardNo,resultSalary,data_new['Authority_Distrinct_Id_Card']))
+        sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,ID_CardNo,data_new['Authority_Distrinct_Id_Card']))
 
         i=0
         for i in xrange(len(result9)):
