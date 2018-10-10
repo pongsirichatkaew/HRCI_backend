@@ -12,6 +12,7 @@ def QryContract(cursor):
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
+                                      INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s AND employee.validstatus=1 AND company.validstatus=1 AND Address.validstatus=1 AND Personal.validstatus=1"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
@@ -178,6 +179,7 @@ def QryContract(cursor):
         resultlast["PostCode"] = result[1]['PostCode']
         resultlast["Surname"] = result[0]['SurnameTh']
         resultlast["citizenid"] = result[0]['ID_CardNo']
+        resultlast["position_detail"] = result[0]['position_detail']
         resultlast["salary"] = result[0]['salary']
         resultlast["Shot_name_company"] = result[0]['company_short_name']
         resultlast["Name_company"] = result[0]['companyname']
