@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 from dbConfig import *
 from status.section import *
 from status.org_name import *
@@ -44,13 +46,36 @@ def TestgenEM(cursor):
     dataInput = request.json
     source = dataInput['source']
     data_new = source
-    try:
-        ID_CardNo=data_new['ID_CardNo']
-        ID_CardNo_split = ID_CardNo.split("-")
-        ID_CardNo = ID_CardNo_split[0]+ID_CardNo_split[1]+ID_CardNo_split[2]+ID_CardNo_split[4]
-    except Exception as e:
-        ID_CardNo=data_new['ID_CardNo']
-    # now_contract = datetime.now()
+
+    date_name = str(data_new['date'])
+    date_name__ = date_name.split("-")
+    date_year = str(int(date_name__[2])+543)[2:]
+    date_mounth = int(date_name__[1])
+    if   date_mounth==1:
+         Mounth_name ="ม.ค."
+    elif date_mounth==2:
+         Mounth_name="ก.พ."
+    elif date_mounth==3:
+         Mounth_name="มี.ค."
+    elif date_mounth==4:
+         Mounth_name="เม.ย."
+    elif date_mounth==5:
+         Mounth_name="พ.ค."
+    elif date_mounth==6:
+         Mounth_name="มิ.ย."
+    elif date_mounth==7:
+         Mounth_name="ก.ค."
+    elif date_mounth==8:
+         Mounth_name="ส.ค."
+    elif date_mounth==9:
+         Mounth_name="ก.ย."
+    elif date_mounth==10:
+         Mounth_name="ต.ค."
+    elif date_mounth==11:
+         Mounth_name="พ.ย."
+    else:
+         Mounth_name="ธ.ค"
+    Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
     # date_contract = str(int(now_contract.year)+543)
     # date_sub_contract = date_contract[2:]
     # try:
@@ -68,7 +93,7 @@ def TestgenEM(cursor):
     # except Exception as e:
     #     contract_id_ = 0
     # contract_id_last = int(contract_id_)+1
-    return jsonify(ID_CardNo)
+    return jsonify(Birthdate_name)
 @app.route('/login', methods=['POST'])
 def login():
     try:

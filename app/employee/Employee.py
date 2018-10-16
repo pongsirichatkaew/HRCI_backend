@@ -329,9 +329,39 @@ def EditEmployee_Personal(cursor):
         sql_Up_Personal = "UPDATE Personal SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_Personal,(result[0]['citizenid']))
 
-        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
-        EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
+        date_name = str(data_new['Birthdate'])
+        date_name__ = date_name.split("-")
+        date_year = str(int(date_name__[2])+543)[2:]
+        date_mounth = int(date_name__[1])
+        if   date_mounth==1:
+             Mounth_name ="ม.ค."
+        elif date_mounth==2:
+             Mounth_name="ก.พ."
+        elif date_mounth==3:
+             Mounth_name="มี.ค."
+        elif date_mounth==4:
+             Mounth_name="เม.ย."
+        elif date_mounth==5:
+             Mounth_name="พ.ค."
+        elif date_mounth==6:
+             Mounth_name="มิ.ย."
+        elif date_mounth==7:
+             Mounth_name="ก.ค."
+        elif date_mounth==8:
+             Mounth_name="ส.ค."
+        elif date_mounth==9:
+             Mounth_name="ก.ย."
+        elif date_mounth==10:
+             Mounth_name="ต.ค."
+        elif date_mounth==11:
+             Mounth_name="พ.ย."
+        else:
+             Mounth_name="ธ.ค"
+        Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
+
+        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
+        EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
          data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
          data_new['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
 
@@ -688,10 +718,40 @@ def InsertEmployeeHRCI_Management(cursor):
                 sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['languageskill'],data_new['Languages'][i]['languagespeak'],data_new['Languages'][i]['languageread'],data_new['Languages'][i]['languagewrite']))
 
-            sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel) \
-            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            date_name = str(data_new['Birthdate'])
+            date_name__ = date_name.split("-")
+            date_year = str(int(date_name__[2])+543)[2:]
+            date_mounth = int(date_name__[1])
+            if   date_mounth==1:
+                 Mounth_name ="ม.ค."
+            elif date_mounth==2:
+                 Mounth_name="ก.พ."
+            elif date_mounth==3:
+                 Mounth_name="มี.ค."
+            elif date_mounth==4:
+                 Mounth_name="เม.ย."
+            elif date_mounth==5:
+                 Mounth_name="พ.ค."
+            elif date_mounth==6:
+                 Mounth_name="มิ.ย."
+            elif date_mounth==7:
+                 Mounth_name="ก.ค."
+            elif date_mounth==8:
+                 Mounth_name="ส.ค."
+            elif date_mounth==9:
+                 Mounth_name="ก.ย."
+            elif date_mounth==10:
+                 Mounth_name="ต.ค."
+            elif date_mounth==11:
+                 Mounth_name="พ.ย."
+            else:
+                 Mounth_name="ธ.ค"
+            Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
+
+            sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
             cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
-            data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],data_new['BirthPlace'],data_new['BirthProvince'], \
+            data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'], \
             data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
             data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['other'], \
             data_new['phone_company'],data_new['Mobile'],data_new['email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel']))

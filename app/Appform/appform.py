@@ -406,10 +406,40 @@ def QryDatbaseAppform():
             sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn13,(ID_CardNo,result13[i]['Languages'],result13[i]['Speaking'],result13[i]['Reading'],result13[i]['Writting']))
 
-        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
-        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+        date_name = str(result14[0]['Birthdate'])
+        date_name__ = date_name.split("-")
+        date_year = str(int(date_name__[2])+543)[2:]
+        date_mounth = int(date_name__[1])
+        if   date_mounth==1:
+             Mounth_name ="ม.ค."
+        elif date_mounth==2:
+             Mounth_name="ก.พ."
+        elif date_mounth==3:
+             Mounth_name="มี.ค."
+        elif date_mounth==4:
+             Mounth_name="เม.ย."
+        elif date_mounth==5:
+             Mounth_name="พ.ค."
+        elif date_mounth==6:
+             Mounth_name="มิ.ย."
+        elif date_mounth==7:
+             Mounth_name="ก.ค."
+        elif date_mounth==8:
+             Mounth_name="ส.ค."
+        elif date_mounth==9:
+             Mounth_name="ก.ย."
+        elif date_mounth==10:
+             Mounth_name="ต.ค."
+        elif date_mounth==11:
+             Mounth_name="พ.ย."
+        else:
+             Mounth_name="ธ.ค"
+        Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
+
+        sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
+        VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14,(result14[0]['NameTh'],result14[0]['SurnameTh'],result14[0]['NicknameTh'],result14[0]['NameEn'],\
-        result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
+        result14[0]['SurnameEn'],result14[0]['NicknameEn'],result14[0]['Birthdate'],Birthdate_name,result14[0]['BirthPlace'],result14[0]['BirthProvince'], \
         result14[0]['BirthCountry'],result14[0]['Age'],result14[0]['Height'],result14[0]['Weight'],result14[0]['BloodGroup'],result14[0]['Citizenship'],result14[0]['Religion'],ID_CardNo, \
         result14[0]['IssueDate'],result14[0]['ExpiryDate'],result14[0]['MaritalStatus'],result14[0]['NumberOfChildren'],result14[0]['StudyChild'],result14[0]['MilitaryService'],result14[0]['Others'], \
         result14[0]['Worktel'],result14[0]['Mobile'],result14[0]['Email'],result14[0]['EmergencyPerson'],result14[0]['EmergencyRelation'],result14[0]['EmergencyAddress'],result14[0]['EmergencyTel'],result14[0]['date']))
