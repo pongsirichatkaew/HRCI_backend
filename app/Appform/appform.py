@@ -433,7 +433,7 @@ def QryDatbaseAppform():
         elif date_mounth==11:
              Mounth_name="พ.ย."
         else:
-             Mounth_name="ธ.ค"
+             Mounth_name="ธ.ค."
         Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \

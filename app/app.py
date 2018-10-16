@@ -74,7 +74,7 @@ def TestgenEM(cursor):
     elif date_mounth==11:
          Mounth_name="พ.ย."
     else:
-         Mounth_name="ธ.ค"
+         Mounth_name="ธ.ค."
     Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
     # date_contract = str(int(now_contract.year)+543)
     # date_sub_contract = date_contract[2:]
