@@ -357,7 +357,7 @@ def EditEmployee_Personal(cursor):
              Mounth_name="พ.ย."
         else:
              Mounth_name="ธ.ค."
-        Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
+        Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
         EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
@@ -746,7 +746,7 @@ def InsertEmployeeHRCI_Management(cursor):
                  Mounth_name="พ.ย."
             else:
                  Mounth_name="ธ.ค."
-            Birthdate_name = date_name__[0]+" "+Mounth_name.decode('utf-8')+date_year
+            Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
 
             sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel) \
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
