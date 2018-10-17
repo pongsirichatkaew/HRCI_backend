@@ -408,7 +408,7 @@ def QryDatbaseAppform():
 
         date_name = str(result14[0]['Birthdate'])
         date_name__ = date_name.split("-")
-        date_year = str(int(date_name__[2])+543)[2:]
+        date_year = str(int(date_name__[2])+543)
         date_mounth = int(date_name__[1])
         if   date_mounth==1:
              Mounth_name ="ม.ค."

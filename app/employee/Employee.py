@@ -331,7 +331,7 @@ def EditEmployee_Personal(cursor):
 
         date_name = str(data_new['Birthdate'])
         date_name__ = date_name.split("-")
-        date_year = str(int(date_name__[2])+543)[2:]
+        date_year = str(int(date_name__[2])+543)
         date_mounth = int(date_name__[1])
         if   date_mounth==1:
              Mounth_name ="ม.ค."
@@ -720,7 +720,7 @@ def InsertEmployeeHRCI_Management(cursor):
 
             date_name = str(data_new['Birthdate'])
             date_name__ = date_name.split("-")
-            date_year = str(int(date_name__[2])+543)[2:]
+            date_year = str(int(date_name__[2])+543)
             date_mounth = int(date_name__[1])
             if   date_mounth==1:
                  Mounth_name ="ม.ค."

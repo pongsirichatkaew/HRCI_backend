@@ -47,35 +47,27 @@ def TestgenEM(cursor):
     source = dataInput['source']
     data_new = source
 
-    date_name = str(data_new['date'])
-    date_name__ = date_name.split("-")
-    date_year = str(int(date_name__[2])+543)[2:]
-    date_mounth = int(date_name__[1])
-    if   date_mounth==1:
-         Mounth_name ="ม.ค."
-    elif date_mounth==2:
-         Mounth_name="ก.พ."
-    elif date_mounth==3:
-         Mounth_name="มี.ค."
-    elif date_mounth==4:
-         Mounth_name="เม.ย."
-    elif date_mounth==5:
-         Mounth_name="พ.ค."
-    elif date_mounth==6:
-         Mounth_name="มิ.ย."
-    elif date_mounth==7:
-         Mounth_name="ก.ค."
-    elif date_mounth==8:
-         Mounth_name="ส.ค."
-    elif date_mounth==9:
-         Mounth_name="ก.ย."
-    elif date_mounth==10:
-         Mounth_name="ต.ค."
-    elif date_mounth==11:
-         Mounth_name="พ.ย."
-    else:
-         Mounth_name="ธ.ค."
-    Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
+    sql = "SELECT employee.id,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,position.position_detail,section.sect_detail,org_name.org_name_detail,\
+    cost_center_name.cost_detail,company.companyname,employee.start_work,employee_ga.phone_depreciate,\
+    employee_ga.notebook_depreciate,employee_ga.limit_phone,employee_ga.chair_table,employee_ga.pc,\
+    employee_ga.notebook,employee_ga.office_equipment,employee_ga.ms,employee_ga.car_ticket,\
+    employee_ga.band_car,employee_ga.color,employee_ga.regis_car_number,employee_ga.other,employee_ga.description FROM employee \
+		                              LEFT JOIN company ON company.companyid = employee.company_id \
+                                      LEFT JOIN position ON position.position_id = employee.position_id \
+                                      LEFT JOIN section ON section.sect_id = employee.section_id \
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id \
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id \
+		                              LEFT JOIN employee_ga ON employee_ga.employeeid = employee.employeeid \
+                                      LEFT JOIN status ON status.status_id = employee.validstatus \
+    WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1 ORDER BY employee.id"
+    cursor.execute(sql)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
+
+    for item_ in result:
+        item_['salary'] = base64.b64decode(item_['salary'])
+        # for i in result:
+        #    decode_salary_ = base64.b64decode(result[item_][i]['salary'])
     # date_contract = str(int(now_contract.year)+543)
     # date_sub_contract = date_contract[2:]
     # try:
@@ -93,7 +85,7 @@ def TestgenEM(cursor):
     # except Exception as e:
     #     contract_id_ = 0
     # contract_id_last = int(contract_id_)+1
-    return jsonify(Birthdate_name)
+    return jsonify(result)
 @app.route('/login', methods=['POST'])
 def login():
     try:
