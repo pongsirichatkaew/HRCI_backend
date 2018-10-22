@@ -354,25 +354,12 @@ def QryDatbaseAppform():
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
             cursor.execute(sqlIn6,(ID_CardNo,result6[i]['ComSkill'],result6[i]['Level']))
 
-        # salary = data_new['salary']
-        # salary= (str(salary)[::-1])
-        # thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
-        # unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
-        # length = len(salary) > 1
-        # resultSalary = ""
-        # for index, current in enumerate(map(int, salary)):
-        #     if current:
-        #         if index:
-        #            resultSalary = unit[index] + resultSalary
-        #         if length and current == 1 and index == 0:
-        #             resultSalary += 'เอ็ด'
-        #         elif index == 1 and current == 2:
-        #             resultSalary = 'ยี่' + resultSalary
-        #         elif index != 1 or current != 1:
-        #             resultSalary = thai_number[current] + resultSalary
+        start_date_ = data_new['Start_contract']
+        split_str_date = start_date_.split("-")
+        str_date_year = split_str_date[2]
 
-        now_contract = datetime.now()
-        date_contract = str(int(now_contract.year)+543)
+        now_contract = str_date_year
+        date_contract = str(int(now_contract)+543)
         date_sub_contract = date_contract[2:]
         try:
             sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
@@ -411,30 +398,30 @@ def QryDatbaseAppform():
         date_year = str(int(date_name__[2])+543)
         date_mounth = int(date_name__[1])
         if   date_mounth==1:
-             Mounth_name ="ม.ค."
+             Mounth_name ="มกราคม"
         elif date_mounth==2:
-             Mounth_name="ก.พ."
+             Mounth_name="กุมภาพันธ์"
         elif date_mounth==3:
-             Mounth_name="มี.ค."
+             Mounth_name="มีนาคม"
         elif date_mounth==4:
-             Mounth_name="เม.ย."
+             Mounth_name="เมษายน"
         elif date_mounth==5:
-             Mounth_name="พ.ค."
+             Mounth_name="พฤษภาคม"
         elif date_mounth==6:
-             Mounth_name="มิ.ย."
+             Mounth_name="มิถุนายน"
         elif date_mounth==7:
-             Mounth_name="ก.ค."
+             Mounth_name="กรกฎาคม"
         elif date_mounth==8:
-             Mounth_name="ส.ค."
+             Mounth_name="สิงหาคม"
         elif date_mounth==9:
-             Mounth_name="ก.ย."
+             Mounth_name="กันยายน"
         elif date_mounth==10:
-             Mounth_name="ต.ค."
+             Mounth_name="ตุลาคม"
         elif date_mounth==11:
-             Mounth_name="พ.ย."
+             Mounth_name="พฤศจิกายน"
         else:
-             Mounth_name="ธ.ค."
-        Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
+             Mounth_name="ธันวาคม"
+        Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+" "+date_year
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date) \
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
@@ -474,16 +461,16 @@ def QryDatbaseAppform():
 
         companyid__ = int(data_new['company_id'])
         if companyid__==1:
-            now = datetime.now()
-            date_n = str(int(now.year))
+            now = str_date_year
+            date_n = str(int(now))
             form_employee = date_n
         elif companyid__==21:
-            now = datetime.now()
-            date_n = str(int(now.year))
+            now = str_date_year
+            date_n = str(int(now))
             form_employee = date_n[2:]
         else:
-            now = datetime.now()
-            date_n = str(int(now.year)+543)
+            now = str_date_year
+            date_n = str(int(now)+543)
             form_employee = date_n[2:]
         sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s AND validstatus=1"
         cursor.execute(sqlcompafirst,data_new['company_id'])

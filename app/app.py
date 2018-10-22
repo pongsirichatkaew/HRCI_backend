@@ -7,6 +7,7 @@ from status.cost_center_name import *
 from status.position import *
 from status.company import *
 from status.Admin import *
+from status.employee_ga import *
 from status.employee_MD import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
@@ -23,31 +24,11 @@ def hello():
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
-    # def uploadmutifile():
-    # path = "uploads/"
-    #     try:
-    #         file = request.files.getlist('file')
-    #         for idx, fileList in enumerate(file):
-    #             fileName = fileList.filename
-    #             fileType = fileName.split('.')[-1]
-    #             fileList.filename = 'U' + "test" + '' + request.form['source_id']  + '' + str(idx + 1) + '.' + fileType
-    #             try:
-    #                 os.remove(os.path.join(path, fileList.filename))
-    #             except OSError:
-    #                 pass
-    #             if file and allowed_file(fileList.filename):
-    #                 fileList.save(os.path.join(path, fileList.filename))
-    #             else:
-    #                 return jsonify({"status": "file is not allowed"})
-    #         return jsonify({"status": "success"})
-    #     except Exception as e:
-    #         current_app.logger.info("Error in file: " + str(e))
-    #         return jsonify({"status": "Error in file upload"})
     dataInput = request.json
     source = dataInput['source']
     data_new = source
 
-    sql = "SELECT employee.id,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,position.position_detail,section.sect_detail,org_name.org_name_detail,\
+    sql = """SELECT employee.id,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,position.position_detail,section.sect_detail,org_name.org_name_detail,\
     cost_center_name.cost_detail,company.companyname,employee.start_work,employee_ga.phone_depreciate,\
     employee_ga.notebook_depreciate,employee_ga.limit_phone,employee_ga.chair_table,employee_ga.pc,\
     employee_ga.notebook,employee_ga.office_equipment,employee_ga.ms,employee_ga.car_ticket,\
@@ -59,32 +40,18 @@ def TestgenEM(cursor):
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id \
 		                              LEFT JOIN employee_ga ON employee_ga.employeeid = employee.employeeid \
                                       LEFT JOIN status ON status.status_id = employee.validstatus \
-    WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1 ORDER BY employee.id"
+    WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1"""
+    strtime = time.time()
     cursor.execute(sql)
+    endtime = time.time()
+    print(endtime-strtime)
+    # cursor.execute(sql)
+
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)
 
-    for item_ in result:
-        item_['salary'] = base64.b64decode(item_['salary'])
-        # for i in result:
-        #    decode_salary_ = base64.b64decode(result[item_][i]['salary'])
-    # date_contract = str(int(now_contract.year)+543)
-    # date_sub_contract = date_contract[2:]
-    # try:
-    #     sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
-    #     cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
-    #     columns = [column[0] for column in cursor.description]
-    #     resultsql_contract_id = toJson(cursor.fetchall(),columns)
-    #     year_contract = resultsql_contract_id[0]['year']
-    #     contract_id_ = resultsql_contract_id[0]['contract_id']
-    #     year_sub_con = year_contract[2:]
-    #     if year_sub_con==date_sub_contract:
-    #         contract_id_ = resultsql_contract_id[0]['contract_id']
-    #     else:
-    #         contract_id_ = 0
-    # except Exception as e:
-    #     contract_id_ = 0
-    # contract_id_last = int(contract_id_)+1
+    # for item_ in result:
+    #     item_['salary'] = base64.b64decode(item_['salary'])
     return jsonify(result)
 @app.route('/login', methods=['POST'])
 def login():

@@ -334,30 +334,30 @@ def EditEmployee_Personal(cursor):
         date_year = str(int(date_name__[2])+543)
         date_mounth = int(date_name__[1])
         if   date_mounth==1:
-             Mounth_name ="ม.ค."
+             Mounth_name ="มกราคม"
         elif date_mounth==2:
-             Mounth_name="ก.พ."
+             Mounth_name="กุมภาพันธ์"
         elif date_mounth==3:
-             Mounth_name="มี.ค."
+             Mounth_name="มีนาคม"
         elif date_mounth==4:
-             Mounth_name="เม.ย."
+             Mounth_name="เมษายน"
         elif date_mounth==5:
-             Mounth_name="พ.ค."
+             Mounth_name="พฤษภาคม"
         elif date_mounth==6:
-             Mounth_name="มิ.ย."
+             Mounth_name="มิถุนายน"
         elif date_mounth==7:
-             Mounth_name="ก.ค."
+             Mounth_name="กรกฎาคม"
         elif date_mounth==8:
-             Mounth_name="ส.ค."
+             Mounth_name="สิงหาคม"
         elif date_mounth==9:
-             Mounth_name="ก.ย."
+             Mounth_name="กันยายน"
         elif date_mounth==10:
-             Mounth_name="ต.ค."
+             Mounth_name="ตุลาคม"
         elif date_mounth==11:
-             Mounth_name="พ.ย."
+             Mounth_name="พฤศจิกายน"
         else:
-             Mounth_name="ธ.ค."
-        Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
+             Mounth_name="ธันวาคม"
+        Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+" "+date_year
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
         EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
@@ -723,30 +723,30 @@ def InsertEmployeeHRCI_Management(cursor):
             date_year = str(int(date_name__[2])+543)
             date_mounth = int(date_name__[1])
             if   date_mounth==1:
-                 Mounth_name ="ม.ค."
+                 Mounth_name ="มกราคม"
             elif date_mounth==2:
-                 Mounth_name="ก.พ."
+                 Mounth_name="กุมภาพันธ์"
             elif date_mounth==3:
-                 Mounth_name="มี.ค."
+                 Mounth_name="มีนาคม"
             elif date_mounth==4:
-                 Mounth_name="เม.ย."
+                 Mounth_name="เมษายน"
             elif date_mounth==5:
-                 Mounth_name="พ.ค."
+                 Mounth_name="พฤษภาคม"
             elif date_mounth==6:
-                 Mounth_name="มิ.ย."
+                 Mounth_name="มิถุนายน"
             elif date_mounth==7:
-                 Mounth_name="ก.ค."
+                 Mounth_name="กรกฎาคม"
             elif date_mounth==8:
-                 Mounth_name="ส.ค."
+                 Mounth_name="สิงหาคม"
             elif date_mounth==9:
-                 Mounth_name="ก.ย."
+                 Mounth_name="กันยายน"
             elif date_mounth==10:
-                 Mounth_name="ต.ค."
+                 Mounth_name="ตุลาคม"
             elif date_mounth==11:
-                 Mounth_name="พ.ย."
+                 Mounth_name="พฤศจิกายน"
             else:
-                 Mounth_name="ธ.ค."
-            Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+date_year
+                 Mounth_name="ธันวาคม"
+            Birthdate_name = str(int(date_name__[0]))+" "+Mounth_name.decode('utf-8')+" "+date_year
 
             sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel) \
             VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
