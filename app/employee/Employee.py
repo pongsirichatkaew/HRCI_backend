@@ -1087,13 +1087,23 @@ def Edit_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlEmp_GA = "UPDATE employee_ga SET validstatus=0 WHERE employeeid=%s"
-        cursor.execute(sqlEmp_GA,data_new['employeeid'])
+        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employee_benefits=%s"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEm_ga,(data_new['employeeid'],data_new['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],\
-        data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
-        data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
+        i=0
+        for i in xrange(len(result)):
+            sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['employeeid'],result[i]['citizenid'],result[i]['benefits_id'],result[i]['benefits_values'],data_new['createby']))
+
+        sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s"
+        cursor.execute(sqlde,(data_new['employeeid']))
+
+        i=0
+        for i in xrange(len(result)):
+            sqlIn = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['employeeid'],data_new[i]['citizenid'],data_new[i]['benefits_id'],data_new[i]['benefits_values'],data_new['createby']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -1105,7 +1115,8 @@ def Qry_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM employee_ga WHERE employeeid=%s AND validstatus = 1"
+        sql = "SELECT benefits.benefits_detail,employee_benefits.benefits_values FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
+         WHERE employee_benefits.employeeid=%s AND benefits.validstatus = 1"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

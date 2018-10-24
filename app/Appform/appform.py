@@ -614,6 +614,7 @@ def QryAppform_One_person():
 
             Address_Type_Present = "Present"
 
+
             sqlIn = "INSERT INTO Address (EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn,(result_home[0]['EmploymentAppNo'],Address_Type_Present,result_home[0]['HouseNo'],
             result_home[0]['Street'],result_home[0]['DISTRICT_ID'],result_home[0]['AMPHUR_ID'],result_home[0]['PROVINCE_ID'],result_home[0]['PostCode'],result_home[0]['Tel'],result_home[0]['Fax']))

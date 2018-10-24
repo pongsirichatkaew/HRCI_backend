@@ -9,13 +9,13 @@ def InsertBenefits(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlQry = "SELECT benefits_id FROM benefits_employee ORDER BY benefits_id DESC LIMIT 1"
+        sqlQry = "SELECT benefits_id FROM benefits ORDER BY benefits_id DESC LIMIT 1"
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         benefits_id_last=result[0]['benefits_id']+1
 
-        sql = "INSERT INTO benefits_employee (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
+        sql = "INSERT INTO benefits (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sql,(benefits_id_last,data_new['benefits_detail'],data_new['createby']))
         return "success"
     except Exception as e:
@@ -28,15 +28,15 @@ def EditBenefits(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT benefits_id FROM benefits_employee WHERE benefits_id=%s"
+        sql = "SELECT benefits_id FROM benefits WHERE benefits_id=%s"
         cursor.execute(sql,(data_new['benefits_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE benefits_employee SET validstatus=0 WHERE benefits_id=%s"
+        sqlUp = "UPDATE benefits SET validstatus=0 WHERE benefits_id=%s"
         cursor.execute(sqlUp,(data_new['benefits_id']))
 
-        sqlIn = "INSERT INTO benefits_employee (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
+        sqlIn = "INSERT INTO benefits (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sqlIn,(result[0]['benefits_id'],data_new['benefits_detail'],data_new['createby']))
         return "success"
     except Exception as e:
@@ -50,10 +50,10 @@ def DeleteBenefits(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeBenefits = "UPDATE benefits_employee SET validstatus=0 WHERE benefits_id=%s"
+        sql_OldTimeBenefits = "UPDATE benefits SET validstatus=0 WHERE benefits_id=%s"
         cursor.execute(sql_OldTimePosition,(data_new['benefits_id']))
 
-        sql_NewTimeBenefits = "INSERT INTO benefits_employee (benefits_id,benefits_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
+        sql_NewTimeBenefits = "INSERT INTO benefits (benefits_id,benefits_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
         cursor.execute(sql_NewTimePosition,(data_new['benefits_id'],data_new['benefits_detail'],0,data_new['createby']))
         return "success"
     except Exception as e:
@@ -63,7 +63,7 @@ def DeleteBenefits(cursor):
 @connect_sql()
 def QryBenefits(cursor):
     try:
-        sql = "SELECT benefits_id,benefits_detail FROM benefits_employee WHERE validstatus=1"
+        sql = "SELECT benefits_id,benefits_detail FROM benefits WHERE validstatus=1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

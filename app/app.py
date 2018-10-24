@@ -40,18 +40,12 @@ def TestgenEM(cursor):
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id \
 		                              LEFT JOIN employee_ga ON employee_ga.employeeid = employee.employeeid \
                                       LEFT JOIN status ON status.status_id = employee.validstatus \
-    WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1"""
-    strtime = time.time()
+    WHERE employee.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND status.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1"""
     cursor.execute(sql)
-    endtime = time.time()
-    print(endtime-strtime)
-    # cursor.execute(sql)
-
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)
-
-    # for item_ in result:
-    #     item_['salary'] = base64.b64decode(item_['salary'])
+    for item_ in result:
+        item_['salary'] = base64.b64decode(item_['salary'])
     return jsonify(result)
 @app.route('/login', methods=['POST'])
 def login():
