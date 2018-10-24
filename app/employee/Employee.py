@@ -387,11 +387,11 @@ def EditEmployee_AddressType(cursor):
         if data_new['AddressTypeHome']=='Home':
             sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypeHome'],data_new['HomeNo'],
-            data_new['HomeStreet'],data_new['HomeAmphur'],data_new['HomeDistrict'],data_new['HomeProvince'],data_new['HomePostCode'],data_new['HomeTel'],data_new['HomeFax']))
+            data_new['HomeStreet'],data_new['HomeDistrict'],data_new['HomeAmphur'],data_new['HomeProvince'],data_new['HomePostCode'],data_new['HomeTel'],data_new['HomeFax']))
         if data_new['AddressTypePresent']=='Present':
             sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypePresent'],data_new['PresentNo'],
-            data_new['PresentStreet'],data_new['PresentAmphur'],data_new['PresentDistrict'],data_new['PresentProvince'],data_new['PresentPostCode'],data_new['PresentTel'],data_new['PresentFax']))
+            data_new['PresentStreet'],data_new['PresentDistrict'],data_new['PresentAmphur'],data_new['PresentProvince'],data_new['PresentPostCode'],data_new['PresentTel'],data_new['PresentFax']))
         return "Success"
     except Exception as e:
         logserver(e)
