@@ -15,10 +15,13 @@ def InsertCost_center(cursor):
         result = toJson(cursor.fetchall(),columns)
         cost_center_name_id_last=result[0]['cost_center_name_id']+1
 
-        # sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby']))
         sql = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
         cursor.execute(sql,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO cost_center_name_log (cost_center_name_id,cost_detail,email,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(cost_center_name_id_last,data_new['cost_detail'],data_new['email'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -30,16 +33,19 @@ def EditCost_center(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT cost_center_name_id FROM cost_center_name WHERE cost_center_name_id=%s"
+        sql = "SELECT * FROM cost_center_name WHERE cost_center_name_id=%s"
         cursor.execute(sql,(data_new['cost_center_name_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE cost_center_name SET validstatus=0 WHERE cost_center_name_id=%s"
-        cursor.execute(sqlUp,(data_new['cost_center_name_id']))
+        type_action= "Edit"
 
-        # sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email'],data_new['createby']))
+        sqlIn_log = "INSERT INTO cost_center_name_log (cost_center_name_id,cost_detail,email,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_log,(result[0]['cost_center_name_id'],result[0]['cost_detail'],result[0]['email'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM cost_center_name WHERE cost_center_name_id=%s"
+        cursor.execute(sqlDe,(data_new['cost_center_name_id']))
+
         sqlIn = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,email,createby) VALUES (%s,%s,%s,%s)"
         cursor.execute(sqlIn,(result[0]['cost_center_name_id'],data_new['cost_detail'],data_new['email'],data_new['createby']))
         return "success"
@@ -50,7 +56,7 @@ def EditCost_center(cursor):
 @connect_sql()
 def QryCost_center(cursor):
     try:
-        sql = "SELECT cost_center_name_id,cost_detail,email,id FROM cost_center_name WHERE validstatus=1"
+        sql = "SELECT cost_center_name_id,cost_detail,email,id FROM cost_center_name"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -66,11 +72,19 @@ def DeleteCost_center(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeCost_center = "UPDATE cost_center_name SET validstatus=0 WHERE cost_center_name_id=%s"
-        cursor.execute(sql_OldTimeCost_center,(data_new['cost_center_name_id']))
+        sql = "SELECT * FROM cost_center_name WHERE cost_center_name_id=%s"
+        cursor.execute(sql,(data_new['cost_center_name_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimeCost_center = "INSERT INTO cost_center_name (cost_center_name_id,cost_detail,createby,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeCost_center,(data_new['cost_center_name_id'],data_new['cost_detail'],data_new['createby'],0))
+        type_action= "Delete"
+
+        sqlIn_log = "INSERT INTO cost_center_name_log (cost_center_name_id,cost_detail,email,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_log,(result[0]['cost_center_name_id'],result[0]['cost_detail'],result[0]['email'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM cost_center_name WHERE cost_center_name_id=%s"
+        cursor.execute(sqlDe,(data_new['cost_center_name_id']))
+        
         return "success"
     except Exception as e:
         logserver(e)

@@ -24,8 +24,14 @@ def InsertCompany(cursor):
             path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
+
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(request.form['acronym'],companyid_last,request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO company_log(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(request.form['acronym'],companyid_last,request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -34,8 +40,10 @@ def InsertCompany(cursor):
 @connect_sql()
 def EditCompany(cursor):
     try:
-        sqlUp = "UPDATE company SET validstatus=0,createby=%s WHERE companyid=%s"
-        cursor.execute(sqlUp,(request.form['createby'],request.form['companyid']))
+        sql_se = "SELECT * FROM company WHERE companyid=%s"
+        cursor.execute(sql_se,(request.form['companyid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/' + request.form['companyid']
@@ -49,6 +57,15 @@ def EditCompany(cursor):
             path_image = path2+'/'+currentTime+'_company_img.png'
         else:
             return 'file is not allowed'
+
+        type_action= "Edit"
+
+        sql_log = "INSERT INTO company_log(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['acronym'],result[0]['companyid'],result[0]['companyname'],result[0]['company_short_name'],result[0]['phone'],result[0]['email'],result[0]['address_company'],result[0]['imageName'],request.form['createby'],type_action))
+
+        sqlDe = "DELETE FROM company WHERE companyid=%s"
+        cursor.execute(sqlDe,(request.form['companyid']))
+
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(request.form['acronym'],request.form['companyid'],request.form['companyname'],request.form['company_short_name'],request.form['phone'],request.form['email'],request.form['address_company'],path_image,request.form['createby']))
         return "success"
@@ -63,13 +80,18 @@ def EditCompany_data(cursor):
         source = data['source']
         data_new = source
 
-        sql = "SELECT imageName FROM company WHERE companyid=%s"
+        sql = "SELECT * FROM company WHERE companyid=%s"
         cursor.execute(sql,data_new['companyid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE company SET validstatus=0,createby=%s WHERE companyid=%s"
-        cursor.execute(sqlUp,(data_new['createby'],data_new['companyid']))
+        type_action= "Edit_data"
+
+        sql_log = "INSERT INTO company_log(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['acronym'],result[0]['companyid'],result[0]['companyname'],result[0]['company_short_name'],result[0]['phone'],result[0]['email'],result[0]['address_company'],result[0]['imageName'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM company WHERE companyid=%s"
+        cursor.execute(sqlDe,(data_new['companyid']))
 
         sql = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(data_new['acronym'],data_new['companyid'],data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],result[0]['imageName'],data_new['createby']))
@@ -81,7 +103,7 @@ def EditCompany_data(cursor):
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company WHERE validstatus =1"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -97,11 +119,19 @@ def DeleteCompany(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeCompany = "UPDATE company SET validstatus=0,createby=%s WHERE companyid=%s"
-        cursor.execute(sql_OldTimeCompany,(data_new['createby'],data_new['companyid']))
+        sql = "SELECT * FROM company WHERE companyid=%s"
+        cursor.execute(sql,data_new['companyid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimeCompany = "INSERT INTO company(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeCompany,(data_new['acronym'],data_new['companyid'],data_new['companyname'],data_new['company_short_name'],data_new['phone'],data_new['email'],data_new['address_company'],data_new['imageName'],data_new['createby'],0))
+        type_action= "Delete"
+
+        sql_log = "INSERT INTO company_log(acronym,companyid,companyname,company_short_name,phone,email,address_company,imageName,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['acronym'],result[0]['companyid'],result[0]['companyname'],result[0]['company_short_name'],result[0]['phone'],result[0]['email'],result[0]['address_company'],result[0]['imageName'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM company WHERE companyid=%s"
+        cursor.execute(sqlDe,(data_new['companyid']))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -110,7 +140,7 @@ def DeleteCompany(cursor):
 @connect_sql()
 def QryCompanyname(cursor):
     try:
-        sql = "SELECT companyid,companyname FROM company WHERE validstatus=1"
+        sql = "SELECT companyid,companyname FROM company"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

@@ -11,8 +11,11 @@ def InsertAdmin(cursor):
         data_new = source
         sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sql,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby']))
-        # sql = "INSERT INTO Admin (employeeid,username,name,permission) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sql,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO Admin_log (employeeid,username,name,permission,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -25,13 +28,22 @@ def EditAdmin(cursor):
         source = data['source']
         data_new = source
 
-        sqlUp = "UPDATE Admin SET validstatus=%s WHERE employeeid=%s"
-        cursor.execute(sqlUp,('0',data_new['employeeid']))
+        sql = "SELECT * FROM Admin WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],'1'))
-        # sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],'1'))
+        type_action= "Edit"
+
+        sqlIn_log = "INSERT INTO Admin_log (employeeid,username,name,permission,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_log,(result[0]['employeeid'],result[0]['username'],result[0]['name'],result[0]['permission'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM Admin WHERE employeeid=%s"
+        cursor.execute(sqlDe,(data_new['employeeid']))
+
+        sqlIn = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby']))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -40,7 +52,7 @@ def EditAdmin(cursor):
 @connect_sql()
 def QryAdmin(cursor):
     try:
-        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE validstatus = 1"
+        sql = "SELECT id,employeeid,username,name,permission FROM Admin"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -68,13 +80,19 @@ def DeleteAdmin(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeAdmin = "UPDATE Admin SET validstatus=0 WHERE employeeid=%s"
-        cursor.execute(sql_OldTimeAdmin,(data_new['employeeid']))
+        sql = "SELECT * FROM Admin WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],data_new['createby'],0))
-        # sql_NewTimeAdmin = "INSERT INTO Admin (employeeid,username,name,permission,validstatus) VALUES (%s,%s,%s,%s,%s)"
-        # cursor.execute(sql_NewTimeAdmin,(data_new['employeeid'],data_new['username'],data_new['name'],data_new['permission'],0))
+        type_action= "Delete"
+
+        sqlIn_log = "INSERT INTO Admin_log (employeeid,username,name,permission,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_log,(result['employeeid'],result['username'],result['name'],result['permission'],data_new['createby'],type_action))
+
+        sqlDe = "DELETE FROM Admin WHERE employeeid=%s"
+        cursor.execute(sqlDe,(data_new['employeeid']))
+
         return "success"
     except Exception as e:
         logserver(e)

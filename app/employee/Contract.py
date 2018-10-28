@@ -13,10 +13,20 @@ def QryContract(cursor):
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
-        WHERE employee.employeeid=%s AND employee.validstatus=1 AND company.validstatus=1 AND Address.validstatus=1 AND Personal.validstatus=1"
+        WHERE employee.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+
+        sql2 = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+                                      INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
+                                      INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
+                                      INNER JOIN position ON employee.position_id = position.position_id\
+        WHERE employee.employeeid=%s AND Address.AddressType='Home'"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result__2 = toJson(cursor.fetchall(),columns)
+
         decodesalary = base64.b64decode(result[0]['salary'])
         tranImage = 'uploads/'+result[0]['imageName']
         with open(tranImage, 'rb') as image_file:
@@ -111,7 +121,7 @@ def QryContract(cursor):
         else:
              tranExpiryDate_EndWork_probation_Mounth="ธันวาคม"
 
-        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s AND employee_MD.validstatus=1 AND company.validstatus=1 AND position.validstatus=1"
+        sql2 = "SELECT employee_MD.name_md,employee_MD.surname_md,employee_MD.position_id,position.position_detail FROM employee_MD INNER JOIN company ON employee_MD.companyid = company.companyid INNER JOIN position ON employee_MD.position_id = position.position_id WHERE employee_MD.companyid=%s"
         cursor.execute(sql2,result[0]['company_id'])
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
@@ -187,14 +197,14 @@ def QryContract(cursor):
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
-        resultlast["HouseNo"] = result[1]['HouseNo']
-        resultlast["Street"] = result[1]['Street']
+        resultlast["HouseNo"] = result__2[0]['HouseNo']
+        resultlast["Street"] = result__2[0]['Street']
         resultlast['Path_logo_company'] = encoded_Image
-        resultlast["DISTRICT"] = result[1]['DISTRICT_ID']
-        resultlast["AMPHUR"] = result[1]['AMPHUR_ID']
-        resultlast["PROVINCE"] = result[1]['PROVINCE_ID']
+        resultlast["DISTRICT"] = result__2[0]['DISTRICT_ID']
+        resultlast["AMPHUR"] = result__2[0]['AMPHUR_ID']
+        resultlast["PROVINCE"] = result__2[0]['PROVINCE_ID']
         resultlast["Authority_Distrinct"] = result3[0]['Authority_Distrinct_Id_Card']
-        resultlast["PostCode"] = result[1]['PostCode']
+        resultlast["PostCode"] = result__2[0]['PostCode']
         resultlast["Surname"] = result[0]['SurnameTh']
         resultlast["citizenid"] = result[0]['ID_CardNo']
         resultlast["position_detail"] = result[0]['position_detail']
@@ -233,8 +243,7 @@ def QryListContract(cursor):
                                       INNER JOIN section ON employee.section_id = section.sect_id\
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
-                                      INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
-        WHERE employee.validstatus=1 AND company.validstatus=1 AND section.validstatus=1 AND position.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1"
+                                      INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -276,8 +285,7 @@ def QryListContract_by_mounth(cursor):
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
                                       INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
-        WHERE employee.validstatus=1 AND company.validstatus=1 AND section.validstatus=1 AND position.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND \
-        employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+        WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

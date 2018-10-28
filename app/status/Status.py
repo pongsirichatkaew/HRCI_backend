@@ -18,8 +18,11 @@ def InsertStatus(cursor):
 
         sql = "INSERT INTO status (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
-        # sql = "INSERT INTO status (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sql,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO status_log (status_id,status_detail,path_color,font_color,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(status_id_last,data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -32,19 +35,21 @@ def EditStatus(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT status_id FROM status WHERE status_id=%s"
+        sql = "SELECT * FROM status WHERE status_id=%s"
         cursor.execute(sql,(data_new['status_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE status SET validstatus=0 WHERE status_id=%s"
+        type_action = "Edit"
+
+        sql_log = "INSERT INTO status_log (status_id,status_detail,path_color,font_color,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['status_id'],result[0]['status_detail'],result[0]['path_color'],result[0]['font_color'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM status WHERE status_id=%s"
         cursor.execute(sqlUp,(data_new['status_id']))
+
         sqlIn = "INSERT INTO status (status_id,status_detail,path_color,font_color,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby']))
-        # sqlUp = "UPDATE status SET validstatus=0 WHERE status_id=%s"
-        # cursor.execute(sqlUp,(data_new['status_id']))
-        # sqlIn = "INSERT INTO status (status_id,status_detail,path_color,font_color) VALUES (%s,%s,%s,%s)"
-        # cursor.execute(sqlIn,(result[0]['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -53,7 +58,7 @@ def EditStatus(cursor):
 @connect_sql()
 def QryStatus(cursor):
     try:
-        sql = "SELECT id,status_id,status_detail,path_color,id,font_color,validstatus FROM status WHERE validstatus = 1"
+        sql = "SELECT id,status_id,status_detail,path_color,id,font_color,validstatus FROM status"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -69,14 +74,19 @@ def DeleteStatus():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlUp = "UPDATE status SET validstatus=0,createby=%s WHERE status_id=%s"
-        cursor.execute(sqlUp,(data_new['createby'],data_new['status_id']))
 
-        # sqlUp = "UPDATE status SET validstatus=0 WHERE status_id=%s"
-        # cursor.execute(sqlUp,(data_new['status_id']))
+        sql = "SELECT * FROM status WHERE status_id=%s"
+        cursor.execute(sql,(data_new['status_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sqlIn = "INSERT INTO status(status_id,status_detail,path_color,font_color,createby,validstatus) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['status_id'],data_new['status_detail'],data_new['path_color'],data_new['font_color'],data_new['createby'],0))
+        type_action = "Delete"
+
+        sql_log = "INSERT INTO status_log (status_id,status_detail,path_color,font_color,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['status_id'],result[0]['status_detail'],result[0]['path_color'],result[0]['font_color'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM status WHERE status_id=%s"
+        cursor.execute(sqlUp,(data_new['status_id']))
 
         connection.commit()
         connection.close()

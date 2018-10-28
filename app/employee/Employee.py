@@ -59,36 +59,17 @@ def QryEmployee():
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                      LEFT JOIN status ON status.status_id = employee.validstatus\
-        WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1"
+                                      LEFT JOIN status ON status.status_id = employee.validstatus"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/EditEmployee_ga', methods=['POST'])
-@connect_sql()
-def EditEmployee_ga(cursor):
-    try:
-        data = request.json
-        source = data['source']
-        data_new = source
-
-        sqlUp = "UPDATE employee_ga SET validstatus=0,createby=%s WHERE employeeid=%s"
-        cursor.execute(sqlUp,(data_new['createby'],data_new['employeeid']))
-
-        sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEm_ga,(employeeid,result14[0]['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
-        data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
-        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -104,67 +85,67 @@ def QryEmployee_one_person(cursor):
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-        WHERE employee.employeeid=%s AND employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1"
+        WHERE employee.employeeid=%s"
         cursor.execute(sqlEmployee,data_new['employeeid'])
         columnsEmployee = [column[0] for column in cursor.description]
         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
         decodesalary = base64.b64decode(resultEmployee[0]['salary'])
 
-        sqlEmployee_email = "SELECT email FROM employee WHERE employee.employeeid=%s AND employee.validstatus=1"
+        sqlEmployee_email = "SELECT email FROM employee WHERE employee.employeeid=%s"
         cursor.execute(sqlEmployee_email,data_new['employeeid'])
         columnsEmployeeEmail = [column[0] for column in cursor.description]
         resultEmployee_Email = toJson(cursor.fetchall(),columnsEmployeeEmail)
 
         sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Address.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sqlEm,resultEmployee[0]['citizenid'])
         columnsEm = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columnsEm)
 
         sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.ID_CardNo=Attachment.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql4,resultEmployee[0]['citizenid'])
         columns4 = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns4)
 
         sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON Personal.ID_CardNo=ComputerSkill.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql6,resultEmployee[0]['citizenid'])
         columns6 = [column[0] for column in cursor.description]
         result6 = toJson(cursor.fetchall(),columns6)
 
         sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN Personal ON Personal.ID_CardNo=Education.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql9,resultEmployee[0]['citizenid'])
         columns9 = [column[0] for column in cursor.description]
         result9 = toJson(cursor.fetchall(),columns9)
 
         sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.ID_CardNo=Employment.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql10,resultEmployee[0]['citizenid'])
         columns10 = [column[0] for column in cursor.description]
         result10 = toJson(cursor.fetchall(),columns10)
 
         sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
-        WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Family.validstatus=1"
+        WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.ID_CardNo=%s"
         cursor.execute(sqlfa,resultEmployee[0]['citizenid'])
         columnsfa = [column[0] for column in cursor.description]
         resultfa = toJson(cursor.fetchall(),columnsfa)
 
         sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
-        WHERE Family.MemberType = 'BrotherSister' AND Personal.ID_CardNo=%s AND Personal.validstatus=1 AND Family.validstatus=1"
+        WHERE Family.MemberType = 'BrotherSister' AND Personal.ID_CardNo=%s"
         cursor.execute(sqlbro,resultEmployee[0]['citizenid'])
         columnsbro = [column[0] for column in cursor.description]
         resultbro = toJson(cursor.fetchall(),columnsbro)
 
         sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.ID_CardNo=LanguagesSkill.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql13,resultEmployee[0]['citizenid'])
         columns13 = [column[0] for column in cursor.description]
         result13 = toJson(cursor.fetchall(),columns13)
 
         sql14 = "SELECT * FROM Personal \
-        WHERE ID_CardNo=%s AND validstatus=1"
+        WHERE ID_CardNo=%s"
         cursor.execute(sql14,resultEmployee[0]['citizenid'])
         columns14 = [column[0] for column in cursor.description]
         result14 = toJson(cursor.fetchall(),columns14)
@@ -180,25 +161,25 @@ def QryEmployee_one_person(cursor):
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
 
         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql17,resultEmployee[0]['citizenid'])
         columns17 = [column[0] for column in cursor.description]
         result17 = toJson(cursor.fetchall(),columns17)
 
         sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN Personal ON Personal.ID_CardNo=RefPerson.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql18,resultEmployee[0]['citizenid'])
         columns18 = [column[0] for column in cursor.description]
         result18 = toJson(cursor.fetchall(),columns18)
 
         sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN Personal ON Personal.ID_CardNo=SpecialSkill.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1 AND SpecialSkill.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql20,resultEmployee[0]['citizenid'])
         columns20 = [column[0] for column in cursor.description]
         result20 = toJson(cursor.fetchall(),columns20)
 
         sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN Personal ON Personal.ID_CardNo=TrainingCourse.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s AND Personal.validstatus=1"
+        WHERE Personal.ID_CardNo=%s"
         cursor.execute(sql23,resultEmployee[0]['citizenid'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
@@ -499,11 +480,6 @@ def EditEmployee_Family(cursor):
             sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn11,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['BroAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
             data_new['BrotherAndSister'][i]['BroAndSisTel'],data_new['BrotherAndSister'][i]['BroAndSisFax'],data_new['BrotherAndSister'][i]['BroAndSisAddress']))
-        # i=0
-        # for i in xrange(len(data_new['MemberType'])):
-        #     sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn11,(data_new['MemberType'][i]['ID_CardNo'],data_new['MemberType'][i]['MemberType'],data_new['MemberType'][i]['Name'],data_new['MemberType'][i]['Surname'],data_new['MemberType'][i]['Occupation'],\
-        #     data_new['MemberType'][i]['Address'],data_new['MemberType'][i]['Tel'],data_new['MemberType'][i]['Fax']))
 
         return "Success"
     except Exception as e:
@@ -548,10 +524,6 @@ def EditEmployee_SpecialSkill(cursor):
 
         sql_Up_SpecialSkill = "UPDATE SpecialSkill SET validstatus=0 WHERE ID_CardNo=%s"
         cursor.execute(sql_Up_SpecialSkill,(result[0]['citizenid']))
-
-        # sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn20,(data_new[i]['ID_CardNo'],data_new[i]['CarDrivingLicense'],data_new[i]['MotorBicycleDrivingLicense'],data_new[i]['OwnCar'],data_new[i]['OwnMotorBicycle'], \
-        # data[i]['WorkUpCountry'],data_new[i]['StartWorkEarliest'],data_new[i]['PhysicalDisabilityOrDisease'],data[i]['DischargeFromEmployment'],data_new[i]['DischargeFromEmploymentReason'],data_new[i]['Arrested'],data_new[i]['ArrestedReason']))
 
         sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn20,(data_new['ID_CardNo'],data_new['CarDrivingLicense'],data_new['MotorBicycleDrivingLicense'],data_new['OwnCar'],data_new['OwnMotorBicycle'], \
@@ -621,7 +593,7 @@ def EditEmployee_Employeeid(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -637,13 +609,13 @@ def EditEmployee_Employeeid(cursor):
             insert_emp_log = "INSERT INTO employee_id_log (old_employeeid,new_employeeid,create_by) VALUES (%s,%s,%s)"
             cursor.execute(insert_emp_log,(data_new['Old_EmpId'],data_new['employeeid'],data_new['createby']))
 
-            sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['Old_EmpId']))
 
-            sqlUp_gA = "UPDATE employee_ga SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            sqlUp_gA = "UPDATE employee_ga SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp_gA,(data_new['employeeid'],data_new['Old_EmpId']))
 
-            sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s AND validstatus=1"
+            sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['Old_EmpId']))
         return "Success"
     except Exception as e:
@@ -669,19 +641,36 @@ def InsertEmployeeHRCI_Management(cursor):
             #     sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             #     cursor.execute(sqlIn,(data_new[i]['ID_CardNo'],data_new[i]['AddressType'],data_new[i]['HouseNo'],
             #     data_new[i]['Street'],data_new[i]['DISTRICT_NAME'],data_new[i]['AMPHUR_NAME'],data_new[i]['PROVINCE_NAME'],data_new[i]['PostCode'],data_new[i]['Tel'],data_new[i]['Fax']))
+
+            type_action = "ADD"
+
             if data_new['AddressTypeHome']=='Home':
                 sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypeHome'],data_new['AddressHome'],
                 data_new['StreetHome'],data_new['SubdistrictHome'],data_new['DistrictHome'],data_new['ProvinceHome'],data_new['PostalcodeHome'],data_new['PhoneHome'],data_new['FaxHome']))
+
+                sqlIn_log = "INSERT INTO Address_log (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_log,(data_new['ID_CardNo'],data_new['AddressTypeHome'],data_new['AddressHome'],
+                data_new['StreetHome'],data_new['SubdistrictHome'],data_new['DistrictHome'],data_new['ProvinceHome'],data_new['PostalcodeHome'],data_new['PhoneHome'],data_new['FaxHome'],type_action))
+
             if data_new['AddressTypePresent']=='Present':
                 sqlIn = "INSERT INTO Address (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['ID_CardNo'],data_new['AddressTypePresent'],data_new['AddressPresent'],
                 data_new['StreetPresent'],data_new['SubDistrictPresent'],data_new['DistrictPresent'],data_new['ProvincePresent'],data_new['PostalCodePresent'],data_new['PhonePresent'],data_new['FaxPresent']))
 
+                sqlIn_log = "INSERT INTO Address_log (ID_CardNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_log,(data_new['ID_CardNo'],data_new['AddressTypePresent'],data_new['AddressPresent'],
+                data_new['StreetPresent'],data_new['SubDistrictPresent'],data_new['DistrictPresent'],data_new['ProvincePresent'],data_new['PostalCodePresent'],data_new['PhonePresent'],data_new['FaxPresent'],type_action))
+
             i=0
             for i in xrange(len(data_new['ComSkill'])):
                 sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
                 cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['SkillCom'],data_new['ComSkill'][i]['LevelCom']))
+
+            i=0
+            for i in xrange(len(data_new['ComSkill'])):
+                sqlIn6_log = "INSERT INTO ComputerSkill_log (ID_CardNo,ComSkill,Level,type_action) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sqlIn6_log,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['SkillCom'],data_new['ComSkill'][i]['LevelCom'],type_action))
 
             # for dataSkillcomputer in data_new['ComSkill']:
             #     sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level) VALUES (%s,%s,%s)"
@@ -693,20 +682,42 @@ def InsertEmployeeHRCI_Management(cursor):
                 data_new['EducationLevel'][i]['eduQua'],data_new['EducationLevel'][i]['edumajor'],data_new['EducationLevel'][i]['edugpa'],\
                 data_new['EducationLevel'][i]['eduActivities']))
 
+            i=0
+            for i in xrange(len(data_new['EducationLevel'])):
+                sqlIn9_log = "INSERT INTO Education_log (ID_CardNo,EducationLevel,Institute,StartYear,EndYear,Qualification,Major,GradeAvg,ExtraCurricularActivities,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn9_log,(data_new['EducationLevel'][i]['ID_CardNo'],data_new['EducationLevel'][i]['edulevel'],data_new['EducationLevel'][i]['eduName'],data_new['EducationLevel'][i]['eduStartyear'],data_new['EducationLevel'][i]['eduEndyear'], \
+                data_new['EducationLevel'][i]['eduQua'],data_new['EducationLevel'][i]['edumajor'],data_new['EducationLevel'][i]['edugpa'],\
+                data_new['EducationLevel'][i]['eduActivities'],type_action))
+
             if data_new['MemberTypeDad']=='Father':
                 sqlIn = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['ID_CardNoDad'],data_new['MemberTypeDad'],data_new['FatherName'],
                 data_new['FatherSurName'],data_new['FatherJob'],data_new['FatherTel'],data_new['FatherFax'],data_new['FatherAddress']))
+
+                sqlIn_log = "INSERT INTO Family_log (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_log,(data_new['ID_CardNoDad'],data_new['MemberTypeDad'],data_new['FatherName'],
+                data_new['FatherSurName'],data_new['FatherJob'],data_new['FatherTel'],data_new['FatherFax'],data_new['FatherAddress'],type_action))
+
             if data_new['MemberTypeMom']=='Mother':
                 sqlIn = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['ID_CardNoMom'],data_new['MemberTypeMom'],data_new['MotherName'],
                 data_new['MotherSurname'],data_new['MotherJob'],data_new['Mothertel'],data_new['MotherFax'],data_new['MotherAddress']))
+
+                sqlIn_log = "INSERT INTO Family_log (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_log,(data_new['ID_CardNoMom'],data_new['MemberTypeMom'],data_new['MotherName'],
+                data_new['MotherSurname'],data_new['MotherJob'],data_new['Mothertel'],data_new['MotherFax'],data_new['MotherAddress'],type_action))
 
             i=0
             for i in xrange(len(data_new['BrotherAndSister'])):
                 sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn11,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['BroAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
                 data_new['BrotherAndSister'][i]['BroAndSisTel'],data_new['BrotherAndSister'][i]['BroAndSisFax'],data_new['BrotherAndSister'][i]['BroAndSisAddress']))
+
+            i=0
+            for i in xrange(len(data_new['BrotherAndSister'])):
+                sqlIn11_log = "INSERT INTO Family_log (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn11_log,(data_new['BrotherAndSister'][i]['ID_CardNo'],data_new['BrotherAndSister'][i]['MemberType'],data_new['BrotherAndSister'][i]['BroAndSisName'],data_new['BrotherAndSister'][i]['BroAndSisSurName'],data_new['BrotherAndSister'][i]['BroAndSisJob'],\
+                data_new['BrotherAndSister'][i]['BroAndSisTel'],data_new['BrotherAndSister'][i]['BroAndSisFax'],data_new['BrotherAndSister'][i]['BroAndSisAddress'],type_action))
             # i=0
             # for i in xrange(len(data_new['MemberType'])):
             #     sqlIn11 = "INSERT INTO Family (ID_CardNo,MemberType,Name,Surname,Occupation,Address,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -717,6 +728,11 @@ def InsertEmployeeHRCI_Management(cursor):
             for i in xrange(len(data_new['Languages'])):
                 sqlIn13 = "INSERT INTO LanguagesSkill (ID_CardNo,Languages,Speaking,Reading,Writting) VALUES (%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn13,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['languageskill'],data_new['Languages'][i]['languagespeak'],data_new['Languages'][i]['languageread'],data_new['Languages'][i]['languagewrite']))
+
+            i=0
+            for i in xrange(len(data_new['Languages'])):
+                sqlIn13_log = "INSERT INTO LanguagesSkill_log (ID_CardNo,Languages,Speaking,Reading,Writting,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn13_log,(data_new['Languages'][i]['ID_CardNo'],data_new['Languages'][i]['languageskill'],data_new['Languages'][i]['languagespeak'],data_new['Languages'][i]['languageread'],data_new['Languages'][i]['languagewrite'],type_action))
 
             date_name = str(data_new['Birthdate'])
             date_name__ = date_name.split("-")
@@ -755,6 +771,14 @@ def InsertEmployeeHRCI_Management(cursor):
             data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
             data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['other'], \
             data_new['phone_company'],data_new['Mobile'],data_new['email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel']))
+
+            sqlIn14_log = """INSERT INTO Personal_log (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,type_action) \
+            VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
+            cursor.execute(sqlIn14_log,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],\
+            data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'], \
+            data_new['BirthCountry'],data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'], \
+            data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],data_new['other'], \
+            data_new['phone_company'],data_new['Mobile'],data_new['email'],data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],type_action))
             # i=0
             # for i in xrange(len(data_new['RelativeName'])):
             #     sqlIn17 = "INSERT INTO Reference (ID_CardNo,RelativeName,RelativeSurname,RelativePosition,RelativeRelationship,PhysicalHandicap,PhysicalHandicapDetail,KnowFrom) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -769,6 +793,10 @@ def InsertEmployeeHRCI_Management(cursor):
             sqlIn20 = "INSERT INTO SpecialSkill (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn20,(data_new['ID_CardNo'],data_new['CarDrivingLicense'],data_new['MotorBicycleDrivingLicense'],data_new['OwnCar'],data_new['OwnMotorBicycle'], \
             data_new['WorkUpCountry'],data_new['StartWorkEarliest'],data_new['PhysicalDisabilityOrDisease'],data_new['DischargeFromEmployment'],data_new['DischargeFromEmploymentReason'],data_new['Arrested'],data_new['ArrestedReason']))
+
+            sqlIn20_log = "INSERT INTO SpecialSkill_log (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,StartWorkEarliest,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn20_log,(data_new['ID_CardNo'],data_new['CarDrivingLicense'],data_new['MotorBicycleDrivingLicense'],data_new['OwnCar'],data_new['OwnMotorBicycle'],\
+            data_new['WorkUpCountry'],data_new['StartWorkEarliest'],data_new['PhysicalDisabilityOrDisease'],data_new['DischargeFromEmployment'],data_new['DischargeFromEmploymentReason'],data_new['Arrested'],data_new['ArrestedReason'],type_action))
             try:
                 i=0
                 for i in xrange(len(data_new['CompanyName'])):
@@ -776,6 +804,13 @@ def InsertEmployeeHRCI_Management(cursor):
                     cursor.execute(sqlIn10,(data_new['CompanyName'][i]['ID_CardNo'],data_new['CompanyName'][i]['CompanyName'],data_new['CompanyName'][i]['CompanyAddress'],data_new['CompanyName'][i]['PositionHeld'],data_new['CompanyName'][i]['StartSalary'],data_new['CompanyName'][i]['EndSalary'], \
                     data_new['CompanyName'][i]['StartYear'],data_new['CompanyName'][i]['EndYear'], \
                     data_new['CompanyName'][i]['Responsibility'],data_new['CompanyName'][i]['ReasonOfLeaving'],data_new['CompanyName'][i]['Descriptionofwork']))
+
+                i=0
+                for i in xrange(len(data_new['CompanyName'])):
+                    sqlIn10_log = "INSERT INTO Employment_log (ID_CardNo,CompanyName,CompanyAddress,PositionHeld,StartSalary,EndSalary,StartYear,EndYear,Responsibility,ReasonOfLeaving,Descriptionofwork,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlIn10_log,(data_new['CompanyName'][i]['ID_CardNo'],data_new['CompanyName'][i]['CompanyName'],data_new['CompanyName'][i]['CompanyAddress'],data_new['CompanyName'][i]['PositionHeld'],data_new['CompanyName'][i]['StartSalary'],data_new['CompanyName'][i]['EndSalary'], \
+                    data_new['CompanyName'][i]['StartYear'],data_new['CompanyName'][i]['EndYear'], \
+                    data_new['CompanyName'][i]['Responsibility'],data_new['CompanyName'][i]['ReasonOfLeaving'],data_new['CompanyName'][i]['Descriptionofwork'],type_action))
             except Exception as e:
                 logserver(e)
             try:
@@ -783,6 +818,11 @@ def InsertEmployeeHRCI_Management(cursor):
                 for i in xrange(len(data_new['Subject'])):
                     sqlIn23 = "INSERT INTO TrainingCourse(ID_CardNo,Subject,Place,StartDate,EndDate) VALUES (%s,%s,%s,%s,%s)"
                     cursor.execute(sqlIn23,(data_new['Subject'][i]['ID_CardNo'],data_new['Subject'][i]['Subject'],data_new['Subject'][i]['Place'],data_new['Subject'][i]['StartDate'],data_new['Subject'][i]['EndDate']))
+
+                i=0
+                for i in xrange(len(data_new['Subject'])):
+                    sqlIn23_log = "INSERT INTO TrainingCourse_log(ID_CardNo,Subject,Place,StartDate,EndDate,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlIn23_log,(data_new['Subject'][i]['ID_CardNo'],data_new['Subject'][i]['Subject'],data_new['Subject'][i]['Place'],data_new['Subject'][i]['StartDate'],data_new['Subject'][i]['EndDate'],type_action))
             except Exception as e:
                 logserver(e)
 
@@ -802,59 +842,31 @@ def InsertEmployeeHRCI_Management(cursor):
             # salary ='15000'
             encodedsalary = base64.b64encode(data_new['Salary'])
             sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['email'],\
-            data_new['phone_company'],data_new['position_id'],\
-            data_new['sect_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['companyid'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+            cursor.execute(sqlEM,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
-            sqlEm_ga = "INSERT INTO employee_ga (employeeid,citizenid,phone_depreciate,notebook_depreciate,limit_phone,chair_table,pc,notebook,office_equipment,ms,car_ticket,band_car,color,regis_car_number,other,description,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEm_ga,(data_new['employeeid'],data_new['ID_CardNo'],data_new['phone_depreciate'],data_new['notebook_depreciate'],data_new['limit_phone'],data_new['chair_table'],data_new['pc'],data_new['notebook'],data_new['office_equipment'],\
-            data_new['ms'],data_new['car_ticket'],data_new['band_car'],data_new['color'],\
-            data_new['regis_car_number'],data_new['other'],data_new['description'],data_new['createby']))
+            sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_log,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],type_action))
+
+            i=0
+            for i in xrange(len(data_new['benefits'])):
+                sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby']))
+
+            i=0
+            for i in xrange(len(data_new['benefits'])):
+                sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_log,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby'],type_action))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,\
-            data_new['email'],data_new['phone_company'],data_new['position_id'],\
-            data_new['sect_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['companyid'],data_new['Start_contract'],End_probation_date,data_new['createby']))
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/Insert_img_employee', methods=['POST'])
-@connect_sql()
-def Insert_img_employee(cursor):
-    try:
-        sqlQry = "SELECT citizenid FROM employee WHERE employeeid=%s AND validstatus=1"
-        cursor.execute(sqlQry,request.form['employeeid'])
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
+            cursor.execute(sqlEM_pro,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
-        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
-        path = 'uploads/employee/' + request.form['employeeid']
-        path2 = request.form['employeeid']
-        if not os.path.exists(path):
-            os.makedirs(path)
-        if request.method == 'POST':
-            file = request.files['file']
-        if file:
-            file.save(os.path.join(path, currentTime + '_employee_img.png'))
-            path_image = path2+'/'+currentTime+'_employee_img.png'
-        else:
-            return 'file is not allowed'
-        sql = "INSERT INTO Attachment(ID_CardNo,Type,PathFile) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(result['citizenid'],request.form['Type'],path_image))
-        return "success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/Qry_type_image', methods=['POST'])
-@connect_sql()
-def Qry_type_image(cursor):
-    try:
-        sql = "SELECT * FROM Type_upload_image"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
+            sqlEM_pro_log = "INSERT INTO Emp_probation_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_pro_log,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],type_action))
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -876,8 +888,7 @@ def Export_Employee_by_month(cursor):
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                           LEFT JOIN status ON status.status_id = employee.validstatus\
-            WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
-            employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -941,8 +952,7 @@ def Qry_Employee_by_month(cursor):
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN status ON status.status_id = employee.validstatus\
-        WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
-        employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+        WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -967,8 +977,7 @@ def Export_Employee_All_company(cursor):
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                           LEFT JOIN status ON status.status_id = employee.validstatus\
-            WHERE employee.validstatus=1 AND company.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND Personal.validstatus=1 AND \
-            employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1092,10 +1101,12 @@ def Edit_Employee_GA(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
+        type_action = "Edit"
+
         i=0
         for i in xrange(len(result)):
-            sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn,(data_new['employeeid'],result[i]['citizenid'],result[i]['benefits_id'],result[i]['benefits_values'],data_new['createby']))
+            sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['employeeid'],result[i]['citizenid'],result[i]['benefits_id'],result[i]['benefits_values'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s"
         cursor.execute(sqlde,(data_new['employeeid']))

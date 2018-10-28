@@ -17,6 +17,11 @@ def InsertSection(cursor):
 
         sql = "INSERT INTO section (sect_id,sect_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sql,(sect_id_last,data_new['sect_detail'],data_new['createby']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO section_log (sect_id,sect_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(sect_id_last,data_new['sect_detail'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -28,12 +33,18 @@ def EditSection(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT sect_id FROM section WHERE sect_id=%s"
+
+        sql = "SELECT sect_id,sect_detail FROM section WHERE sect_id=%s"
         cursor.execute(sql,(data_new['sect_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
+        type_action = "Edit"
+
+        sql_log = "INSERT INTO section_log (sect_id,sect_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['sect_id'],result[0]['sect_detail'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM section WHERE sect_id=%s"
         cursor.execute(sqlUp,(data_new['sect_id']))
 
         sqlIn = "INSERT INTO section (sect_id,sect_detail,createby) VALUES (%s,%s,%s)"
@@ -46,7 +57,7 @@ def EditSection(cursor):
 @connect_sql()
 def QrySection(cursor):
     try:
-        sql = "SELECT sect_id,sect_detail,id FROM section WHERE validstatus=1"
+        sql = "SELECT sect_id,sect_detail,id FROM section"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -62,11 +73,19 @@ def DeleteSection(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeSection = "UPDATE section SET validstatus=0 WHERE sect_id=%s"
-        cursor.execute(sql_OldTimeSection,(data_new['sect_id']))
+        sql = "SELECT sect_id,sect_detail FROM section WHERE sect_id=%s"
+        cursor.execute(sql,(data_new['sect_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimeSection = "INSERT INTO section (sect_id,sect_detail,createby,validstatus) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimeSection,(data_new['sect_id'],data_new['sect_detail'],data_new['createby'],0))
+        type_action = "Delete"
+
+        sql_log = "INSERT INTO section_log (sect_id,sect_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['sect_id'],result[0]['sect_detail'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM section WHERE sect_id=%s"
+        cursor.execute(sqlUp,(data_new['sect_id']))
+
         return "success"
     except Exception as e:
         logserver(e)

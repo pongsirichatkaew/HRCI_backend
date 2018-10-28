@@ -15,8 +15,13 @@ def InsertBenefits(cursor):
         result = toJson(cursor.fetchall(),columns)
         benefits_id_last=result[0]['benefits_id']+1
 
-        sql = "INSERT INTO benefits (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(benefits_id_last,data_new['benefits_detail'],data_new['createby']))
+        sql = "INSERT INTO benefits (benefits_id,benefits_detail,type_benefits,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(benefits_id_last,data_new['benefits_detail'],data_new['type_benefits'],data_new['createby']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO benefits_log (benefits_id,benefits_detail,type_benefits,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(benefits_id_last,data_new['benefits_detail'],data_new['type_benefits'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -28,16 +33,21 @@ def EditBenefits(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT benefits_id FROM benefits WHERE benefits_id=%s"
+        sql = "SELECT * FROM benefits WHERE benefits_id=%s"
         cursor.execute(sql,(data_new['benefits_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE benefits SET validstatus=0 WHERE benefits_id=%s"
+        type_action = "Edit"
+
+        sql_log = "INSERT INTO benefits_log (benefits_id,benefits_detail,type_benefits,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['benefits_id'],result[0]['benefits_detail'],result[0]['type_benefits'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM benefits WHERE benefits_id=%s"
         cursor.execute(sqlUp,(data_new['benefits_id']))
 
-        sqlIn = "INSERT INTO benefits (benefits_id,benefits_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['benefits_id'],data_new['benefits_detail'],data_new['createby']))
+        sqlIn = "INSERT INTO benefits (benefits_id,benefits_detail,type_benefits,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['benefits_id'],data_new['benefits_detail'],data_new['type_benefits'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -50,11 +60,18 @@ def DeleteBenefits(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimeBenefits = "UPDATE benefits SET validstatus=0 WHERE benefits_id=%s"
-        cursor.execute(sql_OldTimePosition,(data_new['benefits_id']))
+        sql = "SELECT * FROM benefits WHERE benefits_id=%s"
+        cursor.execute(sql,(data_new['benefits_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimeBenefits = "INSERT INTO benefits (benefits_id,benefits_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimePosition,(data_new['benefits_id'],data_new['benefits_detail'],0,data_new['createby']))
+        type_action = "Delete"
+
+        sql_log = "INSERT INTO benefits_log (benefits_id,benefits_detail,type_benefits,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['benefits_id'],result[0]['benefits_detail'],result[0]['type_benefits'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM benefits WHERE benefits_id=%s"
+        cursor.execute(sqlUp,(data_new['benefits_id']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -63,7 +80,7 @@ def DeleteBenefits(cursor):
 @connect_sql()
 def QryBenefits(cursor):
     try:
-        sql = "SELECT benefits_id,benefits_detail FROM benefits WHERE validstatus=1"
+        sql = "SELECT benefits_id,benefits_detail,type_benefits FROM benefits"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -103,7 +120,6 @@ def QryEmployee_ga(cursor):
             if item_['column_name'] in ['id','employeeid','citizenid','createby','create_at','validstatus']:
                 pass
             else:
-                print item_['column_name']
                 if string=="":
                     string+=item_['column_name']
                 else:

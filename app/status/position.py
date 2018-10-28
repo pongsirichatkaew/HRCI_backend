@@ -17,8 +17,12 @@ def InsertPosition(cursor):
 
         sql = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sql,(position_id_last,data_new['position_detail'],data_new['createby']))
-        # sql = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        # cursor.execute(sql,(position_id_last,data_new['position_detail']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO position_log (position_id,position_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(position_id_last,data_new['position_detail'],data_new['createby'],type_action))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -30,18 +34,22 @@ def EditPosition(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT position_id FROM position WHERE position_id=%s"
+        sql = "SELECT position_id,position_detail FROM position WHERE position_id=%s"
         cursor.execute(sql,(data_new['position_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE position SET validstatus=0 WHERE position_id=%s"
+        type_action = "Edit"
+
+        sql_log = "INSERT INTO position_log (position_id,position_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['position_id'],result[0]['position_detail'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM position WHERE position_id=%s"
         cursor.execute(sqlUp,(data_new['position_id']))
 
         sqlIn = "INSERT INTO position (position_id,position_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail'],data_new['createby']))
-        # sqlIn = "INSERT INTO position (position_id,position_detail) VALUES (%s,%s)"
-        # cursor.execute(sqlIn,(result[0]['position_id'],data_new['position_detail']))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -50,7 +58,7 @@ def EditPosition(cursor):
 @connect_sql()
 def QryPosition(cursor):
     try:
-        sql = "SELECT position_id,position_detail FROM position WHERE validstatus = 1"
+        sql = "SELECT position_id,position_detail FROM position"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -66,13 +74,19 @@ def DeletePosition(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql_OldTimePosition = "UPDATE position SET validstatus=0 WHERE position_id=%s"
-        cursor.execute(sql_OldTimePosition,(data_new['position_id']))
+        sql = "SELECT position_id,position_detail FROM position WHERE position_id=%s"
+        cursor.execute(sql,(data_new['position_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
 
-        sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0,data_new['createby']))
-        # sql_NewTimePosition = "INSERT INTO position (position_id,position_detail,validstatus) VALUES (%s,%s,%s)"
-        # cursor.execute(sql_NewTimePosition,(data_new['position_id'],data_new['position_detail'],0))
+        type_action = "Delete"
+
+        sql_log = "INSERT INTO position_log (position_id,position_detail,createby,type_action) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['position_id'],result[0]['position_detail'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM position WHERE position_id=%s"
+        cursor.execute(sqlUp,(data_new['position_id']))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -81,7 +95,7 @@ def DeletePosition(cursor):
 @connect_sql()
 def QryPosition_Detail(cursor):
     try:
-        sql = "SELECT position_id,position_detail FROM position WHERE validstatus=1"
+        sql = "SELECT position_id,position_detail FROM position"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
