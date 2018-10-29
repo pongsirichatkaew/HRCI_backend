@@ -59,7 +59,7 @@ def QryEmployee():
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
