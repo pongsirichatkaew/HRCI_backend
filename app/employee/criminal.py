@@ -43,6 +43,51 @@ def QryEmployeeList(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmployeeList_month_year', methods=['POST'])
+@connect_sql()
+def QryEmployeeList_month_year(cursor):
+    dataInput = request.json
+    source = dataInput['source']
+    data_new = source
+    year=str(data_new['year'])
+    month=str(data_new['month'])
+    try:
+        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
+                                      INNER JOIN company ON company.companyid = employee.company_id\
+                                      INNER JOIN section ON section.sect_id = employee.section_id\
+                                      INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+        WHERE employee.start_work LIKE '%-{}-{}'""".format(month,year)
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmployeeList_month_year_company', methods=['POST'])
+@connect_sql()
+def QryEmployeeList_month_year_company(cursor):
+    dataInput = request.json
+    source = dataInput['source']
+    data_new = source
+    year=str(data_new['year'])
+    month=str(data_new['month'])
+    companyid=str(data_new['companyid'])
+    try:
+        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
+                                      INNER JOIN company ON company.companyid = employee.company_id\
+                                      INNER JOIN section ON section.sect_id = employee.section_id\
+                                      INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+        WHERE employee.company_id='"""+companyid +"""' AND employee.start_work LIKE '%-{}-{}'""".format(month,year)
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryAllEmployeeCrimeList', methods=['POST'])
 @connect_sql()
 def QryAllEmployeeCrimeList(cursor):
@@ -94,8 +139,8 @@ def QryAllEmployee_by_month(cursor):
         LEFT JOIN company ON company.companyid = employee.company_id
         LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
-        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home' AND validstatus=1) AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
-        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother' AND validstatus=1) AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
+        LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
         WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='"""+companyid +"""'""".format(month,year)
 
         cursor.execute(sql4)
@@ -130,8 +175,8 @@ def export_criminal_by_month(cursor):
             LEFT JOIN company ON company.companyid = employee.company_id
             LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
-            LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home' AND validstatus=1) AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
-            LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother' AND validstatus=1) AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
+            LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
+            LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
             WHERE Address.AddressType = 'Present' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='"""+companyid +"""'""".format(month,year)
 
             cursor.execute(sql4)
