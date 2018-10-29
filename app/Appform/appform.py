@@ -553,7 +553,7 @@ def QryDatbaseAppform():
             i=0
             for i in xrange(len(result23)):
                 sqlIn23_log = "INSERT INTO_log TrainingCourse(ID_CardNo,Subject,Place,StartDate,EndDate,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn23_log,(ID_CardNo,result23[i]['Subject'],result23[i]['Place'],result23[i]['StartDate'],result23[i]['EndDate'],,data_new['createby'],type_action))
+                cursor.execute(sqlIn23_log,(ID_CardNo,result23[i]['Subject'],result23[i]['Place'],result23[i]['StartDate'],result23[i]['EndDate'],data_new['createby'],type_action))
         except Exception as e:
                 pass
 
