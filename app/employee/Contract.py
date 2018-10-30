@@ -239,7 +239,7 @@ def QryListContract(cursor):
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN section ON employee.section_id = section.sect_id\
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
@@ -280,12 +280,34 @@ def QryListContract_by_mounth(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
-        sql = """SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN section ON employee.section_id = section.sect_id\
                                       INNER JOIN position ON employee.position_id = position.position_id\
                                       INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
                                       INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
         WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryListContract_by_mounth_new', methods=['POST'])
+@connect_sql()
+def QryListContract_by_mounth_new(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+                                      INNER JOIN section ON employee.section_id = section.sect_id\
+                                      INNER JOIN position ON employee.position_id = position.position_id\
+                                      INNER JOIN org_name ON employee.org_name_id = org_name.org_name_id\
+                                      INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+        WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

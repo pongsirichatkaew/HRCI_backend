@@ -968,7 +968,7 @@ def Export_Employee_by_month(cursor):
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,Personal.NicknameTh,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1002,7 +1002,7 @@ def Export_Employee_by_month(cursor):
                 sheet['A'+str(offset + i)] = result[i]['employeeid']
                 sheet['B'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
                 sheet['C'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
-                sheet['D'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['D'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']
                 sheet['E'+str(offset + i)] = result[i]['email']
                 sheet['F'+str(offset + i)] = result[i]['position_detail']
                 sheet['G'+str(offset + i)] = result[i]['sect_detail']
@@ -1057,7 +1057,7 @@ def Export_Employee_All_company(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,Personal.NicknameTh,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1091,7 +1091,7 @@ def Export_Employee_All_company(cursor):
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
                 sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
-                sheet['E'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['E'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']
                 sheet['F'+str(offset + i)] = result[i]['email']
                 sheet['G'+str(offset + i)] = result[i]['position_detail']
                 sheet['H'+str(offset + i)] = result[i]['sect_detail']
