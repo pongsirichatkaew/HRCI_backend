@@ -1214,7 +1214,7 @@ def Qry_Employee_GA(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT benefits.benefits_detail,employee_benefits.benefits_values FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
-         WHERE employee_benefits.employeeid=%s AND benefits.validstatus = 1"
+         WHERE employee_benefits.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
