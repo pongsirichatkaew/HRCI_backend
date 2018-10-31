@@ -88,7 +88,8 @@ def DeleteAdmin(cursor):
         type_action= "Delete"
 
         sqlIn_log = "INSERT INTO Admin_log (employeeid,username,name,permission,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_log,(result['employeeid'],result['username'],result['name'],result['permission'],data_new['createby'],type_action))
+        cursor.execute(sqlIn_log,(result[0]['employeeid'],result[0]['username'],result[0]['name'],result[0]['permission'],data_new['createby'],type_action))
+
 
         sqlDe = "DELETE FROM Admin WHERE employeeid=%s"
         cursor.execute(sqlDe,(data_new['employeeid']))
