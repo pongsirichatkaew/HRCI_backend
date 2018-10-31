@@ -103,7 +103,7 @@ def EditCompany_data(cursor):
 @connect_sql()
 def QryCompany(cursor):
     try:
-        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,validstatus,acronym FROM company"
+        sql = "SELECT id,companyid,companyname,company_short_name,email,address_company,imageName,phone,acronym FROM company"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
