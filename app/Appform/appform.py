@@ -405,7 +405,7 @@ def QryDatbaseAppform():
         date_contract = str(int(now_contract)+543)
         date_sub_contract = date_contract[2:]
         try:
-            sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND validstatus =1 AND year=%s ORDER BY contract_id DESC LIMIT 1"
+            sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND year=%s ORDER BY contract_id DESC LIMIT 1"
             cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
             columns = [column[0] for column in cursor.description]
             resultsql_contract_id = toJson(cursor.fetchall(),columns)
@@ -570,7 +570,7 @@ def QryDatbaseAppform():
             now = str_date_year
             date_n = str(int(now)+543)
             form_employee = date_n[2:]
-        sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s AND validstatus=1"
+        sqlcompafirst = "SELECT acronym FROM company WHERE companyid=%s"
         cursor.execute(sqlcompafirst,data_new['company_id'])
         columnscompafirst = [column[0] for column in cursor.description]
         resultcompafirst = toJson(cursor.fetchall(),columnscompafirst)
