@@ -1182,25 +1182,44 @@ def Edit_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employee_benefits=%s"
-        cursor.execute(sql,data_new['employeeid'])
+        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['benefits_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "Edit"
 
-        i=0
-        for i in xrange(len(result)):
-            sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn,(data_new['employeeid'],result[i]['citizenid'],result[i]['benefits_id'],result[i]['benefits_values'],data_new['createby'],type_action))
+        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],data_new['createby'],type_action))
 
-        sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s"
-        cursor.execute(sqlde,(data_new['employeeid']))
+        sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        cursor.execute(sqlde,(data_new['employeeid'],data_new['benefits_id']))
 
-        i=0
-        for i in xrange(len(result)):
-            sqlIn = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn,(data_new['employeeid'],data_new[i]['citizenid'],data_new[i]['benefits_id'],data_new[i]['benefits_values'],data_new['createby']))
+        sqlIn = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],data_new['citizenid'],data_new['benefits_id'],data_new['benefits_values'],data_new['createby']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Delete_Employee_GA', methods=['POST'])
+@connect_sql()
+def Delete_Employee_GA(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['benefits_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "Delete"
+
+        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],data_new['createby'],type_action))
+
+        sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        cursor.execute(sqlde,(data_new['employeeid'],data_new['benefits_id']))
         return "Success"
     except Exception as e:
         logserver(e)
