@@ -451,9 +451,9 @@ def EditEmployee_Contract(cursor):
         resultlast={}
         resultlast["employeeid"] = employeeid
         resultlast["message"] = "Success"
-        return resultlast
+        return jsonify(resultlast)
     except Exception as e:
         resultlast={}
         resultlast["message"] = "fail"
         logserver(e)
-        return resultlast
+        return jsonify(resultlast)
