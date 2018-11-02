@@ -670,13 +670,13 @@ def QryDatbaseAppform():
 
         i=0
         for i in xrange(len(data_new['benefits'])):
-            sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby']))
+            sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,type_check,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby']))
 
         i=0
         for i in xrange(len(data_new['benefits'])):
-            sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be_log,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby'],type_action))
+            sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be_log,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby'],type_action))
 
         sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM_pro,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\

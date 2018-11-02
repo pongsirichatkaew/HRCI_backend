@@ -937,13 +937,13 @@ def InsertEmployeeHRCI_Management(cursor):
 
             i=0
             for i in xrange(len(data_new['benefits'])):
-                sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby']))
+                sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,type_check,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby']))
 
             i=0
             for i in xrange(len(data_new['benefits'])):
-                sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be_log,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['createby'],type_action))
+                sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_log,(employeeid,ID_CardNo,data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby'],type_action))
 
             sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(employeeid,ID_CardNo,result_Personal[0]['NameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameTh'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
@@ -1182,21 +1182,21 @@ def Edit_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        sql = "SELECT citizenid,benefits_id,benefits_values,type_check FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['benefits_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "Edit"
 
-        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],data_new['createby'],type_action))
+        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],result[0]['type_check'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['benefits_id']))
 
-        sqlIn = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['employeeid'],data_new['citizenid'],data_new['benefits_id'],data_new['benefits_values'],data_new['createby']))
+        sqlIn = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,type_check,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],data_new['citizenid'],data_new['benefits_id'],data_new['benefits_values'],data_new['type_check'],data_new['createby']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -1208,15 +1208,15 @@ def Delete_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT citizenid,benefits_id,benefits_values FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        sql = "SELECT citizenid,benefits_id,benefits_values,type_check FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['benefits_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "Delete"
 
-        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],data_new['createby'],type_action))
+        sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],result[0]['type_check'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['benefits_id']))
@@ -1231,7 +1231,7 @@ def Qry_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT benefits.benefits_detail,employee_benefits.benefits_values FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
+        sql = "SELECT benefits.benefits_detail,employee_benefits.benefits_values,employee_benefits.type_check FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
          WHERE employee_benefits.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
