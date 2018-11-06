@@ -1121,9 +1121,9 @@ def Qry_Province(cursor3):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_Al_Amphurs', methods=['POST'])
+@app.route('/Qry_All_Amphurs', methods=['POST'])
 @connect_sql3()
-def Qry_Al_Amphurs(cursor3):
+def Qry_All_Amphurs(cursor3):
     try:
         sql = "SELECT AMPHUR_ID, AMPHUR_NAME FROM amphures ORDER BY AMPHUR_NAME ASC"
         cursor3.execute(sql)
@@ -1133,9 +1133,9 @@ def Qry_Al_Amphurs(cursor3):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_Al_Districts', methods=['POST'])
+@app.route('/Qry_All_Districts', methods=['POST'])
 @connect_sql3()
-def Qry_Al_Districts(cursor3):
+def Qry_All_Districts(cursor3):
     try:
         sql = "SELECT DISTRICT_NAME FROM districts ORDER BY DISTRICT_NAME ASC"
         cursor3.execute(sql)
@@ -1231,7 +1231,7 @@ def Qry_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT benefits.benefits_detail,employee_benefits.benefits_values,employee_benefits.type_check FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
+        sql = "SELECT benefits.benefits_detail,benefits.type_benefits,employee_benefits.benefits_id,employee_benefits.benefits_values,employee_benefits.type_check FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
          WHERE employee_benefits.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
