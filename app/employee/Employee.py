@@ -698,7 +698,7 @@ def EditEmployee_Employeeid(cursor):
             sqlUp = "UPDATE employee SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['Old_EmpId']))
 
-            sqlUp_gA = "UPDATE employee_ga SET employeeid=%s WHERE employeeid=%s"
+            sqlUp_gA = "UPDATE employee_benefits SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp_gA,(data_new['employeeid'],data_new['Old_EmpId']))
 
             sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s"
@@ -973,7 +973,6 @@ def Export_Employee_by_month(cursor):
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
-                                          LEFT JOIN status ON status.status_id = employee.validstatus\
             WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
@@ -1062,7 +1061,6 @@ def Export_Employee_All_company(cursor):
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
-                                          LEFT JOIN status ON status.status_id = employee.validstatus\
             WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
@@ -1098,6 +1096,354 @@ def Export_Employee_All_company(cursor):
                 sheet['J'+str(offset + i)] = result[i]['cost_detail']
                 sheet['K'+str(offset + i)] = result[i]['Mobile']
                 sheet['L'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Emp_benefit_All_company', methods=['POST'])
+@connect_sql()
+def Export_Emp_benefit_All_company(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for item_ in result:
+                item_['salary'] = base64.b64decode(item_['salary'])
+            companyname_ = result[0]['company_short_name']
+            for i1 in result:
+                benefitsful = []
+                workTime = []
+                sql1 = """  SELECT employee_benefits.benefits_values AS benefitsName
+                            FROM employee_benefits , employee
+                            WHERE employee_benefits.employeeid =  %s
+                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
+                cursor.execute(sql1,(i1['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    benefitsful.append(i2)
+                i1['benefitsful'] = benefitsful
+            # return jsonify(result[1]['benefitsful'][2]['benefitsName'])
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_benefit_All.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_benefit_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['E'+str(3)] = year + '/' + month
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['company_short_name']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['sect_detail']
+                sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['G'+str(offset + i)] = result[i]['cost_detail']
+                sheet['H'+str(offset + i)] = result[i]['start_work']
+                sheet['I'+str(offset + i)] = result[i]['salary']
+                sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
+                sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
+                sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
+                sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
+                sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
+                sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Emp_benefit_company', methods=['POST'])
+@connect_sql()
+def Export_Emp_benefit_company(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        companyid=str(data_new['companyid'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for item_ in result:
+                item_['salary'] = base64.b64decode(item_['salary'])
+            companyname_ = result[0]['company_short_name']
+            for i1 in result:
+                benefitsful = []
+                workTime = []
+                sql1 = """  SELECT employee_benefits.benefits_values AS benefitsName
+                            FROM employee_benefits , employee
+                            WHERE employee_benefits.employeeid =  %s
+                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
+                cursor.execute(sql1,(i1['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    benefitsful.append(i2)
+                i1['benefitsful'] = benefitsful
+            # return jsonify(result[1]['benefitsful'][2]['benefitsName'])
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_benefit_All.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_benefit_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['E'+str(3)] = year + '/' + month
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['company_short_name']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['sect_detail']
+                sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['G'+str(offset + i)] = result[i]['cost_detail']
+                sheet['H'+str(offset + i)] = result[i]['start_work']
+                sheet['I'+str(offset + i)] = result[i]['salary']
+                sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
+                sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
+                sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
+                sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
+                sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
+                sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Emp_Ga_All_company', methods=['POST'])
+@connect_sql()
+def Export_Emp_Ga_All_company(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for item_ in result:
+                item_['salary'] = base64.b64decode(item_['salary'])
+            companyname_ = result[0]['company_short_name']
+            for i1 in result:
+                benefitsful = []
+                workTime = []
+                sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
+                                         ELSE employee_benefits.benefits_values END) AS benefitsName
+                            FROM employee_benefits , employee
+                            WHERE employee_benefits.employeeid =  %s
+                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
+                cursor.execute(sql1,(i1['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    benefitsful.append(i2)
+                i1['benefitsful'] = benefitsful
+            # return jsonify(result[1]['benefitsful'][16]['benefitsName'])
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Ga_All.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_Ga_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['E'+str(3)] = year + '/' + month
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th']
+                sheet['D'+str(offset + i)] = result[i]['surname_th']
+                sheet['E'+str(offset + i)] = result[i]['name_eng']
+                sheet['F'+str(offset + i)] = result[i]['surname_eng']
+                sheet['G'+str(offset + i)] = result[i]['position_detail']
+                sheet['H'+str(offset + i)] = result[i]['sect_detail']
+                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['J'+str(offset + i)] = result[i]['cost_detail']
+                sheet['K'+str(offset + i)] = result[i]['company_short_name']
+                sheet['L'+str(offset + i)] = result[i]['start_work']
+                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Emp_Ga_company', methods=['POST'])
+@connect_sql()
+def Export_Emp_Ga_company(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        companyid=str(data_new['companyid'])
+        try:
+            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for item_ in result:
+                item_['salary'] = base64.b64decode(item_['salary'])
+            companyname_ = result[0]['company_short_name']
+            for i1 in result:
+                benefitsful = []
+                workTime = []
+                sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
+                                         ELSE employee_benefits.benefits_values END) AS benefitsName
+                            FROM employee_benefits , employee
+                            WHERE employee_benefits.employeeid =  %s
+                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
+                cursor.execute(sql1,(i1['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    benefitsful.append(i2)
+                i1['benefitsful'] = benefitsful
+            # return jsonify(result[1]['benefitsful'][16]['benefitsName'])
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Ga_All.xlsx'))
+
+        wb = load_workbook('../Template/Template_Employee_Ga_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['E'+str(3)] = year + '/' + month
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th']
+                sheet['D'+str(offset + i)] = result[i]['surname_th']
+                sheet['E'+str(offset + i)] = result[i]['name_eng']
+                sheet['F'+str(offset + i)] = result[i]['surname_eng']
+                sheet['G'+str(offset + i)] = result[i]['position_detail']
+                sheet['H'+str(offset + i)] = result[i]['sect_detail']
+                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['J'+str(offset + i)] = result[i]['cost_detail']
+                sheet['K'+str(offset + i)] = result[i]['company_short_name']
+                sheet['L'+str(offset + i)] = result[i]['start_work']
+                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
