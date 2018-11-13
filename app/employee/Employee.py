@@ -1521,6 +1521,35 @@ def Qry_Districts(cursor3):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Insert_Employee_GA', methods=['POST'])
+@connect_sql()
+def Insert_Employee_GA(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        employeeid = data_new['employeeid']
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sql,(employeeid))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "ADD"
+
+        i=0
+        for i in xrange(len(data_new['benefits'])):
+            sqlIn_be = "INSERT INTO employee_benefits(employeeid,citizenid,benefits_id,benefits_values,type_check,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(employeeid,result[0]['citizenid'],data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby']))
+
+        i=0
+        for i in xrange(len(data_new['benefits'])):
+            sqlIn_be_log = "INSERT INTO employee_benefits_log(employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be_log,(employeeid,result[0]['citizenid'],data_new['benefits'][i]['benefits_id'],data_new['benefits'][i]['benefits_values'],data_new['benefits'][i]['type_check'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Edit_Employee_GA', methods=['POST'])
 @connect_sql()
 def Edit_Employee_GA(cursor):
