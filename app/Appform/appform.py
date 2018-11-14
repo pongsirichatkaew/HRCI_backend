@@ -52,7 +52,7 @@ def InsertBlacklist():
 
         type_action = "ADD"
 
-        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn5,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions'],type_action))
 
         sqlemployee = "DELETE FROM employee WHERE citizenid=%s"
@@ -61,10 +61,10 @@ def InsertBlacklist():
         sqlemployee_log = "DELETE FROM employee_log WHERE citizenid=%s"
         cursor.execute(sqlemployee_log,result[0]['ID_CardNo'])
 
-        sqlemployee_benefits = "DELETE FROM employee_ benefits WHERE citizenid=%s"
-        cursor.execute(sqlemployee_ga,result[0]['ID_CardNo'])
+        sqlemployee_benefits = "DELETE FROM employee_benefits WHERE citizenid=%s"
+        cursor.execute(sqlemployee_benefits,result[0]['ID_CardNo'])
 
-        sqlemployee_benefits_log = "DELETE FROM employee_ benefits_log WHERE citizenid=%s"
+        sqlemployee_benefits_log = "DELETE FROM employee_benefits_log WHERE citizenid=%s"
         cursor.execute(sqlemployee_benefits_log,result[0]['ID_CardNo'])
 
         sqlEmp_pro = "DELETE FROM Emp_probation WHERE citizenid=%s"
