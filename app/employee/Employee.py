@@ -24,7 +24,7 @@ def InsertEmployee_resign(cursor):
         sqlemployee = "DELETE FROM employee WHERE employeeid=%s"
         cursor.execute(sqlemployee,data_new['employeeid'])
 
-        sqlemployee_ga = "DELETE FROM employee_ga WHERE employeeid=%s"
+        sqlemployee_ga = "DELETE FROM employee_benefits WHERE employeeid=%s"
         cursor.execute(sqlemployee_ga,data_new['employeeid'])
 
         sqlEmp_pro = "DELETE FROM Emp_probation WHERE employeeid=%s"
