@@ -9,18 +9,24 @@ def InsertEmployee_resign(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT name_th,surname_th,citizenid,start_work FROM employee WHERE employeeid=%s"
+        sql = "SELECT * FROM employee WHERE employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlemployee = "UPDATE employee SET validstatus=0 WHERE employeeid=%s"
+        type_action = "Resign"
+
+        sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEM_log,(result[0]['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
+        result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['	start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
+
+        sqlemployee = "DELETE FROM employee WHERE employeeid=%s"
         cursor.execute(sqlemployee,data_new['employeeid'])
 
-        sqlemployee_ga = "UPDATE employee_ga SET validstatus=0 WHERE employeeid=%s"
+        sqlemployee_ga = "DELETE FROM employee_ga WHERE employeeid=%s"
         cursor.execute(sqlemployee_ga,data_new['employeeid'])
 
-        sqlEmp_pro = "UPDATE Emp_probation SET validstatus=0 WHERE employeeid=%s"
+        sqlEmp_pro = "DELETE FROM Emp_probation WHERE employeeid=%s"
         cursor.execute(sqlEmp_pro,data_new['employeeid'])
 
         sqlIn4 = "INSERT INTO employee_resign (employeeid,name_th,surname_th,ID_CardNo,star_work,issue_date,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
