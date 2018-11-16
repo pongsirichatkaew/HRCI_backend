@@ -78,6 +78,100 @@ def InsertBlacklist():
 
         sqlpersonal_log = "DELETE FROM Personal_log WHERE ID_CardNo=%s"
         cursor.execute(sqlpersonal_log,result[0]['ID_CardNo'])
+
+        sqlAddress = "DELETE FROM Address WHERE ID_CardNo=%s"
+        cursor.execute(sqlAddress,result[0]['ID_CardNo'])
+
+        sqlAddress_log = "DELETE FROM Address_log WHERE ID_CardNo=%s"
+        cursor.execute(sqlAddress_log,result[0]['ID_CardNo'])
+
+        try:
+            sqlAttachment = "DELETE FROM Attachment WHERE ID_CardNo=%s"
+            cursor.execute(sqlAttachment,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlComputerSkill = "DELETE FROM ComputerSkill WHERE ID_CardNo=%s"
+            cursor.execute(sqlComputerSkill,result[0]['ID_CardNo'])
+
+            sqlComputerSkill_log = "DELETE FROM ComputerSkill_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlComputerSkill_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlEducation = "DELETE FROM Education WHERE ID_CardNo=%s"
+            cursor.execute(sqlEducation,result[0]['ID_CardNo'])
+
+            sqlEducation_log = "DELETE FROM Education_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlEducation_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlEmployment = "DELETE FROM Employment WHERE ID_CardNo=%s"
+            cursor.execute(sqlEmployment,result[0]['ID_CardNo'])
+
+            sqlEmployment_log = "DELETE FROM Employment_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlEmployment_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlFamily = "DELETE FROM Family WHERE ID_CardNo=%s"
+            cursor.execute(sqlFamily,result[0]['ID_CardNo'])
+
+            sqlFamily_log = "DELETE FROM Family_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlFamily_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlLanguagesSkill = "DELETE FROM LanguagesSkill WHERE ID_CardNo=%s"
+            cursor.execute(sqlLanguagesSkill,result[0]['ID_CardNo'])
+
+            sqlLanguagesSkill_log = "DELETE FROM LanguagesSkill_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlLanguagesSkill_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlReference = "DELETE FROM Reference WHERE ID_CardNo=%s"
+            cursor.execute(sqlReference,result[0]['ID_CardNo'])
+
+            sqlReference_log = "DELETE FROM Reference_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlReference_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlRefPerson = "DELETE FROM RefPerson WHERE ID_CardNo=%s"
+            cursor.execute(sqlRefPerson,result[0]['ID_CardNo'])
+
+            sqlRefPerson_log = "DELETE FROM RefPerson_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlRefPerson_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlSpecialSkill = "DELETE FROM SpecialSkill WHERE ID_CardNo=%s"
+            cursor.execute(sqlSpecialSkill,result[0]['ID_CardNo'])
+
+            sqlSpecialSkill_log = "DELETE FROM SpecialSkill_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlSpecialSkill_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
+        try:
+            sqlTrainingCourse = "DELETE FROM TrainingCourse WHERE ID_CardNo=%s"
+            cursor.execute(sqlTrainingCourse,result[0]['ID_CardNo'])
+
+            sqlTrainingCourse_log = "DELETE FROM TrainingCourse_log WHERE ID_CardNo=%s"
+            cursor.execute(sqlTrainingCourse_log,result[0]['ID_CardNo'])
+        except Exception as e:
+            pass
+
         connection.commit()
         connection.close()
         return "Success"
