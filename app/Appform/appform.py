@@ -72,6 +72,12 @@ def InsertBlacklist():
 
         sqlEmp_pro_log = "DELETE FROM Emp_probation_log WHERE citizenid=%s"
         cursor.execute(sqlEmp_pro_log,result[0]['ID_CardNo'])
+
+        sqlpersonal = "DELETE FROM Personal WHERE ID_CardNo=%s"
+        cursor.execute(sqlpersonal,result[0]['ID_CardNo'])
+
+        sqlpersonal_log = "DELETE FROM Personal_log WHERE ID_CardNo=%s"
+        cursor.execute(sqlpersonal_log,result[0]['ID_CardNo'])
         connection.commit()
         connection.close()
         return "Success"
