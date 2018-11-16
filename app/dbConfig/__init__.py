@@ -27,7 +27,7 @@ CORS(app)
 
 app.config['MYSQL_DATABASE_USER'] = "root"
 app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
-app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_backup_test'
+app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management'
 app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
 # app.config['MYSQL_DATABASE_USER'] = "root"
 # app.config['MYSQL_DATABASE_PASSWORD'] = "devops@Pass01"
