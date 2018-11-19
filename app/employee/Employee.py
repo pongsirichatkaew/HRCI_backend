@@ -1599,7 +1599,7 @@ def Delete_Employee_GA(cursor):
         sqlIn = "INSERT INTO employee_benefits_log (employeeid,citizenid,benefits_id,benefits_values,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(data_new['employeeid'],result[0]['citizenid'],result[0]['benefits_id'],result[0]['benefits_values'],result[0]['type_check'],data_new['createby'],type_action))
 
-        sqlde = "DELETE FROM employee_benefits WHERE employeeid=%s AND benefits_id=%s"
+        sqlde = "UPDATE employee_benefits SET validstatus=0 WHERE employeeid=%s AND benefits_id=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['benefits_id']))
         return "Success"
     except Exception as e:
