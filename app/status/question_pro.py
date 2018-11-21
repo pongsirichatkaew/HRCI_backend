@@ -104,13 +104,13 @@ def Insert_form_Question_pro(cursor):
                 question_pro_id_last=result[0]['question_pro_id']+1
             except Exception as e:
                 question_pro_id_last = 1
-            sql = "INSERT INTO question_pro_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(question_pro_id_last,data_new['question_pro_id_type'],data_new['question_pro'][i]['question_pro_id'],data_new['question_pro'][i]['type'],data_new['createby']))
+            sql = "INSERT INTO question_pro_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,group_q,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(question_pro_id_last,data_new['question_pro_id_type'],data_new['question_pro'][i]['question_pro_detail'],data_new['question_pro'][i]['type'],data_new['question_pro'][i]['group'],data_new['createby']))
 
             type_action = "ADD"
 
-            sql_log = "INSERT INTO question_pro_log_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log,(question_pro_id_last,data_new['question_pro_id_type'],data_new['question_pro'][i]['question_pro_id'],data_new['question_pro'][i]['type'],data_new['createby'],type_action))
+            sql_log = "INSERT INTO question_pro_log_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,group_q,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(question_pro_id_last,data_new['question_pro_id_type'],data_new['question_pro'][i]['question_pro_detail'],data_new['question_pro'][i]['type'],data_new['question_pro'][i]['group'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -180,7 +180,7 @@ def Qry_form_Question_pro(cursor):
         result = toJson(cursor.fetchall(),columns)
         for i1 in result:
             question = []
-            sql1 = """  SELECT question_pro_detail FROM question_pro_form WHERE question_pro_id_type = %s AND validstatus=1 ORDER BY question_pro_id ASC"""
+            sql1 = """  SELECT question_pro_detail,type_check,group_q FROM question_pro_form WHERE question_pro_id_type = %s AND validstatus=1 ORDER BY question_pro_id ASC"""
             cursor.execute(sql1,(data_new['question_pro_id_type']))
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
