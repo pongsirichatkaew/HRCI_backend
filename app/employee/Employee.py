@@ -714,6 +714,31 @@ def EditEmployee_Employeeid(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/check_Employeeid', methods=['POST'])
+@connect_sql()
+def check_Employeeid(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sql,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        try:
+            sql2 = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+            cursor.execute(sql2,(data_new['employeeid'],data_new['company_id']))
+            columns = [column[0] for column in cursor.description]
+            result2 = toJson(cursor.fetchall(),columns)
+            employeeid__ = result2[0]['employeeid']
+            return "Duplicate_employeeid"
+        except Exception as e:
+            pass
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/InsertEmployeeHRCI_Management', methods=['POST'])
 @connect_sql()
 def InsertEmployeeHRCI_Management(cursor):
