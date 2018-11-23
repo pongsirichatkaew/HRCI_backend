@@ -103,10 +103,16 @@ def QryEmployee_one_person(cursor):
         resultEmployee_Email = toJson(cursor.fetchall(),columnsEmployeeEmail)
 
         sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
-        WHERE Personal.ID_CardNo=%s"
+        WHERE Personal.ID_CardNo=%s AND Address.AddressType='Home'"
         cursor.execute(sqlEm,resultEmployee[0]['citizenid'])
         columnsEm = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columnsEm)
+        resultAddress_home = toJson(cursor.fetchall(),columnsEm)
+
+        sqlEm_persent = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
+        WHERE Personal.ID_CardNo=%s AND Address.AddressType='Present'"
+        cursor.execute(sqlEm_persent,resultEmployee[0]['citizenid'])
+        columnsEmAD = [column[0] for column in cursor.description]
+        resultAddress_Present = toJson(cursor.fetchall(),columnsEmAD)
 
         sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.ID_CardNo=Attachment.ID_CardNo \
         WHERE Personal.ID_CardNo=%s"
@@ -190,7 +196,8 @@ def QryEmployee_one_person(cursor):
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
         arr={}
-        arr["Address"] = result
+        arr["Address_home"] = resultAddress_home
+        arr["Address_Present"] = resultAddress_Present
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         arr["Image_profile"] = encoded_Image
