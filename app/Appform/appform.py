@@ -975,11 +975,12 @@ def QryDatbaseAppform():
                     encodedsalary = base64.b64encode(data_new['salary'])
 
                     date1 = data_new['Start_contract']
+                    long_date = int(data_new['long_date'])-1
                     star_date = date1.split("-")
                     Day_s = int(star_date[0])
                     Mon_s = int(star_date[1])
                     year_s = int(star_date[2])
-                    next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+                    next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=long_date)
                     next_3_m2 = str(next_3_mm)
                     end_date = next_3_m2.split("-")
                     Day_e = end_date[2]

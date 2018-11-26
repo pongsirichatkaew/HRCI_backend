@@ -48,19 +48,6 @@ def QryEmployee_resign(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/UpdateStatus_Employee', methods=['POST'])
-@connect_sql()
-def UpdateStatus_Employee(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        sqlUp = "UPDATE employee SET validstatus=%s WHERE employeeid=%s"
-        cursor.execute(sqlUp,(data_new['validstatus'],data_new['employeeid']))
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
 @app.route('/QryEmployee', methods=['POST'])
 def QryEmployee():
     try:
@@ -242,11 +229,12 @@ def EditEmployee(cursor):
         result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
 
         date1 = data_new['Start_contract']
+        long_date = int(data_new['long_date'])-1
         star_date = date1.split("-")
         Day_s = int(star_date[0])
         Mon_s =int(star_date[1])
         year_s = int(star_date[2])
-        next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+        next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=long_date)
         next_3_m2 = str(next_3_m)
         end_date = next_3_m2.split("-")
         Day_e = end_date[2]
@@ -298,8 +286,8 @@ def EditEmployee_Personal(cursor):
         sqlIn14_log = """INSERT INTO Personal_log (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress,EmergencyTel,date,createby,type_action) \
         VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14_log,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],\
-        result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],result_Personal[0]['Birthdate'],Birthdate_name,result_Personal[0]['BirthPlace'],result_Personal[0]['BirthProvince'], \
-        result_Personal[0]['BirthCountry'],result_Personal[0]['Age'],result_Personal[0]['Height'],result_Personal[0]['Weight'],result_Personal[0]['BloodGroup'],result_Personal[0]['Citizenship'],result_Personal[0]['Religion'],ID_CardNo, \
+        result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],result_Personal[0]['Birthdate'],result_Personal[0]['Birthdate_name'],result_Personal[0]['BirthPlace'],result_Personal[0]['BirthProvince'], \
+        result_Personal[0]['BirthCountry'],result_Personal[0]['Age'],result_Personal[0]['Height'],result_Personal[0]['Weight'],result_Personal[0]['BloodGroup'],result_Personal[0]['Citizenship'],result_Personal[0]['Religion'],result_Personal[0]['ID_CardNo'], \
         result_Personal[0]['IssueDate'],result_Personal[0]['ExpiryDate'],result_Personal[0]['MaritalStatus'],result_Personal[0]['NumberOfChildren'],result_Personal[0]['StudyChild'],result_Personal[0]['MilitaryService'],result_Personal[0]['Others'], \
         result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date'],data_new['createby'],type_action))
 
@@ -952,11 +940,12 @@ def InsertEmployeeHRCI_Management(cursor):
                 logserver(e)
 
             date1 = data_new['Start_contract']
+            long_date = int(data_new['long_date'])-1
             star_date = date1.split("-")
             Day_s = int(star_date[0])
             Mon_s =int(star_date[1])
             year_s = int(star_date[2])
-            next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=89)
+            next_3_m = date(year_s,Mon_s,Day_s) + relativedelta(days=long_date)
             next_3_m2 = str(next_3_m)
             end_date = next_3_m2.split("-")
             Day_e = end_date[2]
