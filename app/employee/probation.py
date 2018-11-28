@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from dbConfig import *
-
 @app.route('/UpdateStatus_probation', methods=['POST'])
 @connect_sql()
 def UpdateStatus_probation(cursor):
