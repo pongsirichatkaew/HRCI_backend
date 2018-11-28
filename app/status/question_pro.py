@@ -132,11 +132,11 @@ def Edit_form_Question_pro(cursor):
 
         type_action = "Edit"
 
-        sql_log = "INSERT INTO question_pro_log_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(result[0]['question_pro_id'],result[0]['question_pro_id_type'],result[0]['question_pro_detail'],result[0]['type_check'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO question_pro_log_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,group_q,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['question_pro_id'],result[0]['question_pro_id_type'],result[0]['question_pro_detail'],result[0]['type_check'],result[0]['group_q'],data_new['createby'],type_action))
 
-        sqlUp = "UPDATE question_pro_form SET question_pro_id_type=%s,question_pro_detail=%s,type_check=%s,createby=%s WHERE question_pro_id=%s AND question_pro_id_type=%s"
-        cursor.execute(sqlUp,(data_new['New_question_pro_id_type'],data_new['New_question_pro_detail'],data_new['New_type_check'],data_new['createby'],data_new['question_pro_id'],data_new['question_pro_id_type']))
+        sqlUp = "UPDATE question_pro_form SET question_pro_id_type=%s,question_pro_detail=%s,type_check=%s,group_q=%s,createby=%s WHERE question_pro_id=%s AND question_pro_id_type=%s"
+        cursor.execute(sqlUp,(data_new['New_question_pro_id_type'],data_new['New_question_pro_detail'],data_new['New_type_check'],data_new['group_q'],data_new['createby'],data_new['question_pro_id'],data_new['question_pro_id_type']))
 
         # sqlIn = "INSERT INTO question_pro_form (question_pro_id_type,question_pro_detail,type_check,createby) VALUES (%s,%s,%s,%s)"
         # cursor.execute(sqlIn,(data_new['New_question_pro_id_type'],data_new['New_question_pro_id'],data_new['New_type_check'],data_new['createby']))
@@ -159,8 +159,8 @@ def Delete_form_Question_pro(cursor):
 
         type_action = "Delete"
 
-        sql_log = "INSERT INTO question_pro_log_form (question_pro_id_type,question_pro_detail,type_check,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(result[0]['question_pro_id_type'],result[0]['question_pro_detail'],result[0]['type_check'],result[0]['createby'],type_action))
+        sql_log = "INSERT INTO question_pro_log_form (question_pro_id_type,question_pro_detail,type_check,group_q,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['question_pro_id_type'],result[0]['question_pro_detail'],result[0]['type_check'],result[0]['group_q'],result[0]['createby'],type_action))
 
         sqlUp = "UPDATE question_pro_form SET validstatus=0 WHERE question_pro_id=%s AND question_pro_id_type=%s"
         cursor.execute(sqlUp,(data_new['question_pro_id'],data_new['question_pro_id_type']))
@@ -182,7 +182,7 @@ def Qry_form_Question_pro(cursor):
         result = toJson(cursor.fetchall(),columns)
         for i1 in result:
             question = []
-            sql1 = """  SELECT question_pro_detail,type_check,group_q FROM question_pro_form WHERE question_pro_id_type = %s AND validstatus=1 ORDER BY question_pro_id ASC"""
+            sql1 = """  SELECT question_pro_id,question_pro_detail,type_check,group_q FROM question_pro_form WHERE question_pro_id_type = %s AND validstatus=1 ORDER BY question_pro_id ASC"""
             cursor.execute(sql1,(data_new['question_pro_id_type']))
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
