@@ -18,12 +18,12 @@ def QryContract(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sql2 = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sqlhome_address = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s AND Address.AddressType='Home'"
-        cursor.execute(sql,data_new['employeeid'])
+        cursor.execute(sqlhome_address,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result__2 = toJson(cursor.fetchall(),columns)
 
