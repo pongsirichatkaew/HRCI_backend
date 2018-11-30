@@ -182,9 +182,16 @@ def QryEmployee_one_person(cursor):
         cursor.execute(sql23,resultEmployee[0]['citizenid'])
         columns23 = [column[0] for column in cursor.description]
         result23 = toJson(cursor.fetchall(),columns23)
+
+        sqlcontract = "SELECT Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
+        cursor.execute(sqlcontract,resultEmployee[0]['citizenid'])
+        columnscontract = [column[0] for column in cursor.description]
+        resultcontract = toJson(cursor.fetchall(),columnscontract)
+
         arr={}
         arr["Address_home"] = resultAddress_home
         arr["Address_Present"] = resultAddress_Present
+        arr["Authority_Distrinct"] = resultcontract[0]['Authority_Distrinct_Id_Card']
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         arr["Image_profile"] = encoded_Image
@@ -327,8 +334,11 @@ def EditEmployee_Personal(cursor):
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
         EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
         cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
-         data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
-         data_new['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
+        data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
+        data_new['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
+
+        sqlUpAuthority = "UPDATE Contract SET Authority_Distrinct_Id_Card=%s WHERE ID_CardNo=%s"
+        cursor.execute(sqlUpAuthority,(data_new['Authority_Distrinct_Id_Card'],result[0]['citizenid']))
 
         return "Success"
     except Exception as e:
