@@ -30,25 +30,34 @@ def TestgenEM(cursor):
     source = dataInput['source']
     data_new = source
 
-    sql = """SELECT employee.id,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,position.position_detail,section.sect_detail,org_name.org_name_detail,\
-    cost_center_name.cost_detail,company.companyname,employee.start_work,employee_ga.phone_depreciate,\
-    employee_ga.notebook_depreciate,employee_ga.limit_phone,employee_ga.chair_table,employee_ga.pc,\
-    employee_ga.notebook,employee_ga.office_equipment,employee_ga.ms,employee_ga.car_ticket,\
-    employee_ga.band_car,employee_ga.color,employee_ga.regis_car_number,employee_ga.other,employee_ga.description FROM employee \
-		                              LEFT JOIN company ON company.companyid = employee.company_id \
-                                      LEFT JOIN position ON position.position_id = employee.position_id \
-                                      LEFT JOIN section ON section.sect_id = employee.section_id \
-                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id \
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id \
-		                              LEFT JOIN employee_ga ON employee_ga.employeeid = employee.employeeid \
-                                      LEFT JOIN status ON status.status_id = employee.validstatus \
-    WHERE employee.validstatus=1 AND position.validstatus=1 AND section.validstatus=1 AND org_name.validstatus=1 AND status.validstatus=1 AND cost_center_name.validstatus=1 AND status.validstatus=1 AND employee_ga.validstatus=1"""
-    cursor.execute(sql)
-    columns = [column[0] for column in cursor.description]
-    result = toJson(cursor.fetchall(),columns)
-    for item_ in result:
-        item_['salary'] = base64.b64decode(item_['salary'])
-    return jsonify(result)
+    section_ = ['iostest','test2','iostest3','iostest4']
+    org_name = ['','b','c','']
+    new_section_ = []
+    new_org_name = []
+    for i in xrange(len(section_)):
+        if section_[i].startswith("ios"):
+            last = section_[i].replace(section_[i],"")
+            new_section_.append(last)
+            if org_name[i]=="":
+              new_org_name.append(section_[i])
+            else:
+              new_org_name.append(org_name[i])
+        else:
+            last = section_[i]
+            new_section_.append(last)
+            new_org_name.append(org_name[i])
+    print("------------------------------------------------")
+    print(section_)
+    print(new_section_)
+    print("=================================================")
+    print(org_name)
+    print(new_org_name)
+    testA = ['aa','bb','cc','dd','aaa']
+    check_string = ('aaa','bb')
+    for k in testA:
+      if k.startswith(check_string):
+          print(k)
+    return "success"
 @app.route('/login', methods=['POST'])
 def login():
     try:

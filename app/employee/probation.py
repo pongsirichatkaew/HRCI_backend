@@ -89,13 +89,12 @@ def Edit_ans_pro(cursor):
         logserver(e)
         return "fail"
 @app.route('/Qry_probation', methods=['POST'])
-def Qry_probation():
-    dataInput = request.json
-    source = dataInput['source']
-    data_new = source
+@connect_sql()
+def Qry_probation(cursor):
     try:
-        connection = mysql.connect()
-        cursor = connection.cursor()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
@@ -105,7 +104,6 @@ def Qry_probation():
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        connection.close()
         for item in result:
             long_date = []
             date1 = result[0]['start_work']
@@ -180,6 +178,15 @@ def Qry_probation():
             last = split_str[0].split(" ")
             item['long_date_pro'] = str(int(last[0])+1)
 
+            question = []
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid = %s AND validstatus=1 ORDER BY question_pro_id ASC"
+            cursor.execute(sql1pro,(data_new['employeeid']))
+            print(sql1pro)
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            for i2 in data2 :
+                question.append(i2)
+            item['question'] = question
         return jsonify(result)
     except Exception as e:
         logserver(e)

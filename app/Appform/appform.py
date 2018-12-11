@@ -208,7 +208,7 @@ def InsertBlacklist_Appform():
 
         type_action = "ADD"
 
-        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn5,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions'],type_action))
 
         sqlIn4 = "INSERT INTO Update_statusAppform_log (EmploymentAppNo,status_id,create_by) VALUES (%s,%s,%s)"
