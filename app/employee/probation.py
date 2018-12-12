@@ -191,3 +191,42 @@ def Qry_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/upload_user', methods=['POST'])
+@connect_sql()
+def upload_user(cursor):
+    try:
+        sqlqry = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sqlqry,request.form['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        resultsqlqry = toJson(cursor.fetchall(),columns)
+        ID_CardNo = resultsqlqry[0]['citizenid']
+        Type = 'probation'
+        employeeid = request.form['employeeid']
+        path = '../uploads/'+employeeid+'/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        file = request.files.getlist('file')
+        for idx, fileList in enumerate(file):
+            fileName = fileList.filename
+            fileType = fileName.split('.')[-1]
+            fileList.filename = 'Probation' + '' + '' + str(idx + 1) + '.' + fileType
+            try:
+                os.remove(os.path.join(path, fileList.filename))
+            except OSError:
+                pass
+            if file and allowed_file(fileList.filename):
+                fileList.save(os.path.join(path, fileList.filename))
+                PathFile = employeeid+'/'+str(fileList.filename)
+                try:
+                    sqlDe = "DELETE FROM employee_upload WHERE ID_CardNo=%s"
+                    cursor.execute(sqlDe,(ID_CardNo))
+                except Exception as e:
+                    pass
+                sql = "INSERT INTO employee_upload(ID_CardNo,Type,PathFile,createby) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
+            else:
+                return "file is not allowed"
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
