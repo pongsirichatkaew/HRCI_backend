@@ -200,6 +200,13 @@ def upload_user(cursor):
         columns = [column[0] for column in cursor.description]
         resultsqlqry = toJson(cursor.fetchall(),columns)
         ID_CardNo = resultsqlqry[0]['citizenid']
+
+        try:
+            sqlDe = "DELETE FROM employee_upload WHERE ID_CardNo=%s"
+            cursor.execute(sqlDe,(ID_CardNo))
+        except Exception as e:
+            pass
+
         Type = 'probation'
         employeeid = request.form['employeeid']
         path = '../uploads/'+employeeid+'/'
@@ -216,12 +223,7 @@ def upload_user(cursor):
                 pass
             if file and allowed_file(fileList.filename):
                 fileList.save(os.path.join(path, fileList.filename))
-                PathFile = employeeid+'/'+str(fileList.filename)
-                try:
-                    sqlDe = "DELETE FROM employee_upload WHERE ID_CardNo=%s"
-                    cursor.execute(sqlDe,(ID_CardNo))
-                except Exception as e:
-                    pass
+                PathFile = employeeid+'/'+str(fileList.filename)                
                 sql = "INSERT INTO employee_upload(ID_CardNo,Type,PathFile,createby) VALUES (%s,%s,%s,%s)"
                 cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
             else:
