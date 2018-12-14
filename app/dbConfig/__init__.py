@@ -17,9 +17,19 @@ import base64
 import xlsxwriter
 import urllib
 import time
+import sys
 from werkzeug import secure_filename
 from openpyxl import load_workbook
 from dateutil.relativedelta import relativedelta
+# lib email
+import smtplib
+from os.path import basename
+from email.mime.application import MIMEApplication
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+from email.utils import COMMASPACE, formatdate
+reload(sys)
+sys.setdefaultencoding('utf8')
 
 app = Flask(__name__)
 CORS(app)
