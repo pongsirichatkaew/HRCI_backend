@@ -67,6 +67,16 @@ def Add_emp_kpi(cursor):
         data_new = source
         employeeid = data_new['employeeid']
 
+        try:
+            sql44 = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi FROM employee_kpi WHERE employeeid=%s"
+            cursor.execute(sql44,(employeeid))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            name = result[0]['name']
+            return "employee is duplicate"
+        except Exception as e:
+            pass
+
         type_action = "ADD"
 
         sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
