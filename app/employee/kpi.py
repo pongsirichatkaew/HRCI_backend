@@ -23,8 +23,12 @@ def QryEmployee_kpi():
         return "fail"
 @app.route('/QryEmployee_kpi_one', methods=['POST'])
 @connect_sql()
-def QryEmployee_kpi_one():
+def QryEmployee_kpi_one(cursor):
     try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
         sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group FROM employee_kpi WHERE employeeid=%s "
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
@@ -48,7 +52,7 @@ def QryEmployee_kpi_one():
         sum={}
         sum["employee"] = result
         sum["board"] = result2
-        sum["image"] = encoded_Image  
+        sum["image"] = encoded_Image
 
         return jsonify(result)
     except Exception as e:
