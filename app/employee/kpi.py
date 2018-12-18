@@ -111,11 +111,11 @@ def Update_grade_hr(cursor):
         grade_board = str(result[0]['grade'])
         if grade_board != "":
             type_action = "Edit"
-            sqlIn_be2 = "INSERT INTO answer_kpi_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
+            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
             cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['grade'],result[0]['createby'],type_action))
         else:
             type_action = "Insert"
-            sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
+            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['grade'],data_new['createby'],type_action))
         sqlUp = "UPDATE employee_kpi SET grade=$ WHERE employeeid=%s"
         cursor.execute(sqlUp,(data_new['grade'],data_new['employeeid']))
