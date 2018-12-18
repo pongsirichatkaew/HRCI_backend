@@ -19,6 +19,7 @@ from employee.Employee import *
 from employee.criminal import *
 from employee.Contract import *
 from employee.probation import *
+from employee.kpi import *
 from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])

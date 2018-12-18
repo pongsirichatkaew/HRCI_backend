@@ -236,7 +236,7 @@ def upload_user(cursor):
             if file and allowed_file(fileList.filename):
                 fileList.save(os.path.join(path, fileList.filename))
                 PathFile = employeeid+'/'+str(fileList.filename)
-                sql = "INSERT INTO employee_upload(ID_CardNo,Type,PathFile,createby) VALUES (%s,%s,%s,%s)"
+                sql = "INSERT INTO employee_upload(ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
                 cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
             else:
                 return "file is not allowed"
@@ -257,7 +257,7 @@ def Qry_upload_file(cursor):
         resultsqlqry = toJson(cursor.fetchall(),columns)
         ID_CardNo = resultsqlqry[0]['citizenid']
 
-        sql = "SELECT ID_CardNo,Type,PathFile FROM employee_upload WHERE ID_CardNo=%s "
+        sql = "SELECT ID_CardNo,FileName,Type,PathFile FROM employee_upload WHERE ID_CardNo=%s "
         cursor.execute(sql,(ID_CardNo))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
