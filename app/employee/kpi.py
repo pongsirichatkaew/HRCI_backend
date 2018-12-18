@@ -3,7 +3,7 @@
 from dbConfig import *
 @app.route('/QryEmployee_kpi', methods=['POST'])
 @connect_sql()
-def QryEmployee_kpi():
+def QryEmployee_kpi(cursor):
     try:
         group_kpi_id = ""
         try:
