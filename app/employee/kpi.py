@@ -54,7 +54,7 @@ def QryEmployee_kpi_one(cursor):
         sum["board"] = result2
         sum["image"] = encoded_Image
 
-        return jsonify(result)
+        return jsonify(sum)
     except Exception as e:
         logserver(e)
         return "fail"
