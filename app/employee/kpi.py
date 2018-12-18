@@ -21,6 +21,39 @@ def QryEmployee_kpi():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmployee_kpi_one', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_one():
+    try:
+        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group FROM employee_kpi WHERE employeeid=%s "
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
+        cursor.execute(sql2,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
+
+        try:
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            open_path_ = urllib.urlopen(encoded_Image)
+            htmlSource = open_path_.read()
+            open_path_.close()
+            test= htmlSource.decode('utf-8')
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.jpg")
+        except Exception as e:
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+
+        sum={}
+        sum["employee"] = result
+        sum["board"] = result2
+        sum["image"] = encoded_Image  
+
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Add_emp_kpi', methods=['POST'])
 @connect_sql()
 def Add_emp_kpi(cursor):
@@ -124,21 +157,21 @@ def Update_grade_hr(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_board_kpi', methods=['POST'])
-@connect_sql()
-def Qry_board_kpi():
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi WHERE employeeid=%s"
-        cursor.execute(sql,(data_new['employeeid']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Qry_board_kpi', methods=['POST'])
+# @connect_sql()
+# def Qry_board_kpi():
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#         sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi WHERE employeeid=%s"
+#         cursor.execute(sql,(data_new['employeeid']))
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#         return jsonify(result)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Add_board_kpi', methods=['POST'])
 @connect_sql()
 def Add_board_kpi(cursor):
