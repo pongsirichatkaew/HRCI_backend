@@ -108,7 +108,7 @@ def QryEmployee_hrci_by_employeeid(cursor2):
         data_new = request.json
         source = data_new['source']
         data_new = source
-        sql = "SELECT thainame,email FROM hrci  WHERE workstatus='Active'AND code=%s "
+        sql = "SELECT thainame,positionname,orgname,email FROM hrci  WHERE workstatus='Active'AND code=%s "
         cursor2.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor2.description]
         result = toJson(cursor2.fetchall(),columns)
@@ -120,6 +120,8 @@ def QryEmployee_hrci_by_employeeid(cursor2):
         resultlast['email'] = result[0]['email']
         resultlast['name'] = name
         resultlast['surname'] = surname
+        resultlast['positionname'] = result[0]['positionname']
+        resultlast['orgname'] = result[0]['orgname']
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)

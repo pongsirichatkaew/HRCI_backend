@@ -10,6 +10,10 @@ def UpdateStatus_probation(cursor):
         data_new = source
         sqlUp = "UPDATE Emp_probation SET validstatus=%s WHERE employeeid=%s"
         cursor.execute(sqlUp,(data_new['validstatus'],data_new['employeeid']))
+
+        # sqlApprove = "INSERT INTO approve_stat(employeeid,name,lastname,tier_approve,createby) VALUES (%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlApprove,(data_new['employeeid'],data_new['createby']))
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -17,6 +21,14 @@ def UpdateStatus_probation(cursor):
 @app.route('/QryEmployee_probation', methods=['POST'])
 def QryEmployee_probation():
     try:
+        status_id = ""
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            status_id = 'WHERE validstatus='+str(data_new['status_id'])
+        except Exception as e:
+            pass
         connection = mysql.connect()
         cursor = connection.cursor()
         sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
@@ -24,7 +36,7 @@ def QryEmployee_probation():
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
-                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus"
+                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus "+status_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -191,3 +203,95 @@ def Qry_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/upload_user', methods=['POST'])
+@connect_sql()
+def upload_user(cursor):
+    try:
+        sqlqry = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sqlqry,request.form['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        resultsqlqry = toJson(cursor.fetchall(),columns)
+        ID_CardNo = resultsqlqry[0]['citizenid']
+
+        try:
+            sqlDe = "DELETE FROM employee_upload WHERE ID_CardNo=%s"
+            cursor.execute(sqlDe,(ID_CardNo))
+        except Exception as e:
+            pass
+
+        Type = 'probation'
+        employeeid = request.form['employeeid']
+        path = '../uploads/'+employeeid+'/'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        file = request.files.getlist('file')
+        for idx, fileList in enumerate(file):
+            fileName = fileList.filename
+            fileType = fileName.split('.')[-1]
+            fileList.filename = 'Probation' + '' + '' + str(idx + 1) + '.' + fileType
+            try:
+                os.remove(os.path.join(path, fileList.filename))
+            except OSError:
+                pass
+            if file and allowed_file(fileList.filename):
+                fileList.save(os.path.join(path, fileList.filename))
+                PathFile = employeeid+'/'+str(fileList.filename)
+                sql = "INSERT INTO employee_upload(ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
+                cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
+            else:
+                return "file is not allowed"
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_upload_file', methods=['POST'])
+@connect_sql()
+def Qry_upload_file(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlqry = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sqlqry,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        resultsqlqry = toJson(cursor.fetchall(),columns)
+        ID_CardNo = resultsqlqry[0]['citizenid']
+
+        sql = "SELECT ID_CardNo,FileName,Type,PathFile FROM employee_upload WHERE ID_CardNo=%s "
+        cursor.execute(sql,(ID_CardNo))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for item_ in result:
+            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/sendEmail', methods = ['POST'])
+def send_email():
+    email = request.json['emails']
+    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = "This is attached file from administrator. thank you for reading"
+    server="mailtx.inet.co.th"
+
+    # assert isinstance(send_to, list)
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    # msg['To'] = send_to
+    msg['To'] = COMMASPACE.join(send_to)
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
