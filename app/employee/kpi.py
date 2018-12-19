@@ -347,23 +347,31 @@ def QryAdmin_business(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAdmin_Engineer', methods=['POST'])
+@connect_sql()
+def QryAdmin_Engineer(cursor):
+    try:
         sql2 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Engineer'"
         cursor.execute(sql2)
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
-
+        return jsonify(result2)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryAdmin_Support', methods=['POST'])
+@connect_sql()
+def QryAdmin_Support(cursor):
+    try:
         sql3 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Support'"
         cursor.execute(sql3)
         columns = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns)
-
-        sum={}
-        sum["business"] = result
-        sum["engineer"] = result2
-        sum["support"]  = result3
-
-        return jsonify(sum)
+        return jsonify(result3)
     except Exception as e:
         logserver(e)
         return "fail"
