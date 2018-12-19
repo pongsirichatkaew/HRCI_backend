@@ -339,3 +339,31 @@ def Qry_upload_file_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryAdmin_business', methods=['POST'])
+@connect_sql()
+def QryAdmin_business(cursor):
+    try:
+        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย ธุรกิจ'"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sql2 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Engineer'"
+        cursor.execute(sql2)
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
+
+        sql3 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Support'"
+        cursor.execute(sql3)
+        columns = [column[0] for column in cursor.description]
+        result3 = toJson(cursor.fetchall(),columns)
+
+        sum={}
+        sum["business"] = result
+        sum["engineer"] = result2
+        sum["support"]  = result3
+
+        return jsonify(sum)
+    except Exception as e:
+        logserver(e)
+        return "fail"
