@@ -13,7 +13,7 @@ def QryEmployee_kpi(cursor):
             org_name = 'WHERE group_kpi='+str(data_new['group_kpi_id'])
         except Exception as e:
             pass
-        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi FROM employee_kpi "+group_kpi_id+" "
+        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -29,7 +29,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi FROM employee_kpi WHERE employeeid=%s "
+        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi WHERE employeeid=%s "
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -79,11 +79,11 @@ def Add_emp_kpi(cursor):
 
         type_action = "ADD"
 
-        sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['createby']))
+        sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby']))
 
-        sqlIn_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['createby'],type_action))
+        sqlIn_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -105,14 +105,14 @@ def Edit_emp_kpi(cursor):
 
         type_action = "Edit"
 
-        sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],data_new['createby'],type_action))
+        sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s"
         cursor.execute(sqlI9de,data_new['employeeid'])
 
-        sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi_kpi,star_date_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['createby']))
+        sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby']))
 
         return "Success"
     except Exception as e:
@@ -134,8 +134,8 @@ def Delete_emp_kpi(cursor):
 
         type_action = "Delete"
 
-        sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],data_new['createby'],type_action))
+        sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s"
         cursor.execute(sqlI9de,data_new['employeeid'])
