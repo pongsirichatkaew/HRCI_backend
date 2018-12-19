@@ -343,10 +343,17 @@ def Qry_upload_file_kpi(cursor):
 @connect_sql()
 def QryAdmin_business(cursor):
     try:
-        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย ธุรกิจ'"
+        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงานธุรกิจ'"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for item_ in result:
+            surname = []
+            user_s = item_['name'].split(" ")
+            name_t = user_s[0]
+            surname_t = user_s[1]
+            item_['name'] = name_t
+            item_['surname'] = surname_t
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -355,10 +362,17 @@ def QryAdmin_business(cursor):
 @connect_sql()
 def QryAdmin_Engineer(cursor):
     try:
-        sql2 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Engineer'"
+        sql2 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงาน Engineer'"
         cursor.execute(sql2)
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
+        for item_ in result2:
+            surname = []
+            user_s = item_['name'].split(" ")
+            name_t = user_s[0]
+            surname_t = user_s[1]
+            item_['name'] = name_t
+            item_['surname'] = surname_t
         return jsonify(result2)
     except Exception as e:
         logserver(e)
@@ -367,10 +381,17 @@ def QryAdmin_Engineer(cursor):
 @connect_sql()
 def QryAdmin_Support(cursor):
     try:
-        sql3 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สาย Support'"
+        sql3 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงาน Support'"
         cursor.execute(sql3)
         columns = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns)
+        for item_ in result3:
+            surname = []
+            user_s = item_['name'].split(" ")
+            name_t = user_s[0]
+            surname_t = user_s[1]
+            item_['name'] = name_t
+            item_['surname'] = surname_t
         return jsonify(result3)
     except Exception as e:
         logserver(e)
