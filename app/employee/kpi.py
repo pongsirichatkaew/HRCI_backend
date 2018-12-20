@@ -135,7 +135,7 @@ def Delete_emp_kpi(cursor):
         type_action = "Delete"
 
         sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
+        cursor.execute(sql_be,(result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s"
         cursor.execute(sqlI9de,data_new['employeeid'])
@@ -265,7 +265,7 @@ def Delete_board_kpi(cursor):
         type_action = "Delete"
 
         sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
+        cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
@@ -304,38 +304,38 @@ def Update_board_kpi(cursor):
 @app.route('/upload_user_kpi', methods=['POST'])
 @connect_sql()
 def upload_user_kpi(cursor):
+    # try:
     try:
-        try:
-            sqlDe = "DELETE FROM employee_upload WHERE employeeid=%s"
-            cursor.execute(sqlDe,(request.form['employeeid']))
-        except Exception as e:
-            pass
-
-        Type = 'kpi'
-        employeeid = request.form['employeeid']
-        path = '../uploads/'+employeeid+'/'+'kpi'+'/'
-        if not os.path.exists(path):
-            os.makedirs(path)
-        file = request.files.getlist('file')
-        for idx, fileList in enumerate(file):
-            fileName = fileList.filename
-            fileType = fileName.split('.')[-1]
-            fileList.filename = 'Probation' + '' + '' + str(idx + 1) + '.' + fileType
-            try:
-                os.remove(os.path.join(path, fileList.filename))
-            except OSError:
-                pass
-            if file and allowed_file(fileList.filename):
-                fileList.save(os.path.join(path, fileList.filename))
-                PathFile = employeeid+'/'+str(fileList.filename)
-                sql = "INSERT INTO employee_upload_kpi(employeeid,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sql,(employeeid,fileName,Type,PathFile,request.form['createby']))
-            else:
-                return "file is not allowed"
-        return "success"
+        sqlDe = "DELETE FROM employee_upload WHERE employeeid=%s"
+        cursor.execute(sqlDe,(request.form['employeeid']))
     except Exception as e:
-        logserver(e)
-        return "fail"
+        pass
+
+    Type = 'kpi'
+    employeeid = request.form['employeeid']
+    path = '../uploads/'+employeeid+'/'+'kpi'+'/'
+    if not os.path.exists(path):
+        os.makedirs(path)
+    file = request.files.getlist('file')
+    for idx, fileList in enumerate(file):
+        fileName = fileList.filename
+        fileType = fileName.split('.')[-1]
+        fileList.filename = 'Probation' + '' + '' + str(idx + 1) + '.' + fileType
+        try:
+            os.remove(os.path.join(path, fileList.filename))
+        except OSError:
+            pass
+        if file and allowed_file(fileList.filename):
+            fileList.save(os.path.join(path, fileList.filename))
+            PathFile = employeeid+'/'+str(fileList.filename)
+            sql = "INSERT INTO employee_upload_kpi(employeeid,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(employeeid,fileName,Type,PathFile,request.form['createby']))
+        else:
+            return "file is not allowed"
+    return "success"
+    # except Exception as e:
+    #     logserver(e)
+    #     return "fail"
 @app.route('/Qry_upload_file_kpi', methods=['POST'])
 @connect_sql()
 def Qry_upload_file_kpi(cursor):
