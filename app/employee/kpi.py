@@ -34,7 +34,7 @@ def QryEmployee_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
+        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
         cursor.execute(sql2,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
@@ -288,13 +288,13 @@ def Update_board_kpi(cursor):
         grade_board = str(result[0]['grade_board'])
         if grade_board != "":
             type_action = "Edit"
-            sqlIn_be2 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            sqlIn_be2 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],result[0]['grade_board'],result[0]['comment'],data_new['createby'],type_action))
         else:
             type_action = "Insert"
-            sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['employeeid_board'],data_new['grade_board'],data_new['comment'],data_new['createby'],type_action))
-        sqlUp = "UPDATE board_kpi SET grade_board=$,comment=$s WHERE employeeid=%s AND employeeid_board=%s"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['comment'],data_new['employeeid'],data_new['employeeid_board']))
 
         return "Success"
