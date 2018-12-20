@@ -198,12 +198,12 @@ def Add_board_kpi(cursor):
         type_action = "ADD"
 
         for i in xrange(len(data_new['emp_board'])):
-            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,org_name,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['org_name_kpi'],data_new['createby']))
+            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
 
         for i in xrange(len(data_new['emp_board'])):
-            sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,org_name,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['org_name_kpi'],data_new['createby'],type_action))
+            sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -223,14 +223,14 @@ def Edit_board_kpi(cursor):
 
         type_action = "Edit"
 
-        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,org_name,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['org_name_kpi'],data_new['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
 
-        sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,org_name,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['org_name_kpi'],data_new['createby']))
+        sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -249,8 +249,8 @@ def Delete_board_kpi(cursor):
 
         type_action = "Delete"
 
-        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,org_name,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['org_name_kpi'],data_new['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
 
         sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
@@ -343,7 +343,7 @@ def Qry_upload_file_kpi(cursor):
 @connect_sql()
 def QryAdmin_business(cursor):
     try:
-        sql = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงานธุรกิจ'"
+        sql = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงานธุรกิจ'"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -362,7 +362,7 @@ def QryAdmin_business(cursor):
 @connect_sql()
 def QryAdmin_Engineer(cursor):
     try:
-        sql2 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงาน Engineer'"
+        sql2 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Engineer'"
         cursor.execute(sql2)
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
@@ -381,7 +381,7 @@ def QryAdmin_Engineer(cursor):
 @connect_sql()
 def QryAdmin_Support(cursor):
     try:
-        sql3 = "SELECT id,employeeid,username,name,permission FROM Admin WHERE permission='สายงาน Support'"
+        sql3 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Support'"
         cursor.execute(sql3)
         columns = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns)
@@ -393,6 +393,88 @@ def QryAdmin_Support(cursor):
             item_['name'] = name_t
             item_['surname'] = surname_t
         return jsonify(result3)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_kpi', methods=['POST'])
+@connect_sql()
+def Export_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi"
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for i1 in result:
+                kpi_ful = []
+                sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
+                                         ELSE employee_benefits.benefits_values END) AS benefitsName
+                            FROM employee_benefits , employee
+                            WHERE employee_benefits.employeeid =  %s
+                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
+                cursor.execute(sql1,(i1['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    kpi_ful.append(i2)
+                i1['kpi_ful'] = kpi_ful
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Ga_All.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee_Ga_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['E'+str(3)] = year + '/' + month
+            offset = 3
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th']
+                sheet['D'+str(offset + i)] = result[i]['surname_th']
+                sheet['E'+str(offset + i)] = result[i]['name_eng']
+                sheet['F'+str(offset + i)] = result[i]['surname_eng']
+                sheet['G'+str(offset + i)] = result[i]['position_detail']
+                sheet['H'+str(offset + i)] = result[i]['sect_detail']
+                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['J'+str(offset + i)] = result[i]['cost_detail']
+                sheet['K'+str(offset + i)] = result[i]['company_short_name']
+                sheet['L'+str(offset + i)] = result[i]['start_work']
+                sheet['M'+str(offset + i)] = result[i]['kpi_ful'][5]['benefitsName']
+                sheet['N'+str(offset + i)] = result[i]['kpi_ful'][6]['benefitsName']
+                sheet['O'+str(offset + i)] = result[i]['kpi_ful'][7]['benefitsName']
+                sheet['P'+str(offset + i)] = result[i]['kpi_ful'][8]['benefitsName']
+                sheet['Q'+str(offset + i)] = result[i]['kpi_ful'][9]['benefitsName']
+                sheet['R'+str(offset + i)] = result[i]['kpi_ful'][10]['benefitsName']
+                sheet['S'+str(offset + i)] = result[i]['kpi_ful'][11]['benefitsName']
+                sheet['T'+str(offset + i)] = result[i]['kpi_ful'][12]['benefitsName']
+                sheet['U'+str(offset + i)] = result[i]['kpi_ful'][13]['benefitsName']
+                sheet['V'+str(offset + i)] = result[i]['kpi_ful'][14]['benefitsName']
+                sheet['W'+str(offset + i)] = result[i]['kpi_ful'][15]['benefitsName']
+                sheet['X'+str(offset + i)] = result[i]['kpi_ful'][16]['benefitsName']
+                sheet['Y'+str(offset + i)] = result[i]['kpi_ful'][17]['benefitsName']
+                sheet['Z'+str(offset + i)] = result[i]['kpi_ful'][18]['benefitsName']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
     except Exception as e:
         logserver(e)
         return "fail"
