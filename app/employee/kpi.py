@@ -400,11 +400,6 @@ def QryAdmin_Support(cursor):
 @connect_sql()
 def Export_kpi(cursor):
     try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        year=str(data_new['year'])
-        month=str(data_new['month'])
         try:
             sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi"
             cursor.execute(sql)
@@ -412,12 +407,8 @@ def Export_kpi(cursor):
             result = toJson(cursor.fetchall(),columns)
             for i1 in result:
                 kpi_ful = []
-                sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
-                                         ELSE employee_benefits.benefits_values END) AS benefitsName
-                            FROM employee_benefits , employee
-                            WHERE employee_benefits.employeeid =  %s
-                            AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
-                cursor.execute(sql1,(i1['employeeid']))
+                sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
+                cursor.execute(sql2,(result[0]['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
@@ -431,42 +422,89 @@ def Export_kpi(cursor):
         reasonText = ""
         now = datetime.now()
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
-        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Ga_All.xlsx'))
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_Employee_Ga_All.xlsx')
+        wb = load_workbook('../Template/Template_kpi.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
-            sheet['E'+str(3)] = year + '/' + month
-            offset = 3
+            offset = 4
             i = 0
             for i in xrange(len(result)):
                 sheet['A'+str(offset + i)] = i+1
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
-                sheet['C'+str(offset + i)] = result[i]['name_th']
-                sheet['D'+str(offset + i)] = result[i]['surname_th']
-                sheet['E'+str(offset + i)] = result[i]['name_eng']
-                sheet['F'+str(offset + i)] = result[i]['surname_eng']
-                sheet['G'+str(offset + i)] = result[i]['position_detail']
-                sheet['H'+str(offset + i)] = result[i]['sect_detail']
-                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['J'+str(offset + i)] = result[i]['cost_detail']
-                sheet['K'+str(offset + i)] = result[i]['company_short_name']
-                sheet['L'+str(offset + i)] = result[i]['start_work']
-                sheet['M'+str(offset + i)] = result[i]['kpi_ful'][5]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['kpi_ful'][6]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['kpi_ful'][7]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['kpi_ful'][8]['benefitsName']
-                sheet['Q'+str(offset + i)] = result[i]['kpi_ful'][9]['benefitsName']
-                sheet['R'+str(offset + i)] = result[i]['kpi_ful'][10]['benefitsName']
-                sheet['S'+str(offset + i)] = result[i]['kpi_ful'][11]['benefitsName']
-                sheet['T'+str(offset + i)] = result[i]['kpi_ful'][12]['benefitsName']
-                sheet['U'+str(offset + i)] = result[i]['kpi_ful'][13]['benefitsName']
-                sheet['V'+str(offset + i)] = result[i]['kpi_ful'][14]['benefitsName']
-                sheet['W'+str(offset + i)] = result[i]['kpi_ful'][15]['benefitsName']
-                sheet['X'+str(offset + i)] = result[i]['kpi_ful'][16]['benefitsName']
-                sheet['Y'+str(offset + i)] = result[i]['kpi_ful'][17]['benefitsName']
-                sheet['Z'+str(offset + i)] = result[i]['kpi_ful'][18]['benefitsName']
+                sheet['C'+str(offset + i)] = result[i]['name']
+                sheet['D'+str(offset + i)] = result[i]['surname']
+                sheet['E'+str(offset + i)] = result[i]['org_name']
+                sheet['F'+str(offset + i)] = result[i]['position']
+                sheet['G'+str(offset + i)] = result[i]['work_date']
+                sheet['H'+str(offset + i)] = result[i]['work_month']
+                sheet['I'+str(offset + i)] = result[i]['work_year']
+                sheet['J'+str(offset + i)] = result[i]['star_date_kpi']
+                sheet['K'+str(offset + i)] = result[i]['group_kpi']
+                sheet['L'+str(offset + i)] = result[i]['old_grade']
+                sheet['M'+str(offset + i)] = result[i]['status']
+                sheet['N'+str(offset + i)] = result[i]['grade']
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['kpi_ful'][0]['name_kpi']+' '+result[i]['kpi_ful'][0]['surname_kpi']
+                    sheet['P'+str(offset + i)] = result[i]['kpi_ful'][0]['grade_board']
+                    sheet['Q'+str(offset + i)] = result[i]['kpi_ful'][0]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['R'+str(offset + i)] = result[i]['kpi_ful'][1]['name_kpi']+' '+result[i]['kpi_ful'][1]['surname_kpi']
+                    sheet['S'+str(offset + i)] = result[i]['kpi_ful'][1]['grade_board']
+                    sheet['T'+str(offset + i)] = result[i]['kpi_ful'][1]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['U'+str(offset + i)] = result[i]['kpi_ful'][2]['name_kpi']+' '+result[i]['kpi_ful'][2]['surname_kpi']
+                    sheet['V'+str(offset + i)] = result[i]['kpi_ful'][2]['grade_board']
+                    sheet['W'+str(offset + i)] = result[i]['kpi_ful'][2]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['X'+str(offset + i)] = result[i]['kpi_ful'][3]['name_kpi']+' '+result[i]['kpi_ful'][3]['surname_kpi']
+                    sheet['Y'+str(offset + i)] = result[i]['kpi_ful'][3]['grade_board']
+                    sheet['Z'+str(offset + i)] = result[i]['kpi_ful'][3]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AA'+str(offset + i)] = result[i]['kpi_ful'][4]['name_kpi']+' '+result[i]['kpi_ful'][4]['surname_kpi']
+                    sheet['AB'+str(offset + i)] = result[i]['kpi_ful'][4]['grade_board']
+                    sheet['AC'+str(offset + i)] = result[i]['kpi_ful'][4]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AD'+str(offset + i)] = result[i]['kpi_ful'][5]['name_kpi']+' '+result[i]['kpi_ful'][5]['surname_kpi']
+                    sheet['AE'+str(offset + i)] = result[i]['kpi_ful'][5]['grade_board']
+                    sheet['AF'+str(offset + i)] = result[i]['kpi_ful'][5]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AG'+str(offset + i)] = result[i]['kpi_ful'][6]['name_kpi']+' '+result[i]['kpi_ful'][6]['surname_kpi']
+                    sheet['AH'+str(offset + i)] = result[i]['kpi_ful'][6]['grade_board']
+                    sheet['AI'+str(offset + i)] = result[i]['kpi_ful'][6]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AJ'+str(offset + i)] = result[i]['kpi_ful'][7]['name_kpi']+' '+result[i]['kpi_ful'][7]['surname_kpi']
+                    sheet['AK'+str(offset + i)] = result[i]['kpi_ful'][7]['grade_board']
+                    sheet['AL'+str(offset + i)] = result[i]['kpi_ful'][7]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AM'+str(offset + i)] = result[i]['kpi_ful'][8]['name_kpi']+' '+result[i]['kpi_ful'][8]['surname_kpi']
+                    sheet['AN'+str(offset + i)] = result[i]['kpi_ful'][8]['grade_board']
+                    sheet['AO'+str(offset + i)] = result[i]['kpi_ful'][8]['comment']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['AP'+str(offset + i)] = result[i]['kpi_ful'][9]['name_kpi']+' '+result[i]['kpi_ful'][9]['surname_kpi']
+                    sheet['AQ'+str(offset + i)] = result[i]['kpi_ful'][9]['grade_board']
+                    sheet['AR'+str(offset + i)] = result[i]['kpi_ful'][9]['comment']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
