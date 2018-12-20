@@ -423,7 +423,7 @@ def Export_kpi(cursor):
             for i1 in result:
                 kpi_ful = []
                 sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
-                cursor.execute(sql2,(result[0]['employeeid']))
+                cursor.execute(sql2,(i1['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
