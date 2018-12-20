@@ -93,6 +93,14 @@ def login():
         result['name'] = _output[0]['name']
         result['username'] = _output[0]['username']
         result['permission'] = _output2[0]['permission']
+        try:
+            result['permission2'] = _output2[1]['permission']
+        except Exception as e:
+            result['permission2'] = ""
+        try:
+            result['permission3'] = _output2[2]['permission']
+        except Exception as e:
+            result['permission3'] = ""
         return jsonify(result)
     except Exception as e:
         logserver(e)
