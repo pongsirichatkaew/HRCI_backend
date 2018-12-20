@@ -171,21 +171,36 @@ def Update_grade_hr(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-# @app.route('/Qry_board_kpi', methods=['POST'])
-# @connect_sql()
-# def Qry_board_kpi():
-#     try:
-#         dataInput = request.json
-#         source = dataInput['source']
-#         data_new = source
-#         sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi WHERE employeeid=%s"
-#         cursor.execute(sql,(data_new['employeeid']))
-#         columns = [column[0] for column in cursor.description]
-#         result = toJson(cursor.fetchall(),columns)
-#         return jsonify(result)
-#     except Exception as e:
-#         logserver(e)
-#         return "fail"
+@app.route('/Qry_board_kpi', methods=['POST'])
+@connect_sql()
+def Qry_board_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_em_board_kpi', methods=['POST'])
+@connect_sql()
+def Qry_em_board_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi FROM board_kpi WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Add_board_kpi', methods=['POST'])
 @connect_sql()
 def Add_board_kpi(cursor):
