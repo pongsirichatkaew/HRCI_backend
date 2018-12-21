@@ -255,8 +255,8 @@ def Qry_board_kpi_v2(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employeeid_board,name,group_kpi FROM employee_kpi WHERE validstatus=1 "
-        cursor.execute(sql,(data_new['employeeid']))
+        sql = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
+        cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -277,7 +277,7 @@ def Add_board_kpi_v2(cursor):
         sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
         cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
-        sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
         group_kpi_id = ""
