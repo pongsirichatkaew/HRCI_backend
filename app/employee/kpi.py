@@ -380,7 +380,8 @@ def Qry_upload_file_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
-            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+            # item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+            item_['PathFile'] = str(item_['PathFile'])
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -580,3 +581,6 @@ def Export_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/userGetKpiFile/<path>', methods=['GET'])
+def userGetKpiFile(path):
+    return send_from_directory('../uploads/', path)
