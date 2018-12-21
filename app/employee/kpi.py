@@ -10,7 +10,7 @@ def QryEmployee_kpi(cursor):
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            org_name = 'WHERE group_kpi='+str(data_new['group_kpi_id'])
+            group_kpi_id = 'WHERE group_kpi='+str(data_new['group_kpi_id'])
         except Exception as e:
             pass
         sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
