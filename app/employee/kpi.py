@@ -370,7 +370,7 @@ def Add_board_kpi_no_result(cursor):
             group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
         except Exception as e:
             pass
-        sql_emp_kpi = "SELECT employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board=Null "
+        sql_emp_kpi = "SELECT employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board='' "
         cursor.execute(sql_emp_kpi)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
