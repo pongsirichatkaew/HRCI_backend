@@ -10,7 +10,8 @@ def QryEmployee_kpi(cursor):
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            group_kpi_id = 'WHERE group_kpi='+str(data_new['group_kpi_id'])
+            group_ = str(data_new['group_kpi_id'])
+            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
         except Exception as e:
             pass
         sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
@@ -380,8 +381,8 @@ def Qry_upload_file_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
-            # item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
-            item_['PathFile'] = str(item_['PathFile'])
+            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+            # item_['PathFile'] = str(item_['PathFile'])
         return jsonify(result)
     except Exception as e:
         logserver(e)
