@@ -237,6 +237,26 @@ def Add_board_kpi(cursor):
         type_action = "ADD"
 
         for i in xrange(len(data_new['emp_board'])):
+            sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_betttt,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
+
+        for i in xrange(len(data_new['emp_board'])):
+            try:
+                permission = "board"
+                # for i in xrange(len(data_new['emp_board'])):
+                sql = "SELECT username FROM Admin WHERE employeeid=%s"
+                cursor.execute(sql,(data_new['emp_board'][i]['employeeid_board']))
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+                check_email = result[0]['username']
+            except Exception as e:
+                permission = "board"
+                # for i in xrange(len(data_new['emp_board'])):
+                name___ = data_new['emp_board'][i]['name_kpi']+data_new['emp_board'][i]['surname_kpi']
+                sqlIn_betttt = "INSERT INTO Admin(employeeid,username,name,createby) VALUES (%s,%s,%s,%s)"
+                cursor.execute(sqlIn_betttt,(data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['username'],permission,name___,data_new['createby']))
+
+        for i in xrange(len(data_new['emp_board'])):
             sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
 
@@ -248,13 +268,10 @@ def Add_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_board_kpi_v2', methods=['POST'])
+@app.route('/board_qry', methods=['POST'])
 @connect_sql()
-def Qry_board_kpi_v2(cursor):
+def board_qry(cursor):
     try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
         sql = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
