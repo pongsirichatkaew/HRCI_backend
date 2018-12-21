@@ -400,7 +400,12 @@ def Qry_upload_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
-            item_['PathFile'] = 'uploads/'+str(item_['PathFile'])
+            img_base64 = []
+            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+            tranImage = item_['PathFile']
+            with open(tranImage, 'rb') as image_file:
+                encoded_Image = base64.b64encode(image_file.read())
+            item_['img_base64'] = encoded_Image
         return jsonify(result)
     except Exception as e:
         logserver(e)
