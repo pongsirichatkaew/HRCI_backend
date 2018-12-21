@@ -568,7 +568,7 @@ def upload_user_kpi_one(cursor):
             cursor.execute(sqlDe,(request.form['employeeid']))
         except Exception as e:
             pass
-        path = 'uploads/'+employeeid+'/'+'kpi'+'/'
+        path = '../uploads/'+employeeid+'/'+'kpi'+'/'
         path2 = employeeid+'/'+'kpi'+'/'
         if not os.path.exists(path):
             os.makedirs(path)
