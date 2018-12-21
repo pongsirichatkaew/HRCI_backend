@@ -403,7 +403,7 @@ def Delete_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board=Null "
+        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board = '' "
         cursor.execute(sqlUp2,(data_new['employeeid_board']))
 
         return "Success"
