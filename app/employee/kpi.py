@@ -14,6 +14,14 @@ def QryEmployee_kpi(cursor):
             group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
         except Exception as e:
             pass
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            group_2 = str(data_new['group_kpi_id2'])
+            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
+        except Exception as e:
+            pass
         sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
