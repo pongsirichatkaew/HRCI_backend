@@ -236,33 +236,36 @@ def Add_board_kpi(cursor):
 
         type_action = "ADD"
 
-        for i in xrange(len(data_new['emp_board'])):
-            sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_betttt,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
+        # for i in xrange(len(data_new['emp_board'])):
+        #     sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn_betttt,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
 
-        for i in xrange(len(data_new['emp_board'])):
-            try:
-                permission = "board"
-                # for i in xrange(len(data_new['emp_board'])):
-                sql = "SELECT username FROM Admin WHERE employeeid=%s"
-                cursor.execute(sql,(data_new['emp_board'][i]['employeeid_board']))
-                columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(),columns)
-                check_email = result[i]['username']
-            except Exception as e:
-                permission = "board"
-                # for i in xrange(len(data_new['emp_board'])):
-                name___ = data_new['emp_board'][i]['name_kpi']+data_new['emp_board'][i]['surname_kpi']
-                sqlIn_betttt = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_betttt,(data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['username'],permission,name___,data_new['createby']))
+        # sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        # cursor.execute(sqlIn_betttt,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
 
-        for i in xrange(len(data_new['emp_board'])):
-            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
+        # for i in xrange(len(data_new['emp_board'])):
+        try:
+            permission = "board"
+            # for i in xrange(len(data_new['emp_board'])):
+            sql = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql,(data_new['employeeid_board']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            check_email = result[i]['username']
+        except Exception as e:
+            permission = "board"
+            # for i in xrange(len(data_new['emp_board'])):
+            name___ = data_new['name_kpi']+data_new['surname_kpi']
+            sqlIn_bet2 = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],permission,name___,data_new['createby']))
 
-        for i in xrange(len(data_new['emp_board'])):
-            sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby'],type_action))
+        # for i in xrange(len(data_new['emp_board'])):
+        sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+
+        # for i in xrange(len(data_new['emp_board'])):
+        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
