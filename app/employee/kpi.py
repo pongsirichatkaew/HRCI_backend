@@ -233,6 +233,95 @@ def Add_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_board_kpi_v2', methods=['POST'])
+@connect_sql()
+def Qry_board_kpi_v2(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT employeeid_board,name,group_kpi FROM employee_kpi WHERE validstatus=1 "
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Add_board_kpi_v2', methods=['POST'])
+@connect_sql()
+def Add_board_kpi_v2(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        employeeid = data_new['employeeid_board']
+
+        nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
+
+        sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+
+        sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+
+        group_kpi_id = ""
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            group_ = str(data_new['group_kpi_id'])
+            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
+        except Exception as e:
+            pass
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            group_2 = str(data_new['group_kpi_id2'])
+            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
+        except Exception as e:
+            pass
+        sql_emp_kpi = "SELECT employeeid FROM employee_kpi "+group_kpi_id+" "
+        cursor.execute(sql_emp_kpi)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "ADD"
+
+        for i in xrange(len(result)):
+            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+
+        for i in xrange(len(result)):
+            sqlIn_be = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Delete_board_kpi_v2', methods=['POST'])
+@connect_sql()
+def Delete_board_kpi_v2(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s"
+        cursor.execute(sqlUp,(data_new['employeeid_board']))
+
+        sqlDe = "DELETE FROM Admin WHERE employeeid=%s"
+        cursor.execute(sqlDe,(data_new['employeeid_board']))
+
+        sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['employeeid_board'],data_new['name'],data_new['group_kpi'],data_new['createby']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Edit_board_kpi', methods=['POST'])
 @connect_sql()
 def Edit_board_kpi(cursor):
