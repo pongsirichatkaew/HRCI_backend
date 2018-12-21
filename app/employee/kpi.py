@@ -43,7 +43,7 @@ def QryEmployee_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
+        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND validstatus=1"
         cursor.execute(sql2,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
@@ -202,7 +202,7 @@ def Qry_em_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi FROM board_kpi WHERE employeeid=%s"
+        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi FROM board_kpi WHERE employeeid=%s AND validstatus=1"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -217,7 +217,7 @@ def Qry_user_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid WHERE board_kpi.employeeid_board=%s "
+        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid WHERE board_kpi.employeeid_board=%s AND board_kpi.validstatus=1 "
         cursor.execute(sql,(data_new['employeeid_board']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -337,32 +337,32 @@ def Delete_board_kpi_v2(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Edit_board_kpi', methods=['POST'])
-@connect_sql()
-def Edit_board_kpi(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        sql = "SELECT * FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-
-        type_action = "Edit"
-
-        sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
-
-        sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
-        cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
-
-        sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Edit_board_kpi', methods=['POST'])
+# @connect_sql()
+# def Edit_board_kpi(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#         sql = "SELECT * FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+#         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board']))
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#
+#         type_action = "Edit"
+#
+#         sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+#         cursor.execute(sqlIn_be2,(employeeid,result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
+#
+#         sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+#         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
+#
+#         sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+#         cursor.execute(sqlIn_be,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+#         return "Success"
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Delete_board_kpi', methods=['POST'])
 @connect_sql()
 def Delete_board_kpi(cursor):
@@ -370,7 +370,7 @@ def Delete_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+        sql = "SELECT * FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -380,7 +380,7 @@ def Delete_board_kpi(cursor):
         sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
 
-        sqlde = "DELETE FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+        sqlde = "UPDATE board_kpi SET validstatus=0 WHERE employeeid=%s AND employeeid_board=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board']))
 
         return "Success"
@@ -394,7 +394,7 @@ def Update_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+        sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -407,7 +407,7 @@ def Update_board_kpi(cursor):
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['employeeid_board'],data_new['grade_board'],data_new['comment'],data_new['createby'],type_action))
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['comment'],data_new['employeeid'],data_new['employeeid_board']))
 
         return "Success"
@@ -590,7 +590,7 @@ def Export_kpi(cursor):
             result = toJson(cursor.fetchall(),columns)
             for i1 in result:
                 kpi_ful = []
-                sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s"
+                sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND validstatus=1"
                 cursor.execute(sql2,(i1['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
