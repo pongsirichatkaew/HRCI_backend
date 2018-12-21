@@ -210,6 +210,21 @@ def Qry_em_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_user_kpi', methods=['POST'])
+@connect_sql()
+def Qry_user_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid WHERE board_kpi.employeeid_board=%s "
+        cursor.execute(sql,(data_new['employeeid_board']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Add_board_kpi', methods=['POST'])
 @connect_sql()
 def Add_board_kpi(cursor):
