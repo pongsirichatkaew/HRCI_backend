@@ -232,7 +232,7 @@ def Add_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        employeeid = data_new['employeeid']
+        employeeid = data_new['employeeid_board']
 
         type_action = "ADD"
 
@@ -283,59 +283,59 @@ def board_qry(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Add_board_kpi_v2', methods=['POST'])
-@connect_sql()
-def Add_board_kpi_v2(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        employeeid = data_new['employeeid_board']
-
-        nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
-        permission = "board"
-        sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
-
-        sqlIn_bet2 = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],permission,nameKpi__,data_new['createby']))
-
-        group_kpi_id = ""
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
-        except Exception as e:
-            pass
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            group_2 = str(data_new['group_kpi_id2'])
-            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
-        except Exception as e:
-            pass
-        sql_emp_kpi = "SELECT employeeid FROM employee_kpi "+group_kpi_id+" "
-        cursor.execute(sql_emp_kpi)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-
-        type_action = "ADD"
-
-        for i in xrange(len(result)):
-            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
-
-        for i in xrange(len(result)):
-            sqlIn_be = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
-
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Add_board_kpi_v2', methods=['POST'])
+# @connect_sql()
+# def Add_board_kpi_v2(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#         employeeid = data_new['employeeid_board']
+#
+#         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
+#         permission = "board"
+#         sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
+#         cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+#
+#         sqlIn_bet2 = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
+#         cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],permission,nameKpi__,data_new['createby']))
+#
+#         group_kpi_id = ""
+#         try:
+#             dataInput = request.json
+#             source = dataInput['source']
+#             data_new = source
+#             group_ = str(data_new['group_kpi_id'])
+#             group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
+#         except Exception as e:
+#             pass
+#         try:
+#             dataInput = request.json
+#             source = dataInput['source']
+#             data_new = source
+#             group_2 = str(data_new['group_kpi_id2'])
+#             group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
+#         except Exception as e:
+#             pass
+#         sql_emp_kpi = "SELECT employeeid FROM employee_kpi "+group_kpi_id+" "
+#         cursor.execute(sql_emp_kpi)
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#
+#         type_action = "ADD"
+#
+#         for i in xrange(len(result)):
+#             sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+#             cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+#
+#         for i in xrange(len(result)):
+#             sqlIn_be = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+#             cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+#
+#         return "Success"
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
@@ -347,11 +347,31 @@ def Add_board_kpi_no_result(cursor):
 
         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
 
+        try:
+            sql_check_board = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 "
+            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id']))
+            columns = [column[0] for column in cursor.description]
+            result_check_board = toJson(cursor.fetchall(),columns)
+            test_check_board = result_check_board[0]['employeeid_board']
+            return "employee board is duplicate"
+        except Exception as e:
+            pass
+
         sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
         cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
-        sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+        try:
+            permission = "board"
+            # for i in xrange(len(data_new['emp_board'])):
+            sql = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql,(employeeid))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            check_email = result[i]['username']
+        except Exception as e:
+            permission = "board"
+            sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
         group_kpi_id = ""
         try:
@@ -371,7 +391,7 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board=Null "
+            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board IS NULL "
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -414,37 +434,37 @@ def Delete_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board = '' "
+        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board IS NULL "
         cursor.execute(sqlUp2,(data_new['employeeid_board']))
 
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Delete_board_kpi_v2', methods=['POST'])
-@connect_sql()
-def Delete_board_kpi_v2(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-
-        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s"
-        cursor.execute(sqlUp,(data_new['employeeid_board']))
-
-        try:
-            sqlDe = "DELETE FROM Admin WHERE employeeid=%s AND permission='board'"
-            cursor.execute(sqlDe,(data_new['employeeid_board']))
-        except Exception as e:
-            pass
-
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s"
-        cursor.execute(sqlUp2,(data_new['employeeid_board']))
-
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Delete_board_kpi_v2', methods=['POST'])
+# @connect_sql()
+# def Delete_board_kpi_v2(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#
+#         sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s"
+#         cursor.execute(sqlUp,(data_new['employeeid_board']))
+#
+#         try:
+#             sqlDe = "DELETE FROM Admin WHERE employeeid=%s AND permission='board'"
+#             cursor.execute(sqlDe,(data_new['employeeid_board']))
+#         except Exception as e:
+#             pass
+#
+#         sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s"
+#         cursor.execute(sqlUp2,(data_new['employeeid_board']))
+#
+#         return "Success"
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 # @app.route('/Edit_board_kpi', methods=['POST'])
 # @connect_sql()
 # def Edit_board_kpi(cursor):
@@ -588,25 +608,25 @@ def upload_user_kpi_one(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_upload_file_kpi', methods=['POST'])
-@connect_sql()
-def Qry_upload_file_kpi(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-
-        sql = "SELECT employeeid,FileName,Type,PathFile FROM employee_upload_kpi WHERE employeeid=%s "
-        cursor.execute(sql,(data_new['employeeid']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        for item_ in result:
-            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
-            # item_['PathFile'] = str(item_['PathFile'])
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Qry_upload_file_kpi', methods=['POST'])
+# @connect_sql()
+# def Qry_upload_file_kpi(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#
+#         sql = "SELECT employeeid,FileName,Type,PathFile FROM employee_upload_kpi WHERE employeeid=%s "
+#         cursor.execute(sql,(data_new['employeeid']))
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#         for item_ in result:
+#             item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+#             # item_['PathFile'] = str(item_['PathFile'])
+#         return jsonify(result)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Qry_upload_kpi_one', methods=['POST'])
 @connect_sql()
 def Qry_upload_kpi_one(cursor):
@@ -630,63 +650,63 @@ def Qry_upload_kpi_one(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/QryAdmin_business', methods=['POST'])
-@connect_sql()
-def QryAdmin_business(cursor):
-    try:
-        sql = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงานธุรกิจ'"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        for item_ in result:
-            surname = []
-            user_s = item_['name'].split(" ")
-            name_t = user_s[0]
-            surname_t = user_s[1]
-            item_['name'] = name_t
-            item_['surname'] = surname_t
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/QryAdmin_Engineer', methods=['POST'])
-@connect_sql()
-def QryAdmin_Engineer(cursor):
-    try:
-        sql2 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Engineer'"
-        cursor.execute(sql2)
-        columns = [column[0] for column in cursor.description]
-        result2 = toJson(cursor.fetchall(),columns)
-        for item_ in result2:
-            surname = []
-            user_s = item_['name'].split(" ")
-            name_t = user_s[0]
-            surname_t = user_s[1]
-            item_['name'] = name_t
-            item_['surname'] = surname_t
-        return jsonify(result2)
-    except Exception as e:
-        logserver(e)
-        return "fail"
-@app.route('/QryAdmin_Support', methods=['POST'])
-@connect_sql()
-def QryAdmin_Support(cursor):
-    try:
-        sql3 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Support'"
-        cursor.execute(sql3)
-        columns = [column[0] for column in cursor.description]
-        result3 = toJson(cursor.fetchall(),columns)
-        for item_ in result3:
-            surname = []
-            user_s = item_['name'].split(" ")
-            name_t = user_s[0]
-            surname_t = user_s[1]
-            item_['name'] = name_t
-            item_['surname'] = surname_t
-        return jsonify(result3)
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/QryAdmin_business', methods=['POST'])
+# @connect_sql()
+# def QryAdmin_business(cursor):
+#     try:
+#         sql = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงานธุรกิจ'"
+#         cursor.execute(sql)
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#         for item_ in result:
+#             surname = []
+#             user_s = item_['name'].split(" ")
+#             name_t = user_s[0]
+#             surname_t = user_s[1]
+#             item_['name'] = name_t
+#             item_['surname'] = surname_t
+#         return jsonify(result)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
+# @app.route('/QryAdmin_Engineer', methods=['POST'])
+# @connect_sql()
+# def QryAdmin_Engineer(cursor):
+#     try:
+#         sql2 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Engineer'"
+#         cursor.execute(sql2)
+#         columns = [column[0] for column in cursor.description]
+#         result2 = toJson(cursor.fetchall(),columns)
+#         for item_ in result2:
+#             surname = []
+#             user_s = item_['name'].split(" ")
+#             name_t = user_s[0]
+#             surname_t = user_s[1]
+#             item_['name'] = name_t
+#             item_['surname'] = surname_t
+#         return jsonify(result2)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
+# @app.route('/QryAdmin_Support', methods=['POST'])
+# @connect_sql()
+# def QryAdmin_Support(cursor):
+#     try:
+#         sql3 = "SELECT id,employeeid,username,name,permission,position FROM Admin WHERE permission='สายงาน Support'"
+#         cursor.execute(sql3)
+#         columns = [column[0] for column in cursor.description]
+#         result3 = toJson(cursor.fetchall(),columns)
+#         for item_ in result3:
+#             surname = []
+#             user_s = item_['name'].split(" ")
+#             name_t = user_s[0]
+#             surname_t = user_s[1]
+#             item_['name'] = name_t
+#             item_['surname'] = surname_t
+#         return jsonify(result3)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Export_kpi', methods=['POST'])
 @connect_sql()
 def Export_kpi(cursor):
