@@ -232,7 +232,7 @@ def Add_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        employeeid = data_new['employeeid_board']
+        employeeid = data_new['employeeid']
 
         type_action = "ADD"
 
@@ -371,7 +371,7 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             permission = "board"
             sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['createby']))
 
         group_kpi_id = ""
         try:
