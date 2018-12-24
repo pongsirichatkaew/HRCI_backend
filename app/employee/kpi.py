@@ -160,21 +160,24 @@ def Update_grade_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employeeid,grade FROM employee_kpi WHERE employeeid=%s"
+        comment_hr = data_new['comment_hr']
+        sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         grade_ = str(result[0]['grade'])
         if grade_ is None:
             type_action = "Edit"
-            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(result[0]['employeeid'],grade_,result[0]['createby'],type_action))
+            commet_hr_edit
+            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(result[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
         else:
             type_action = "Insert"
-            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['grade'],data_new['createby'],type_action))
-        sqlUp = "UPDATE employee_kpi SET grade=%s WHERE employeeid=%s"
-        cursor.execute(sqlUp,(data_new['grade'],data_new['employeeid']))
+            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
+
+        sqlUp = "UPDATE employee_kpi SET grade=%s,comment_hr=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['grade'],comment_hr,data_new['employeeid']))
 
         return "Success"
     except Exception as e:
@@ -252,7 +255,7 @@ def Add_board_kpi(cursor):
             cursor.execute(sql,(data_new['employeeid_board']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            check_email = result[i]['username']
+            check_email = result[0]['username']
         except Exception as e:
             permission = "board"
             # for i in xrange(len(data_new['emp_board'])):
@@ -349,7 +352,7 @@ def Add_board_kpi_no_result(cursor):
         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
 
         try:
-            sql_check_board = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 "
+            sql_check_board = "SELECT employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 "
             cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id']))
             columns = [column[0] for column in cursor.description]
             result_check_board = toJson(cursor.fetchall(),columns)
@@ -364,11 +367,11 @@ def Add_board_kpi_no_result(cursor):
         try:
             permission = "board"
             # for i in xrange(len(data_new['emp_board'])):
-            sql = "SELECT username FROM Admin WHERE employeeid=%s"
-            cursor.execute(sql,(employeeid))
+            sql_test_admin = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql_test_admin,(employeeid))
             columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-            check_email = result[i]['username']
+            result_test_admin = toJson(cursor.fetchall(),columns)
+            check_email = result_test_admin[i]['username']
         except Exception as e:
             permission = "board"
             sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
@@ -376,19 +379,8 @@ def Add_board_kpi_no_result(cursor):
 
         group_kpi_id = ""
         try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
             group_ = str(data_new['group_kpi_id'])
             group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
-        except Exception as e:
-            pass
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            group_2 = str(data_new['group_kpi_id2'])
-            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
         except Exception as e:
             pass
         try:
@@ -403,16 +395,15 @@ def Add_board_kpi_no_result(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
-
         type_action = "ADD"
 
         for i in xrange(len(result)):
-            sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+            sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_bet,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
 
         for i in xrange(len(result)):
-            sqlIn_be = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+            sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be_2,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -536,8 +527,13 @@ def Update_board_kpi(cursor):
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['employeeid_board'],data_new['grade_board'],data_new['comment'],data_new['createby'],type_action))
+        try:
+            comment_board = str(data_new['comment'])
+        except Exception as e:
+            comment_board = '' 
+
         sqlUp = "UPDATE board_kpi SET grade_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
-        cursor.execute(sqlUp,(data_new['grade_board'],data_new['comment'],data_new['employeeid'],data_new['employeeid_board']))
+        cursor.execute(sqlUp,(data_new['grade_board'],comment_board,data_new['employeeid'],data_new['employeeid_board']))
 
         return "Success"
     except Exception as e:
