@@ -221,7 +221,7 @@ def upload_user(cursor):
 
         Type = 'probation'
         employeeid = request.form['employeeid']
-        path = '../uploads/'+employeeid+'/'
+        path = '../uploads/'+employeeid+'/'+'probation'+'/'
         if not os.path.exists(path):
             os.makedirs(path)
         file = request.files.getlist('file')
@@ -235,7 +235,7 @@ def upload_user(cursor):
                 pass
             if file and allowed_file(fileList.filename):
                 fileList.save(os.path.join(path, fileList.filename))
-                PathFile = employeeid+'/'+str(fileList.filename)
+                PathFile = employeeid+'/'+'probation'+'/'+str(fileList.filename)
                 sql = "INSERT INTO employee_upload(ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
                 cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
             else:
