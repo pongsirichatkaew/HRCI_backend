@@ -255,7 +255,7 @@ def Add_board_kpi(cursor):
         except Exception as e:
             permission = "board"
             # for i in xrange(len(data_new['emp_board'])):
-            name___ = data_new['name_kpi']+data_new['surname_kpi']
+            name___ = data_new['name_kpi']+' '+data_new['surname_kpi']
             sqlIn_bet2 = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],name___,permission,data_new['createby']))
 
@@ -527,7 +527,7 @@ def Update_board_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         grade_board = str(result[0]['grade_board'])
-        if grade_board != "":
+        if grade_board is None:
             type_action = "Edit"
             sqlIn_be2 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],result[0]['grade_board'],result[0]['comment'],data_new['createby'],type_action))
