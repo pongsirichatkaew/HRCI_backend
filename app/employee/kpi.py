@@ -22,7 +22,7 @@ def QryEmployee_kpi(cursor):
             group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'
         except Exception as e:
             pass
-        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
+        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,comment_hr,group_kpi,star_date_kpi,status FROM employee_kpi "+group_kpi_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -38,7 +38,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi WHERE employeeid=%s "
+        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,comment_hr,group_kpi,star_date_kpi,status FROM employee_kpi WHERE employeeid=%s "
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -220,7 +220,7 @@ def Qry_user_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid WHERE board_kpi.employeeid_board=%s AND board_kpi.validstatus=1 "
+        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid WHERE board_kpi.employeeid_board=%s AND board_kpi.validstatus=1 "
         cursor.execute(sql,(data_new['employeeid_board']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -530,7 +530,7 @@ def Update_board_kpi(cursor):
         try:
             comment_board = str(data_new['comment'])
         except Exception as e:
-            comment_board = '' 
+            comment_board = ''
 
         sqlUp = "UPDATE board_kpi SET grade_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],comment_board,data_new['employeeid'],data_new['employeeid_board']))
