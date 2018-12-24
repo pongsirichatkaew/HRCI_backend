@@ -165,7 +165,7 @@ def Update_grade_hr(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         grade_ = str(result[0]['grade'])
-        if grade_board is None:
+        if grade_ is None:
             type_action = "Edit"
             sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
             cursor.execute(sqlIn_be2,(result[0]['employeeid'],grade_,result[0]['createby'],type_action))
