@@ -164,11 +164,11 @@ def Update_grade_hr(cursor):
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        grade_board = str(result[0]['grade'])
+        grade_ = str(result[0]['grade'])
         if grade_board is None:
             type_action = "Edit"
             sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['grade'],result[0]['createby'],type_action))
+            cursor.execute(sqlIn_be2,(result[0]['employeeid'],grade_,result[0]['createby'],type_action))
         else:
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,createby,type_action) VALUES (%s,%s,%s,%s)"
@@ -530,7 +530,7 @@ def Update_board_kpi(cursor):
         if grade_board is None:
             type_action = "Edit"
             sqlIn_be2 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],result[0]['grade_board'],result[0]['comment'],data_new['createby'],type_action))
+            cursor.execute(sqlIn_be2,(result[0]['employeeid'],result[0]['employeeid_board'],grade_board,result[0]['comment'],data_new['createby'],type_action))
         else:
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_log(employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
