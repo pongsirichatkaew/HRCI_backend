@@ -236,14 +236,15 @@ def Add_board_kpi(cursor):
 
         type_action = "ADD"
 
-        # for i in xrange(len(data_new['emp_board'])):
-        #     sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        #     cursor.execute(sqlIn_betttt,(employeeid,data_new['emp_board'][i]['employeeid_board'],data_new['emp_board'][i]['name_kpi'],data_new['emp_board'][i]['surname_kpi'],data_new['emp_board'][i]['position_kpi'],data_new['createby']))
-
-        # sqlIn_betttt = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlIn_betttt,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
-
-        # for i in xrange(len(data_new['emp_board'])):
+        try:
+            sql44 = "SELECT employeeid FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+            cursor.execute(sql44,(employeeid,data_new['employeeid_board']))
+            columns = [column[0] for column in cursor.description]
+            result_check_em_board = toJson(cursor.fetchall(),columns)
+            check_em_board = result_check_em_board[0]['employeeid']
+            return "employee is duplicate"
+        except Exception as e:
+            pass
         try:
             permission = "board"
             # for i in xrange(len(data_new['emp_board'])):
