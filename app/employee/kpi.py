@@ -257,7 +257,7 @@ def Add_board_kpi(cursor):
             # for i in xrange(len(data_new['emp_board'])):
             name___ = data_new['name_kpi']+data_new['surname_kpi']
             sqlIn_bet2 = "INSERT INTO Admin(employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],permission,name___,data_new['createby']))
+            cursor.execute(sqlIn_bet2,(data_new['employeeid_board'],data_new['username'],name___,permission,data_new['createby']))
 
         # for i in xrange(len(data_new['emp_board'])):
         sqlIn_be = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
@@ -641,7 +641,7 @@ def Qry_upload_kpi_one(cursor):
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
             img_base64 = []
-            item_['PathFile'] = '../app/uploads/'+str(item_['PathFile'])
+            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
             tranImage = item_['PathFile']
             with open(tranImage, 'rb') as image_file:
                 encoded_Image = base64.b64encode(image_file.read())
