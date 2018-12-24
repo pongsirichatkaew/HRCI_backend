@@ -542,41 +542,41 @@ def Update_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/upload_user_kpi', methods=['POST'])
-@connect_sql()
-def upload_user_kpi(cursor):
-    try:
-        try:
-            sqlDe = "DELETE FROM employee_upload WHERE employeeid=%s"
-            cursor.execute(sqlDe,(request.form['employeeid']))
-        except Exception as e:
-            pass
-
-        Type = 'kpi'
-        employeeid = request.form['employeeid']
-        path = '../uploads/'+employeeid+'/'+'kpi'+'/'
-        if not os.path.exists(path):
-            os.makedirs(path)
-        file = request.files.getlist('file')
-        for idx, fileList in enumerate(file):
-            fileName = fileList.filename
-            fileType = fileName.split('.')[-1]
-            fileList.filename = 'kpi' + '' + '' + str(idx + 1) + '.' + fileType
-            try:
-                os.remove(os.path.join(path, fileList.filename))
-            except OSError:
-                pass
-            if file and allowed_file(fileList.filename):
-                fileList.save(os.path.join(path, fileList.filename))
-                PathFile = employeeid+'/'+'kpi'+'/'+str(fileList.filename)
-                sql = "INSERT INTO employee_upload_kpi(employeeid,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sql,(employeeid,fileName,Type,PathFile,request.form['createby']))
-            else:
-                return "file is not allowed"
-        return "success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/upload_user_kpi', methods=['POST'])
+# @connect_sql()
+# def upload_user_kpi(cursor):
+#     try:
+#         try:
+#             sqlDe = "DELETE FROM employee_upload WHERE employeeid=%s"
+#             cursor.execute(sqlDe,(request.form['employeeid']))
+#         except Exception as e:
+#             pass
+#
+#         Type = 'kpi'
+#         employeeid = request.form['employeeid']
+#         path = '../uploads/'+employeeid+'/'+'kpi'+'/'
+#         if not os.path.exists(path):
+#             os.makedirs(path)
+#         file = request.files.getlist('file')
+#         for idx, fileList in enumerate(file):
+#             fileName = fileList.filename
+#             fileType = fileName.split('.')[-1]
+#             fileList.filename = 'kpi' + '' + '' + str(idx + 1) + '.' + fileType
+#             try:
+#                 os.remove(os.path.join(path, fileList.filename))
+#             except OSError:
+#                 pass
+#             if file and allowed_file(fileList.filename):
+#                 fileList.save(os.path.join(path, fileList.filename))
+#                 PathFile = employeeid+'/'+'kpi'+'/'+str(fileList.filename)
+#                 sql = "INSERT INTO employee_upload_kpi(employeeid,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
+#                 cursor.execute(sql,(employeeid,fileName,Type,PathFile,request.form['createby']))
+#             else:
+#                 return "file is not allowed"
+#         return "success"
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/upload_user_kpi_one', methods=['POST'])
 @connect_sql()
 def upload_user_kpi_one(cursor):
@@ -588,8 +588,8 @@ def upload_user_kpi_one(cursor):
             cursor.execute(sqlDe,(request.form['employeeid']))
         except Exception as e:
             pass
-        path = '../uploads/'+employeeid+'/'+'kpi'+'/'
-        path2 = employeeid+'/'+'kpi'+'/'
+        path = '../uploads/'+employeeid+'/'+'kpi'
+        path2 = employeeid+'/'+'kpi'
         if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
