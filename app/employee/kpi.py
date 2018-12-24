@@ -641,7 +641,7 @@ def Qry_upload_kpi_one(cursor):
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
             img_base64 = []
-            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
+            item_['PathFile'] = '../app/uploads/'+str(item_['PathFile'])
             tranImage = item_['PathFile']
             with open(tranImage, 'rb') as image_file:
                 encoded_Image = base64.b64encode(image_file.read())
@@ -735,7 +735,7 @@ def Export_kpi(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
 
-        wb = load_workbook('../Template/Template_kpi.xlsx')
+        wb = load_workbook('../app/Template/Template_kpi.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
