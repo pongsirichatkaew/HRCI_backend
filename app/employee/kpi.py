@@ -252,7 +252,7 @@ def Add_board_kpi(cursor):
             cursor.execute(sql,(data_new['employeeid_board']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            check_email = result[i]['username']
+            check_email = result[0]['username']
         except Exception as e:
             permission = "board"
             # for i in xrange(len(data_new['emp_board'])):
