@@ -75,7 +75,7 @@ def Add_emp_kpi(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = str(data_new['employeeid'])
-        check_board = str(data_new['employeeid_board'])
+        # check_board = str(data_new['employeeid_board'])
         try:
             sql44 = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi FROM employee_kpi WHERE employeeid=%s"
             cursor.execute(sql44,(employeeid))
@@ -109,7 +109,7 @@ def Add_emp_kpi(cursor):
             item_['surname_borad']  = name_split_board[1]
         for i in xrange(len(result_emboard)):
             check_em_id = str(employeeid)
-            check_em_board = str(check_board)
+            check_em_board = str(result_emboard[i]['employeeid_board'])
             if check_em_id==check_em_board:
                 pass
             else:
@@ -117,7 +117,7 @@ def Add_emp_kpi(cursor):
                 cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
         for i in xrange(len(result_emboard)):
             check_em_id = str(employeeid)
-            check_em_board = str(check_board)
+            check_em_board = str(result_emboard[i]['employeeid_board'])
             if check_em_id==check_em_board:
                 type_action = "Copy_board"
                 sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
