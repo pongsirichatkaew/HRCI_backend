@@ -294,7 +294,7 @@ def Add_board_kpi(cursor):
                 pass
             else:
                 sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name']result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
+                cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
         for i in xrange(len(result_emboard)):
             check_em_id = str(result_emboard[i]['employeeid'])
             check_em_board = str(data_new['employeeid_board'])
