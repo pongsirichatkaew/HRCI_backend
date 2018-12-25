@@ -35,14 +35,14 @@ app = Flask(__name__)
 CORS(app)
 app.config['ALLOWED_EXTENSIONS'] = set(['xls', 'xlsm', 'xlsx', 'csv', 'txt', 'xml','docx','jpg','pdf'])
 
-app.config['MYSQL_DATABASE_USER'] = "root"
-app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
-app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management'
-app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
 # app.config['MYSQL_DATABASE_USER'] = "root"
 # app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
-# app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_backup_test2'
+# app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management'
 # app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
+app.config['MYSQL_DATABASE_USER'] = "root"
+app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
+app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_backup_test2'
+app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
 mysql = MySQL()
 mysql.init_app(app)
 
