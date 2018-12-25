@@ -288,16 +288,16 @@ def Add_board_kpi(cursor):
             item_['name']    = name_split_board[0]
             item_['surname_borad']  = name_split_board[1]
         for i in xrange(len(result_emboard)):
-            check_em_id = str(result_emboard[i]['employeeid'])
-            check_em_board = str(data_new['employeeid_board'])
+            check_em_id = str(employeeid)
+            check_em_board = str(check_board)
             if check_em_id==check_em_board:
                 pass
             else:
                 sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
         for i in xrange(len(result_emboard)):
-            check_em_id = str(result_emboard[i]['employeeid'])
-            check_em_board = str(data_new['employeeid_board'])
+            check_em_id = str(employeeid)
+            check_em_board = str(check_board)
             if check_em_id==check_em_board:
                 type_action = "Copy_board"
                 sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
