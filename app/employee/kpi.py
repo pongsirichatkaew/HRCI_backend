@@ -74,8 +74,8 @@ def Add_emp_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        employeeid = data_new['employeeid']
-
+        employeeid = str(data_new['employeeid'])
+        check_board = str(data_new['employeeid_board'])
         try:
             sql44 = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi FROM employee_kpi WHERE employeeid=%s"
             cursor.execute(sql44,(employeeid))
@@ -91,8 +91,40 @@ def Add_emp_kpi(cursor):
         sqlIn_be = "INSERT INTO employee_kpi(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby']))
 
-        sqlIn_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby'],type_action))
+
+        group_ = str(data_new['group_kpi_id'])
+        group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
+
+        sql_emp_kpi = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 "+group_kpi_id+" "
+        cursor.execute(sql_emp_kpi)
+        columns = [column[0] for column in cursor.description]
+        result_emboard = toJson(cursor.fetchall(),columns)
+        position_kpi = 'กรรมการ'
+        for item_ in result_emboard:
+            surname_borad = []
+            name_split_board = str(item_['name']).split(" ")
+            item_['name']    = name_split_board[0]
+            item_['surname_borad']  = name_split_board[1]
+        for i in xrange(len(result_emboard)):
+            check_em_id = str(employeeid)
+            check_em_board = str(check_board)
+            if check_em_id==check_em_board:
+                pass
+            else:
+                sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
+        for i in xrange(len(result_emboard)):
+            check_em_id = str(employeeid)
+            check_em_board = str(check_board)
+            if check_em_id==check_em_board:
+                type_action = "Copy_board"
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
+            else:
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -273,38 +305,6 @@ def Add_board_kpi(cursor):
         # for i in xrange(len(data_new['emp_board'])):
         sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
-
-        group_ = str(data_new['group_kpi_id'])
-        group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
-
-        sql_emp_kpi = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 "+group_kpi_id+" "
-        cursor.execute(sql_emp_kpi)
-        columns = [column[0] for column in cursor.description]
-        result_emboard = toJson(cursor.fetchall(),columns)
-        position_kpi = 'กรรมการ'
-        for item_ in result_emboard:
-            surname_borad = []
-            name_split_board = str(item_['name']).split(" ")
-            item_['name']    = name_split_board[0]
-            item_['surname_borad']  = name_split_board[1]
-        for i in xrange(len(result_emboard)):
-            check_em_id = str(employeeid)
-            check_em_board = str(check_board)
-            if check_em_id==check_em_board:
-                pass
-            else:
-                sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
-        for i in xrange(len(result_emboard)):
-            check_em_id = str(employeeid)
-            check_em_board = str(check_board)
-            if check_em_id==check_em_board:
-                type_action = "Copy_board"
-                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
-            else:
-                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
