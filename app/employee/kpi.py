@@ -243,7 +243,7 @@ def Add_board_kpi(cursor):
         type_action = "ADD"
 
         try:
-            sql44 = "SELECT employeeid FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s WHERE validstatus=1"
+            sql44 = "SELECT employeeid FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
             cursor.execute(sql44,(employeeid,data_new['employeeid_board']))
             columns = [column[0] for column in cursor.description]
             result_check_em_board = toJson(cursor.fetchall(),columns)
