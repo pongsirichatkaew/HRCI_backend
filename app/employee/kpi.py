@@ -243,7 +243,7 @@ def Add_board_kpi(cursor):
         type_action = "ADD"
 
         try:
-            sql44 = "SELECT employeeid FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s"
+            sql44 = "SELECT employeeid FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND validstatus=1"
             cursor.execute(sql44,(employeeid,data_new['employeeid_board']))
             columns = [column[0] for column in cursor.description]
             result_check_em_board = toJson(cursor.fetchall(),columns)
@@ -273,6 +273,38 @@ def Add_board_kpi(cursor):
         # for i in xrange(len(data_new['emp_board'])):
         sqlIn_be2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(employeeid,data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+
+        group_ = str(data_new['group_kpi_id'])
+        group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
+
+        sql_emp_kpi = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 "+group_kpi_id+" "
+        cursor.execute(sql_emp_kpi)
+        columns = [column[0] for column in cursor.description]
+        result_emboard = toJson(cursor.fetchall(),columns)
+        position_kpi = 'กรรมการ'
+        for item_ in result_emboard:
+            surname_borad = []
+            name_split_board = str(item_['name']).split(" ")
+            item_['name']    = name_split_board[0]
+            item_['surname_borad']  = name_split_board[1]
+        for i in xrange(len(result_emboard)):
+            check_em_id = str(result_emboard[i]['employeeid'])
+            check_em_board = str(data_new['employeeid_board'])
+            if check_em_id==check_em_board:
+                pass
+            else:
+                sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_bet,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name']result_emboard[i]['surname_borad'],position_kpi,data_new['createby']))
+        for i in xrange(len(result_emboard)):
+            check_em_id = str(result_emboard[i]['employeeid'])
+            check_em_board = str(data_new['employeeid_board'])
+            if check_em_id==check_em_board:
+                type_action = "Copy_board"
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
+            else:
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(employeeid,result_emboard[i]['employeeid_board'],result_emboard[i]['name'],result_emboard[i]['surname_borad'],position_kpi,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -387,7 +419,7 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
+            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
