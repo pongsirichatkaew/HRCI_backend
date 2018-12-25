@@ -387,7 +387,7 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.grade_board IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
+            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
