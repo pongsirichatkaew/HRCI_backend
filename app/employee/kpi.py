@@ -94,7 +94,7 @@ def Add_emp_kpi(cursor):
         sqlIn_be2 = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],data_new['old_grade'],data_new['group_kpi'],data_new['star_date_kpi'],data_new['status'],data_new['createby'],type_action))
 
-        group_ = str(data_new['group_kpi_id'])
+        group_ = str(data_new['group_kpi'])
         group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
 
         sql_emp_kpi = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 "+group_kpi_id+" "
