@@ -185,14 +185,50 @@ def Delete_emp_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Update_grade_hr', methods=['POST'])
+@app.route('/Update_grade_hr_board', methods=['POST'])
 @connect_sql()
-def Update_grade_hr(cursor):
+def Update_grade_hr_board(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
         comment_hr = data_new['comment_hr']
+        permission_hr = str(data_new['permission'])
+        if permission_hr!="HrBoard":
+            return "hr no permission"
+        sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        grade_ = str(result[0]['grade'])
+        if grade_ is None:
+            type_action = "Edit"
+            commet_hr_edit = str(result[0]['comment_hr'])
+            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(result[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
+        else:
+            type_action = "Insert"
+            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be1,(data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
+
+        sqlUp = "UPDATE employee_kpi SET grade=%s,comment_hr=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['grade'],comment_hr,data_new['employeeid']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Update_grade_hr_hall', methods=['POST'])
+@connect_sql()
+def Update_grade_hr_hall(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        comment_hr = data_new['comment_hr']
+        permission_hr = str(data_new['permission'])
+        if permission_hr!="HrHall":
+            return "hr no permission"
         sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
