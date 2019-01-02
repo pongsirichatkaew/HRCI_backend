@@ -42,15 +42,15 @@ def AddApprove_probation(cursor):
         data_new = source
         i=0
         for i in xrange(len(data_new['approve'])):
-        sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby']))
+            sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby']))
 
         type_action = "ADD"
 
         i=0
         for i in xrange(len(data_new['approve'])):
-        sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby'],type_action))
+            sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -284,7 +284,8 @@ def upload_user(cursor):
 
         Type = 'probation'
         employeeid = request.form['employeeid']
-        path = 'uploads/'+employeeid+'/'+'probation'
+        # path = 'uploads/'+employeeid+'/'+'probation'
+        path = '../uploads/'+employeeid+'/'+'probation'
         if not os.path.exists(path):
             os.makedirs(path)
         file = request.files.getlist('file')
@@ -300,7 +301,8 @@ def upload_user(cursor):
                 fileList.save(os.path.join(path, fileList.filename))
                 PathFile = employeeid+'/'+'probation'+'/'+str(fileList.filename)
                 sql = "INSERT INTO employee_upload(ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
-                cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
+                # cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
+                cursor.execute(sql,(ID_CardNo,fileName,Type,PathFile,request.form['createby']))
             else:
                 return "file is not allowed"
         return "success"
@@ -326,7 +328,8 @@ def Qry_upload_file(cursor):
         result = toJson(cursor.fetchall(),columns)
         for item_ in result:
             img_base64 = []
-            item_['PathFile'] = '../app/uploads/'+str(item_['PathFile'])
+            # item_['PathFile'] = '../app/uploads/'+str(item_['PathFile'])
+            item_['PathFile'] = '../uploads/'+str(item_['PathFile'])
             tranImage = item_['PathFile']
             with open(tranImage, 'rb') as image_file:
                 encoded_Image = base64.b64encode(image_file.read())
