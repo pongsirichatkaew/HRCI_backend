@@ -340,6 +340,92 @@ def EditEmployee_Personal(cursor):
         sqlUpAuthority = "UPDATE Contract SET Authority_Distrinct_Id_Card=%s WHERE ID_CardNo=%s"
         cursor.execute(sqlUpAuthority,(data_new['Authority_Distrinct_Id_Card'],result[0]['citizenid']))
 
+        try:
+            UpAddress = "UPDATE Address SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpAddress,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpAttachment = "UPDATE Attachment SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpAttachment,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpComputerSkill = "UPDATE ComputerSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpComputerSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpContract = "UPDATE Contract SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpContract,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEducation = "UPDATE Education SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEducation,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            Upemployee= "UPDATE employee SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(Upemployee,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            Upemployee_benefits= "UPDATE employee_benefits SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(Upemployee_benefits,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmployment= "UPDATE Employment SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEmployment,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmp_probation= "UPDATE Emp_probation SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEmp_probation,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpFamily= "UPDATE Family SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpFamily,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpLanguagesSkill= "UPDATE LanguagesSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpLanguagesSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpLanguagesSkill= "UPDATE LanguagesSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpLanguagesSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpReference= "UPDATE Reference SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpReference,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpRefPerson= "UPDATE RefPerson SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpRefPerson,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpRefPerson= "UPDATE RefPerson SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpRefPerson,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpSpecialSkill= "UPDATE SpecialSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpSpecialSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpTrainingCourse= "UPDATE TrainingCourse SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpTrainingCourse,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+
         return "Success"
     except Exception as e:
         logserver(e)
