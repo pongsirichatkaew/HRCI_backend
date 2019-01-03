@@ -42,23 +42,23 @@ def AddApprove_probation(cursor):
         data_new = source
         i=0
         for i in xrange(len(data_new['approve'])):
-            sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby']))
+            sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby']))
 
         type_action = "ADD"
 
         i=0
         for i in xrange(len(data_new['approve'])):
-            sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['prosition_detail'],data_new['createby'],type_action))
+            sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/DeltteApprove_probation', methods=['POST'])
+@app.route('/DeleteApprove_probation', methods=['POST'])
 @connect_sql()
-def DeltteApprove_probation(cursor):
+def DeleteApprove_probation(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
