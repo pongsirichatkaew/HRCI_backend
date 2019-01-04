@@ -82,7 +82,10 @@ def QryEmployee_one_person(cursor):
         cursor.execute(sqlEmployee,data_new['employeeid'])
         columnsEmployee = [column[0] for column in cursor.description]
         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
-        decodesalary = base64.b64decode(resultEmployee[0]['salary'])
+        try:
+            decodesalary = base64.b64decode(resultEmployee[0]['salary'])
+        except Exception as e:
+            decodesalary = ""
 
         sqlEmployee_email = "SELECT email FROM employee WHERE employee.employeeid=%s"
         cursor.execute(sqlEmployee_email,data_new['employeeid'])
