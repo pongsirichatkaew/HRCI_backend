@@ -425,22 +425,50 @@ def Qry_upload_file(cursor):
         return "fail"
 @app.route('/sendEmail', methods = ['POST'])
 def send_email():
+
+    status_id = ""
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        status_id = 'WHERE validstatus='+'"'+str(data_new['status_id'])+'"'
+    except Exception as e:
+        pass
+    connection = mysql.connect()
+    cursor = connection.cursor()
+    sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+                                  LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+                                  LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
+                                  LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
+                                  LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
+                                  LEFT JOIN status ON status.status_id = Emp_probation.validstatus "+status_id+" "
+    cursor.execute(sql)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
+
     email = request.json['emails']
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
-    text = "This is attached file from administrator. thank you for reading"
+    text = """\
+                <html>
+                  <body>
+                    <b>Hi,<br>
+                       How are you?<br>
+                       <a href="http://www.realpython.com">Real Python</a>
+                       has many great tutorials.
+                    </b>
+                  </body>
+                </html>
+        """
     server="mailtx.inet.co.th"
-
-    # assert isinstance(send_to, list)
 
     msg = MIMEMultipart()
     msg['From'] = send_from
-    # msg['To'] = send_to
-    msg['To'] = COMMASPACE.join(send_to)
+    msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
-    msg.attach(MIMEText(text))
+    msg.attach(MIMEText(text, "html"))
 
     try:
         smtp = smtplib.SMTP(server)
