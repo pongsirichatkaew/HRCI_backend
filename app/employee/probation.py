@@ -8,12 +8,29 @@ def UpdateStatus_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
-        cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
-
-        # sqlApprove = "INSERT INTO approve_stat(employeeid,name,lastname,tier_approve,createby) VALUES (%s,%s,%s,%s,%s)"
-        # cursor.execute(sqlApprove,(data_new['employeeid'],data_new['createby']))
-
+        tier_approve = str(data_new['tier_approve'])
+        status_ = str(data_new['status_'])
+        if tier_approve=='L4'& status_=='Reject':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        elif tier_approve =='L3'& status_ =='Reject':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        elif tier_approve =='L2'& status_ =='Reject':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        elif tier_approve =='L4'& status_ =='Approve':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        elif tier_approve =='L3'& status_=='Approve':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        elif tier_approve =='L2'& status_ =='Approve':
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
+        else:
+            sqlUp = "UPDATE approve_probation SET status_=%s,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['status_'],data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -83,7 +100,7 @@ def DeleteApprove_probation(cursor):
         return "fail"
 @app.route('/QryEmployee_probation', methods=['POST'])
 def QryEmployee_probation():
-    try:
+    # try:
         status_id = ""
         try:
             dataInput = request.json
@@ -103,11 +120,34 @@ def QryEmployee_probation():
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        # today = str(date.today())
+        # print(today)
+        for item in result:
+            long_date = []
+            date1 = item['start_work']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            d0 = date(year_s,Mon_s,Day_s)
+            today = str(date.today())
+            today = today.split("-")
+            Day_s = int(star_date[0])
+            Day_now = int(today[2])
+            Mon_now = int(today[1])
+            year_now = int(today[0])
+            # print(today)
+            d1 = date(year_now,Mon_now,Day_now)
+            delta = d1 - d0
+            str_date = str(delta)
+            split_str = str_date.split(",")
+            last = split_str[0]
+            item['long_date'] = last
         connection.close()
         return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
+    # except Exception as e:
+    #     logserver(e)
+    #     return "fail"
 @app.route('/QryEmp_pro_leader', methods=['POST'])
 def QryEmp_pro_leader():
     try:
@@ -284,7 +324,7 @@ def Qry_probation(cursor):
             question = []
             sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid = %s AND validstatus=1 ORDER BY question_pro_id ASC"
             cursor.execute(sql1pro,(data_new['employeeid']))
-            print(sql1pro)
+            # print(sql1pro)
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
             for i2 in data2 :
