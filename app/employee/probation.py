@@ -98,6 +98,26 @@ def DeleteApprove_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEm_oneperson', methods=['POST'])
+@connect_sql()
+def QryEm_oneperson(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlEmployee = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+        WHERE employee.employeeid=%s"
+        cursor.execute(sqlEmployee,data_new['employeeid'])
+        columnsEmployee = [column[0] for column in cursor.description]
+        resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
+        return jsonify(resultEmployee)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee_probation', methods=['POST'])
 def QryEmployee_probation():
     try:
