@@ -9,6 +9,17 @@ def InsertAssessor_pro(cursor):
         data = request.json
         source = data['source']
         data_new = source
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+            return "employee is duplicate"
+        except Exception as e:
+            pass
+
         sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
@@ -33,6 +44,17 @@ def EditAssessor_pro(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+            return "employee is duplicate"
+        except Exception as e:
+            pass
+
         sqlQry = "SELECT * FROM assessor_pro WHERE assessor_pro_id=%s"
         cursor.execute(sqlQry,data_new['assessor_pro_id'])
         columns = [column[0] for column in cursor.description]
