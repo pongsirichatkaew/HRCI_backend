@@ -86,7 +86,7 @@ def QryAssessor_pro(cursor):
             company_id = 'WHERE companyid='+'"'+str(data_new['companyid'])+'"'
         except Exception as e:
             pass
-        sql = "SELECT assessor_pro.assessor_pro_id,assessor_pro.employeeid,assessor_pro.companyid,company.companyname,assessor_pro.name_asp,assessor_pro.surname_asp,assessor_pro.position_id,position.position_detail,assessor_pro.email_asp FROM assessor_pro INNER JOIN company ON assessor_pro.companyid = company.companyid INNER JOIN position ON assessor_pro.position_id = position.position_id "+company_id+" "
+        sql = "SELECT assessor_pro.assessor_pro_id,assessor_pro.employeeid,assessor_pro.companyid,company.companyname,assessor_pro.name_asp,assessor_pro.surname_asp,assessor_pro.tier_approve,assessor_pro.position_id,position.position_detail,assessor_pro.email_asp FROM assessor_pro INNER JOIN company ON assessor_pro.companyid = company.companyid INNER JOIN position ON assessor_pro.position_id = position.position_id "+company_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
