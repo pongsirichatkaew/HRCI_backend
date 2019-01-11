@@ -663,7 +663,7 @@ def Qry_upload_file(cursor):
 @app.route('/sendEmail', methods = ['POST'])
 @connect_sql()
 def send_email(cursor):
-    sql_L1 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L1' GROUP BY email_asp "
+    sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro  GROUP BY email_asp "
     cursor.execute(sql_L1)
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)
@@ -675,34 +675,35 @@ def send_email(cursor):
         columns = [column[0] for column in cursor.description]
         data1 = toJson(cursor.fetchall(),columns)
         i1['total_em'] = str(data1[0]['total_em'])
-
-    sql_L2 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
-    cursor.execute(sql_L2)
-    columns = [column[0] for column in cursor.description]
-    result2 = toJson(cursor.fetchall(),columns)
-    for i2 in result2:
-        total_em = []
-        sql2_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s"
-        cursor.execute(sql2_total,(i2['employeeid']))
-        columns = [column[0] for column in cursor.description]
-        data2 = toJson(cursor.fetchall(),columns)
-        i2['total_em'] = str(data2[0]['total_em'])
-
-    sql_L3 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
-    cursor.execute(sql_L3)
-    columns = [column[0] for column in cursor.description]
-    result3 = toJson(cursor.fetchall(),columns)
-    for i3 in result3:
-        total_em = []
-        sql3_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s"
-        cursor.execute(sql3_total,(i3['employeeid']))
-        columns = [column[0] for column in cursor.description]
-        data3 = toJson(cursor.fetchall(),columns)
-        i3['total_em'] = str(data3[0]['total_em'])
+    for item in result:
+        sendToMail(item['email_asp'], item['total_em'])
+    # sql_L2 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
+    # cursor.execute(sql_L2)
+    # columns = [column[0] for column in cursor.description]
+    # result2 = toJson(cursor.fetchall(),columns)
+    # for i2 in result2:
+    #     total_em = []
+    #     sql2_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
+    #                    WHERE approve_probation.employeeid_pro = %s"
+    #     cursor.execute(sql2_total,(i2['employeeid']))
+    #     columns = [column[0] for column in cursor.description]
+    #     data2 = toJson(cursor.fetchall(),columns)
+    #     i2['total_em'] = str(data2[0]['total_em'])
+    #
+    # sql_L3 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
+    # cursor.execute(sql_L3)
+    # columns = [column[0] for column in cursor.description]
+    # result3 = toJson(cursor.fetchall(),columns)
+    # for i3 in result3:
+    #     total_em = []
+    #     sql3_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
+    #                    WHERE approve_probation.employeeid_pro = %s"
+    #     cursor.execute(sql3_total,(i3['employeeid']))
+    #     columns = [column[0] for column in cursor.description]
+    #     data3 = toJson(cursor.fetchall(),columns)
+    #     i3['total_em'] = str(data3[0]['total_em'])
     return jsonify(result)
-def sendToMail(email, total_em, mounth, year):
+def sendToMail(email, total_em):
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
