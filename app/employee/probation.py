@@ -87,7 +87,7 @@ def UpdateStatus_probation(cursor):
                 pass
 
         elif (tier_approve =='L4')&(status_ =='Approve'):
-            
+
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
@@ -262,7 +262,8 @@ def QryApprove_probation(cursor):
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        return "Success"
+        return jsonify(result)
+        # return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -686,13 +687,12 @@ def send_email():
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
-    text = """\
+     text = """\
                 <html>
                   <body>
-                    <b>Hi,<br>
-                       How are you?<br>
+                    <b>เรียน     ผู้บริหารและพนักงานทุกท่าน<br>
+                      ในเดือนมกราคม 2561 จะมีพนักงานผ่านการทดลองงานจำนวน 5 คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://www.realpython.com">Real Python</a>
-                       has many great tutorials.
                     </b>
                   </body>
                 </html>
@@ -704,7 +704,7 @@ def send_email():
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
-    msg.attach(MIMEText(text, "html"))
+    msg.attach(MIMEText(text, "html","utf-8"))
 
     try:
         smtp = smtplib.SMTP(server)
