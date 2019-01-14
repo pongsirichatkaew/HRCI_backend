@@ -19,7 +19,7 @@ def UpdateStatus_probation(cursor):
             type_action = "reject_director"
 
             sqlReject = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
             sqlUp = "UPDATE approve_probation SET status_=8,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -48,7 +48,7 @@ def UpdateStatus_probation(cursor):
             type_action = "reject_deputy_director"
 
             sqlReject = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
             sqlUp = "UPDATE approve_probation SET status_=7,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -72,7 +72,7 @@ def UpdateStatus_probation(cursor):
             type_action = "reject_hr"
 
             sqlReject = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+            cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
             sqlUp = "UPDATE approve_probation SET status_=6,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -96,7 +96,7 @@ def UpdateStatus_probation(cursor):
             type_action = "send_director"
 
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+            cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
             sqlUp = "UPDATE approve_probation SET status_=9,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -106,7 +106,8 @@ def UpdateStatus_probation(cursor):
 
         elif (tier_approve =='L3')&(status_=='Approve'):
 
-            sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L4'"
+            # sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L4'"
+            sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4'"
             cursor.execute(sqlcheck_L3,(data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_check_L4 = toJson(cursor.fetchall(),columns)
@@ -121,7 +122,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_deputy_director"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=9,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -137,7 +138,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_deputy_director"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=5,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -147,7 +148,8 @@ def UpdateStatus_probation(cursor):
 
         elif (tier_approve =='L2')&(status_ =='Approve'):
 
-            sqlcheck_L3 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L3'"
+            # sqlcheck_L3 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L3'"
+            sqlcheck_L3 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L3'"
             cursor.execute(sqlcheck_L3,(data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_check_L3 = toJson(cursor.fetchall(),columns)
@@ -162,7 +164,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_hr_no_L3"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=5,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -178,7 +180,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_hr"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=3,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -208,7 +210,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_pro_no_L2"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=4,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
@@ -224,7 +226,7 @@ def UpdateStatus_probation(cursor):
                 type_action = "send_pro_no_L2_L3"
 
                 sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
+                cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
                 sqlUp = "UPDATE approve_probation SET status_=5,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
