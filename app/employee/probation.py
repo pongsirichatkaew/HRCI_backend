@@ -665,45 +665,74 @@ def Qry_upload_file(cursor):
 @app.route('/sendEmail', methods = ['POST'])
 @connect_sql()
 def send_email(cursor):
-    sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro  GROUP BY email_asp "
+    sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L1' GROUP BY email_asp "
     cursor.execute(sql_L1)
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)
     for i1 in result:
         total_em = []
         sql1_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s"
+                                                                                                    LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(2,12)"
         cursor.execute(sql1_total,(i1['employeeid']))
         columns = [column[0] for column in cursor.description]
         data1 = toJson(cursor.fetchall(),columns)
         i1['total_em'] = str(data1[0]['total_em'])
     for item in result:
-        sendToMail(item['email_asp'], item['total_em'])
-    # sql_L2 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
-    # cursor.execute(sql_L2)
-    # columns = [column[0] for column in cursor.description]
-    # result2 = toJson(cursor.fetchall(),columns)
-    # for i2 in result2:
-    #     total_em = []
-    #     sql2_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
-    #                    WHERE approve_probation.employeeid_pro = %s"
-    #     cursor.execute(sql2_total,(i2['employeeid']))
-    #     columns = [column[0] for column in cursor.description]
-    #     data2 = toJson(cursor.fetchall(),columns)
-    #     i2['total_em'] = str(data2[0]['total_em'])
-    #
-    # sql_L3 = "SELECT employeeid,email_asp FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
-    # cursor.execute(sql_L3)
-    # columns = [column[0] for column in cursor.description]
-    # result3 = toJson(cursor.fetchall(),columns)
-    # for i3 in result3:
-    #     total_em = []
-    #     sql3_total = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
-    #                    WHERE approve_probation.employeeid_pro = %s"
-    #     cursor.execute(sql3_total,(i3['employeeid']))
-    #     columns = [column[0] for column in cursor.description]
-    #     data3 = toJson(cursor.fetchall(),columns)
-    #     i3['total_em'] = str(data3[0]['total_em'])
+        count = int(item['total_em'])
+        if count>0:
+            sendToMail(item['email_asp'], item['total_em'])
+    sql_L2 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
+    cursor.execute(sql_L2)
+    columns = [column[0] for column in cursor.description]
+    result2 = toJson(cursor.fetchall(),columns)
+    for i2 in result2:
+        total_em2 = []
+        sql1_total2 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
+                                                                                                    LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(3,12)"
+        cursor.execute(sql1_total2,(i2['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+        i2['total_em'] = str(data2[0]['total_em'])
+    for item2 in result2:
+        count2 = int(item2['total_em'])
+        if count2>0:
+            sendToMail(item2['email_asp'], item2['total_em'])
+    sql_L3 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
+    cursor.execute(sql_L3)
+    columns = [column[0] for column in cursor.description]
+    result3 = toJson(cursor.fetchall(),columns)
+    for i3 in result3:
+        total_em3 = []
+        sql1_total3 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
+                                                                                                    LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(4,12)"
+        cursor.execute(sql1_total3,(i3['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data3 = toJson(cursor.fetchall(),columns)
+        i3['total_em'] = str(data3[0]['total_em'])
+    for item3 in result3:
+        count3 = int(item3['total_em'])
+        if count3>0:
+            sendToMail(item3['email_asp'], item3['total_em'])
+    sql_L4 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L4' GROUP BY email_asp "
+    cursor.execute(sql_L4)
+    columns = [column[0] for column in cursor.description]
+    result4 = toJson(cursor.fetchall(),columns)
+    for i4 in result4:
+        total_em4 = []
+        sql1_total4 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
+                                                                                                    LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(5,12)"
+        cursor.execute(sql1_total4,(i4['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data4 = toJson(cursor.fetchall(),columns)
+        i4['total_em'] = str(data4[0]['total_em'])
+    for item4 in result4:
+        count4 = int(item4['total_em'])
+        if count4>0:
+            sendToMail(item4['email_asp'], item4['total_em'])
     return jsonify(result)
 def sendToMail(email, total_em):
     send_from = "Hr Management <jirakit.da@inet.co.th>"
