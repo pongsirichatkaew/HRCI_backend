@@ -85,6 +85,31 @@ def login():
         data2 = cursor.fetchall()
         columns2 = [column[0] for column in cursor.description]
         _output2 = toJson(data2, columns2)
+        for item in _output2:
+            sum_permisssion = []
+            sql2 = "SELECT permission FROM Admin WHERE username=%s"
+            cursor.execute(sql2,_output[0]['username'])
+            data2 = cursor.fetchall()
+            columns2 = [column[0] for column in cursor.description]
+            _output_per = toJson(data2, columns2)
+            for i2 in _output_per :
+                sum_permisssion.append(i2)
+            item['permission'] = sum_permisssion
+        sql3 = "SELECT * FROM assessor_pro WHERE email_asp=%s"
+        cursor.execute(sql3,_output[0]['username'])
+        data3 = cursor.fetchall()
+        columns3 = [column[0] for column in cursor.description]
+        _output3 = toJson(data3, columns3)
+        for item2 in _output3:
+            sum_permisssion2 = []
+            sql2_ = "SELECT tier_approve FROM assessor_pro WHERE email_asp=%s GROUP BY tier_approve"
+            cursor.execute(sql2_,_output[0]['username'])
+            data3 = cursor.fetchall()
+            columns3 = [column[0] for column in cursor.description]
+            _output_per2 = toJson(data3, columns3)
+            for i3 in _output_per2 :
+                sum_permisssion2.append(i3)
+            item2['tier_approve'] = sum_permisssion2
         connection.commit()
         connection.close()
         result={}
@@ -92,15 +117,19 @@ def login():
         result['userid'] = _output[0]['userid']
         result['name'] = _output[0]['name']
         result['username'] = _output[0]['username']
-        result['permission'] = _output2[0]['permission']
         try:
-            result['permission2'] = _output2[1]['permission']
+            result['permission'] = _output2[0]['permission']
         except Exception as e:
-            result['permission2'] = ""
+            new_arr = []
+            user = ['user']
+            key_ = ['permission']
+            last_user = dict(zip(key_,user))
+            new_arr.append(last_user)
+            result['permission'] = new_arr
         try:
-            result['permission3'] = _output2[2]['permission']
+            result['permission2'] = _output3[0]['tier_approve']
         except Exception as e:
-            result['permission3'] = ""
+            result['permission2'] = ''
         return jsonify(result)
     except Exception as e:
         logserver(e)
