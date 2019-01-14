@@ -690,7 +690,7 @@ def send_email(cursor):
         total_em2 = []
         sql1_total2 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
                                                                                                     LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(3,12)"
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(3,6,12)"
         cursor.execute(sql1_total2,(i2['employeeid']))
         columns = [column[0] for column in cursor.description]
         data2 = toJson(cursor.fetchall(),columns)
@@ -707,7 +707,7 @@ def send_email(cursor):
         total_em3 = []
         sql1_total3 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
                                                                                                     LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(4,12)"
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(4,7,12)"
         cursor.execute(sql1_total3,(i3['employeeid']))
         columns = [column[0] for column in cursor.description]
         data3 = toJson(cursor.fetchall(),columns)
@@ -724,7 +724,7 @@ def send_email(cursor):
         total_em4 = []
         sql1_total4 = "SELECT COUNT(approve_probation.employeeid) AS total_em FROM approve_probation LEFT JOIN assessor_pro ON approve_probation.employeeid_pro = assessor_pro.employeeid\
                                                                                                     LEFT JOIN Emp_probation ON approve_probation.employeeid = Emp_probation.employeeid\
-                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(5,12)"
+                       WHERE approve_probation.employeeid_pro = %s AND Emp_probation.validstatus IN(5,8,12)"
         cursor.execute(sql1_total4,(i4['employeeid']))
         columns = [column[0] for column in cursor.description]
         data4 = toJson(cursor.fetchall(),columns)
