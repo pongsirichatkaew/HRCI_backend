@@ -904,7 +904,7 @@ def QryDatbaseAppform():
                     coun_length =len(resultcompafirst[0]['acronym'])
                     coun_company = str(resultcompafirst[0]['acronym'])
                     try:
-                        sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(str_date_year)
+                        sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=% AND type_em='employee' AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(str_date_year)
                         cursor.execute(sqlEmployee,data_new['company_id'])
                         columnsEmployee = [column[0] for column in cursor.description]
                         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
