@@ -80,8 +80,8 @@ def DeleteAdmin(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM Admin WHERE employeeid=%s"
-        cursor.execute(sql,(data_new['employeeid']))
+        sql = "SELECT * FROM Admin WHERE employeeid=%s AND permission=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['permission']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
