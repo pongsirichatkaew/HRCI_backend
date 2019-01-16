@@ -796,7 +796,7 @@ def Qry_upload_kpi_one(cursor):
 def Export_kpi(cursor):
     try:
         try:
-            sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,group_kpi,star_date_kpi,status FROM employee_kpi"
+            sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,comment_hr,group_kpi,star_date_kpi,status FROM employee_kpi"
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -900,6 +900,7 @@ def Export_kpi(cursor):
                     sheet['AR'+str(offset + i)] = result[i]['kpi_ful'][9]['comment']
                 except Exception as e:
                     pass
+                sheet['AS'+str(offset + i)] = result[i]['comment_hr']
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
