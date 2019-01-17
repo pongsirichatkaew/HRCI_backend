@@ -783,6 +783,7 @@ def sendToMail(email, total_em):
     text = """\
                 <html>
                   <body>
+                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
                     <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
                       <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
