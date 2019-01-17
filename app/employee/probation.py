@@ -291,22 +291,28 @@ def AddApprove_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        i=0
-        for i in xrange(len(data_new['approve'])):
-            sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby']))
+        # i=0
+        # for i in xrange(len(data_new['approve'])):
+        #     sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby']))
+
+        sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby']))
 
         type_action = "ADD"
 
-        i=0
-        for i in xrange(len(data_new['approve'])):
-            sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby'],type_action))
+        # i=0
+        # for i in xrange(len(data_new['approve'])):
+        #     sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlApprove,(data_new['employeeid'],data_new['approve'][i]['employeeid_pro'],data_new['approve'][i]['name'],data_new['approve'][i]['lastname'],data_new['approve'][i]['tier_approve'],data_new['approve'][i]['position_detail'],data_new['createby'],type_action))
+
+        sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
-        logserver(e)
-        return "fail"
+            logserver(e)
+            return "fail"
 @app.route('/DeleteApprove_probation', methods=['POST'])
 @connect_sql()
 def DeleteApprove_probation(cursor):
@@ -322,8 +328,8 @@ def DeleteApprove_probation(cursor):
 
         type_action = "Delete"
 
-        sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,prosition_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['prosition_detail'],result[0]['status_'],data_new['createby'],type_action))
+        sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
         sqlDe = "DELETE FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
         cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_pro']))

@@ -904,7 +904,7 @@ def QryDatbaseAppform():
                     coun_length =len(resultcompafirst[0]['acronym'])
                     coun_company = str(resultcompafirst[0]['acronym'])
                     try:
-                        sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(str_date_year)
+                        sqlEmployee = "SELECT employeeid FROM employee WHERE company_id=%s AND type_em='employee' AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(str_date_year)
                         cursor.execute(sqlEmployee,data_new['company_id'])
                         columnsEmployee = [column[0] for column in cursor.description]
                         resultEmployee = toJson(cursor.fetchall(),columnsEmployee)
@@ -987,10 +987,15 @@ def QryDatbaseAppform():
                     Mon_e =end_date[1]
                     year_e = end_date[0]
                     End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+                    check_type_em = str(data_new['position_id'])
+                    if check_type_em=='158':
+                        type_em_ = 'trainee'
+                    else:
+                        type_em_ = 'employee'
 
-                    sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,type_em,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                     cursor.execute(sqlEM,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
-                    data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+                    data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],type_em_,data_new['Start_contract'],End_probation_date,data_new['createby']))
 
                     sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                     cursor.execute(sqlEM_log,(employeeid,ID_CardNo,result14[0]['NameTh'],result14[0]['NameEn'],result14[0]['SurnameTh'],result14[0]['SurnameEn'],result14[0]['NicknameEn'],encodedsalary,data_new['email'],data_new['phone_company'],data_new['position_id'],\
