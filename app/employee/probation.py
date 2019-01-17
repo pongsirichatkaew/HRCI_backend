@@ -269,6 +269,21 @@ def QryApprove_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryApprove_Probation_Info', methods=['POST'])
+@connect_sql()
+def QryApprove_Probation_Info(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT name,lastname,position_detail,tier_approve,employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/AddApprove_probation', methods=['POST'])
 @connect_sql()
 def AddApprove_probation(cursor):
