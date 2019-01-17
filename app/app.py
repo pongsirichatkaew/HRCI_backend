@@ -31,15 +31,20 @@ def test2(cursor):
     dataInput = request.json
     source = dataInput['source']
     data_new = source
+    max_all = data_new['max']
+    sql = "SELECT RIGHT(employeeid,{}) AS max_employeeid FROM employee WHERE company_id=11 AND type_em='employee' ORDER BY employeeid DESC LIMIT 1".format(max_all)
+    cursor.execute(sql)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
     max = int(data_new['max'])-1
-    number = data_new['number']
+    number = str(int(result[0]['max_employeeid'])+1)
     for i in range(max):
         last_em = "0"*(max-i)+str(number)
         if len(last_em)==(max+1):
             break
         if len(last_em)>max+1:
             last_em = last_em[1:]
-    return last_em
+    return jsonify(last_em)
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
