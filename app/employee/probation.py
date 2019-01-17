@@ -320,13 +320,13 @@ def Send_probation(cursor):
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
-        elif (result_check_L2=="")&(result_check_L3==""):
+        elif (result_check_L2=="")&(result_check_L3=="")&(result_check_L1==""):
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
-            type_action = "send_pro_no_L2_L3"
+            type_action = "send_pro_no_L2_L3_L1"
 
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
