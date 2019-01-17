@@ -25,6 +25,21 @@ from Appform.appform import *
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'hello'
+@app.route('/test2', methods=['POST'])
+@connect_sql()
+def test2(cursor):
+    dataInput = request.json
+    source = dataInput['source']
+    data_new = source
+    max = int(data_new['max'])-1
+    number = data_new['number']
+    for i in range(max):
+        last_em = "0"*(max-i)+str(number)
+        if len(last_em)==(max+1):
+            break
+        if len(last_em)>max+1:
+            last_em = last_em[1:]
+    return last_em
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
