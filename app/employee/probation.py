@@ -304,7 +304,7 @@ def Send_probation(cursor):
         columns = [column[0] for column in cursor.description]
         result_check_L4 = toJson(cursor.fetchall(),columns)
 
-        if result_check_L2=="":
+        if not result_check_L2:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L3[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
@@ -315,12 +315,12 @@ def Send_probation(cursor):
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
-            sqlUp = "UPDATE approve_probation SET status_=4,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],result_check_L3[0]['employeeid_pro']))
+            sqlUp = "UPDATE approve_probation SET status_=4,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L3[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
-        elif (result_check_L2=="")&(result_check_L3=="")&(result_check_L1==""):
+        elif (not result_check_L2)&(not result_check_L3)&(not result_check_L1):
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
@@ -331,12 +331,12 @@ def Send_probation(cursor):
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
-            sqlUp = "UPDATE approve_probation SET status_=5,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
+            sqlUp = "UPDATE approve_probation SET status_=5,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
-        elif result_check_L1=="":
+        elif not result_check_L1:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
@@ -347,8 +347,8 @@ def Send_probation(cursor):
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
-            sqlUp = "UPDATE approve_probation SET status_=3,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
+            sqlUp = "UPDATE approve_probation SET status_=3,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=3 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -363,8 +363,8 @@ def Send_probation(cursor):
             sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],data_new['createby'],type_action))
 
-            sqlUp = "UPDATE approve_probation SET status_=2 WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sqlUp,(data_new['employeeid'],result_check_L1[0]['employeeid_pro']))
+            sqlUp = "UPDATE approve_probation SET status_=2,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
+            cursor.execute(sqlUp,(data_new['employeeid'],data_new['date_status'],result_check_L1[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=2 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
