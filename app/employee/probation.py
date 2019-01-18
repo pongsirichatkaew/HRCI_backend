@@ -109,7 +109,7 @@ def UpdateStatus_probation(cursor):
 
             # sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L4'"
             sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4'"
-            cursor.execute(sqlcheck_L3,(data_new['employeeid']))
+            cursor.execute(sqlcheck_L4,(data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_check_L4 = toJson(cursor.fetchall(),columns)
 
