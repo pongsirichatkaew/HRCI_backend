@@ -10,6 +10,14 @@ def UpdateStatus_probation(cursor):
         data_new = source
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
+
+        sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s"
+        cursor.execute(sql_check_end,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_check_end = toJson(cursor.fetchall(),columns)
+        check_endpro = int(result_check_end['validstatus'])
+        if check_endpro==9:
+            return "End Probation"
         if (tier_approve=='L4')&(status_=='Reject'):
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))

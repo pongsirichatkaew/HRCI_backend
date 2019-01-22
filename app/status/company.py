@@ -148,7 +148,102 @@ def QryCompanyname(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Insert_typeEm', methods=['POST'])
+@connect_sql()
+def Insert_typeEm(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        try:
+            sqlQry = "SELECT typeEm_id FROM company_em ORDER BY typeEm_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            typeEm_id_last=result[0]['typeEm_id']+1
+        except Exception as e:
+            typeEm_id_last = 1
 
+        sql = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby']))
+
+        type_action = "ADD"
+
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Edit_typeEm', methods=['POST'])
+@connect_sql()
+def Edit_typeEm(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT * FROM company_em WHERE typeEm_id=%s"
+        cursor.execute(sql,(data_new['typeEm_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "Edit"
+
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM company_em WHERE typeEm_id=%s"
+        cursor.execute(sqlUp,(data_new['typeEm_id']))
+
+        sqlIn = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby']))
+
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_typeEm', methods=['POST'])
+@connect_sql()
+def Qry_typeEm(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT * FROM position WHERE company_id=%s"
+        cursor.execute(sql,(data_new['company_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Delete_typeEm', methods=['POST'])
+@connect_sql()
+def Delete_typeEm(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT * FROM company_em WHERE typeEm_id=%s"
+        cursor.execute(sql,(data_new['typeEm_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "Delete"
+
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+
+        sqlUp = "DELETE FROM company_em WHERE typeEm_id=%s"
+        cursor.execute(sqlUp,(data_new['typeEm_id']))
+
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):
     # current_app.logger.info('userGetFile')
