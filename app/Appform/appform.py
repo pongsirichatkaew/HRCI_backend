@@ -1041,162 +1041,67 @@ def QryDatbaseAppform():
     except Exception as e:
         logserver(e)
         return "fail"
-    # except Exception as e:
-    #     logserver(e)
-    #     return "fail"
-# @app.route('/QryAppform_One_person', methods=['POST'])
-# def QryAppform_One_person():
-#     try:
-#         connection = mysql3.connect()
-#         cursor = connection.cursor()
-#         dataInput = request.json
-#         source = dataInput['source']
-#         data_new = source
-#         try:
-#             sqlEm = "SELECT Address.EmploymentAppNo,Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
-#                                                INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
-#                                                INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
-#                                                INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
-#                          WHERE Personal.EmploymentAppNo=%s AND Address.AddressType='Present'"
-#             cursor.execute(sqlEm,data_new['EmploymentAppNo'])
-#             columnsEm = [column[0] for column in cursor.description]
-#             result_home = toJson(cursor.fetchall(),columnsEm)
-#             test = result_home[0]['AddressType']
-#
-#             sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
-#                                                INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
-#                                                INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
-#                                                INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
-#                          WHERE Personal.EmploymentAppNo=%s"
-#             cursor.execute(sqlEm,data_new['EmploymentAppNo'])
-#             columnsEm = [column[0] for column in cursor.description]
-#             result = toJson(cursor.fetchall(),columnsEm)
-#         except Exception as e:
-#             sqlEm = "SELECT EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax FROM Address WHERE EmploymentAppNo=%s AND AddressType='Home'"
-#             cursor.execute(sqlEm,data_new['EmploymentAppNo'])
-#             columnsEm = [column[0] for column in cursor.description]
-#             result_home = toJson(cursor.fetchall(),columnsEm)
-#
-#             Address_Type_Present = "Present"
-#
-#
-#             sqlIn = "INSERT INTO Address (EmploymentAppNo,AddressType,HouseNo,Street,DISTRICT_ID,AMPHUR_ID,PROVINCE_ID,PostCode,Tel,Fax) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-#             cursor.execute(sqlIn,(result_home[0]['EmploymentAppNo'],Address_Type_Present,result_home[0]['HouseNo'],
-#             result_home[0]['Street'],result_home[0]['DISTRICT_ID'],result_home[0]['AMPHUR_ID'],result_home[0]['PROVINCE_ID'],result_home[0]['PostCode'],result_home[0]['Tel'],result_home[0]['Fax']))
-#
-#             sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.PostCode,Address.Tel,Address.Fax,amphures.AMPHUR_CODE,amphures.AMPHUR_NAME,provinces.PROVINCE_NAME,districts.DISTRICT_CODE,districts.DISTRICT_NAME FROM Address INNER JOIN provinces ON provinces.PROVINCE_ID=Address.PROVINCE_ID \
-#                                                INNER JOIN amphures ON amphures.AMPHUR_ID=Address.AMPHUR_ID \
-#                                                INNER JOIN districts ON districts.DISTRICT_CODE=Address.DISTRICT_ID \
-#                                                INNER JOIN Personal ON Personal.EmploymentAppNo=Address.EmploymentAppNo \
-#                          WHERE Personal.EmploymentAppNo=%s"
-#             cursor.execute(sqlEm,data_new['EmploymentAppNo'])
-#             columnsEm = [column[0] for column in cursor.description]
-#             result = toJson(cursor.fetchall(),columnsEm)
-#
-#
-#         sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.EmploymentAppNo=Attachment.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql4,data_new['EmploymentAppNo'])
-#         columns4 = [column[0] for column in cursor.description]
-#         result4 = toJson(cursor.fetchall(),columns4)
-#
-#         sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON Personal.EmploymentAppNo=ComputerSkill.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql6,data_new['EmploymentAppNo'])
-#         columns6 = [column[0] for column in cursor.description]
-#         result6 = toJson(cursor.fetchall(),columns6)
-#
-#         sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN Personal ON Personal.EmploymentAppNo=Education.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql9,data_new['EmploymentAppNo'])
-#         columns9 = [column[0] for column in cursor.description]
-#         result9 = toJson(cursor.fetchall(),columns9)
-#
-#         sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.EmploymentAppNo=Employment.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql10,data_new['EmploymentAppNo'])
-#         columns10 = [column[0] for column in cursor.description]
-#         result10 = toJson(cursor.fetchall(),columns10)
-#
-#         sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
-#         WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.EmploymentAppNo=%s"
-#         cursor.execute(sqlfa,data_new['EmploymentAppNo'])
-#         columnsfa = [column[0] for column in cursor.description]
-#         resultfa = toJson(cursor.fetchall(),columnsfa)
-#
-#         sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.EmploymentAppNo=Family.EmploymentAppNo \
-#         WHERE Family.MemberType = 'BrotherSister' AND Personal.EmploymentAppNo=%s"
-#         cursor.execute(sqlbro,data_new['EmploymentAppNo'])
-#         columnsbro = [column[0] for column in cursor.description]
-#         resultbro = toJson(cursor.fetchall(),columnsbro)
-#
-#         sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.EmploymentAppNo=LanguagesSkill.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql13,data_new['EmploymentAppNo'])
-#         columns13 = [column[0] for column in cursor.description]
-#         result13 = toJson(cursor.fetchall(),columns13)
-#
-#         sql14 = "SELECT * FROM Personal \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql14,data_new['EmploymentAppNo'])
-#         columns14 = [column[0] for column in cursor.description]
-#         result14 = toJson(cursor.fetchall(),columns14)
-#
-#         try:
-#             sqlPath = "SELECT PathFile FROM Attachment \
-#             WHERE EmploymentAppNo=%s AND Type='profile_image'"
-#             cursor.execute(sqlPath,data_new['EmploymentAppNo'])
-#             columnsPath = [column[0] for column in cursor.description]
-#             resulPath = toJson(cursor.fetchall(),columnsPath)
-#             test=str("http://career.inet.co.th/"+str(resulPath[0]['PathFile']))
-#             # with open(test, 'rb') as image_file:
-#             #     encoded_Image = base64.b64encode(image_file.read())
-#             # encoded_Image = base64.b64encode(test)
-#             encoded_Image = test
-#         except Exception as e:
-#             encoded_Image="No images"
-#
-#         sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.EmploymentAppNo=Reference.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql17,data_new['EmploymentAppNo'])
-#         columns17 = [column[0] for column in cursor.description]
-#         result17 = toJson(cursor.fetchall(),columns17)
-#
-#         sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN Personal ON Personal.EmploymentAppNo=RefPerson.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql18,data_new['EmploymentAppNo'])
-#         columns18 = [column[0] for column in cursor.description]
-#         result18 = toJson(cursor.fetchall(),columns18)
-#
-#         sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN Personal ON Personal.EmploymentAppNo=SpecialSkill.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql20,data_new['EmploymentAppNo'])
-#         columns20 = [column[0] for column in cursor.description]
-#         result20 = toJson(cursor.fetchall(),columns20)
-#
-#         sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN Personal ON Personal.EmploymentAppNo=TrainingCourse.EmploymentAppNo \
-#         WHERE Personal.EmploymentAppNo=%s"
-#         cursor.execute(sql23,data_new['EmploymentAppNo'])
-#         columns23 = [column[0] for column in cursor.description]
-#         result23 = toJson(cursor.fetchall(),columns23)
-#         connection.commit()
-#         connection.close()
-#         arr={}
-#         arr["Address"] = result
-#         arr["Attachment"] = result4
-#         arr["Image_profile"] = encoded_Image
-#         arr["ComputerSkill"] = result6
-#         arr["Education"] = result9
-#         arr["Employment"] = result10
-#         arr['fatherAndmother'] = resultfa
-#         arr['BrotherSister'] = resultbro
-#         arr["LanguagesSkill"] = result13
-#         arr["Personal"] = result14
-#         arr["Reference"] = result17
-#         arr["RefPerson"] = result18
-#         arr["SpecialSkill"] = result20
-#         arr["TrainingCourse"] = result23
-#         return jsonify(arr)
-#     except Exception as e:
-#         logserver(e)
-#         return "fail"
+def sendMail_appointment(email, total_em):
+    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
+                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+def sendMail_starwork(email, total_em):
+    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
+                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)

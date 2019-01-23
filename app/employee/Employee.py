@@ -283,16 +283,16 @@ def EditEmployee(cursor):
         End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
         encodedsalary = base64.b64encode(data_new['salary'])
 
-        sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s"
-        cursor.execute(sql_Up_EM,(result[0]['citizenid']))
+        sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s AND employeeid=%s"
+        cursor.execute(sql_Up_EM,(result[0]['citizenid'],data_new['employeeid']))
 
         sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
-        sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s"
-        cursor.execute(sql_Up_EM_pro,(result[0]['citizenid']))
+        sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
+        cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
 
         sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
@@ -1762,9 +1762,15 @@ def Qry_Employee_GA(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        sql_check_em = "SELECT citizenid FROM employee WHERE employeeid=%s"
+        cursor.execute(sql_check_em,data_new['employeeid'])
+        columns = [column[0] for column in cursor.description]
+        result_em = toJson(cursor.fetchall(),columns)
+
         sql = "SELECT benefits.benefits_detail,benefits.type_benefits,employee_benefits.benefits_id,employee_benefits.benefits_values,employee_benefits.type_check FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
-         WHERE employee_benefits.employeeid=%s"
-        cursor.execute(sql,data_new['employeeid'])
+         WHERE employee_benefits.citizenid=%s"
+        cursor.execute(sql,result_em[0]['citizenid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
