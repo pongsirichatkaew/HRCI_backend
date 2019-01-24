@@ -15,7 +15,7 @@ def UpdateStatus_probation(cursor):
         cursor.execute(sql_check_end,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result_check_end = toJson(cursor.fetchall(),columns)
-        check_endpro = int(result_check_end['validstatus'])
+        check_endpro = int(result_check_end[0]['validstatus'])
         if check_endpro==9:
             return "End Probation"
         if (tier_approve=='L4')&(status_=='Reject'):
@@ -630,7 +630,7 @@ def Qry_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
