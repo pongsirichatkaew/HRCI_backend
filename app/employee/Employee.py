@@ -1273,7 +1273,7 @@ def Export_Emp_benefit_All_company(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employeeid.citizenid,employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1292,7 +1292,7 @@ def Export_Emp_benefit_All_company(cursor):
                             FROM employee_benefits , employee
                             WHERE employee_benefits.employeeid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
-                cursor.execute(sql1,(i1['employeeid']))
+                cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
@@ -1355,7 +1355,7 @@ def Export_Emp_benefit_company(cursor):
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employee.citizenid,employee.employeeid,employee.name_th,employee.surname_th,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1374,7 +1374,7 @@ def Export_Emp_benefit_company(cursor):
                             FROM employee_benefits , employee
                             WHERE employee_benefits.employeeid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
-                cursor.execute(sql1,(i1['employeeid']))
+                cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
@@ -1436,7 +1436,7 @@ def Export_Emp_Ga_All_company(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employee.citizenid,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1456,7 +1456,7 @@ def Export_Emp_Ga_All_company(cursor):
                             FROM employee_benefits , employee
                             WHERE employee_benefits.employeeid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
-                cursor.execute(sql1,(i1['employeeid']))
+                cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
@@ -1529,7 +1529,7 @@ def Export_Emp_Ga_company(cursor):
         month=str(data_new['month'])
         companyid=str(data_new['companyid'])
         try:
-            sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = """SELECT employee.citizenid,employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1549,7 +1549,7 @@ def Export_Emp_Ga_company(cursor):
                             FROM employee_benefits , employee
                             WHERE employee_benefits.employeeid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
-                cursor.execute(sql1,(i1['employeeid']))
+                cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
