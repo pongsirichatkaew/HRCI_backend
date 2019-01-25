@@ -1290,7 +1290,7 @@ def Export_Emp_benefit_All_company(cursor):
                 workTime = []
                 sql1 = """  SELECT employee_benefits.benefits_values AS benefitsName
                             FROM employee_benefits , employee
-                            WHERE employee_benefits.employeeid =  %s
+                            WHERE employee_benefits.citizenid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
                 cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
@@ -1372,7 +1372,7 @@ def Export_Emp_benefit_company(cursor):
                 workTime = []
                 sql1 = """  SELECT employee_benefits.benefits_values AS benefitsName
                             FROM employee_benefits , employee
-                            WHERE employee_benefits.employeeid =  %s
+                            WHERE employee_benefits.citizenid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
                 cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
@@ -1454,7 +1454,7 @@ def Export_Emp_Ga_All_company(cursor):
                 sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
                                          ELSE employee_benefits.benefits_values END) AS benefitsName
                             FROM employee_benefits , employee
-                            WHERE employee_benefits.employeeid =  %s
+                            WHERE employee_benefits.citizenid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
                 cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
@@ -1547,7 +1547,7 @@ def Export_Emp_Ga_company(cursor):
                 sql1 = """  SELECT (CASE WHEN employee_benefits.benefits_values = 1 THEN "✔"
                                          ELSE employee_benefits.benefits_values END) AS benefitsName
                             FROM employee_benefits , employee
-                            WHERE employee_benefits.employeeid =  %s
+                            WHERE employee_benefits.citizenid =  %s
                             AND employee_benefits.employeeid = employee.employeeid ORDER BY employee_benefits.benefits_id ASC"""
                 cursor.execute(sql1,(i1['citizenid']))
                 columns = [column[0] for column in cursor.description]
