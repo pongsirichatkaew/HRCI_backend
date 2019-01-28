@@ -211,7 +211,7 @@ def Qry_typeEm(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM position WHERE company_id=%s"
+        sql = "SELECT * FROM company_em WHERE company_id=%s"
         cursor.execute(sql,(data_new['company_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
