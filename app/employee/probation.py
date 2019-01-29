@@ -546,7 +546,7 @@ def QryEmp_pro_leader():
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
                                       LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
-                                      LEFT JOIN question_pro_type ON question_pro_type.Send_probation = Emp_probation.type_question\
+                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
                                       LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s "+status_id+" "
         cursor.execute(sql,data_new['employeeid_pro'])
         columns = [column[0] for column in cursor.description]
