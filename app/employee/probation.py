@@ -296,7 +296,7 @@ def Send_probation(cursor):
         columns = [column[0] for column in cursor.description]
         result_check_L4 = toJson(cursor.fetchall(),columns)
 
-        if not result_check_L2:
+        if (not result_check_L2)&(not result_check_L1):
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L3[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
