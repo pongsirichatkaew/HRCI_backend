@@ -540,12 +540,13 @@ def QryEmp_pro_leader():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
                                       LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                                      LEFT JOIN question_pro_type ON question_pro_type.Send_probation = Emp_probation.type_question\
                                       LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s "+status_id+" "
         cursor.execute(sql,data_new['employeeid_pro'])
         columns = [column[0] for column in cursor.description]
