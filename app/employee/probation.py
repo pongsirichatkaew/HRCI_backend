@@ -286,6 +286,11 @@ def Send_probation(cursor):
         columns = [column[0] for column in cursor.description]
         result_check_L3 = toJson(cursor.fetchall(),columns)
 
+        try:
+            check_L3 = result_check_L3[0]['employeeid_pro']
+        except Exception as e:
+            return "No Level L3"
+
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4'"
         cursor.execute(sqlcheck_L4,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
