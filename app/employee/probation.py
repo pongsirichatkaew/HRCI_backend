@@ -322,10 +322,10 @@ def Send_probation(cursor):
             cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=5 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
+            cursor.execute(sqlUp_main,(data_new['type_question'],data_new['employeeid']))
         elif not result_check_L1:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sql,(data_new['type_question'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
+            cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -338,10 +338,10 @@ def Send_probation(cursor):
             cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=3 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
+            cursor.execute(sqlUp_main,(data_new['type_question'],data_new['employeeid']))
         else:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sql,(data_new['type_question'],data_new['employeeid'],result_check_L1[0]['employeeid_pro']))
+            cursor.execute(sql,(data_new['employeeid'],result_check_L1[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -354,7 +354,7 @@ def Send_probation(cursor):
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['date_status'],result_check_L1[0]['employeeid_pro']))
 
             sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=2 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
+            cursor.execute(sqlUp_main,(data_new['type_question'],data_new['employeeid']))
         return "Success"
     except Exception as e:
         logserver(e)
