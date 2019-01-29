@@ -305,8 +305,8 @@ def Send_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=4,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L3[0]['employeeid_pro']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
+            sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=4 WHERE employeeid=%s"
+            cursor.execute(sqlUp_main,(data_new['type_question'],data_new['employeeid']))
         elif (not result_check_L2)&(not result_check_L3)&(not result_check_L1):
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
@@ -321,11 +321,11 @@ def Send_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=5,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s"
+            sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=5 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
         elif not result_check_L1:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sql,(data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
+            cursor.execute(sql,(data_new['type_question'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -337,11 +337,11 @@ def Send_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=3,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['date_status'],data_new['employeeid'],result_check_L2[0]['employeeid_pro']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=3 WHERE employeeid=%s"
+            sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=3 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
         else:
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
-            cursor.execute(sql,(data_new['employeeid'],result_check_L1[0]['employeeid_pro']))
+            cursor.execute(sql,(data_new['type_question'],data_new['employeeid'],result_check_L1[0]['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -353,7 +353,7 @@ def Send_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=2,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['employeeid'],data_new['date_status'],result_check_L1[0]['employeeid_pro']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=2 WHERE employeeid=%s"
+            sqlUp_main = "UPDATE Emp_probation SET type_question=%s,validstatus=2 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
         return "Success"
     except Exception as e:
@@ -486,7 +486,7 @@ def QryEmployee_probation():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
@@ -533,7 +533,7 @@ def QryEmp_pro_leader():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
@@ -630,7 +630,12 @@ def Qry_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+        createby_id = ""
+        try:
+            createby_id = 'AND createby='+'"'+str(data_new['createby_id'])+'"'
+        except Exception as e:
+            pass
+        sql = "SELECT Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
@@ -714,7 +719,7 @@ def Qry_probation(cursor):
             item['long_date_pro'] = str(int(last[0])+1)
 
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid = %s AND validstatus=1 ORDER BY question_pro_id ASC"
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid = %s AND validstatus=1 "+createby_id+" ORDER BY question_pro_id ASC"
             cursor.execute(sql1pro,(data_new['employeeid']))
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]

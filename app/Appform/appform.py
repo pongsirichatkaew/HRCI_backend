@@ -1041,17 +1041,79 @@ def QryDatbaseAppform():
     except Exception as e:
         logserver(e)
         return "fail"
-def sendMail_appointment(email, total_em):
+@app.route('/send_Mail_appointment', methods=['POST'])
+def send_Mail_appointment():
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+
+        sqlUp = "UPDATE Personal SET check_mail = 2 WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlUp,(data_new['EmploymentAppNo']))
+
+        sqlcheck = "SELECT NameTh,SurnameTh,Email FROM Personal WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlcheck,(data_new['EmploymentAppNo']))
+        columns = [column[0] for column in cursor.description]
+        result_per = toJson(cursor.fetchall(),columns)
+
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO appoint_mail_log (EmploymentAppNo,appoint_day,appoint_time,appoint_place,position,create_by) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],data_new['create_by']))
+        connection.commit()
+        connection.close()
+        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'])
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/send_Mail_starwork', methods=['POST'])
+@connect_sql()
+def send_Mail_starwork(cursor):
+    dataInput = request.json
+    source = dataInput['source']
+    data_new = source
+    for item in data_new:
+        print(item)
+    newkey = len(list(data_new.keys()))
+    for max in range(newkey):
+        newvalues = str("%s,"*(max+1))
+        newvalues = newvalues[:-1]
+    print(newvalues)
+    return 'hello'
+def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname):
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
                 <html>
                   <body>
-                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
-                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b>เรียน  """+name+""" """+surname+"""</b></br>
+                      <p>บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)  ขอเรียนเชิญสัมภาษณ์งาน  ตำแหน่ง """+position+""" <br>
+                       ในวันที่ """+appoint_day+""" เวลา """+appoint_time+""" น. ณ อาคารไทยซัมมิททาวเวอร์  ชั้น IT ห้องประชุม INET """+appoint_place+"""</p>
+                      <p>สามารถดูรายละเอียดลักษณะงานได้ที่ :<a href="http://www.inet.co.th/careers/">http://www.inet.co.th/careers/</a></p></br></br>
+                      <p>ทั้งนี้รบกวนตอบกลับเข้ารับการสัมภาษณ์ทาง Email ด้วยนะครับ</p></br></br>
+                      <p>กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a></p></br></br>
+                      <p>โดยเตรียมเอกสารเอกสารประกอบการสมัครงาน ดังนี้</p></br>
+                      <p>- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                      <p>- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                      <p>- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                      <p>- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p></br>
+                      <p>- หลักฐานการผ่านหรือได้รับการยกเว้นการเกณฑ์ทหาร (ถ้ามี)</p></br>
+                      <p>- ผู้สมัครสามารถนำ Resume  / CV หรือแฟ้มแสดงผลงาน (Port Folio)  มาแสดงเพื่อประกอบการสัมภาษณ์ได้</p></br></br>
+                      <p>เส้นทางการเดินทาง</p></br>
+                      <p>- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p></br>
+                      <p>เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p></br>
+                      <p>- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p></br>
+                      <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
+                      <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
+                      <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
+                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br></br>
                   </body>
                 </html>
         """
@@ -1073,7 +1135,7 @@ def sendMail_appointment(email, total_em):
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendMail_starwork(email, total_em):
+def sendMail_starwork(email,star_date,position):
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
