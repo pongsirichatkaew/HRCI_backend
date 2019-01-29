@@ -511,7 +511,6 @@ def QryEmployee_probation():
             year_now = int(today[0])
             d1 = date(year_now,Mon_now,Day_now)
             delta = d0 - d1
-            print(delta)
             str_date = str(delta)
             split_str = str_date.split(",")
             last = split_str[0]
