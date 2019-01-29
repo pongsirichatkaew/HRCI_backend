@@ -20,6 +20,7 @@ from employee.criminal import *
 from employee.Contract import *
 from employee.probation import *
 from employee.kpi import *
+from employee.request_employee import *
 from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])
@@ -55,7 +56,7 @@ def test2(cursor):
     try:
         number = str(int(result[0]['max_employeeid'])+1)
     except Exception as e:
-        number = '1' 
+        number = '1'
     for i in range(max):
         last_em = "0"*(max-i)+str(number)
         if len(last_em)==(max+1):
