@@ -233,7 +233,7 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=4,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
 
-                if check_total_l1=1 :
+                if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
@@ -254,7 +254,7 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=5,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
 
-                if check_total_l1=1 :
+                if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
@@ -274,7 +274,7 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=3,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
 
-                if check_total_l1=1 :
+                if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=3 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
