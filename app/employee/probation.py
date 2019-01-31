@@ -490,7 +490,7 @@ def AddApprove_pro_tranfer(cursor):
         sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
 
-        type_action = "ADD"
+        type_action = "ADD_tranfer"
 
         sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
@@ -504,6 +504,31 @@ def AddApprove_pro_tranfer(cursor):
         sqlReject = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlReject,(data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action2))
 
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
+@app.route('/AddApprove_pro_together', methods=['POST'])
+@connect_sql()
+def AddApprove_pro_together(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlApprove = "INSERT INTO approve_probation(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
+
+        type_action = "ADD_together"
+
+        sqlApprove = "INSERT INTO approve_probation_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
