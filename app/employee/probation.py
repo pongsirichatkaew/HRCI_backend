@@ -566,7 +566,7 @@ def QryApprove_Probation_Info(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT name,lastname,position_detail,tier_approve,employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
+        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -887,9 +887,10 @@ def Qry_probation(cursor):
             last = split_str[0].split(" ")
             item['long_date_pro'] = str(int(last[0])+1)
 
+            employeeid_ = data_new['employeeid']
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid = %s AND validstatus=1 "+createby_id+" ORDER BY question_pro_id ASC"
-            cursor.execute(sql1pro,(data_new['employeeid']))
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 {} ORDER BY question_pro_id ASC".format(employeeid_,createby_id)
+            cursor.execute(sql1pro)
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
