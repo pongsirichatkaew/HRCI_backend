@@ -299,6 +299,95 @@ def EditEmployee(cursor):
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
+        UpPersonal = "UPDATE Personal SET ID_CardNo=%s,NameTh=%s,SurnameTh=%s,NameEn=%s,SurnameEn=%s,NicknameEn=%s WHERE ID_CardNo=%s"
+        cursor.execute(UpPersonal,(data_new['ID_CardNo'],data_new['NameTh'],data_new['SurnameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],result[0]['citizenid']))
+
+        try:
+            UpAddress = "UPDATE Address SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpAddress,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpAttachment = "UPDATE Attachment SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpAttachment,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpComputerSkill = "UPDATE ComputerSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpComputerSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpContract = "UPDATE Contract SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpContract,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEducation = "UPDATE Education SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEducation,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            Upemployee= "UPDATE employee SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(Upemployee,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            Upemployee_benefits= "UPDATE employee_benefits SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(Upemployee_benefits,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmployment= "UPDATE Employment SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEmployment,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmp_probation= "UPDATE Emp_probation SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpEmp_probation,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpFamily= "UPDATE Family SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpFamily,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpLanguagesSkill= "UPDATE LanguagesSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpLanguagesSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpLanguagesSkill= "UPDATE LanguagesSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpLanguagesSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpReference= "UPDATE Reference SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpReference,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpRefPerson= "UPDATE RefPerson SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpRefPerson,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpRefPerson= "UPDATE RefPerson SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpRefPerson,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpSpecialSkill= "UPDATE SpecialSkill SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpSpecialSkill,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpTrainingCourse= "UPDATE TrainingCourse SET ID_CardNo=%s WHERE ID_CardNo=%s"
+            cursor.execute(UpTrainingCourse,(data_new['ID_CardNo'],result[0]['citizenid']))
+        except Exception as e:
+            pass
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -366,7 +455,7 @@ def EditEmployee_Personal(cursor):
 
         sqlIn14 = """INSERT INTO Personal (NameTh,SurnameTh,NicknameTh,NameEn,SurnameEn,NicknameEn,Birthdate,Birthdate_name,BirthPlace,BirthProvince,BirthCountry,Age,Height,Weight,BloodGroup,Citizenship,Religion,ID_CardNo,IssueDate,ExpiryDate,MaritalStatus,NumberOfChildren,StudyChild,MilitaryService,Others,Worktel,Mobile,Email,EmergencyPerson,EmergencyRelation,EmergencyAddress, \
         EmergencyTel,date)VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"""
-        cursor.execute(sqlIn14,(result_Personal[0]['NameTh'],result_Personal[0]['SurnameTh'],result_Personal[0]['NicknameTh'],result_Personal[0]['NameEn'],result_Personal[0]['SurnameEn'],result_Personal[0]['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
+        cursor.execute(sqlIn14,(data_new['NameTh'],data_new['SurnameTh'],data_new['NicknameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],data_new['Birthdate'],Birthdate_name,data_new['BirthPlace'],data_new['BirthProvince'],data_new['BirthCountry'],\
         data_new['Age'],data_new['Height'],data_new['Weight'],data_new['BloodGroup'],data_new['Citizenship'],data_new['Religion'],data_new['ID_CardNo'],data_new['IssueDate'],data_new['ExpiryDate'],data_new['MaritalStatus'],data_new['NumberOfChildren'],data_new['StudyChild'],data_new['MilitaryService'],\
         data_new['Others'],result_Personal[0]['Worktel'],result_Personal[0]['Mobile'],result_Personal[0]['Email'],result_Personal[0]['EmergencyPerson'],result_Personal[0]['EmergencyRelation'],result_Personal[0]['EmergencyAddress'],result_Personal[0]['EmergencyTel'],result_Personal[0]['date']))
 
