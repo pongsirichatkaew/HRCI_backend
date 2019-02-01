@@ -1,6 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from dbConfig import *
+@app.route('/Qry_log_probation', methods=['POST'])
+@connect_sql()
+def Qry_log_probation(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT approve_probation_log.employeeid,approve_probation_log.employeeid_pro,approve_probation_log.name,approve_probation_log.lastname,approve_probation_log.tier_approve,approve_probation_log.position_detail,status.status_detail,approve_probation_log.comment,approve_probation_log.comment_orther,approve_probation_log.date_status FROM approve_probation_log LEFT JOIN status ON status.status_id = approve_probation_log.status_\
+        WHERE approve_probation_log.employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/UpdateStatus_probation', methods=['POST'])
 @connect_sql()
 def UpdateStatus_probation(cursor):
