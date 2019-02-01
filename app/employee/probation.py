@@ -121,8 +121,8 @@ def UpdateStatus_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
 
-            # sqlUp_main = "UPDATE Emp_probation SET validstatus=9 WHERE employeeid=%s"
-            # cursor.execute(sqlUp_main,(data_new['employeeid']))
+            sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s"
+            cursor.execute(sqlUp_main,(data_new['employeeid']))
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
@@ -148,8 +148,8 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro']))
 
-                # sqlUp_main = "UPDATE Emp_probation SET validstatus=9 WHERE employeeid=%s"
-                # cursor.execute(sqlUp_main,(data_new['employeeid']))
+                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s"
+                cursor.execute(sqlUp_main,(data_new['employeeid']))
 
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s"
                 cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro']))
