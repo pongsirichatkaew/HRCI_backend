@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 from dbConfig import *
 from status.section import *
+from status.quota import *
 from status.org_name import *
 from status.cost_center_name import *
 from status.position import *
@@ -11,6 +12,7 @@ from status.Admin import *
 from status.employee_ga import *
 from status.employee_MD import*
 from status.assessor_probation import*
+from status.assessor_quota import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*
