@@ -542,7 +542,7 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
-            sql14 = "SELECT * FROM Emp_probation WHERE employeeid=%s AND version=%s"
+            sql14 = "SELECT * FROM Emp_probation WHERE employeeid=%s AND version=%s ORDER BY version DESC LIMIT 1"
             cursor.execute(sql14,(data_new['employeeid'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result14 = toJson(cursor.fetchall(),columns)
