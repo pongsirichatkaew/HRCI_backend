@@ -75,7 +75,7 @@ def UpdateStatus_probation(cursor):
 
             try:
                 sqlUp_L2 = "UPDATE approve_probation SET status_=12,comment=NULL,comment_orther=NULL,date_status=NULL WHERE employeeid=%s AND tier_approve='L2' AND version=%s"
-                cursor.execute(sqlUp_L2,(data_new['employeeid'],,data_new['version']))
+                cursor.execute(sqlUp_L2,(data_new['employeeid'],data_new['version']))
             except Exception as e:
                 pass
 
