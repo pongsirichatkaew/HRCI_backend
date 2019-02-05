@@ -542,6 +542,35 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
+            sql14 = "SELECT * FROM Emp_probation WHERE employeeid=%s AND version=%s"
+            cursor.execute(sql14,(data_new['employeeid'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result14 = toJson(cursor.fetchall(),columns)
+
+            version_last = int(result14[0]['version'])+1
+            date1 = data_new['start_work']
+            long_date = int(data_new['long_date'])
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=long_date)
+            next_3_m2 = str(next_3_mm)
+            end_date = next_3_m2.split("-")
+            Day_e = end_date[2]
+            Mon_e =end_date[1]
+            year_e = end_date[0]
+            End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+
+
+            sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['	surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],result14[0]['salary'],result14[0]['email'],result14[0]['phone_company'],result14[0]['position_id'],\
+            result14[0]['section_id'],result14[0]['org_name_id'],result14[0]['cost_center_name_id'],result14[0]['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
+
+            sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],result14[0]['salary'],result14[0]['email'],result14[0]['phone_company'],result14[0]['position_id'],\
+            result14[0]['section_id'],result14[0]['org_name_id'],result14[0]['cost_center_name_id'],result14[0]['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
+
         return "Success"
     except Exception as e:
         logserver(e)
