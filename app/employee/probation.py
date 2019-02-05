@@ -581,6 +581,22 @@ def AddApprove_pro_tranfer(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/QueryApprove_pro_tranfer', methods=['POST'])
+@connect_sql()
+def QueryApprove_pro_tranfer(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT * FROM approve_probation_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_tranfer'"
+        cursor.execute(sql,(data_new['employeeid'],data_new['createby']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+            logserver(e)
+            return "fail"
 @app.route('/AddApprove_pro_together', methods=['POST'])
 @connect_sql()
 def AddApprove_pro_together(cursor):
@@ -603,6 +619,22 @@ def AddApprove_pro_together(cursor):
         cursor.execute(sqlApprove_log,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
 
         return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
+@app.route('/QueryApprove_pro_together', methods=['POST'])
+@connect_sql()
+def QueryApprove_pro_together(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT * FROM approve_probation_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_together'"
+        cursor.execute(sql,(data_new['employeeid'],data_new['createby']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
     except Exception as e:
             logserver(e)
             return "fail"
