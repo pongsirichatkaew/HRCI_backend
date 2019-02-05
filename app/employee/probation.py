@@ -561,15 +561,15 @@ def Abstract_hr(cursor):
             Mon_e =end_date[1]
             year_e = end_date[0]
             End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-
+            encodedsalary = base64.b64encode(data_new['salary'])
 
             sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['	surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],result14[0]['salary'],result14[0]['email'],result14[0]['phone_company'],result14[0]['position_id'],\
-            result14[0]['section_id'],result14[0]['org_name_id'],result14[0]['cost_center_name_id'],result14[0]['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
+            cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['	surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
 
             sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],result14[0]['salary'],result14[0]['email'],result14[0]['phone_company'],result14[0]['position_id'],\
-            result14[0]['section_id'],result14[0]['org_name_id'],result14[0]['cost_center_name_id'],result14[0]['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
+            cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
