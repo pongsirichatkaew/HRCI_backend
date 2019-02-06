@@ -303,20 +303,18 @@ def gen_employeeid():
         prefix = ['Mr.', 'MS.', 'Mrs.','Acting Sub Lt.','Acting Sub Ly.']
         for i in xrange(len(prefix)):
     	    Name_e = item['NameEn'].split(prefix[i])
-            print(Name_e)
-            # Name_ea = Name_e[1].lower()
-            Name_ea = 'test'
+            if len(Name_e)==2:
+                Name_ea = Name_e[1].lower()
             Surname_e = item['SurnameEn'].lower()
             two = Surname_e[:2]
-            break
     new_email = Name_ea+'.'+two+result_type_em[0]['email']
     last_email = []
     last_email.append(new_email)
     keyEmail = ['email']
     result_mail = dict(zip(keyEmail,last_email))
+    sumall = dict(resultEm.items() + result_mail.items())
     all_result = []
-    all_result.append(resultEm)
-    all_result.append(result_mail)
+    all_result.append(sumall)
     return jsonify(all_result)
 @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):
