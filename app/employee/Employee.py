@@ -291,13 +291,13 @@ def EditEmployee(cursor):
         data_new['phone_company'],data_new['position_id'],\
         data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
 
-        sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
-        cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
+        # sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
+        # cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
 
-        sqlEM_pro = "INSERT INTO Emp_probation (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlEM_pro = "UPDATE Emp_probation SET  employeeid=%s,citizenid=%s,name_th=%s,name_eng=%s,surname_th=%s,surname_eng=%s,nickname_employee=%s,salary=%s,email=%s,phone_company=%s,position_id=%s,section_id=%s,org_name_id=%s,cost_center_name_id=%s,company_id=%s,start_work=%s,EndWork_probation=%s,createby=%s WHERE citizenid=%s AND employeeid=%s"
         cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
-        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['citizenid'],data_new['employeeid']))
 
         UpPersonal = "UPDATE Personal SET ID_CardNo=%s,NameTh=%s,SurnameTh=%s,NameEn=%s,SurnameEn=%s,NicknameEn=%s WHERE ID_CardNo=%s"
         cursor.execute(UpPersonal,(data_new['ID_CardNo'],data_new['NameTh'],data_new['SurnameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],result[0]['citizenid']))
