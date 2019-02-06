@@ -244,6 +244,50 @@ def Delete_typeEm(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/gen_employeeid', methods=['POST'])
+@connect_sql()
+def gen_employeeid(cursor):
+    dataInput = request.json
+    source = dataInput['source']
+    data_new = source
+
+    sql_type_em = "SELECT * FROM company_em WHERE company_id=%s AND typeEm_detail=%s"
+    cursor.execute(sql_type_em,(data_new['company_id'],data_new['typeEm_detail']))
+    columns = [column[0] for column in cursor.description]
+    result_type_em = toJson(cursor.fetchall(),columns)
+    max_all = str(len(result_type_em[0]['typeEm_max']))
+    first_character =  result_type_em[0]['typeEm_first']
+    type_year = result_type_em[0]['typeEm_year']
+    start_date_ = data_new['Start_contract']
+    split_str_date = start_date_.split("-")
+    year_last = split_str_date[2]
+    str_date_year = split_str_date[2]
+    if type_year=='christ':
+        str_date_year = str_date_year[2:]
+    else:
+        new_star = str(int(str_date_year)+543)
+        str_date_year = new_star[2:]
+    sql = "SELECT RIGHT(employeeid,{}) AS max_employeeid FROM employee WHERE company_id={} AND type_em='{}' AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(max_all,data_new['company_id'],data_new['typeEm_detail'],year_last)
+    cursor.execute(sql)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
+    max = int(max_all)-1
+    try:
+        number = str(int(result[0]['max_employeeid'])+1)
+    except Exception as e:
+        number = '1'
+    for i in range(max):
+        last_em = "0"*(max-i)+str(number)
+        if len(last_em)==(max+1):
+            break
+        if len(last_em)>max+1:
+            last_em = last_em[1:]
+    last_em_last = first_character+str_date_year+last_em
+    last = []
+    last.append(last_em_last)
+    keyEm = ['employeeid']
+    resultEm = dict(zip(keyEm,last))
+    return jsonify(resultEm)        
 @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):
     # current_app.logger.info('userGetFile')

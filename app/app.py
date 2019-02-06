@@ -28,45 +28,6 @@ from Appform.appform import *
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'hello'
-@app.route('/test2', methods=['POST'])
-@connect_sql()
-def test2(cursor):
-    dataInput = request.json
-    source = dataInput['source']
-    data_new = source
-
-    sql_type_em = "SELECT * FROM company_em WHERE company_id=%s AND typeEm_detail=%s"
-    cursor.execute(sql_type_em,data_new['company_id'],data_new['typeEm_detail'])
-    columns = [column[0] for column in cursor.description]
-    result_type_em = toJson(cursor.fetchall(),columns)
-    max_all = result_type_em[0]['typeEm_max']
-    first_character =  result_type_em[0]['typeEm_first']
-    type_year = result_type_em['typeEm_year']
-    start_date_ = data_new['Start_contract']
-    split_str_date = start_date_.split("-")
-    str_date_year = split_str_date[2]
-    if type_year=='christ':
-        str_date_year = str_date_year[2:]
-    else:
-        new_star = int(str_date_year)+543
-        str_date_year = str_date_year[2:]
-    sql = "SELECT RIGHT(employeeid,{}) AS max_employeeid FROM employee WHERE company_id=%s AND type_em=%s AND start_work LIKE '%-%-{}' ORDER BY employeeid DESC LIMIT 1".format(max_all,str_date_year)
-    cursor.execute(sql,data_new['company_id'],data_new['type_employee'])
-    columns = [column[0] for column in cursor.description]
-    result = toJson(cursor.fetchall(),columns)
-    max = int(max_all)-1
-    try:
-        number = str(int(result[0]['max_employeeid'])+1)
-    except Exception as e:
-        number = '1'
-    for i in range(max):
-        last_em = "0"*(max-i)+str(number)
-        if len(last_em)==(max+1):
-            break
-        if len(last_em)>max+1:
-            last_em = last_em[1:]
-    last_em = first_character+str_date_year+last_em
-    return jsonify(last_em)
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
