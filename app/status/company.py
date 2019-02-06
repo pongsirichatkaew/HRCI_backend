@@ -164,13 +164,13 @@ def Insert_typeEm(cursor):
         except Exception as e:
             typeEm_id_last = 1
 
-        sql = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby']))
+        sql = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,email,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['email'],data_new['createby']))
 
         type_action = "ADD"
 
-        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,email,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(typeEm_id_last,data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['email'],data_new['createby'],type_action))
 
         return "success"
     except Exception as e:
@@ -190,14 +190,14 @@ def Edit_typeEm(cursor):
 
         type_action = "Edit"
 
-        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,email,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['email'],data_new['createby'],type_action))
 
         sqlUp = "DELETE FROM company_em WHERE typeEm_id=%s"
         cursor.execute(sqlUp,(data_new['typeEm_id']))
 
-        sqlIn = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby']))
+        sqlIn = "INSERT INTO company_em (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,email,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['email'],data_new['createby']))
 
         return "success"
     except Exception as e:
@@ -234,8 +234,8 @@ def Delete_typeEm(cursor):
 
         type_action = "Delete"
 
-        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO company_em_log (typeEm_id,typeEm_first,typeEm_year,typeEm_max,typeEm_detail,company_id,createby,email,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(data_new['typeEm_id'],data_new['typeEm_first'],data_new['typeEm_year'],data_new['typeEm_max'],data_new['typeEm_detail'],data_new['company_id'],data_new['email'],data_new['createby'],type_action))
 
         sqlUp = "DELETE FROM company_em WHERE typeEm_id=%s"
         cursor.execute(sqlUp,(data_new['typeEm_id']))
@@ -245,12 +245,13 @@ def Delete_typeEm(cursor):
         logserver(e)
         return "fail"
 @app.route('/gen_employeeid', methods=['POST'])
-@connect_sql()
-def gen_employeeid(cursor):
+def gen_employeeid():
     dataInput = request.json
     source = dataInput['source']
     data_new = source
 
+    connection = mysql.connect()
+    cursor = connection.cursor()
     sql_type_em = "SELECT * FROM company_em WHERE company_id=%s AND typeEm_detail=%s"
     cursor.execute(sql_type_em,(data_new['company_id'],data_new['typeEm_detail']))
     columns = [column[0] for column in cursor.description]
@@ -271,6 +272,8 @@ def gen_employeeid(cursor):
     cursor.execute(sql)
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)
+    connection.commit()
+    connection.close()
     max = int(max_all)-1
     try:
         number = str(int(result[0]['max_employeeid'])+1)
@@ -287,7 +290,34 @@ def gen_employeeid(cursor):
     last.append(last_em_last)
     keyEm = ['employeeid']
     resultEm = dict(zip(keyEm,last))
-    return jsonify(resultEm)        
+
+    connection = mysql3.connect()
+    cursor = connection.cursor()
+    sqlAppform = "SELECT NameEn,SurnameEn FROM Personal WHERE EmploymentAppNo=%s"
+    cursor.execute(sqlAppform,data_new['EmploymentAppNo'])
+    columns = [column[0] for column in cursor.description]
+    resultAppform = toJson(cursor.fetchall(),columns)
+    connection.commit()
+    connection.close()
+    for item in resultAppform:
+        prefix = ['Mr.', 'MS.', 'Mrs.','Acting Sub Lt.','Acting Sub Ly.']
+        for i in xrange(len(prefix)):
+    	    Name_e = item['NameEn'].split(prefix[i])
+            print(Name_e)
+            # Name_ea = Name_e[1].lower()
+            Name_ea = 'test'
+            Surname_e = item['SurnameEn'].lower()
+            two = Surname_e[:2]
+            break
+    new_email = Name_ea+'.'+two+result_type_em[0]['email']
+    last_email = []
+    last_email.append(new_email)
+    keyEmail = ['email']
+    result_mail = dict(zip(keyEmail,last_email))
+    all_result = []
+    all_result.append(resultEm)
+    all_result.append(result_mail)
+    return jsonify(all_result)
 @app.route('/userGetFile/<path>/<fileName>', methods=['GET'])
 def userGetFile(path, fileName):
     # current_app.logger.info('userGetFile')
