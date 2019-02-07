@@ -296,7 +296,7 @@ def UpdateStatus_probation(cursor):
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s version=%s"
+                sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
                 cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
@@ -528,7 +528,7 @@ def Abstract_hr(cursor):
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
         else:
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s version=%s"
+            sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s"
@@ -564,11 +564,11 @@ def Abstract_hr(cursor):
             encodedsalary = base64.b64encode(data_new['salary'])
 
             sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['	surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
 
             sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['ID_CardNo'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
+            cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
             data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
 
         return "Success"
@@ -942,8 +942,8 @@ def Qry_probation(cursor):
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
                                       LEFT JOIN company ON company.companyid = Emp_probation.company_id\
-        WHERE Emp_probation.employeeid=%s"
-        cursor.execute(sql,(data_new['employeeid']))
+        WHERE Emp_probation.employeeid=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for item in result:
@@ -1047,14 +1047,14 @@ def upload_user(cursor):
 
         try:
             sqlDe = "DELETE FROM employee_upload WHERE ID_CardNo=%s AND version=%s"
-            cursor.execute(sqlDe,(ID_CardNo,data_new['version']))
+            cursor.execute(sqlDe,(ID_CardNo,request.form['version']))
         except Exception as e:
             pass
 
         Type = 'probation'
         employeeid = request.form['employeeid']
         # path = 'uploads/'+employeeid+'/'+'probation'
-        path = '../uploads/'+employeeid+'/'+'probation'+'/'+str(data_new['version'])
+        path = '../uploads/'+employeeid+'/'+'probation'+'/'+str(request.form['version'])
         if not os.path.exists(path):
             os.makedirs(path)
         file = request.files.getlist('file')
@@ -1068,7 +1068,7 @@ def upload_user(cursor):
                 pass
             if file and allowed_file(fileList.filename):
                 fileList.save(os.path.join(path, fileList.filename))
-                PathFile = employeeid+'/'+'probation'+'/'+str(data_new['version'])+'/'+str(fileList.filename)
+                PathFile = employeeid+'/'+'probation'+'/'+str(request.form['version'])+'/'+str(fileList.filename)
                 sql = "INSERT INTO employee_upload(ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s)"
                 # cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
                 cursor.execute(sql,(ID_CardNo,fileName,Type,PathFile,request.form['createby']))
