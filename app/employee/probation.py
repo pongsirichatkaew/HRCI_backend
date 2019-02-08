@@ -583,6 +583,15 @@ def AddApprove_pro_tranfer(cursor):
         source = dataInput['source']
         data_new = source
 
+        try:
+            sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_empro = toJson(cursor.fetchall(),columns)
+            type_check = result_check_empro[0]['employeeid_pro']
+            return "employeeid_pro duplicate"
+        except Exception as e:
+            pass
         sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
@@ -633,6 +642,16 @@ def AddApprove_pro_together(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        try:
+            sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_empro = toJson(cursor.fetchall(),columns)
+            type_check = result_check_empro[0]['employeeid_pro']
+            return "employeeid_pro duplicate"
+        except Exception as e:
+            pass
 
         sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
