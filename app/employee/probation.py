@@ -853,7 +853,7 @@ def QryEm_oneperson(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlEmployee = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sqlEmployee = "SELECT employee.employeeid,employee.citizenid,employee.name_th,employee.surname_th,employee.email,employee.phone_company,employee.position_id,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
