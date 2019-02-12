@@ -821,6 +821,50 @@ def AddApprove_probation(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/AddApprove_probation_many', methods=['POST'])
+@connect_sql()
+def AddApprove_probation_many(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        i=0
+        for i in xrange(len(data_new['em_pro'])):
+            sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['position_detail'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sqlApprove = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['position_detail'],data_new['createby'],type_action))
+
+            try:
+                sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+                cursor.execute(sql44,(data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['employeeid_pro']))
+                columns = [column[0] for column in cursor.description]
+                result_test = toJson(cursor.fetchall(),columns)
+                name_test = result_test[0]['name_asp']
+            except Exception as e:
+
+                sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
+                cursor.execute(sqlQry)
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+                assessor_pro_id_last=result[0]['assessor_pro_id']+1
+
+                sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby']))
+
+                type_action = "ADD"
+
+                sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql_log,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
 @app.route('/DeleteApprove_probation', methods=['POST'])
 @connect_sql()
 def DeleteApprove_probation(cursor):
