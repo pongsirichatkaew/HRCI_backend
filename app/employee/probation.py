@@ -585,7 +585,7 @@ def AddApprove_pro_tranfer(cursor):
 
         try:
             sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_empro = toJson(cursor.fetchall(),columns)
             type_check = result_check_empro[0]['employeeid_pro']
@@ -596,6 +596,7 @@ def AddApprove_pro_tranfer(cursor):
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
 
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
@@ -629,12 +630,12 @@ def AddApprove_pro_tranfer(cursor):
             assessor_pro_id_last=result[0]['assessor_pro_id']+1
 
             sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
 
             type_action = "ADD"
 
             sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby'],type_action))
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -666,7 +667,7 @@ def AddApprove_pro_together(cursor):
 
         try:
             sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_empro = toJson(cursor.fetchall(),columns)
             type_check = result_check_empro[0]['employeeid_pro']
@@ -678,6 +679,7 @@ def AddApprove_pro_together(cursor):
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
 
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
@@ -702,12 +704,12 @@ def AddApprove_pro_together(cursor):
             assessor_pro_id_last=result[0]['assessor_pro_id']+1
 
             sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
 
             type_action = "ADD"
 
             sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby'],type_action))
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -897,7 +899,7 @@ def QryEm_oneperson(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlEmployee = "SELECT employee.employeeid,employee.citizenid,employee.name_th,employee.surname_th,employee.email,employee.phone_company,employee.position_id,employee.company_id,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sqlEmployee = "SELECT employee.employeeid,employee.citizenid,employee.name_th,employee.surname_th,employee.email,employee.phone_company,employee.position_id,employee.company_id,employee.salary,employee.section_id,employee.org_name_id,employee.cost_center_name_id,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
