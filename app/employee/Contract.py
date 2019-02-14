@@ -365,6 +365,7 @@ def QryContract_sales(cursor):
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
+        print(int(result3[0]['sales_volume']))
 
         tranExpiryDate_contract_date = result3[0]['contract_date']
         EndWork_contract_date_expi = tranExpiryDate_contract_date.split("-")
@@ -428,7 +429,7 @@ def QryContract_sales(cursor):
                 elif index != 1 or current != 1:
                     resultSalary = thai_number[current] + resultSalary
 
-        salary2 = decodesalary
+        salary2 = int(result3[0]['sales_volume'])
         salary2= (str(salary2)[::-1])
         thai_number2 = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
         unit2 = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
