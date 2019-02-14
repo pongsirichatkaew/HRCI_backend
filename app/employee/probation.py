@@ -585,7 +585,7 @@ def AddApprove_pro_tranfer(cursor):
 
         try:
             sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_empro = toJson(cursor.fetchall(),columns)
             type_check = result_check_empro[0]['employeeid_pro']
@@ -596,6 +596,7 @@ def AddApprove_pro_tranfer(cursor):
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
 
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
@@ -614,6 +615,27 @@ def AddApprove_pro_tranfer(cursor):
         sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlReject,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action2))
 
+        try:
+            sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_pro']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+        except Exception as e:
+
+            sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            assessor_pro_id_last=result[0]['assessor_pro_id']+1
+
+            sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -645,7 +667,7 @@ def AddApprove_pro_together(cursor):
 
         try:
             sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_empro = toJson(cursor.fetchall(),columns)
             type_check = result_check_empro[0]['employeeid_pro']
@@ -657,6 +679,7 @@ def AddApprove_pro_together(cursor):
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
 
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
@@ -665,6 +688,28 @@ def AddApprove_pro_together(cursor):
 
         sqlApprove_log = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove_log,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_pro']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+        except Exception as e:
+
+            sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            assessor_pro_id_last=result[0]['assessor_pro_id']+1
+
+            sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -734,6 +779,16 @@ def AddApprove_probation(cursor):
         source = dataInput['source']
         data_new = source
 
+        try:
+            sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_empro = toJson(cursor.fetchall(),columns)
+            type_check = result_check_empro[0]['employeeid_pro']
+            return "employeeid_pro duplicate"
+        except Exception as e:
+            pass
+
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby']))
 
@@ -741,6 +796,72 @@ def AddApprove_probation(cursor):
 
         sqlApprove = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_pro']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+        except Exception as e:
+
+            sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            assessor_pro_id_last=result[0]['assessor_pro_id']+1
+
+            sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
+@app.route('/AddApprove_probation_many', methods=['POST'])
+@connect_sql()
+def AddApprove_probation_many(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        i=0
+        for i in xrange(len(data_new['em_pro'])):
+            sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['position_detail'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sqlApprove = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['position_detail'],data_new['createby'],type_action))
+
+            try:
+                sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+                cursor.execute(sql44,(data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['employeeid_pro']))
+                columns = [column[0] for column in cursor.description]
+                result_test = toJson(cursor.fetchall(),columns)
+                name_test = result_test[0]['name_asp']
+            except Exception as e:
+
+                sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
+                cursor.execute(sqlQry)
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+                assessor_pro_id_last=result[0]['assessor_pro_id']+1
+
+                sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby']))
+
+                type_action = "ADD"
+
+                sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sql_log,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -778,7 +899,7 @@ def QryEm_oneperson(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlEmployee = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sqlEmployee = "SELECT employee.employeeid,employee.citizenid,employee.name_th,employee.surname_th,employee.email,employee.phone_company,employee.position_id,employee.company_id,employee.salary,employee.section_id,employee.org_name_id,employee.cost_center_name_id,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyname FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1199,6 +1320,38 @@ def send_email(cursor):
             sendToMail(item4['email_asp'], item4['total_em'])
     return jsonify(result)
 def sendToMail(email, total_em):
+    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
+                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+def sendToMail_reject(email, total_em):
     send_from = "Hr Management <jirakit.da@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
