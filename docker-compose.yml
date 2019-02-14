@@ -5,7 +5,7 @@ services:
     hrci_stage:
         image: hrci_stage
         ports:
-            - "8888:5000"
+            - "8888:8888"
         environment:
             - ISENV=pro
         volumes:
