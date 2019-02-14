@@ -494,7 +494,7 @@ def QryListContract(cursor):
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
