@@ -365,7 +365,6 @@ def QryContract_sales(cursor):
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
-        print(int(result3[0]['sales_volume']))
 
         tranExpiryDate_contract_date = result3[0]['contract_date']
         EndWork_contract_date_expi = tranExpiryDate_contract_date.split("-")
@@ -494,7 +493,7 @@ def QryListContract(cursor):
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
