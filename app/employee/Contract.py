@@ -365,7 +365,6 @@ def QryContract_sales(cursor):
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
-        print(int(result3[0]['sales_volume']))
 
         tranExpiryDate_contract_date = result3[0]['contract_date']
         EndWork_contract_date_expi = tranExpiryDate_contract_date.split("-")
