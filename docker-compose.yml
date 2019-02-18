@@ -4,6 +4,7 @@ version: '2'
 services:
     hrci_state:
         image: hrci_state
+        container_name: hrci_state
         ports:
             - "8888:8888"
         environment:
@@ -14,7 +15,7 @@ services:
             - "/home/ubuntu/pro/HRCI/Template:/app/Template"
         restart: always
         networks:
-            - backend-network
+            - backend-network-state
 networks:
-    backend-network:
+    backend-network-state:
         driver: bridge
