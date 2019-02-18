@@ -856,12 +856,12 @@ def AddApprove_probation_many(cursor):
                 assessor_pro_id_last=result[0]['assessor_pro_id']+1
 
                 sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sql,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby']))
+                cursor.execute(sql,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['Email_Employee'],data_new['createby']))
 
                 type_action = "ADD"
 
                 sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sql_log,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['email_asp'],data_new['createby'],type_action))
+                cursor.execute(sql_log,(assessor_pro_id_last,data_new['em_pro'][i]['employeeid_pro'],data_new['em_pro'][i]['companyid'],data_new['em_pro'][i]['name'],data_new['em_pro'][i]['lastname'],data_new['em_pro'][i]['position_id'],data_new['em_pro'][i]['tier_approve'],data_new['em_pro'][i]['Email_Employee'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
