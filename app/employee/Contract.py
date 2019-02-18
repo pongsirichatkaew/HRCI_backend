@@ -361,7 +361,7 @@ def QryContract_sales(cursor):
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
 
-        sql3 = "SELECT contract_id,contract_date,year,Authority_Distrinct_Id_Card,sales_volume FROM Contract WHERE ID_CardNo=%s"
+        sql3 = "SELECT contract_id,contract_date,year,Authority_Distrinct_Id_Card,date_con,sales_volume FROM Contract WHERE ID_CardNo=%s"
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
@@ -536,11 +536,11 @@ def Update_Contract_sales(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE Contract SET sales_volume=%s WHERE ID_CardNo=%s"
-        cursor.execute(sqlUp,(data_new['sales_volume'],result[0]['citizenid']))
+        sqlUp = "UPDATE Contract SET sales_volume=%s,date_con=%s WHERE ID_CardNo=%s"
+        cursor.execute(sqlUp,(data_new['sales_volume'],data_new['date_con'],result[0]['citizenid']))
 
-        sql = "INSERT INTO Contract_log_sales(ID_CardNo,sales_volume,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(result[0]['citizenid'],data_new['sales_volume'],data_new['createby']))
+        sql = "INSERT INTO Contract_log_sales(ID_CardNo,date_con,sales_volume,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(result[0]['citizenid'],data_new['date_con'],data_new['sales_volume'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
