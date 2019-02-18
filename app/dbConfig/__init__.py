@@ -37,7 +37,7 @@ app.config['ALLOWED_EXTENSIONS'] = set(['xls', 'xlsm', 'xlsx', 'csv', 'txt', 'xm
 
 # app.config['MYSQL_DATABASE_USER'] = "root"
 # app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
-# app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_stateging'
+# app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management'
 # app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
 app.config['MYSQL_DATABASE_USER'] = "root"
 app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
@@ -54,7 +54,7 @@ app2.config['MYSQL_DATABASE_HOST'] = '203.150.57.159'
 mysql2 = MySQL()
 mysql2.init_app(app2)
 
-app3 = Flask(__name__)
+# app3 = Flask(__name__)
 # app3.config['MYSQL_DATABASE_USER'] = "root"
 # app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
 # app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
