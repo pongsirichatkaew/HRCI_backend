@@ -54,7 +54,7 @@ app2.config['MYSQL_DATABASE_HOST'] = '203.150.57.159'
 mysql2 = MySQL()
 mysql2.init_app(app2)
 
-# app3 = Flask(__name__)
+app3 = Flask(__name__)
 # app3.config['MYSQL_DATABASE_USER'] = "root"
 # app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
 # app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
