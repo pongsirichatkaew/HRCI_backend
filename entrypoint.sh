@@ -39,8 +39,8 @@ echo "server {
 
 echo "
 server {
-  listen 8888;
-  listen [::]:8888;
+  listen 5000;
+  listen [::]:5000;
   # listen 5000 ssl;
   # listen [::]:5000 ssl;
 

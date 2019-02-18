@@ -2,10 +2,10 @@
 version: '2'
 
 services:
-    hrci_stage:
-        image: hrci_stage
+    hrci_dev:
+        image: hrci_dev
         ports:
-            - "8888:8888"
+            - "5000:5000"
         environment:
             - ISENV=pro
         volumes:
