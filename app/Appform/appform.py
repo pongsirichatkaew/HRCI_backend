@@ -529,6 +529,8 @@ def QryDatbaseAppform():
     data_new = source
     EmploymentAppNo = data_new['EmploymentAppNo']
 
+    if int(data_new['long_date'])>180:
+        return "too long day"
     connection = mysql3.connect()
     cursor = connection.cursor()
     sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
