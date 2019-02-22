@@ -1442,7 +1442,7 @@ def send_email(cursor):
             sendToMail(item4['email_asp'], item4['total_em'])
     return jsonify(result)
 def sendToMail(email, total_em):
-    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
     text = """\
@@ -1474,7 +1474,7 @@ def sendToMail(email, total_em):
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
 def sendToMail_reject(email, total_em):
-    send_from = "Hr Management <jirakit.da@inet.co.th>"
+    send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
     text = """\
