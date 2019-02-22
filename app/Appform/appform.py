@@ -571,12 +571,6 @@ def QryDatbaseAppform():
            connection.close()
            return "Blacklist"
         elif len(resultemployee) != 0:
-           connection = mysql3.connect()
-           cursor = connection.cursor()
-           sqlUp = "UPDATE Personal SET status_id_hrci=0 WHERE EmploymentAppNo=%s"
-           cursor.execute(sqlUp,EmploymentAppNo)
-           connection.commit()
-           connection.close()
            return "Employee"
         else:
             if data_new['status_id']!=3:
