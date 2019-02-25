@@ -529,6 +529,8 @@ def QryDatbaseAppform():
     data_new = source
     EmploymentAppNo = data_new['EmploymentAppNo']
 
+    if int(data_new['long_date'])>180:
+        return "too long day"
     connection = mysql3.connect()
     cursor = connection.cursor()
     sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
@@ -569,12 +571,6 @@ def QryDatbaseAppform():
            connection.close()
            return "Blacklist"
         elif len(resultemployee) != 0:
-           connection = mysql3.connect()
-           cursor = connection.cursor()
-           sqlUp = "UPDATE Personal SET status_id_hrci=0 WHERE EmploymentAppNo=%s"
-           cursor.execute(sqlUp,EmploymentAppNo)
-           connection.commit()
-           connection.close()
            return "Employee"
         else:
             if data_new['status_id']!=3:
