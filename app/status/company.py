@@ -219,6 +219,22 @@ def Qry_typeEm(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_Edit_Type_Employee', methods=['POST'])
+@connect_sql()
+def Qry_Edit_Type_Employee(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT * FROM company_em WHERE typeEm_id=%s"
+        cursor.execute(sql,(data_new['typeEm_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Delete_typeEm', methods=['POST'])
 @connect_sql()
 def Delete_typeEm(cursor):

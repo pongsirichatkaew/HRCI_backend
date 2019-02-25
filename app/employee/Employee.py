@@ -32,6 +32,83 @@ def InsertEmployee_resign(cursor):
 
         sqlIn4 = "INSERT INTO employee_resign (employeeid,name_th,surname_th,ID_CardNo,star_work,issue_date,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn4,(data_new['employeeid'],result[0]['name_th'],result[0]['surname_th'],result[0]['citizenid'],result[0]['start_work'],data_new['issue_date'],data_new['createby'],data_new['Descriptions']))
+
+        try:
+            UpAddress = "DELETE FROM Address  WHERE ID_CardNo=%s"
+            cursor.execute(UpAddress,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpAttachment = "DELETE FROM Attachment  WHERE ID_CardNo=%s"
+            cursor.execute(UpAttachment,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpComputerSkill = "DELETE FROM ComputerSkill  WHERE ID_CardNo=%s"
+            cursor.execute(UpComputerSkill,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpContract = "DELETE FROM Contract WHERE ID_CardNo=%s"
+            cursor.execute(UpContract,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEducation = "DELETE FROM Education  WHERE ID_CardNo=%s"
+            cursor.execute(UpEducation,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            Upemployee_benefits= "DELETE FROM employee_benefits WHERE ID_CardNo=%s"
+            cursor.execute(Upemployee_benefits,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmployment= "DELETE FROM Employment  WHERE ID_CardNo=%s"
+            cursor.execute(UpEmployment,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpEmp_probation= "DELETE FROM Emp_probation WHERE ID_CardNo=%s"
+            cursor.execute(UpEmp_probation,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpFamily= "DELETE FROM Family  WHERE ID_CardNo=%s"
+            cursor.execute(UpFamily,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpLanguagesSkill= "DELETE FROM LanguagesSkill  WHERE ID_CardNo=%s"
+            cursor.execute(UpLanguagesSkill,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpReference= "DELETE FROM Reference  WHERE ID_CardNo=%s"
+            cursor.execute(UpReference,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpRefPerson= "DELETE FROM RefPerson  WHERE ID_CardNo=%s"
+            cursor.execute(UpRefPerson,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpSpecialSkill= "DELETE FROM SpecialSkill  WHERE ID_CardNo=%s"
+            cursor.execute(UpSpecialSkill,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpTrainingCourse= "DELETE FROM TrainingCourse  WHERE ID_CardNo=%s"
+            cursor.execute(UpTrainingCourse,(result[0]['citizenid']))
+        except Exception as e:
+            pass
+        try:
+            UpApprove= "DELETE FROM approve_probation  WHERE employeeid=%s"
+            cursor.execute(UpApprove,(data_new['employeeid']))
+        except Exception as e:
+            pass
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -923,6 +1000,13 @@ def EditEmployee_Employeeid(cursor):
 
             sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['Old_EmpId']))
+
+            try:
+                sqlUp_prove = "UPDATE approve_probation SET employeeid=%s WHERE employeeid=%s"
+                cursor.execute(sqlUp_prove,(data_new['employeeid'],data_new['Old_EmpId']))
+            except Exception as e:
+                pass
+                
         return "Success"
     except Exception as e:
         logserver(e)

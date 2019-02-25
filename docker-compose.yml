@@ -2,8 +2,8 @@
 version: '2'
 
 services:
-    hrci_back:
-        image: hrci_back
+    hrci_dev:
+        image: hrci_dev
         ports:
             - "5000:5000"
         environment:

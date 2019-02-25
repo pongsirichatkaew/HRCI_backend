@@ -21,6 +21,8 @@ def Insert_type_Question_pro(cursor):
 
         sql_log = "INSERT INTO question_pro_log_type (question_pro_id_type,question_pro_detail_type,createby,type_action) VALUES (%s,%s,%s,%s)"
         cursor.execute(sql_log,(question_pro_id_last_type,data_new['question_pro_detail_type'],data_new['createby'],type_action))
+
+        add_PreQuestion_Probation(question_pro_id_last_type)
         return "success"
     except Exception as e:
         logserver(e)
@@ -193,3 +195,48 @@ def Qry_form_Question_pro(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@connect_sql()
+def add_PreQuestion_Probation(cursor, question_pro_id_last_type):
+    question_pro = [
+        { 'question_pro_detail': '1.คุณภาพงาน ความละเอียดรอบคอบและความถูกต้องของงาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '2.ความรับผิดชอบและความเอาใจใส่ในหน้าที่การงาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '3.ความสามารถ และความเชี่ยวชาญในงานที่รับผิดชอบ', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '4.ความคืดริเริ่มสร้างสรรค์ นำแนวคิดมาพัฒนาการทำงาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '5.ความสามารถในการเรียนรู้งาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '6.ทัศนคตืและกาปฎิบัติงานร่วมกับผู้อื่น', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '7.การปฏิบัติตามคำสั่ง คำแนะนำ', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '8.ไหวพริบ การแก้ไขปัญหาเฉพาะหน้า', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '9.สภาพการมาปฏิบัติงาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': '10.ความประพฤติ และการปฏิบัติตามกฎระเบียบของบริษัท', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'หลักเกณฑ์ในการประเมินผลทดลองงาน (KPI)', 'type': '', 'group': 'SectionKPI', 'createby': 'SYSTEM' },
+        # { 'question_pro_detail': 'ผลการปฎิบัติงานที่ได้ (เอกสารแนบ)', 'type': '', 'group': 'SectionKPI', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'เห็นควรบรรจุเป็นพนักงานประจำปรับตำแหน่ง', 'type': 'CheckboxWithTextfield', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ขยายระยะเวลาทดลองงานเป็นเวลา(วัน)', 'type': 'CheckboxWithTextfield', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'แจ้งเลิกจ้าง', 'type': 'Checkbox', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'อื่นๆ โปรดระบุ', 'type': 'CheckboxWithTextfield', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ปรับเงินเดือนเพิ่ม(บาท)ุ', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ปรับเงินเพิ่มพิเศษ(บาท)', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ค่าตำแหน่ง(บาท)', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'วงเงินค่าโทรศัพท์(บาท)', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ค่าเดินทางหรือค่าน้ำมัน(บาท)ุ', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'อื่นๆ', 'type': 'CheckboxWithTextfield', 'group': 'SectionReqBenefits', 'createby': 'SYSTEM' }
+    ]
+
+    for item in question_pro:
+        try:
+            sqlQry = "SELECT question_pro_id FROM question_pro_form ORDER BY question_pro_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            question_pro_id_last=result[0]['question_pro_id']+1
+        except Exception as e:
+            question_pro_id_last = 1
+        sql = "INSERT INTO question_pro_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,group_q,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(question_pro_id_last, question_pro_id_last_type, item['question_pro_detail'], item['type'], item['group'], item['createby']))
+
+        type_action = "ADD_BY_HeadQuestion"
+
+        sql_log = "INSERT INTO question_pro_log_form (question_pro_id,question_pro_id_type,question_pro_detail,type_check,group_q,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(question_pro_id_last, question_pro_id_last_type, item['question_pro_detail'], item['type'], item['group'], item['createby'], type_action))
+    return 'success'

@@ -241,10 +241,14 @@ def QryContract_sales(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
-                                      INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s"
+        # sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        #                               INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
+        #                               INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
+        #                               INNER JOIN position ON employee.position_id = position.position_id\
+        # WHERE employee.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -357,7 +361,7 @@ def QryContract_sales(cursor):
         columns2 = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns2)
 
-        sql3 = "SELECT contract_id,contract_date,year,Authority_Distrinct_Id_Card,sales_volume FROM Contract WHERE ID_CardNo=%s"
+        sql3 = "SELECT contract_id,contract_date,year,Authority_Distrinct_Id_Card,date_con,sales_volume FROM Contract WHERE ID_CardNo=%s"
         cursor.execute(sql3,result[0]['citizenid'])
         columns3 = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns3)
@@ -424,7 +428,7 @@ def QryContract_sales(cursor):
                 elif index != 1 or current != 1:
                     resultSalary = thai_number[current] + resultSalary
 
-        salary2 = decodesalary
+        salary2 = int(result3[0]['sales_volume'])
         salary2= (str(salary2)[::-1])
         thai_number2 = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
         unit2 = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
@@ -489,7 +493,7 @@ def QryListContract(cursor):
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
@@ -532,11 +536,11 @@ def Update_Contract_sales(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlUp = "UPDATE Contract SET sales_volume=%s WHERE ID_CardNo=%s"
-        cursor.execute(sqlUp,(data_new['sales_volume'],result[0]['citizenid']))
+        sqlUp = "UPDATE Contract SET sales_volume=%s,date_con=%s WHERE ID_CardNo=%s"
+        cursor.execute(sqlUp,(data_new['sales_volume'],data_new['date_con'],result[0]['citizenid']))
 
-        sql = "INSERT INTO Contract_log_sales(ID_CardNo,sales_volume,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(result[0]['citizenid'],data_new['sales_volume'],data_new['createby']))
+        sql = "INSERT INTO Contract_log_sales(ID_CardNo,date_con,sales_volume,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(result[0]['citizenid'],data_new['date_con'],data_new['sales_volume'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
