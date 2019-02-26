@@ -1109,7 +1109,16 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
                       <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
                       <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
                       <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
-                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br></br>
+                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br>
+                      <p>--</p>
+                      <p>Best regards,</p>
+                      <p>"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                      <p>Human Resource Officer</p>
+                      <p>Internet Thailand Public Co., Ltd.</p>
+                      <p>Tel : """+phone+"""</p>
+                      <p>E-mail : """+email_hr+"""</p>
+                      <p>Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                       <img src="https://inet.co.th/images/inetlogo.png"></br>
                   </body>
                 </html>
         """
@@ -1159,7 +1168,16 @@ def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,e
                    <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
                    <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
                    <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
-                   <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br></br>
+                   <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br>
+                   <p>--</p>
+                   <p>Best regards,</p>
+                   <p>"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                   <p>Human Resource Officer</p>
+                   <p>Internet Thailand Public Co., Ltd.</p>
+                   <p>Tel : """+phone+"""</p>
+                   <p>E-mail : """+email_hr+"""</p>
+                   <p>Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                    <img src="https://inet.co.th/images/inetlogo.png"></br>
                   </body>
                 </html>
         """
