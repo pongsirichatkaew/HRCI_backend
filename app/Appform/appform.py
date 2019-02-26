@@ -531,6 +531,21 @@ def QryDatbaseAppform():
 
     if int(data_new['long_date'])>180:
         return "too long day"
+
+    connection = mysql.connect()
+    cursor = connection.cursor()    
+    try:
+        sql2 = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+        cursor.execute(sql2,(data_new['employeeid'],data_new['company_id']))
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
+        employeeid__ = result2[0]['employeeid']
+        return "Duplicate_employeeid"
+    except Exception as e:
+        pass
+    connection.commit()
+    connection.close()
+
     connection = mysql3.connect()
     cursor = connection.cursor()
     sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
@@ -1061,9 +1076,15 @@ def send_Mail_appointment():
         cursor = connection.cursor()
         sqlIn4 = "INSERT INTO appoint_mail_log (EmploymentAppNo,appoint_day,appoint_time,appoint_place,position,create_by) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],data_new['create_by']))
+
+        sqlhr = "SELECT name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr WHERE employeeid = %s"
+        cursor.execute(sqlhr,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
         connection.commit()
         connection.close()
-        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'])
+        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
         return "success"
     except Exception as e:
         logserver(e)
@@ -1082,8 +1103,8 @@ def send_Mail_starwork(cursor):
         newvalues = newvalues[:-1]
     print(newvalues)
     return 'hello'
-def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname):
-    send_from = "Hr Management <jirakit.da@inet.co.th>"
+def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
+    send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
@@ -1109,7 +1130,16 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
                       <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
                       <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
                       <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
-                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br></br>
+                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br>
+                      <p>--</p>
+                      <p>Best regards,</p>
+                      <p>"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                      <p>Human Resource Officer</p>
+                      <p>Internet Thailand Public Co., Ltd.</p>
+                      <p>Tel : """+phone+"""</p>
+                      <p>E-mail : """+email_hr+"""</p>
+                      <p>Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                       <img src="https://inet.co.th/images/inetlogo.png"></br>
                   </body>
                 </html>
         """
@@ -1131,17 +1161,49 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendMail_starwork(email,star_date,position):
-    send_from = "Hr Management <jirakit.da@inet.co.th>"
+def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,email_hr,phone,nickname):
+    send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "ขอยืนยันผลสัมภาษณ์งานตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
                 <html>
                   <body>
-                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
-                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                 <b>เรียน  """+name+""" """+surname+"""</b></br>
+                   <p>บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน) <br>
+                    ขอยืนยันวันเริ่มงาน ในวันที่ """+star_work+"""  ตำแหน่ง """+position+""" รบกวนเตรียมเอกสารดังนี้ </p>
+                   <p>เอกสารที่ต้องสแกนส่งทางอีเมลหากไม่ได้นำมาในวันเริ่มงาน ดังนี้</p></br>
+                   <p>- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                   <p>- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                   <p>- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
+                   <p>- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p></br>
+                   <p>เอกสารที่ต้องเตรียมในวันเริ่มงาน ดังนี้</p></br>
+                   <p>- สำเนาบัญชี ธนาคารกรุงไทย   พร้อมเซ็นสำเนาถูกต้อง</p></br>
+                   <p>- ใบรับรองแพทย์ตรวจสุขภาพทั่วไป 5 โรค  และตรวจเชื้อไวรัสตับอักเสบบี</p></br>
+                   <p>ตรวจสุขภาพทั่วไป 5 โรค</p></br>
+                   <p>1.วัณโรคในระยะแพร่กระจายเชื้อ</p></br>
+                   <p>2.โรคเท้าช้างในระยะที่ปรากฎอาการเป็นที่รังเกียจแก่สังคม</p></br>
+                   <p>3.โรคติดยาเสพติดให้โทษ</p></br>
+                   <p>4.โรคพิษสุราเรื้อรัง</p></br>
+                   <p>5.โรคติดต่อร้ายแรงหรือโรคเรื้อรังที่ปรากฏอาการเด่นชัดหรือรุนแรงและเป็นอุปสรรคต่อการปฏิบัติหน้าที่</p></br></br>
+                   <p>กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a></p></br></br>
+                   <p>ทั้งนี้หากได้รับ Email หรือ มีการเปลี่ยนแปลงวันเริ่มงาน กรุณาตอบรับกลับทาง Email ครับ</p></br></br>
+                   <p>เส้นทางการเดินทาง</p></br>
+                   <p>- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p></br>
+                   <p>เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p></br>
+                   <p>- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p></br>
+                   <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
+                   <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
+                   <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
+                   <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br>
+                   <p>--</p>
+                   <p>Best regards,</p>
+                   <p>"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                   <p>Human Resource Officer</p>
+                   <p>Internet Thailand Public Co., Ltd.</p>
+                   <p>Tel : """+phone+"""</p>
+                   <p>E-mail : """+email_hr+"""</p>
+                   <p>Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                    <img src="https://inet.co.th/images/inetlogo.png"></br>
                   </body>
                 </html>
         """
