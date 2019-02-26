@@ -531,6 +531,21 @@ def QryDatbaseAppform():
 
     if int(data_new['long_date'])>180:
         return "too long day"
+
+    connection = mysql.connect()
+    cursor = connection.cursor()    
+    try:
+        sql2 = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
+        cursor.execute(sql2,(data_new['employeeid'],data_new['company_id']))
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
+        employeeid__ = result2[0]['employeeid']
+        return "Duplicate_employeeid"
+    except Exception as e:
+        pass
+    connection.commit()
+    connection.close()
+
     connection = mysql3.connect()
     cursor = connection.cursor()
     sqlqryIDcard = "SELECT ID_CardNo FROM Personal WHERE EmploymentAppNo=%s"
