@@ -1061,9 +1061,15 @@ def send_Mail_appointment():
         cursor = connection.cursor()
         sqlIn4 = "INSERT INTO appoint_mail_log (EmploymentAppNo,appoint_day,appoint_time,appoint_place,position,create_by) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],data_new['create_by']))
+
+        sqlhr = "SELECT name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr WHERE employeeid = %s"
+        cursor.execute(sqlhr,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
         connection.commit()
         connection.close()
-        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'])
+        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
         return "success"
     except Exception as e:
         logserver(e)
@@ -1082,8 +1088,8 @@ def send_Mail_starwork(cursor):
         newvalues = newvalues[:-1]
     print(newvalues)
     return 'hello'
-def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname):
-    send_from = "Hr Management <jirakit.da@inet.co.th>"
+def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
+    send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
@@ -1140,7 +1146,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,email_hr):
+def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
     subject = "ขอยืนยันผลสัมภาษณ์งานตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
