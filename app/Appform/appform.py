@@ -1068,7 +1068,12 @@ def send_Mail_appointment():
         cursor.execute(sqlcheck,(data_new['EmploymentAppNo']))
         columns = [column[0] for column in cursor.description]
         result_per = toJson(cursor.fetchall(),columns)
-
+        for item in result_per:
+            prefix = ['นาย', 'นาง', 'นางสาว']
+            for i in xrange(len(prefix)):
+        	    Name_e = item['NameTh'].split(prefix[i])
+                if len(Name_e)==2:
+                    Name_ea = Name_e[1]
         connection.commit()
         connection.close()
 
@@ -1084,7 +1089,7 @@ def send_Mail_appointment():
 
         connection.commit()
         connection.close()
-        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
+        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],Name_ea,result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
         return "success"
     except Exception as e:
         logserver(e)
@@ -1110,7 +1115,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     text = """\
                 <html>
                   <body>
-                    <p style="font-size: 16px;margin-bottom: 40px;"><span style="font-weight: bold;">เรียน</span>  """+name+""" """+surname+"""</p>
+                    <p style="font-size: 16px;margin-bottom: 40px;"><span style="font-weight: bold;">เรียน</span>  คุณ"""+name+""" """+surname+"""</p>
 
                       <p style="text-indent: 20px;">บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)  ขอเรียนเชิญสัมภาษณ์งาน <span style="font-weight:bold; background-color: rgb(255, 204, 153);">ตำแหน่ง """+position+"""</span><br>
                        ใน<span style="font-weight:bold; background-color: rgb(255, 204, 153);">วันที่ """+appoint_day+""" เวลา """+appoint_time+""" น.</span> ณ อาคารไทยซัมมิททาวเวอร์  ชั้น IT ห้องประชุม INET """+appoint_place+"""</p>
