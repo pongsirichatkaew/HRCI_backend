@@ -533,7 +533,7 @@ def QryDatbaseAppform():
         return "too long day"
 
     connection = mysql.connect()
-    cursor = connection.cursor()    
+    cursor = connection.cursor()
     try:
         sql2 = "SELECT employeeid FROM employee WHERE employeeid=%s AND company_id=%s"
         cursor.execute(sql2,(data_new['employeeid'],data_new['company_id']))
@@ -1084,7 +1084,7 @@ def send_Mail_appointment():
 
         connection.commit()
         connection.close()
-        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
+        sendMail_appointment(result_per[0]['Email'],data_new['appoint_day'],data_new['appoint_time'],data_new['appoint_place'],data_new['position'],result_per[0]['NameTh'],result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
         return "success"
     except Exception as e:
         logserver(e)
