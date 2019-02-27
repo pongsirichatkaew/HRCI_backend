@@ -1068,12 +1068,12 @@ def send_Mail_appointment():
         cursor.execute(sqlcheck,(data_new['EmploymentAppNo']))
         columns = [column[0] for column in cursor.description]
         result_per = toJson(cursor.fetchall(),columns)
-        for item in result_per:
-            prefix = ['นาย', 'นาง', 'นางสาว']
-            for i in xrange(len(prefix)):
-        	    Name_e = item['NameTh'].split(prefix[i])
-                if len(Name_e)==2:
-                    Name_ea = Name_e[1]
+        # for item in result_per:
+        prefix = ['นาย', 'นาง', 'นางสาว']
+        for i in xrange(len(prefix)):
+    	    Name_e = result_per[0]['NameTh'].split(prefix[i])
+            if len(Name_e)==2:
+                Name_ea = Name_e[1]
         connection.commit()
         connection.close()
 
