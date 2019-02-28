@@ -1094,6 +1094,45 @@ def send_Mail_appointment():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/get_Mail_appointment', methods=['POST'])
+def get_Mail_appointment():
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+
+        sqlcheck = "SELECT NameTh,SurnameTh,Email FROM Personal WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlcheck,(data_new['EmploymentAppNo']))
+        columns = [column[0] for column in cursor.description]
+        result_per = toJson(cursor.fetchall(),columns)
+
+        prefix = ['นาย', 'นาง', 'นางสาว']
+        for i in xrange(len(prefix)):
+    	    Name_e = result_per[0]['NameTh'].split(prefix[i])
+            if len(Name_e)==2:
+                Name_ea = Name_e[1]
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+
+        sqlhr = "SELECT name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr WHERE employeeid = %s"
+        cursor.execute(sqlhr,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
+        connection.commit()
+        connection.close()
+        resultlast={}
+        resultlast['personal_detail'] = result_per
+        resultlast['hr_detail'] = result_hr
+        return jsonify(resultlast)
+    except Exception as e:
+        logserver(e)
+        return "fail"        
 @app.route('/send_Mail_starwork', methods=['POST'])
 @connect_sql()
 def send_Mail_starwork(cursor):
