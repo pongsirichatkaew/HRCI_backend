@@ -284,7 +284,7 @@ def gen_employeeid():
     else:
         new_star = str(int(str_date_year)+543)
         str_date_year = new_star[2:]
-    sql = "SELECT MAX(RIGHT(employeeid,{})) AS max_employeeid FROM employee WHERE company_id={} AND type_em='{}' AND start_work LIKE '%-%-{}'".format(max_all,data_new['company_id'],data_new['typeEm_detail'],year_last)
+    sql = "SELECT RIGHT(MAX(employeeid),{}) AS max_employeeid FROM employee WHERE company_id={} AND type_em='{}' AND start_work LIKE '%-%-{}'".format(max_all,data_new['company_id'],data_new['typeEm_detail'],year_last)
     cursor.execute(sql)
     columns = [column[0] for column in cursor.description]
     result = toJson(cursor.fetchall(),columns)

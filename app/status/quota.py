@@ -58,8 +58,8 @@ def Editquota(cursor):
 @connect_sql()
 def Qryquota(cursor):
     try:
-        sql = "SELECT quota.quota_id,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
-                                                                                                                                   LEFT JOIN status ON position.position_id = quota.position_id"
+        sql = "SELECT quota.quota_id,company.companyid,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
+                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
