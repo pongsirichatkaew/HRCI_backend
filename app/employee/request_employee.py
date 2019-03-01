@@ -291,8 +291,8 @@ def QryApprove_request_Info(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
