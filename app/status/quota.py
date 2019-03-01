@@ -48,7 +48,7 @@ def Editquota(cursor):
         cursor.execute(sqlUp,(data_new['quota_id']))
 
         sqlIn = "INSERT INTO quota (quota_id,year,companyid,position_id,member,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['quota_id'],,data_new['year']data_new['companyid'],data_new['position_id'],data_new['member'],data_new['createby']))
+        cursor.execute(sqlIn,(result[0]['quota_id'],data_new['year'],data_new['companyid'],data_new['position_id'],data_new['member'],data_new['createby']))
 
         return "success"
     except Exception as e:
