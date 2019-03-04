@@ -267,12 +267,12 @@ def Addapprove_request_many(cursor):
 
         i=0
         for i in xrange(len(data_new['em_request'])):
-            sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(data_new['employeeid'],data_new['em_request'][i]['employeeid_reques'],data_new['em_request'][i]['name'],data_new['em_request'][i]['lastname'],data_new['em_request'][i]['tier_approve'],data_new['em_request'][i]['position_detail'],data_new['createby']))
 
             type_action = "ADD"
 
-            sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlApprove,(data_new['employeeid'],data_new['em_request'][i]['employeeid_reques'],data_new['em_request'][i]['name'],data_new['em_request'][i]['lastname'],data_new['em_request'][i]['tier_approve'],data_new['em_request'][i]['position_detail'],data_new['createby'],type_action))
 
             try:
