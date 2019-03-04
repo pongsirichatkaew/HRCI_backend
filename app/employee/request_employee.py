@@ -225,6 +225,32 @@ def AddApprove_request(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/Update_quotaid', methods=['POST'])
+@connect_sql()
+def Update_quotaid(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp = "UPDATE employee SET quota_id=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['quota_id'],data_new['employeeid']))
+
+        sql = "SELECT * FROM employee WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "Edit"
+
+        sqlEM = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,type_em,start_work,EndWork_probation,quota_id,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlEM,(data_new['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
+        result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['type_em'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['quota_id'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
 @app.route('/Addapprove_request_many', methods=['POST'])
 @connect_sql()
 def Addapprove_request_many(cursor):
