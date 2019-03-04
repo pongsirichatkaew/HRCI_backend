@@ -19,25 +19,29 @@ def QryEm_request(cursor):
         result = toJson(cursor.fetchall(),columns)
         for item in result:
             salary_thai = []
-            decodesalary = base64.b64decode(item['salary'])
-            item['salary'] = decodesalary
-            salary = decodesalary
-            salary= (str(salary)[::-1])
-            thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
-            unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
-            length = len(salary) > 1
-            resultSalary = ""
-            for index, current in enumerate(map(int, salary)):
-                if current:
-                    if index:
-                       resultSalary = unit[index] + resultSalary
-                    if length and current == 1 and index == 0:
-                        resultSalary += 'เอ็ด'
-                    elif index == 1 and current == 2:
-                        resultSalary = 'ยี่' + resultSalary
-                    elif index != 1 or current != 1:
-                        resultSalary = thai_number[current] + resultSalary
-            item['salary_thai'] = resultSalary
+            try:
+                decodesalary = base64.b64decode(item['salary'])
+                item['salary'] = decodesalary
+                salary = decodesalary
+                salary= (str(salary)[::-1])
+                thai_number = ("ศูนย์","หนึ่ง","สอง","สาม","สี่","ห้า","หก","เจ็ด","แปด","เก้า")
+                unit = ("","สิบ","ร้อย","พัน","หมื่น","แสน","ล้าน")
+                length = len(salary) > 1
+                resultSalary = ""
+                for index, current in enumerate(map(int, salary)):
+                    if current:
+                        if index:
+                           resultSalary = unit[index] + resultSalary
+                        if length and current == 1 and index == 0:
+                            resultSalary += 'เอ็ด'
+                        elif index == 1 and current == 2:
+                            resultSalary = 'ยี่' + resultSalary
+                        elif index != 1 or current != 1:
+                            resultSalary = thai_number[current] + resultSalary
+                item['salary_thai'] = resultSalary
+            except Exception as e:
+                item['salary'] = ""
+                item['salary_thai'] = ""
             long_date = []
             date1 = result[0]['start_work']
             star_date = date1.split("-")
