@@ -133,11 +133,17 @@ def QryEm_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_benefits = toJson(cursor.fetchall(),columns)
 
+        sql_approver = "SELECT * FROM approve_request WHERE employeeid=%s"
+        cursor.execute(sql_approver,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_approver = toJson(cursor.fetchall(),columns)
+
         result_all={}
         result_all["employee"] = result
         result_all["employee_Education"] = result_Education
         result_all["employee_Employment"] = result_Employment
         result_all["employee_Benefits"] = result_benefits
+        result_all["employee_Approver"] = result_approver
 
         return jsonify(result_all)
     except Exception as e:
