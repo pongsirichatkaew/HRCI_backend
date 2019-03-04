@@ -294,14 +294,16 @@ def QryEmployee_one_person(cursor):
             sqlcontract = "SELECT Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
             cursor.execute(sqlcontract,resultEmployee[0]['citizenid'])
             columnscontract = [column[0] for column in cursor.description]
-            resultcontract = toJson(cursor.fetchall(),columnscontract)
+            resultcontract_all = toJson(cursor.fetchall(),columnscontract)
+            resultcontract = resultcontract_all[0]['Authority_Distrinct_Id_Card']
         except Exception as e:
             resultcontract = ""
 
         arr={}
         arr["Address_home"] = resultAddress_home
         arr["Address_Present"] = resultAddress_Present
-        arr["Authority_Distrinct"] = resultcontract[0]['Authority_Distrinct_Id_Card']
+        arr["Authority_Distrinct"] = resultcontract
+        # arr["Authority_Distrinct"] = resultcontract[0]['Authority_Distrinct_Id_Card']
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         arr["Image_profile"] = encoded_Image

@@ -181,12 +181,12 @@ def AddApprove_request(cursor):
         except Exception as e:
             pass
 
-        sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby']))
 
         type_action = "ADD"
 
-        sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
 
         try:
@@ -274,13 +274,37 @@ def Deleteapprove_request(cursor):
 
         type_action = "Delete"
 
-        sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
         sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
         cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques']))
 
         return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryApprove_request', methods=['POST'])
+@connect_sql()
+def QryApprove_request(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        # sql2 = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s"
+        # cursor.execute(sql2,(data_new['employeeid']))
+        # columns = [column[0] for column in cursor.description]
+        # result2 = toJson(cursor.fetchall(),columns)
+        # for item in result:
+        #     validstatus = []
+        #     item['validstatus'] = result2[0]['validstatus']
+
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -402,6 +426,18 @@ def Send_request(cursor):
             sqlUp_main = "UPDATE employee SET validstatus_request=2 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
         return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryStatus_request', methods=['POST'])
+@connect_sql()
+def QryStatus_request(cursor):
+    try:
+        sql = "SELECT id,status_id,status_detail,path_color,id,font_color FROM status_request"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
