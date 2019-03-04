@@ -83,7 +83,7 @@ def QryAssessor_quota(cursor):
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            company_id = 'WHERE assessor_quota.companyid='+'"'+str(data_new['companyid'])+'"'
+            company_id = 'WHERE assessor_quota.companyid='+'"'+str(data_new['companyid'])+'"'+' '+'AND assessor_quota.tier_approve IN'+"('L2','L3','L4')"
         except Exception as e:
             pass
         sql = "SELECT assessor_quota.assessor_quota_id,assessor_quota.employeeid,assessor_quota.companyid,company.companyname,assessor_quota.name_asp,assessor_quota.surname_asp,assessor_quota.tier_approve,assessor_quota.position_id,position.position_detail,assessor_quota.email_asp FROM assessor_quota INNER JOIN company ON assessor_quota.companyid = company.companyid INNER JOIN position ON assessor_quota.position_id = position.position_id "+company_id+" "
