@@ -595,14 +595,14 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve =='L2')&(status_ =='Reject'):
 
-            sqlUp = "UPDATE approve_request SET status_=6,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=6,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=6 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
             try:
-                sqlUp_L1 = "UPDATE approve_request SET status_=6,comment=NULL,date_status=NULL WHERE employeeid=%s AND tier_approve='L1'"
+                sqlUp_L1 = "UPDATE approve_request SET status_=6,comment=NULL,comment_orther=NULL,date_status=NULL WHERE employeeid=%s AND tier_approve='L1'"
                 cursor.execute(sqlUp_L1,(data_new['employeeid']))
 
                 # sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
@@ -715,8 +715,8 @@ def UpdateStatus_request(cursor):
 
             if not result_check_L3:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -733,8 +733,8 @@ def UpdateStatus_request(cursor):
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -770,8 +770,8 @@ def UpdateStatus_request(cursor):
 
             if not result_check_L2:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
@@ -791,8 +791,8 @@ def UpdateStatus_request(cursor):
 
             elif (not result_check_L2)&(not result_check_L3):
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
@@ -811,8 +811,8 @@ def UpdateStatus_request(cursor):
                 sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=3 WHERE employeeid=%s"
