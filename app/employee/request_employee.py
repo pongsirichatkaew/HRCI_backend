@@ -233,6 +233,12 @@ def Addapprove_request_many(cursor):
         source = dataInput['source']
         data_new = source
 
+        sqlUp = "UPDATE employee SET quota_id=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp,(data_new['quota_id'],data_new['employeeid']))
+
+        sqlUp_log = "UPDATE employee_log SET quota_id=%s WHERE employeeid=%s"
+        cursor.execute(sqlUp_log,(data_new['quota_id'],data_new['employeeid']))
+
         i=0
         for i in xrange(len(data_new['em_request'])):
             sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"

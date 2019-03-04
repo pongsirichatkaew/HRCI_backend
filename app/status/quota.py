@@ -63,6 +63,17 @@ def Qryquota(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            quota_detail = []
+            sql1 = "SELECT COUNT(employee.employeeid) AS now_member,  CONVERT(quota.member,SIGNED)-CONVERT(COUNT(employee.employeeid),SIGNED) AS remain_member\
+                        FROM employee LEFT JOIN quota ON employee.quota_id = quota.quota_id WHERE employee.quota_id = %s "
+            cursor.execute(sql1,(i1['quota_id']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            for i2 in data2 :
+                quota_detail.append(i2)
+                i2['remain_member'] = int(i1['member'])-int(i2['now_member'])
+            i1['quota_detail'] = quota_detail
         return jsonify(result)
     except Exception as e:
         logserver(e)
