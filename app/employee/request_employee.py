@@ -338,15 +338,21 @@ def QryApprove_request(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        # sql2 = "SELECT validstatus FROM employee WHERE employeeid=%s"
-        # cursor.execute(sql2,(data_new['employeeid']))
-        # columns = [column[0] for column in cursor.description]
-        # result2 = toJson(cursor.fetchall(),columns)
-        # for item in result:
-        #     validstatus = []
-        #     item['validstatus'] = result2[0]['validstatus']
+        sql2 = "SELECT quota_id FROM employee WHERE employeeid=%s"
+        cursor.execute(sql2,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
 
-        return jsonify(result)
+        sql3 = "SELECT quota.quota_id,quota.year,company.companyid,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
+                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id"
+        cursor.execute(sql3,(result2[0]['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        result3 = toJson(cursor.fetchall(),columns)
+
+        result_all={}
+        result_all["employee"] = result
+        result_all["quota"] = result3
+        return jsonify(result_all)
     except Exception as e:
         logserver(e)
         return "fail"
