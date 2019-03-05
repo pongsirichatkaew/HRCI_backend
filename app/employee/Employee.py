@@ -363,7 +363,7 @@ def EditEmployee(cursor):
         try:
             encodedsalary = base64.b64encode(data_new['salary'])
         except Exception as e:
-            pass 
+            encodedsalary = "" 
         sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s AND employeeid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid'],data_new['employeeid']))
 
