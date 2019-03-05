@@ -733,7 +733,7 @@ def EditEmployee_ComputerSkill(cursor):
         i=0
         for i in xrange(len(data_new['ComSkill'])):
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level,createby) VALUES (%s,%s,%s,%s)"
-            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level'],data_new['crcreateby']))
+            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level'],data_new['createby']))
 
         return "Success"
     except Exception as e:
@@ -880,10 +880,13 @@ def EditEmployee_SpecialSkill(cursor):
         result2 = toJson(cursor.fetchall(),columns)
 
         type_action = "Edit"
+        try:
+            sqlIn20_log = "INSERT INTO SpecialSkill_log (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason,type_action,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn20_log,(result2[0]['ID_CardNo'],result2[0]['CarDrivingLicense'],result2[0]['MotorBicycleDrivingLicense'],result2[0]['OwnCar'],result2[0]['OwnMotorBicycle'], \
+            result2[0]['WorkUpCountry'],result2[0]['PhysicalDisabilityOrDisease'],result2[0]['DischargeFromEmployment'],result2[0]['DischargeFromEmploymentReason'],result2[0]['Arrested'],result2[0]['ArrestedReason'],type_action,data_new['createby']))
 
-        sqlIn20_log = "INSERT INTO SpecialSkill_log (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason,type_action,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn20_log,(result2[0]['ID_CardNo'],result2[0]['CarDrivingLicense'],result2[0]['MotorBicycleDrivingLicense'],result2[0]['OwnCar'],result2[0]['OwnMotorBicycle'], \
-        result2[0]['WorkUpCountry'],result2[0]['PhysicalDisabilityOrDisease'],result2[0]['DischargeFromEmployment'],result2[0]['DischargeFromEmploymentReason'],result2[0]['Arrested'],result2[0]['ArrestedReason'],type_action,data_new['createby']))
+        except Exception as e:
+            pass
 
         sql_De_SpecialSkill = "DELETE FROM SpecialSkill WHERE ID_CardNo=%s"
         cursor.execute(sql_De_SpecialSkill,(result[0]['citizenid']))
