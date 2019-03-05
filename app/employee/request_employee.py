@@ -344,7 +344,7 @@ def QryApprove_request(cursor):
         result2 = toJson(cursor.fetchall(),columns)
 
         sql3 = "SELECT quota.quota_id,quota.year,company.companyid,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
-                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id"
+                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id WHERE quota.quota_id = %s"
         cursor.execute(sql3,(result2[0]['quota_id']))
         columns = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns)
