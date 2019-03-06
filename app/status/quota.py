@@ -58,8 +58,16 @@ def Editquota(cursor):
 @connect_sql()
 def Qryquota(cursor):
     try:
+        quota_id = ""
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            quota_id = 'WHERE quota_id='+'"'+str(data_new['quota_id'])+'"'
+        except Exception as e:
+            pass
         sql = "SELECT quota.quota_id,quota.year,company.companyid,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
-                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id"
+                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id "+quota_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
