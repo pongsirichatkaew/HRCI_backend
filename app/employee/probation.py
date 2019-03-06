@@ -48,14 +48,14 @@ def UpdateStatus_probation(cursor):
 
                 sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_probation  LEFT JOIN employee ON approve_probation.employeeid_pro = employee.employeeid\
                                  WHERE approve_probation.employeeid=%s AND approve_probation.tier_approve='L3' AND approve_probation.version=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
+                cursor.execute(sql_reject_l3,(data_new['employeeid'],data_new['version']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_l3 = toJson(cursor.fetchall(),columns)
 
                 sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                        WHERE employee.employeeid=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid']))
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_employee = toJson(cursor.fetchall(),columns)
                 em_name = result_reject_employee[0]['name_th']
@@ -75,14 +75,14 @@ def UpdateStatus_probation(cursor):
 
                 sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_probation  LEFT JOIN employee ON approve_probation.employeeid_pro = employee.employeeid\
                                  WHERE approve_probation.employeeid=%s AND approve_probation.tier_approve='L2' AND approve_probation.version=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
+                cursor.execute(sql_reject_l3,(data_new['employeeid'],data_new['version']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_l3 = toJson(cursor.fetchall(),columns)
 
                 sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                        WHERE employee.employeeid=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid']))
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_employee = toJson(cursor.fetchall(),columns)
                 em_name = result_reject_employee[0]['name_th']
@@ -121,14 +121,14 @@ def UpdateStatus_probation(cursor):
 
                 sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_probation  LEFT JOIN employee ON approve_probation.employeeid_pro = employee.employeeid\
                                  WHERE approve_probation.employeeid=%s AND approve_probation.tier_approve='L2' AND approve_probation.version=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
+                cursor.execute(sql_reject_l3,(data_new['employeeid'],data_new['version']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_l3 = toJson(cursor.fetchall(),columns)
 
                 sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                        WHERE employee.employeeid=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid']))
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_employee = toJson(cursor.fetchall(),columns)
                 em_name = result_reject_employee[0]['name_th']
@@ -167,14 +167,14 @@ def UpdateStatus_probation(cursor):
 
                 sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_probation  LEFT JOIN employee ON approve_probation.employeeid_pro = employee.employeeid\
                                  WHERE approve_probation.employeeid=%s AND approve_probation.tier_approve='L1' AND approve_probation.version=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
+                cursor.execute(sql_reject_l3,(data_new['employeeid'],data_new['version']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_l3 = toJson(cursor.fetchall(),columns)
 
                 sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                        WHERE employee.employeeid=%s"
-                cursor.execute(sql_check_end,(data_new['employeeid']))
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_reject_employee = toJson(cursor.fetchall(),columns)
                 em_name = result_reject_employee[0]['name_th']
