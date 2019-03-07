@@ -94,7 +94,7 @@ def uploads_pic_probation(cursor):
 def Qry_uploads_pic_probation(cursor):
     try:
         img_base64 = []
-        path_mail_pic = '../uploads/probation_mail/probation_mail.png'
+        path_mail_pic = '../app/uploads/probation_mail/probation_mail.png'
         tranImage = path_mail_pic
         with open(tranImage, 'rb') as image_file:
             encoded_Image = base64.b64encode(image_file.read())
@@ -114,3 +114,10 @@ def Qry_uploads_pic_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/userGetFileImageMail/<path>/<fileName>', methods=['GET'])
+def userGetFileImageMail(path, fileName):
+    # current_app.logger.info('userGetFile')
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory('../uploads/' + path, fileName)
+    # return "ssss"
