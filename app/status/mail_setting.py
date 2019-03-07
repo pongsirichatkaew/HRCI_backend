@@ -114,3 +114,10 @@ def Qry_uploads_pic_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/userGetFileImageMail/<path>/<fileName>', methods=['GET'])
+def userGetFileImageMail(path, fileName):
+    # current_app.logger.info('userGetFile')
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory('../uploads/' + path, fileName)
+    # return "ssss"
