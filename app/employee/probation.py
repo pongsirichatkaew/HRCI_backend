@@ -1414,7 +1414,7 @@ def Qry_upload_file(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/sendEmail', methods = ['POST'])
+@app.route('/sendEmail', methods = ['GET'])
 @connect_sql()
 def send_email(cursor):
     sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L1' GROUP BY email_asp "
