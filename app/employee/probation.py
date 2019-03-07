@@ -1493,7 +1493,7 @@ def sendToMail(email, total_em):
     text = """\
                 <html>
                   <body>
-                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
                     <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
                       <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
@@ -1525,7 +1525,7 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     text = """\
                 <html>
                   <body>
-                  <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
                     <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
                       <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
