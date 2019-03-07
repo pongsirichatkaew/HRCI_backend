@@ -1527,7 +1527,7 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
                   <body>
                   <img src="https://intranet.inet.co.th/assets/images/news/1521011167Slide1.JPG"></br>
                     <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
-                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
                   </body>
                 </html>
