@@ -41,16 +41,6 @@ def Editmail_hr(cursor):
         source = dataInput['source']
         data_new = source
 
-        try:
-            sql44 = "SELECT name_hr FROM mail_hr WHERE employeeid=%s"
-            cursor.execute(sql44,(data_new['employeeid']))
-            columns = [column[0] for column in cursor.description]
-            result_test = toJson(cursor.fetchall(),columns)
-            name_test = result_test[0]['name_hr']
-            return "employee is duplicate"
-        except Exception as e:
-            pass
-
         sqlUp = "DELETE FROM mail_hr WHERE mail_hr_id=%s"
         cursor.execute(sqlUp,(data_new['mail_hr_id']))
 
