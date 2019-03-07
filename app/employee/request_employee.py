@@ -867,3 +867,32 @@ def UpdateStatus_request(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmp_request_leader', methods=['POST'])
+def QryEmp_request_leader():
+    try:
+        status_id = ""
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'"'
+        except Exception as e:
+            pass
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_request.tier_approve,question_pro_type.question_pro_detail_type FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = employee.type_question\
+                                      LEFT JOIN status ON status.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+        cursor.execute(sql,data_new['employeeid_reques'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
