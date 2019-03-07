@@ -294,14 +294,16 @@ def QryEmployee_one_person(cursor):
             sqlcontract = "SELECT Authority_Distrinct_Id_Card FROM Contract WHERE ID_CardNo=%s"
             cursor.execute(sqlcontract,resultEmployee[0]['citizenid'])
             columnscontract = [column[0] for column in cursor.description]
-            resultcontract = toJson(cursor.fetchall(),columnscontract)
+            resultcontract_all = toJson(cursor.fetchall(),columnscontract)
+            resultcontract = resultcontract_all[0]['Authority_Distrinct_Id_Card']
         except Exception as e:
             resultcontract = ""
 
         arr={}
         arr["Address_home"] = resultAddress_home
         arr["Address_Present"] = resultAddress_Present
-        arr["Authority_Distrinct"] = resultcontract[0]['Authority_Distrinct_Id_Card']
+        arr["Authority_Distrinct"] = resultcontract
+        # arr["Authority_Distrinct"] = resultcontract[0]['Authority_Distrinct_Id_Card']
         arr["employee"] = resultEmployee
         arr["Attachment"] = result4
         arr["Image_profile"] = encoded_Image
@@ -341,10 +343,13 @@ def EditEmployee(cursor):
         cursor.execute(sqlEM_log,(result[0]['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
         result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
 
-        sqlEM_pro_log = "INSERT INTO Emp_probation_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlEM_pro_log,(result[0]['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
-        result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
+        try:
+            sqlEM_pro_log = "INSERT INTO Emp_probation_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlEM_pro_log,(result[0]['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
+            result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
 
+        except Exception as e:
+            pass
         date1 = data_new['Start_contract']
         long_date = int(data_new['long_date'])-1
         star_date = date1.split("-")
@@ -358,8 +363,10 @@ def EditEmployee(cursor):
         Mon_e =end_date[1]
         year_e = end_date[0]
         End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-        encodedsalary = base64.b64encode(data_new['salary'])
-
+        try:
+            encodedsalary = base64.b64encode(data_new['salary'])
+        except Exception as e:
+            encodedsalary = ""
         sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s AND employeeid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid'],data_new['employeeid']))
 
@@ -370,11 +377,13 @@ def EditEmployee(cursor):
 
         # sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
         # cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
-
-        sqlEM_pro = "UPDATE Emp_probation SET  employeeid=%s,citizenid=%s,name_th=%s,name_eng=%s,surname_th=%s,surname_eng=%s,nickname_employee=%s,salary=%s,email=%s,phone_company=%s,position_id=%s,section_id=%s,org_name_id=%s,cost_center_name_id=%s,company_id=%s,start_work=%s,EndWork_probation=%s,createby=%s WHERE citizenid=%s AND employeeid=%s"
-        cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
-        data_new['phone_company'],data_new['position_id'],\
-        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['citizenid'],data_new['employeeid']))
+        try:
+            sqlEM_pro = "UPDATE Emp_probation SET  employeeid=%s,citizenid=%s,name_th=%s,name_eng=%s,surname_th=%s,surname_eng=%s,nickname_employee=%s,salary=%s,email=%s,phone_company=%s,position_id=%s,section_id=%s,org_name_id=%s,cost_center_name_id=%s,company_id=%s,start_work=%s,EndWork_probation=%s,createby=%s WHERE citizenid=%s AND employeeid=%s"
+            cursor.execute(sqlEM_pro,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
+            data_new['phone_company'],data_new['position_id'],\
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['citizenid'],data_new['employeeid']))
+        except Exception as e:
+            pass
 
         UpPersonal = "UPDATE Personal SET ID_CardNo=%s,NameTh=%s,SurnameTh=%s,NameEn=%s,SurnameEn=%s,NicknameEn=%s WHERE ID_CardNo=%s"
         cursor.execute(UpPersonal,(data_new['ID_CardNo'],data_new['NameTh'],data_new['SurnameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],result[0]['citizenid']))
@@ -724,7 +733,7 @@ def EditEmployee_ComputerSkill(cursor):
         i=0
         for i in xrange(len(data_new['ComSkill'])):
             sqlIn6 = "INSERT INTO ComputerSkill (ID_CardNo,ComSkill,Level,createby) VALUES (%s,%s,%s,%s)"
-            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level'],data_new['crcreateby']))
+            cursor.execute(sqlIn6,(data_new['ComSkill'][i]['ID_CardNo'],data_new['ComSkill'][i]['ComSkill'],data_new['ComSkill'][i]['Level'],data_new['createby']))
 
         return "Success"
     except Exception as e:
@@ -871,10 +880,13 @@ def EditEmployee_SpecialSkill(cursor):
         result2 = toJson(cursor.fetchall(),columns)
 
         type_action = "Edit"
+        try:
+            sqlIn20_log = "INSERT INTO SpecialSkill_log (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason,type_action,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn20_log,(result2[0]['ID_CardNo'],result2[0]['CarDrivingLicense'],result2[0]['MotorBicycleDrivingLicense'],result2[0]['OwnCar'],result2[0]['OwnMotorBicycle'], \
+            result2[0]['WorkUpCountry'],result2[0]['PhysicalDisabilityOrDisease'],result2[0]['DischargeFromEmployment'],result2[0]['DischargeFromEmploymentReason'],result2[0]['Arrested'],result2[0]['ArrestedReason'],type_action,data_new['createby']))
 
-        sqlIn20_log = "INSERT INTO SpecialSkill_log (ID_CardNo,CarDrivingLicense,MotorBicycleDrivingLicense,OwnCar,OwnMotorBicycle,WorkUpCountry,PhysicalDisabilityOrDisease,DischargeFromEmployment,DischargeFromEmploymentReason,Arrested,ArrestedReason,type_action,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn20_log,(result2[0]['ID_CardNo'],result2[0]['CarDrivingLicense'],result2[0]['MotorBicycleDrivingLicense'],result2[0]['OwnCar'],result2[0]['OwnMotorBicycle'], \
-        result2[0]['WorkUpCountry'],result2[0]['PhysicalDisabilityOrDisease'],result2[0]['DischargeFromEmployment'],result2[0]['DischargeFromEmploymentReason'],result2[0]['Arrested'],result2[0]['ArrestedReason'],type_action,data_new['createby']))
+        except Exception as e:
+            pass
 
         sql_De_SpecialSkill = "DELETE FROM SpecialSkill WHERE ID_CardNo=%s"
         cursor.execute(sql_De_SpecialSkill,(result[0]['citizenid']))
@@ -1006,7 +1018,7 @@ def EditEmployee_Employeeid(cursor):
                 cursor.execute(sqlUp_prove,(data_new['employeeid'],data_new['Old_EmpId']))
             except Exception as e:
                 pass
-                
+
         return "Success"
     except Exception as e:
         logserver(e)
