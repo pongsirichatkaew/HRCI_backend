@@ -72,3 +72,45 @@ def Deletemail_setting(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/uploads_pic_probation', methods=['POST'])
+@connect_sql()
+def uploads_pic_probation(cursor):
+    try:
+        path = 'uploads/'+'probation_mail'
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+            file.save(os.path.join(path, 'probation_mail.png'))
+        else:
+            return 'file is not allowed'
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_uploads_pic_probation', methods=['POST'])
+@connect_sql()
+def Qry_uploads_pic_probation(cursor):
+    try:
+        img_base64 = []
+        path_mail_pic = '../uploads/probation_mail/probation_mail.png'
+        tranImage = path_mail_pic
+        with open(tranImage, 'rb') as image_file:
+            encoded_Image = base64.b64encode(image_file.read())
+        img_base64 = encoded_Image
+        img_base64 = []
+        img_base64.append(encoded_Image)
+        last_email = []
+        last_email.append(path_mail_pic)
+        keyEmail = ['path_email']
+        # keyemail2 =['path_email_bass64']
+        # result_mail = dict(zip(keyemail2,img_base64))
+        result_mail2 = dict(zip(keyEmail,last_email))
+        # sumall = dict(result_mail.items() + result_mail2.items())
+        # all_result = []
+        # all_result.append(sumall)
+        return jsonify(result_mail2)
+    except Exception as e:
+        logserver(e)
+        return "fail"

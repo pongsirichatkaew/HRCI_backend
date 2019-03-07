@@ -26,7 +26,7 @@ def Insertmail_hr(cursor):
         result = toJson(cursor.fetchall(),columns)
         mail_hr_id_last=result[0]['mail_hr_id']+1
 
-        sql = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sql = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(mail_hr_id_last,data_new['employeeid'],data_new['name_hr'],data_new['surname_hr'],data_new['nickname'],data_new['phone'],data_new['email_hr'],data_new['createby']))
 
         return "success"
@@ -64,8 +64,12 @@ def Editmail_hr(cursor):
 @connect_sql()
 def Qrymail_hr(cursor):
     try:
-        sql = "SELECT mail_hr_id,employeeid,name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr"
-        cursor.execute(sql)
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT mail_hr_id,employeeid,name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr WHERE employeeid=%s"
+        cursor.execute(sql, (data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
