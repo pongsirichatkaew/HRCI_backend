@@ -1150,6 +1150,7 @@ def send_Mail_starwork(cursor):
 def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
+    send_cc = email_hr
     send_bcc = email_hr
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
@@ -1199,6 +1200,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
+    msg['Cc'] = send_cc
     msg['Bcc'] = send_bcc
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
