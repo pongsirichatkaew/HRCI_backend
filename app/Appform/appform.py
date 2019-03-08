@@ -1208,7 +1208,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
 
     try:
         smtp = smtplib.SMTP(server)
-        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
         smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
