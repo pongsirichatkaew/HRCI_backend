@@ -1132,7 +1132,7 @@ def get_Mail_appointment():
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)
-        return "fail"        
+        return "fail"
 @app.route('/send_Mail_starwork', methods=['POST'])
 @connect_sql()
 def send_Mail_starwork(cursor):
@@ -1150,6 +1150,7 @@ def send_Mail_starwork(cursor):
 def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
+    send_bcc = email_hr
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
                 <html>
@@ -1198,6 +1199,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
+    msg['Bcc'] = send_bcc
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
