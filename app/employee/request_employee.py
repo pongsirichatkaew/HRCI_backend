@@ -895,3 +895,49 @@ def QryEmp_request_leader():
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Abstract_hr_request', methods=['POST'])
+@connect_sql()
+def Abstract_hr_request(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        abstract = data_new['abstract']
+
+        if (abstract=='Pass'):
+
+            sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
+            cursor.execute(sqlUp_main,(data_new['employeeid']))
+
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s"
+            cursor.execute(sql,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+
+            type_action = "abstract_pass"
+            status_last = "9"
+
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+
+        elif (abstract=='Not_pass'):
+
+            sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
+            cursor.execute(sqlUp_main,(data_new['employeeid']))
+
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s"
+            cursor.execute(sql,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+
+            type_action = "abstract_not_pass"
+            status_last = "11"
+
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+        else:
+            return "fail"
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
