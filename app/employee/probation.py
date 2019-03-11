@@ -678,6 +678,24 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
+            sql_reject_l3 = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql_reject_l3,(data_new['createby']))
+            columns = [column[0] for column in cursor.description]
+            result_admin = toJson(cursor.fetchall(),columns)
+
+            sql_reject_employee = "SELECT employee.name_th,employee.surname_th,employee.email,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id  WHERE employee.employeeid=%s"
+            cursor.execute(sql_reject_employee,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_reject_employee = toJson(cursor.fetchall(),columns)
+            em_name = result_reject_employee[0]['name_th']
+            em_surname = result_reject_employee[0]['surname_th']
+            em_position = result_reject_employee[0]['position_detail']
+            em_org = result_reject_employee[0]['org_name_detail']
+            email = result_reject_employee[0]['email']
+
+            sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'])
+
         elif (abstract=='Not_pass'):
 
             sqlUp_main = "UPDATE Emp_probation SET validstatus=11 WHERE employeeid=%s AND version=%s"
@@ -1544,6 +1562,41 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     try:
         smtp = smtplib.SMTP(server)
         smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr):
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    send_cc = email_hr
+    send_bcc = email_hr
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
+                    <b>Dear  """ + em_name + """ """ + em_surname + """</b></br>
+                      <p>พนักงานผ่านทดลองงาน """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ <br></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Cc'] = send_cc
+    msg['Bcc'] = send_bcc
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
         smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
