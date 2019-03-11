@@ -79,6 +79,7 @@ def uploads_pic_mail(cursor):
         sqlDe = "DELETE FROM mail_pic WHERE mail_type=%s"
         cursor.execute(sqlDe,(request.form['mail_type']))
 
+        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/' + request.form['mail_type']
         path2 = request.form['mail_type']
         if not os.path.exists(path):
@@ -86,8 +87,8 @@ def uploads_pic_mail(cursor):
         if request.method == 'POST':
             file = request.files['file']
         if file:
-            file.save(os.path.join(path, 'mail_type.png'))
-            path_image = path2+'/'+'mail_type.png'
+            file.save(os.path.join(path, currentTime + 'mail_type.png'))
+            path_image = path2+'/'+currentTime+'mail_type.png'
         else:
             return 'file is not allowed'
 
