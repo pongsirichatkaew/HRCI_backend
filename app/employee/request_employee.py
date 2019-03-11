@@ -499,6 +499,11 @@ def UpdateStatus_request(cursor):
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
 
+        sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+        cursor.execute(sql_picture)
+        columns = [column[0] for column in cursor.description]
+        result_picture = toJson(cursor.fetchall(),columns)
+
         sql_check_end = "SELECT validstatus_request FROM employee WHERE employeeid=%s"
         cursor.execute(sql_check_end,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
@@ -536,7 +541,7 @@ def UpdateStatus_request(cursor):
                 # em_org = result_reject_employee[0]['org_name_detail']
                 #
                 # for item in result_reject_l3:
-                #     sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -563,7 +568,7 @@ def UpdateStatus_request(cursor):
                 # em_org = result_reject_employee[0]['org_name_detail']
                 #
                 # for item in result_reject_l3:
-                #     sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -609,7 +614,7 @@ def UpdateStatus_request(cursor):
                 # em_org = result_reject_employee[0]['org_name_detail']
                 #
                 # for item in result_reject_l3:
-                #     sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -655,7 +660,7 @@ def UpdateStatus_request(cursor):
                 # em_org = result_reject_employee[0]['org_name_detail']
                 #
                 # for item in result_reject_l3:
-                #     sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -941,3 +946,144 @@ def Abstract_hr_request(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/sendEmail_request', methods = ['GET'])
+@connect_sql()
+def sendEmail_request(cursor):
+    sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='request_mail'"
+    cursor.execute(sql_picture)
+    columns = [column[0] for column in cursor.description]
+    result_picture = toJson(cursor.fetchall(),columns)
+
+    sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_quota WHERE tier_approve='L1' GROUP BY email_asp "
+    cursor.execute(sql_L1)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(),columns)
+    for i1 in result:
+        total_em = []
+        sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+                                                                                                    LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
+                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(2,6)"
+        cursor.execute(sql1_total,(i1['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data1 = toJson(cursor.fetchall(),columns)
+        i1['total_em'] = str(data1[0]['total_em'])
+    for item in result:
+        count = int(item['total_em'])
+        if count>0:
+            sendToMail_request(item['email_asp'], item['total_em'],result_picture[0]['imageName'])
+    sql_L2 = "SELECT employeeid,email_asp,tier_approve FROM assessor_quota WHERE tier_approve='L2' GROUP BY email_asp "
+    cursor.execute(sql_L2)
+    columns = [column[0] for column in cursor.description]
+    result2 = toJson(cursor.fetchall(),columns)
+    for i2 in result2:
+        total_em2 = []
+        sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+                                                                                                    LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
+                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(3,7,8)"
+        cursor.execute(sql1_total2,(i2['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+        i2['total_em'] = str(data2[0]['total_em'])
+    for item2 in result2:
+        count2 = int(item2['total_em'])
+        if count2>0:
+            sendToMail_request(item2['email_asp'], item2['total_em'],result_picture[0]['imageName'])
+    sql_L3 = "SELECT employeeid,email_asp,tier_approve FROM assessor_quota WHERE tier_approve='L3' GROUP BY email_asp "
+    cursor.execute(sql_L3)
+    columns = [column[0] for column in cursor.description]
+    result3 = toJson(cursor.fetchall(),columns)
+    for i3 in result3:
+        total_em3 = []
+        sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+                                                                                                    LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
+                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(4,8)"
+        cursor.execute(sql1_total3,(i3['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data3 = toJson(cursor.fetchall(),columns)
+        i3['total_em'] = str(data3[0]['total_em'])
+    for item3 in result3:
+        count3 = int(item3['total_em'])
+        if count3>0:
+            sendToMail_request(item3['email_asp'], item3['total_em'],result_picture[0]['imageName'])
+    sql_L4 = "SELECT employeeid,email_asp,tier_approve FROM assessor_quota WHERE tier_approve='L4' GROUP BY email_asp "
+    cursor.execute(sql_L4)
+    columns = [column[0] for column in cursor.description]
+    result4 = toJson(cursor.fetchall(),columns)
+    for i4 in result4:
+        total_em4 = []
+        sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+                                                                                                    LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
+                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(5)"
+        cursor.execute(sql1_total4,(i4['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        data4 = toJson(cursor.fetchall(),columns)
+        i4['total_em'] = str(data4[0]['total_em'])
+    for item4 in result4:
+        count4 = int(item4['total_em'])
+        if count4>0:
+            sendToMail_request(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
+    return jsonify(result)
+def sendToMail_request(email, total_em,imageName):
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    subject = "อนุมัติพนักงานเข้าทำงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
+                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                      <p>จะมีพนักงานรอการอนุมัติเข้าทำงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการดำเนินการ ได้ที่<br>
+                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
+                    <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
+                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
