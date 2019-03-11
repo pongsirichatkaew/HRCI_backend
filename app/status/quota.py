@@ -111,3 +111,52 @@ def Deletequota(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/uploads_pic_jd', methods=['POST'])
+@connect_sql()
+def uploads_pic_jd(cursor):
+    try:
+        sqlDe = "DELETE FROM picture_jd WHERE quota_id=%s"
+        cursor.execute(sqlDe,(request.form['quota_id']))
+
+        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
+        path = 'uploads/quota/' + request.form['quota_id']
+        path2 = request.form['quota_id']
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+            file.save(os.path.join(path, currentTime + 'quota_id.png'))
+            path_image = path2+'/'+currentTime+'quota_id.png'
+        else:
+            return 'file is not allowed'
+
+        sql = "INSERT INTO picture_jd(quota_id,imageName,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sql,(request.form['quota_id'],path_image,request.form['createby']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_uploads_pic_jd', methods=['POST'])
+@connect_sql()
+def Qry_uploads_pic_jd(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT quota_id,imageName FROM picture_jd WHERE quota_id=%s"
+        cursor.execute(sql,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/userGetFileImageQuota/<path>/<fileName>', methods=['GET'])
+def userGetFileImageQuota(path, fileName):
+    # current_app.logger.info('userGetFile')
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory('../uploads/quota/' + path, fileName)
+    # return "ssss"
