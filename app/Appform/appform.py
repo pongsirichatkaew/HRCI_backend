@@ -1132,7 +1132,7 @@ def get_Mail_appointment():
         return jsonify(resultlast)
     except Exception as e:
         logserver(e)
-        return "fail"        
+        return "fail"
 @app.route('/send_Mail_starwork', methods=['POST'])
 @connect_sql()
 def send_Mail_starwork(cursor):
@@ -1150,6 +1150,8 @@ def send_Mail_starwork(cursor):
 def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
+    send_cc = email_hr
+    send_bcc = email_hr
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = """\
                 <html>
@@ -1160,25 +1162,25 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
                        ใน<span style="font-weight:bold; background-color: rgb(255, 204, 153);">วันที่ """+appoint_day+""" เวลา """+appoint_time+""" น.</span> ณ อาคารไทยซัมมิททาวเวอร์  ชั้น IT ห้องประชุม INET """+appoint_place+"""</p>
                       <p><span style="font-weight:bold;">สามารถดูรายละเอียดลักษณะงานได้ที่ :</span> <a href="http://www.inet.co.th/careers/">http://www.inet.co.th/careers/</a></p>
 
-                      <p style="font-weight:bold; line-height: 30px;"><span style="background-color: yellow;">ทั้งนี้รบกวนตอบกลับเข้ารับการสัมภาษณ์ทาง Email ด้วยนะครับ</span></p>
+                      <p style="font-weight:bold; line-height: 30px;"><span style="background-color: yellow;">ทั้งนี้รบกวนตอบกลับเข้ารับการสัมภาษณ์ทาง Email ด้วย</span></p>
 
-                      <p style="font-weight:bold; line-height: 30px;">กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a><span style="font-weight:bold; background-color: rgb(255, 204, 153);">(กรุณากรอกก่อนเข้ามาสัมภาษณ์)</span></p>
+                      <p style="font-weight:bold; line-height: 30px;">กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a> <span style="font-weight:bold; background-color: rgb(255, 204, 153);">(กรุณากรอกก่อนเข้ามาสัมภาษณ์)</span></p>
                       <p style="font-weight:bold;">โดยเตรียมเอกสารเอกสารประกอบการสมัครงาน ดังนี้</p>
-                      <p>- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-                      <p>- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-                      <p>- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-                      <p>- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p>
-                      <p>- หลักฐานการผ่านหรือได้รับการยกเว้นการเกณฑ์ทหาร (ถ้ามี)</p>
-                      <p>- ผู้สมัครสามารถนำ Resume  / CV หรือแฟ้มแสดงผลงาน (Port Folio)  มาแสดงเพื่อประกอบการสัมภาษณ์ได้</p></br>
+                      <p style="line-height: 0.5;">- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
+                      <p style="line-height: 0.5;">- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
+                      <p style="line-height: 0.5;">- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
+                      <p style="line-height: 0.5;">- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p>
+                      <p style="line-height: 0.5;">- หลักฐานการผ่านหรือได้รับการยกเว้นการเกณฑ์ทหาร (ถ้ามี)</p>
+                      <p style="line-height: 0.5;">- ผู้สมัครสามารถนำ Resume  / CV หรือแฟ้มแสดงผลงาน (Port Folio)  มาแสดงเพื่อประกอบการสัมภาษณ์ได้</p></br>
 
                       <p style="font-weight: bold;">เส้นทางการเดินทาง</p>
-                      <p>- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p>
-                      <p>เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p>
-                      <p>- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p>
-                      <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p>
-                      <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p>
-                      <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p>
-                      <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br>
+                      <p style="line-height: 0.5;">- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p>
+                      <p style="line-height: 0.5;">เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p>
+                      <p style="line-height: 0.5;">- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p>
+                      <p style="line-height: 0.5;">ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p>
+                      <p style="line-height: 0.5;">- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p>
+                      <p style="line-height: 0.5;">เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  (ลิฟท์ Medium Zone)  กดชั้น IT</p>
+                      <p style="line-height: 0.5;">- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br>
 
                       <p>--</p>
                       <p style="font-size: 18px;">Best regards,</p></br>
@@ -1198,13 +1200,15 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,n
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
+    msg['Cc'] = send_cc
+    msg['Bcc'] = send_bcc
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
 
     try:
         smtp = smtplib.SMTP(server)
-        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
         smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
