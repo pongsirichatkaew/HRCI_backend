@@ -9,7 +9,7 @@ def QryEm_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,employee.createby,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN company ON company.companyid = employee.company_id\
@@ -138,12 +138,18 @@ def QryEm_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_approver = toJson(cursor.fetchall(),columns)
 
+        sql_hr = "SELECT name FROM Admin WHERE employeeid=%s"
+        cursor.execute(sql_hr,(result[0]['createby']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
         result_all={}
         result_all["employee"] = result
         result_all["employee_Education"] = result_Education
         result_all["employee_Employment"] = result_Employment
         result_all["employee_Benefits"] = result_benefits
         result_all["employee_Approver"] = result_approver
+        result_all["hr_send_request"] = result_hr
 
         return jsonify(result_all)
     except Exception as e:
