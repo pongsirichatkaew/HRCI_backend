@@ -4,7 +4,7 @@ from dbConfig import *
 
 @app.route('/Qry_log_request', methods=['POST'])
 @connect_sql()
-def Qry_log_probation(cursor):
+def Qry_log_request(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
