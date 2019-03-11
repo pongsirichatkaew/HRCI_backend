@@ -1511,7 +1511,7 @@ def sendToMail(email, total_em):
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
                     <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
                       <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
@@ -1543,7 +1543,7 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
                     <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
                       <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
@@ -1577,7 +1577,7 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr):
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
                     <b>Dear  """ + em_name + """ """ + em_surname + """</b></br>
                       <p>พนักงานผ่านทดลองงาน """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ <br></p>
                   </body>
