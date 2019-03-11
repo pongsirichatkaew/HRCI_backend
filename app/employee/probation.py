@@ -63,8 +63,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -90,8 +95,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -136,8 +146,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -182,8 +197,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -693,8 +713,13 @@ def Abstract_hr(cursor):
             # em_position = result_reject_employee[0]['position_detail']
             # em_org = result_reject_employee[0]['org_name_detail']
             # email = result_reject_employee[0]['email']
-            #
-            # sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'])
+
+            # sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+            # cursor.execute(sql_picture)
+            # columns = [column[0] for column in cursor.description]
+            # result_picture = toJson(cursor.fetchall(),columns)
+
+            # sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'],result_picture[0]['imageName'])
 
         elif (abstract=='Not_pass'):
 
@@ -1435,6 +1460,11 @@ def Qry_upload_file(cursor):
 @app.route('/sendEmail', methods = ['GET'])
 @connect_sql()
 def send_email(cursor):
+    sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+    cursor.execute(sql_picture)
+    columns = [column[0] for column in cursor.description]
+    result_picture = toJson(cursor.fetchall(),columns)
+
     sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L1' GROUP BY email_asp "
     cursor.execute(sql_L1)
     columns = [column[0] for column in cursor.description]
@@ -1451,7 +1481,7 @@ def send_email(cursor):
     for item in result:
         count = int(item['total_em'])
         if count>0:
-            sendToMail(item['email_asp'], item['total_em'])
+            sendToMail(item['email_asp'], item['total_em'],result_picture[0]['imageName'])
     sql_L2 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
     cursor.execute(sql_L2)
     columns = [column[0] for column in cursor.description]
@@ -1468,7 +1498,7 @@ def send_email(cursor):
     for item2 in result2:
         count2 = int(item2['total_em'])
         if count2>0:
-            sendToMail(item2['email_asp'], item2['total_em'])
+            sendToMail(item2['email_asp'], item2['total_em'],result_picture[0]['imageName'])
     sql_L3 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
     cursor.execute(sql_L3)
     columns = [column[0] for column in cursor.description]
@@ -1485,7 +1515,7 @@ def send_email(cursor):
     for item3 in result3:
         count3 = int(item3['total_em'])
         if count3>0:
-            sendToMail(item3['email_asp'], item3['total_em'])
+            sendToMail(item3['email_asp'], item3['total_em'],result_picture[0]['imageName'])
     sql_L4 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L4' GROUP BY email_asp "
     cursor.execute(sql_L4)
     columns = [column[0] for column in cursor.description]
@@ -1502,16 +1532,16 @@ def send_email(cursor):
     for item4 in result4:
         count4 = int(item4['total_em'])
         if count4>0:
-            sendToMail(item4['email_asp'], item4['total_em'])
+            sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
     return jsonify(result)
-def sendToMail(email, total_em):
+def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
                     <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
                       <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
@@ -1536,14 +1566,14 @@ def sendToMail(email, total_em):
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org):
+def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
                     <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
                       <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
@@ -1568,7 +1598,7 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr):
+def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     send_cc = email_hr
@@ -1577,7 +1607,7 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr):
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/mail_type.png"></br>
+                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""></br>
                     <b>Dear  """ + em_name + """ """ + em_surname + """</b></br>
                       <p>พนักงานผ่านทดลองงาน """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ <br></p>
                   </body>
