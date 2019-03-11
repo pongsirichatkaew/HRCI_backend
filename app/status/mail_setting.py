@@ -72,9 +72,9 @@ def Deletemail_setting(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/uploads_pic_probation', methods=['POST'])
+@app.route('/uploads_pic_mail', methods=['POST'])
 @connect_sql()
-def uploads_pic_probation(cursor):
+def uploads_pic_mail(cursor):
     try:
         sqlDe = "DELETE FROM mail_pic WHERE mail_type=%s"
         cursor.execute(sqlDe,(request.form['mail_type']))
@@ -97,14 +97,14 @@ def uploads_pic_probation(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_uploads_pic_probation', methods=['POST'])
+@app.route('/Qry_uploads_pic_mail', methods=['POST'])
 @connect_sql()
-def Qry_uploads_pic_probation(cursor):
+def Qry_uploads_pic_mail(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        
+
         sql = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type=%s"
         cursor.execute(sql,(data_new['mail_type']))
         columns = [column[0] for column in cursor.description]
