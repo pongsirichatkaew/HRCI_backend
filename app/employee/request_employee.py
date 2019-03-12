@@ -25,7 +25,7 @@ def QryEm_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,employee.createby,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,employee.validstatus_request,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,employee.createby,employee.quota_id,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,employee.validstatus_request,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN company ON company.companyid = employee.company_id\
@@ -159,6 +159,11 @@ def QryEm_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_hr = toJson(cursor.fetchall(),columns)
 
+        sql_pic = "SELECT quota_id,imageName FROM picture_jd WHERE quota_id=%s"
+        cursor.execute(sql_pic,(result[0]['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        result_pic = toJson(cursor.fetchall(),columns)
+
         result_all={}
         result_all["employee"] = result
         result_all["employee_Education"] = result_Education
@@ -166,6 +171,7 @@ def QryEm_request(cursor):
         result_all["employee_Benefits"] = result_benefits
         result_all["employee_Approver"] = result_approver
         result_all["hr_send_request"] = result_hr
+        result_all["path_JD"] = result_pic
 
         return jsonify(result_all)
     except Exception as e:

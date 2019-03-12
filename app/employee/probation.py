@@ -719,7 +719,7 @@ def Abstract_hr(cursor):
             columns = [column[0] for column in cursor.description]
             result_picture = toJson(cursor.fetchall(),columns)
 
-            sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'],result_picture[0]['imageName'])
+            sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin[0]['username'],result_picture[0]['imageName'])
 
         elif (abstract=='Not_pass'):
 
