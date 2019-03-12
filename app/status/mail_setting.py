@@ -56,6 +56,22 @@ def Qrymail_setting(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qrymail_setting_by_one', methods=['POST'])
+@connect_sql()
+def Qrymail_setting_by_one(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT mail_setting_id,mail_head,mail_setting_detail FROM mail_setting WHERE mail_setting_id=%s"
+        cursor.execute(sql,(data_new['mail_setting_id']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Deletemail_setting', methods=['POST'])
 @connect_sql()
 def Deletemail_setting(cursor):
