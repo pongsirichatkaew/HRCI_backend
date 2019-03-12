@@ -69,7 +69,7 @@ def UpdateStatus_probation(cursor):
                 result_picture = toJson(cursor.fetchall(),columns)
 
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -101,7 +101,7 @@ def UpdateStatus_probation(cursor):
                 result_picture = toJson(cursor.fetchall(),columns)
 
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -152,7 +152,7 @@ def UpdateStatus_probation(cursor):
                 result_picture = toJson(cursor.fetchall(),columns)
 
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -203,7 +203,7 @@ def UpdateStatus_probation(cursor):
                 result_picture = toJson(cursor.fetchall(),columns)
 
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -295,8 +295,8 @@ def UpdateStatus_probation(cursor):
 
             if not result_check_L3:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
@@ -313,8 +313,8 @@ def UpdateStatus_probation(cursor):
                 cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
@@ -350,8 +350,8 @@ def UpdateStatus_probation(cursor):
 
             if not result_check_L2:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
@@ -371,8 +371,8 @@ def UpdateStatus_probation(cursor):
 
             elif (not result_check_L2)&(not result_check_L3):
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
@@ -391,8 +391,8 @@ def UpdateStatus_probation(cursor):
                 sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 if check_total_l1==1 :
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=3 WHERE employeeid=%s AND version=%s"
@@ -698,28 +698,28 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
-            # sql_reject_l3 = "SELECT username FROM Admin WHERE employeeid=%s"
-            # cursor.execute(sql_reject_l3,(data_new['createby']))
-            # columns = [column[0] for column in cursor.description]
-            # result_admin = toJson(cursor.fetchall(),columns)
-            #
-            # sql_reject_employee = "SELECT employee.name_th,employee.surname_th,employee.email,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
-            # LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id  WHERE employee.employeeid=%s"
-            # cursor.execute(sql_reject_employee,(data_new['employeeid']))
-            # columns = [column[0] for column in cursor.description]
-            # result_reject_employee = toJson(cursor.fetchall(),columns)
-            # em_name = result_reject_employee[0]['name_th']
-            # em_surname = result_reject_employee[0]['surname_th']
-            # em_position = result_reject_employee[0]['position_detail']
-            # em_org = result_reject_employee[0]['org_name_detail']
-            # email = result_reject_employee[0]['email']
+            sql_reject_l3 = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql_reject_l3,(data_new['createby']))
+            columns = [column[0] for column in cursor.description]
+            result_admin = toJson(cursor.fetchall(),columns)
 
-            # sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
-            # cursor.execute(sql_picture)
-            # columns = [column[0] for column in cursor.description]
-            # result_picture = toJson(cursor.fetchall(),columns)
+            sql_reject_employee = "SELECT employee.name_th,employee.surname_th,employee.email,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id  WHERE employee.employeeid=%s"
+            cursor.execute(sql_reject_employee,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_reject_employee = toJson(cursor.fetchall(),columns)
+            em_name = result_reject_employee[0]['name_th']
+            em_surname = result_reject_employee[0]['surname_th']
+            em_position = result_reject_employee[0]['position_detail']
+            em_org = result_reject_employee[0]['org_name_detail']
+            email = result_reject_employee[0]['email']
 
-            # sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'],result_picture[0]['imageName'])
+            sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+            cursor.execute(sql_picture)
+            columns = [column[0] for column in cursor.description]
+            result_picture = toJson(cursor.fetchall(),columns)
+
+            sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin['username'],result_picture[0]['imageName'])
 
         elif (abstract=='Not_pass'):
 
@@ -1542,8 +1542,9 @@ def sendToMail(email, total_em,imageName):
                 <html>
                   <body>
                   <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
-                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                    <b>เรียน  ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                      <p> ฝ่ายทรัพยากรบุคคลขอแจ้งประเมินทดลองงานของพนักงานที่จะครบทดลองงาน """ + total_em + """ คน รบกวนต้นสังกัดประเมินพนักงานภายในระยะเวลา15วัน ก่อนครบทดลองงาน หากล่าช้าจะส่งผลต่อสวัสดิการพนักงาน
+                      ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
                   </body>
                 </html>
@@ -1566,7 +1567,7 @@ def sendToMail(email, total_em,imageName):
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
+def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน"
@@ -1574,8 +1575,8 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
                 <html>
                   <body>
                   <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
-                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
+                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                      <p>ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า ผู้บริหารไม่อนุมัติการครบทดลองงานของ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ เนื่องจาก """ + comment + """ ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
                   </body>
                 </html>
@@ -1608,8 +1609,8 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
                 <html>
                   <body>
                   <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""></br>
-                    <b>Dear  """ + em_name + """ """ + em_surname + """</b></br>
-                      <p>พนักงานผ่านทดลองงาน """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ <br></p>
+                    <b>เรียน  """ + em_name + """ """ + em_surname + """</b></br>
+                      <p>ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ท่านได้ผ่านทดลองงานแล้ว สามารถใช้สวัสดิการพนักงานได้อย่างเต็มที่ <br></p>
                   </body>
                 </html>
         """
