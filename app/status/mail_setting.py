@@ -9,11 +9,15 @@ def Insertmail_setting(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlQry = "SELECT mail_setting_id FROM mail_setting ORDER BY mail_setting_id DESC LIMIT 1"
-        cursor.execute(sqlQry)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        mail_setting_id_last=result[0]['mail_setting_id']+1
+        
+        try:
+            sqlQry = "SELECT mail_setting_id FROM mail_setting ORDER BY mail_setting_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            mail_setting_id_last=result[0]['mail_setting_id']+1
+        except Exception as e:
+            mail_setting_id_last=1
 
         sql = "INSERT INTO mail_setting (mail_setting_id,mail_setting_detail,createby) VALUES (%s,%s,%s)"
         cursor.execute(sql,(mail_setting_id_last,data_new['mail_setting_detail'],data_new['createby']))
