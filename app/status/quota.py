@@ -6,9 +6,6 @@ from dbConfig import *
 @connect_sql()
 def Insertquota(cursor):
     try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
         sqlQry = "SELECT quota_id FROM quota ORDER BY quota_id DESC LIMIT 1"
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
@@ -16,12 +13,28 @@ def Insertquota(cursor):
         quota_id_last=result[0]['quota_id']+1
 
         sql = "INSERT INTO quota (quota_id,year,companyid,position_id,member,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(quota_id_last,data_new['year'],data_new['companyid'],data_new['position_id'],data_new['member'],data_new['createby']))
+        cursor.execute(sql,(quota_id_last,request.form['year'],request.form['companyid'],request.form['position_id'],request.form['member'],request.form['createby']))
 
         type_action = "ADD"
 
         sql_log = "INSERT INTO quota_log (quota_id,year,companyid,position_id,member,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(quota_id_last,data_new['year'],data_new['companyid'],data_new['position_id'],data_new['member'],data_new['createby'],type_action))
+        cursor.execute(sql_log,(quota_id_last,request.form['year'],request.form['companyid'],request.form['position_id'],request.form['member'],request.form['createby'],type_action))
+
+        currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
+        path = 'uploads/quota/' + quota_id_last
+        path2 = quota_id_last
+        if not os.path.exists(path):
+            os.makedirs(path)
+        if request.method == 'POST':
+            file = request.files['file']
+        if file:
+            file.save(os.path.join(path, currentTime + 'quota_id.png'))
+            path_image = path2+'/'+currentTime+'quota_id.png'
+        else:
+            return 'file is not allowed'
+
+        sql_insert = "INSERT INTO picture_jd(quota_id,imageName,createby) VALUES (%s,%s,%s)"
+        cursor.execute(sql_insert,(quota_id_last,path_image,request.form['createby']))
 
         return "success"
     except Exception as e:
@@ -120,14 +133,6 @@ def uploads_pic_jd(cursor):
             cursor.execute(sqlDe,(request.form['quota_id']))
         except Exception as e:
             pass
-        try:
-            sqlQry = "SELECT quota_id FROM quota ORDER BY quota_id DESC LIMIT 1"
-            cursor.execute(sqlQry)
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-            quota_id_last=result[0]['quota_id']+1
-        except Exception as e:
-            quota_id_last=1
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/quota/' + request.form['quota_id']
@@ -141,13 +146,9 @@ def uploads_pic_jd(cursor):
             path_image = path2+'/'+currentTime+'quota_id.png'
         else:
             return 'file is not allowed'
-        try:
-            quota_id_last = request.form['quota_id']
-        except Exception as e:
-            quota_id_last = quota_id_last
 
         sql = "INSERT INTO picture_jd(quota_id,imageName,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(quota_id_last,path_image,request.form['createby']))
+        cursor.execute(sql,(request.form['quota_id'],path_image,request.form['createby']))
         return "success"
     except Exception as e:
         logserver(e)

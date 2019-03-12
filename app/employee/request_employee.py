@@ -1048,12 +1048,13 @@ def sendEmail_request(cursor):
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "อนุมัติพนักงานเข้าทำงาน"
+    subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
                   <body>
                   <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <b> ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงาน เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</b></br>
                       <p>จะมีพนักงานรอการอนุมัติเข้าทำงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการดำเนินการ ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
                   </body>
@@ -1080,7 +1081,7 @@ def sendToMail_request(email, total_em,imageName):
 def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "[HR] ผู้บริหารไม่อนุมัติการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
                   <body>
