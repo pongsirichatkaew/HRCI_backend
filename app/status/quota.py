@@ -10,7 +10,7 @@ def Insertquota(cursor):
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        quota_id_last=result[0]['quota_id']+1
+        quota_id_last=str(result[0]['quota_id']+1)
 
         sql = "INSERT INTO quota (quota_id,year,companyid,position_id,member,createby) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(quota_id_last,request.form['year'],request.form['companyid'],request.form['position_id'],request.form['member'],request.form['createby']))
