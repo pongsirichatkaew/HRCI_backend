@@ -1115,7 +1115,8 @@ def get_Mail_appointment():
                 Name_ea = Name_e[1]
         connection.commit()
         connection.close()
-
+        for item in result_per:
+            item['NameTh'] = Name_ea
         connection = mysql.connect()
         cursor = connection.cursor()
 

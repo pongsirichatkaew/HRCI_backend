@@ -72,6 +72,9 @@ def Editquota(cursor):
 def Qryquota(cursor):
     try:
         quota_id = ""
+        testsum = 0
+        testsumnow = 0
+        testsumremain = 0
         try:
             dataInput = request.json
             source = dataInput['source']
@@ -80,7 +83,7 @@ def Qryquota(cursor):
         except Exception as e:
             pass
         sql = "SELECT quota.quota_id,quota.year,company.companyid,company.company_short_name,position.position_detail,quota.position_id,quota.member FROM quota LEFT JOIN company ON company.companyid = quota.companyid\
-                                                                                                                                   LEFT JOIN position ON position.position_id = quota.position_id "+quota_id+" "
+               LEFT JOIN position ON position.position_id = quota.position_id  WHERE quota.year="+data_new['year']+" "+quota_id+"  "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -94,7 +97,17 @@ def Qryquota(cursor):
             for i2 in data2 :
                 quota_detail.append(i2)
                 i2['remain_member'] = int(i1['member'])-int(i2['now_member'])
+                testsumnow += int(i2['now_member'])
+                testsumremain += i2['remain_member']
             i1['quota_detail'] = quota_detail
+            testsum += int(i1['member'])
+        for i1 in result:
+            total_year_member = []
+            total_year_now = []
+            total_year_remain = []
+            i1['total_year_member'] = testsum
+            i1['total_year_now'] = testsumnow
+            i1['total_year_remain'] = testsumremain
         return jsonify(result)
     except Exception as e:
         logserver(e)
