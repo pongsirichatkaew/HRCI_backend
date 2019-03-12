@@ -115,8 +115,19 @@ def Deletequota(cursor):
 @connect_sql()
 def uploads_pic_jd(cursor):
     try:
-        sqlDe = "DELETE FROM picture_jd WHERE quota_id=%s"
-        cursor.execute(sqlDe,(request.form['quota_id']))
+        try:
+            sqlDe = "DELETE FROM picture_jd WHERE quota_id=%s"
+            cursor.execute(sqlDe,(request.form['quota_id']))
+        except Exception as e:
+            pass
+        try:
+            sqlQry = "SELECT quota_id FROM quota ORDER BY quota_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            quota_id_last=result[0]['quota_id']+1
+        except Exception as e:
+            quota_id_last=1
 
         currentTime = datetime.today().strftime('%Y%m%d%H%M%S%f')
         path = 'uploads/quota/' + request.form['quota_id']
@@ -130,9 +141,13 @@ def uploads_pic_jd(cursor):
             path_image = path2+'/'+currentTime+'quota_id.png'
         else:
             return 'file is not allowed'
+        try:
+            quota_id_last = request.form['quota_id']
+        except Exception as e:
+            quota_id_last = quota_id_last
 
         sql = "INSERT INTO picture_jd(quota_id,imageName,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(request.form['quota_id'],path_image,request.form['createby']))
+        cursor.execute(sql,(quota_id_last,path_image,request.form['createby']))
         return "success"
     except Exception as e:
         logserver(e)
