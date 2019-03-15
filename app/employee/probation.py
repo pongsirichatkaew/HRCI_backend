@@ -1135,7 +1135,7 @@ def QryEmployee_probation():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\

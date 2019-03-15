@@ -9,7 +9,7 @@ def Qry_log_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT approve_request_log.id,approve_request_log.employeeid,approve_request_log.employeeid_pro,approve_request_log.name,approve_request_log.lastname,approve_request_log.tier_approve,approve_request_log.position_detail,status_request.status_detail,approve_request_log.comment,approve_request_log.comment_orther,approve_request_log.date_status FROM approve_request_log LEFT JOIN status_request ON status_request.status_id = approve_request_log.status_\
+        sql = "SELECT approve_request_log.id,approve_request_log.employeeid,approve_request_log.employeeid_reques,approve_request_log.name,approve_request_log.lastname,approve_request_log.tier_approve,approve_request_log.position_detail,status_request.status_detail,approve_request_log.comment,approve_request_log.comment_orther,approve_request_log.date_status FROM approve_request_log LEFT JOIN status_request ON status_request.status_id = approve_request_log.status_\
         WHERE approve_request_log.employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
