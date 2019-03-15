@@ -9,7 +9,7 @@ def Qry_log_probation(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT approve_probation_log.version,approve_probation_log.id,approve_probation_log.employeeid,approve_probation_log.employeeid_pro,approve_probation_log.name,approve_probation_log.lastname,approve_probation_log.tier_approve,approve_probation_log.position_detail,status.status_detail,approve_probation_log.comment,approve_probation_log.comment_orther,approve_probation_log.date_status FROM approve_probation_log LEFT JOIN status ON status.status_id = approve_probation_log.status_\
-        WHERE approve_probation_log.employeeid=%s AND approve_probation_log.version=%s"
+        WHERE approve_probation_log.employeeid=%s AND approve_probation_log.version=%s AND approve_probation_log.status_ IS NOT NULL"
         cursor.execute(sql,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -758,8 +758,8 @@ def Abstract_hr(cursor):
             result14 = toJson(cursor.fetchall(),columns)
 
             version_last = int(result14[0]['version'])+1
-            date1 = data_new['start_work']
-            long_date = int(data_new['long_date'])
+            date1 = result14[0]['EndWork_probation']
+            long_date = 30
             star_date = date1.split("-")
             Day_s = int(star_date[0])
             Mon_s = int(star_date[1])
@@ -775,11 +775,11 @@ def Abstract_hr(cursor):
 
             sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],result14[0]['EndWork_probation'],End_probation_date,data_new['createby']))
 
             sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],result14[0]['EndWork_probation'],End_probation_date,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
