@@ -1155,48 +1155,21 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,c
     send_bcc = email_hr
     subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = contentemail
-    # text = """\
-    #             <html>
-    #               <body>
-    #                 <p style="font-size: 16px;margin-bottom: 40px;"><span style="font-weight: bold;">เรียน</span>  คุณ"""+name+""" """+surname+"""</p>
-    #
-    #                   <p style="text-indent: 20px;">บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)  ขอเรียนเชิญสัมภาษณ์งาน <span style="font-weight:bold; background-color: rgb(255, 204, 153);">ตำแหน่ง """+position+"""</span><br>
-    #                    ใน<span style="font-weight:bold; background-color: rgb(255, 204, 153);">วันที่ """+appoint_day+""" เวลา """+appoint_time+""" น.</span> ณ อาคารไทยซัมมิททาวเวอร์  ชั้น IT ห้องประชุม INET """+appoint_place+"""</p>
-    #                   <p><span style="font-weight:bold;">สามารถดูรายละเอียดลักษณะงานได้ที่ :</span> <a href="http://www.inet.co.th/careers/">http://www.inet.co.th/careers/</a></p>
-    #
-    #                   <p style="font-weight:bold; line-height: 30px;"><span style="background-color: yellow;">ทั้งนี้รบกวนตอบกลับเข้ารับการสัมภาษณ์ทาง Email ด้วย</span></p>
-    #
-    #                   <p style="font-weight:bold; line-height: 30px;">กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a> <span style="font-weight:bold; background-color: rgb(255, 204, 153);">(กรุณากรอกก่อนเข้ามาสัมภาษณ์)</span></p>
-    #                   <p style="font-weight:bold;">โดยเตรียมเอกสารเอกสารประกอบการสมัครงาน ดังนี้</p>
-    #                   <p style="line-height: 0.5;">- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-    #                   <p style="line-height: 0.5;">- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-    #                   <p style="line-height: 0.5;">- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p>
-    #                   <p style="line-height: 0.5;">- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p>
-    #                   <p style="line-height: 0.5;">- หลักฐานการผ่านหรือได้รับการยกเว้นการเกณฑ์ทหาร (ถ้ามี)</p>
-    #                   <p style="line-height: 0.5;">- ผู้สมัครสามารถนำ Resume  / CV หรือแฟ้มแสดงผลงาน (Port Folio)  มาแสดงเพื่อประกอบการสัมภาษณ์ได้</p></br>
-    #
-    #                   <p style="font-weight: bold;">เส้นทางการเดินทาง</p>
-    #                   <p style="line-height: 0.5;">- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p>
-    #                   <p style="line-height: 0.5;">เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p>
-    #                   <p style="line-height: 0.5;">- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p>
-    #                   <p style="line-height: 0.5;">ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p>
-    #                   <p style="line-height: 0.5;">- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p>
-    #                   <p style="line-height: 0.5;">เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  (ลิฟท์ Medium Zone)  กดชั้น IT</p>
-    #                   <p style="line-height: 0.5;">- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br>
-    #
-    #                   <p>--</p>
-    #                   <p style="font-size: 18px;">Best regards,</p></br>
-    #
-    #                   <p style="font-weight: bold; margin: 0px;font-size: 18px;">"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
-    #                   <p style="margin: 0px;font-size: 18px;">Human Resource Officer</p>
-    #                   <p style="margin: 0px;font-size: 18px; font-style: italic;">Internet Thailand Public Co., Ltd.</p>
-    #                   <p style="margin: 0px;font-size: 18px;">Tel : """+phone+"""</p>
-    #                   <p style="margin: 0px;font-size: 18px;">E-mail : """+email_hr+"""</p>
-    #                   <p style="margin: 0px;font-size: 18px;">Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
-    #                    <img src="https://inet.co.th/images/inetlogo.png"></br>
-    #               </body>
-    #             </html>
-    #     """
+    text2 = """\
+                <html>
+                  <body>
+                      <p>--</p>
+                      <p style="font-size: 18px;">Best regards,</p></br>
+                      <p style="font-weight: bold; margin: 0px;font-size: 18px;">"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">Human Resource Officer</p>
+                      <p style="margin: 0px;font-size: 18px; font-style: italic;">Internet Thailand Public Co., Ltd.</p>
+                      <p style="margin: 0px;font-size: 18px;">Tel : """+phone+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">E-mail : """+email_hr+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                       <img src="https://inet.co.th/images/inetlogo.png"></br>
+                  </body>
+                </html>
+        """
     server="mailtx.inet.co.th"
 
     msg = MIMEMultipart()
@@ -1207,7 +1180,7 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,c
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
-
+    msg.attach(MIMEText(text2, "html","utf-8"))
     try:
         smtp = smtplib.SMTP(server)
         smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
