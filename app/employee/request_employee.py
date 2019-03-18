@@ -2,6 +2,22 @@
 # -*- coding: utf-8 -*-
 from dbConfig import *
 
+@app.route('/Qry_log_request', methods=['POST'])
+@connect_sql()
+def Qry_log_request(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT approve_request_log.id,approve_request_log.employeeid,approve_request_log.employeeid_reques,approve_request_log.name,approve_request_log.lastname,approve_request_log.tier_approve,approve_request_log.position_detail,status_request.status_detail,approve_request_log.comment,approve_request_log.comment_orther,approve_request_log.date_status FROM approve_request_log LEFT JOIN status_request ON status_request.status_id = approve_request_log.status_\
+        WHERE approve_request_log.employeeid=%s"
+        cursor.execute(sql,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEm_request', methods=['POST'])
 @connect_sql()
 def QryEm_request(cursor):
@@ -9,7 +25,7 @@ def QryEm_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.salary,employee.createby,employee.quota_id,Personal.NicknameTh,Personal.Age,employee.start_work,employee.EndWork_probation,employee.validstatus_request,position.position_detail,org_name.org_name_detail,company.company_short_name FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN company ON company.companyid = employee.company_id\
@@ -138,12 +154,24 @@ def QryEm_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_approver = toJson(cursor.fetchall(),columns)
 
+        sql_hr = "SELECT name FROM Admin WHERE employeeid=%s"
+        cursor.execute(sql_hr,(result[0]['createby']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
+        sql_pic = "SELECT quota_id,imageName FROM picture_jd WHERE quota_id=%s"
+        cursor.execute(sql_pic,(result[0]['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        result_pic = toJson(cursor.fetchall(),columns)
+
         result_all={}
         result_all["employee"] = result
         result_all["employee_Education"] = result_Education
         result_all["employee_Employment"] = result_Employment
         result_all["employee_Benefits"] = result_benefits
         result_all["employee_Approver"] = result_approver
+        result_all["hr_send_request"] = result_hr
+        result_all["path_JD"] = result_pic
 
         return jsonify(result_all)
     except Exception as e:
@@ -914,15 +942,15 @@ def Abstract_hr_request(cursor):
             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s"
-            cursor.execute(sql,(data_new['employeeid']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+            cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
             type_action = "abstract_pass"
             status_last = "9"
 
-            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
         elif (abstract=='Not_pass'):
@@ -930,15 +958,15 @@ def Abstract_hr_request(cursor):
             sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s"
-            cursor.execute(sql,(data_new['employeeid']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+            cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
             type_action = "abstract_not_pass"
             status_last = "11"
 
-            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
         else:
             return "fail"
@@ -960,9 +988,9 @@ def sendEmail_request(cursor):
     result = toJson(cursor.fetchall(),columns)
     for i1 in result:
         total_em = []
-        sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+        sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(2,6)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(2,6)"
         cursor.execute(sql1_total,(i1['employeeid']))
         columns = [column[0] for column in cursor.description]
         data1 = toJson(cursor.fetchall(),columns)
@@ -977,9 +1005,9 @@ def sendEmail_request(cursor):
     result2 = toJson(cursor.fetchall(),columns)
     for i2 in result2:
         total_em2 = []
-        sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+        sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(3,7,8)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(3,7,8)"
         cursor.execute(sql1_total2,(i2['employeeid']))
         columns = [column[0] for column in cursor.description]
         data2 = toJson(cursor.fetchall(),columns)
@@ -994,9 +1022,9 @@ def sendEmail_request(cursor):
     result3 = toJson(cursor.fetchall(),columns)
     for i3 in result3:
         total_em3 = []
-        sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+        sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(4,8)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(4,8)"
         cursor.execute(sql1_total3,(i3['employeeid']))
         columns = [column[0] for column in cursor.description]
         data3 = toJson(cursor.fetchall(),columns)
@@ -1011,9 +1039,9 @@ def sendEmail_request(cursor):
     result4 = toJson(cursor.fetchall(),columns)
     for i4 in result4:
         total_em4 = []
-        sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_pro = assessor_quota.employeeid\
+        sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_pro = %s AND employee.validstatus_request IN(5)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(5)"
         cursor.execute(sql1_total4,(i4['employeeid']))
         columns = [column[0] for column in cursor.description]
         data4 = toJson(cursor.fetchall(),columns)
@@ -1026,12 +1054,13 @@ def sendEmail_request(cursor):
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "อนุมัติพนักงานเข้าทำงาน"
+    subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
                   <body>
                   <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
+                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <b> ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงาน เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</b></br>
                       <p>จะมีพนักงานรอการอนุมัติเข้าทำงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการดำเนินการ ได้ที่<br>
                        <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
                   </body>
@@ -1058,7 +1087,7 @@ def sendToMail_request(email, total_em,imageName):
 def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "[HR] ผู้บริหารไม่อนุมัติการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
                   <body>

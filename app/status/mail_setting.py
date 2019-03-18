@@ -9,14 +9,18 @@ def Insertmail_setting(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sqlQry = "SELECT mail_setting_id FROM mail_setting ORDER BY mail_setting_id DESC LIMIT 1"
-        cursor.execute(sqlQry)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        mail_setting_id_last=result[0]['mail_setting_id']+1
 
-        sql = "INSERT INTO mail_setting (mail_setting_id,mail_setting_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sql,(mail_setting_id_last,data_new['mail_setting_detail'],data_new['createby']))
+        try:
+            sqlQry = "SELECT mail_setting_id FROM mail_setting ORDER BY mail_setting_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            mail_setting_id_last=result[0]['mail_setting_id']+1
+        except Exception as e:
+            mail_setting_id_last=1
+
+        sql = "INSERT INTO mail_setting (mail_setting_id,mail_head,mail_setting_detail,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sql,(mail_setting_id_last,data_new['mail_head'],data_new['mail_setting_detail'],data_new['createby']))
 
         return "success"
     except Exception as e:
@@ -33,8 +37,8 @@ def Editmail_setting(cursor):
         sqlUp = "DELETE FROM mail_setting WHERE mail_setting_id=%s"
         cursor.execute(sqlUp,(data_new['mail_setting_id']))
 
-        sqlIn = "INSERT INTO mail_setting (mail_setting_id,mail_setting_detail,createby) VALUES (%s,%s,%s)"
-        cursor.execute(sqlIn,(data_new['mail_setting_id'],data_new['mail_setting_detail'],data_new['createby']))
+        sqlIn = "INSERT INTO mail_setting (mail_setting_id,mail_head,mail_setting_detail,createby) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(data_new['mail_setting_id'],data_new['mail_head'],data_new['mail_setting_detail'],data_new['createby']))
 
         return "success"
     except Exception as e:
@@ -44,8 +48,24 @@ def Editmail_setting(cursor):
 @connect_sql()
 def Qrymail_setting(cursor):
     try:
-        sql = "SELECT mail_setting_id,mail_setting_detail FROM mail_setting"
+        sql = "SELECT mail_setting_id,mail_head,mail_setting_detail FROM mail_setting"
         cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qrymail_setting_by_one', methods=['POST'])
+@connect_sql()
+def Qrymail_setting_by_one(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT mail_setting_id,mail_head,mail_setting_detail FROM mail_setting WHERE mail_setting_id=%s"
+        cursor.execute(sql,(data_new['mail_setting_id']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -59,11 +79,6 @@ def Deletemail_setting(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
-        sql = "SELECT mail_setting_id,mail_setting_detail FROM mail_setting WHERE mail_setting_id=%s"
-        cursor.execute(sql,(data_new['mail_setting_id']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
 
         sqlUp = "DELETE FROM mail_setting WHERE mail_setting_id=%s"
         cursor.execute(sqlUp,(data_new['mail_setting_id']))
