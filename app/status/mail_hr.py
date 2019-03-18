@@ -44,7 +44,7 @@ def Editmail_hr(cursor):
         sqlUp = "DELETE FROM mail_hr WHERE mail_hr_id=%s"
         cursor.execute(sqlUp,(data_new['mail_hr_id']))
 
-        sqlIn = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlIn = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(data_new['mail_hr_id'],data_new['employeeid'],data_new['name_hr'],data_new['surname_hr'],data_new['nickname'],data_new['phone'],data_new['email_hr'],data_new['createby']))
         return "success"
     except Exception as e:
