@@ -1537,15 +1537,16 @@ def send_email(cursor):
 def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "แจ้งประเมินทดลองงานของพนักงาน"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน  ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                      <p> ฝ่ายทรัพยากรบุคคลขอแจ้งประเมินทดลองงานของพนักงานที่จะครบทดลองงาน """ + total_em + """ คน รบกวนต้นสังกัดประเมินพนักงานภายในระยะเวลา15วัน ก่อนครบทดลองงาน หากล่าช้าจะส่งผลต่อสวัสดิการพนักงาน
-                      ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน  ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งประเมินทดลองงานของพนักงานที่จะครบทดลองงาน """ + total_em + """ คน รบกวนต้นสังกัดประเมินพนักงานภายในระยะเวลา 15 วัน ก่อนครบทดลองงาน หากล่าช้าจะส่งผลต่อสวัสดิการพนักงาน
+                        ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่ <a href="http://hr.devops.inet.co.th">Hr Management</a>
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
                   </body>
                 </html>
         """
@@ -1570,14 +1571,16 @@ def sendToMail(email, total_em,imageName):
 def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "ประเมินพนักงานผ่านทดลองงาน (ไม่ผ่านการอนุมัติ)"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                      <p>ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า ผู้บริหารไม่อนุมัติการครบทดลองงานของ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ เนื่องจาก """ + comment + """ ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติการครบทดลองงาน</span>ของ """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจาก """ + comment + """ ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงานได้ที่
+                        <a href="http://hr.devops.inet.co.th">Hr Management</a>
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1604,13 +1607,15 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     send_to = email
     send_cc = email_hr
     send_bcc = email_hr
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "แจ้งผ่านการทดลองงาน"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""></br>
-                    <b>เรียน  """ + em_name + """ """ + em_surname + """</b></br>
-                      <p>ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ท่านได้ผ่านทดลองงานแล้ว สามารถใช้สวัสดิการพนักงานได้อย่างเต็มที่ <br></p>
+                    <b style="font-size: 18px;">เรียน  """ + em_name + """ """ + em_surname + """</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ท่านได้ผ่านทดลองงาน สามารถใช้สวัสดิการพนักงานได้อย่างเต็มที่
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""">
                   </body>
                 </html>
         """

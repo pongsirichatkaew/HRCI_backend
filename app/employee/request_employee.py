@@ -1058,12 +1058,12 @@ def sendToMail_request(email, total_em,imageName):
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                    <b> ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</b></br>
-                      <p>ทุกท่านสามารถเข้าไปทำการดำเนินการ ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
-                       <b>ขอบคุณค่ะ/ครับ</b></br>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
+                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="http://hr.devops.inet.co.th">Hr Management</a>
+                    </p>
+                    <b>ขอบคุณค่ะ/ครับ</b></br>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1092,11 +1092,11 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                      <p>ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a> </p>
-                       <b>ขอบคุณค่ะ/ครับ</b></br>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="http://hr.devops.inet.co.th">Hr Management</a> </p>
+                    <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
