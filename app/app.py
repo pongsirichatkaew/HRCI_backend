@@ -36,34 +36,9 @@ def TestgenEM(cursor):
     dataInput = request.json
     source = dataInput['source']
     data_new = source
-
-    section_ = ['iostest','test2','iostest3','iostest4']
-    org_name = ['','b','c','']
-    new_section_ = []
-    new_org_name = []
-    for i in xrange(len(section_)):
-        if section_[i].startswith("ios"):
-            last = section_[i].replace(section_[i],"")
-            new_section_.append(last)
-            if org_name[i]=="":
-              new_org_name.append(section_[i])
-            else:
-              new_org_name.append(org_name[i])
-        else:
-            last = section_[i]
-            new_section_.append(last)
-            new_org_name.append(org_name[i])
-    print("------------------------------------------------")
-    print(section_)
-    print(new_section_)
-    print("=================================================")
-    print(org_name)
-    print(new_org_name)
-    testA = ['aa','bb','cc','dd','aaa']
-    check_string = ('aaa','bb')
-    for k in testA:
-      if k.startswith(check_string):
-          print(k)
+    result_token = CheckTokenAssessor(data_new['createby'],data_new['token'])
+    if result_token!='pass':
+        return 'token fail'
     return "success"
 @app.route('/login', methods=['POST'])
 def login():
