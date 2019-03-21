@@ -27,6 +27,10 @@ def UpdateStatus_probation(cursor):
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
 
+        result_token = CheckTokenAssessor(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
         sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s AND version=%s"
         cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
@@ -681,6 +685,10 @@ def Abstract_hr(cursor):
         source = dataInput['source']
         data_new = source
         abstract = data_new['abstract']
+
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
 
         if (abstract=='Pass'):
 
