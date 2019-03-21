@@ -26,9 +26,6 @@ def UpdateStatus_probation(cursor):
         data_new = source
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
-        now = datetime.datetime.now()
-        token_mounth = now.month
-        token_day = now.day
 
         sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s AND version=%s"
         cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))

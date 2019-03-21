@@ -153,6 +153,27 @@ def logserver(msg):
     current_app.logger.info(msg)
 def decode(data):
     return base64.b64decode(data[:-5][::-1])
+def CheckTokenAssessor(employeeid,token):
+    now = str(datetime.now())
+    now = now.split("-")
+    token_mounth = now[1]
+    new_day = now[2].split(" ")
+    token_day = new_day[0]
+    try:
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql3 = "SELECT employeeid FROM assessor_pro WHERE employeeid={} AND token={} AND time_token LIKE '%-{}-{}'".format(employeeid,token,token_mounth,token_day)
+        cursor.execute(sql3)
+        data3 = cursor.fetchall()
+        columns3 = [column[0] for column in cursor.description]
+        _output3 = toJson(data3, columns3)
+        connection.commit()
+        connection.close()
+        token_check = _output3[0]['employeeid']
+        chek_tk = 'pass'
+    except Exception as e:
+        chek_tk = 'Not pass'
+    return chek_tk
 
 def encode(data):
     return (base64.b64encode(str(data)))[::-1] + id_generator()
