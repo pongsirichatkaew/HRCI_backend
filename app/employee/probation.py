@@ -26,6 +26,18 @@ def UpdateStatus_probation(cursor):
         data_new = source
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
+        now = datetime.datetime.now()
+        token_mounth = now.month
+        token_day = now.day
+        try:
+            check_token = "SELECT * FROM assessor_pro WHERE email_asp=%s"
+            cursor.execute(check_token,_output[0]['username'])
+            data3 = cursor.fetchall()
+            columns3 = [column[0] for column in cursor.description]
+            _output3 = toJson(data3, columns3)
+            last_check
+        except Exception as e:
+            raise
 
         sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s AND version=%s"
         cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))

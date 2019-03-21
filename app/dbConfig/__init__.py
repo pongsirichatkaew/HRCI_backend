@@ -17,6 +17,7 @@ import base64
 import xlsxwriter
 import urllib
 import time
+import uuid
 import sys
 from werkzeug import secure_filename
 from openpyxl import load_workbook
