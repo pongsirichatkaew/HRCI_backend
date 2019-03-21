@@ -1647,3 +1647,10 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
+@app.route('/userGetFileProbation/<employeeid>/<filetype>/<version>/<fileName>', methods=['GET'])
+def userGetFileProbation(employeeid,filetype,version,fileName):
+    path = '../../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory(path, fileName)
+    # return send_from_directory('../uploads/' + path)
