@@ -128,6 +128,14 @@ def QryEmployee_resign(cursor):
 @app.route('/QryEmployee', methods=['POST'])
 def QryEmployee():
     try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+            
         connection = mysql.connect()
         cursor = connection.cursor()
         sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
