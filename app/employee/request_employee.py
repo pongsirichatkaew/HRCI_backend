@@ -10,7 +10,7 @@ def Qry_log_request(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT approve_request_log.id,approve_request_log.employeeid,approve_request_log.employeeid_reques,approve_request_log.name,approve_request_log.lastname,approve_request_log.tier_approve,approve_request_log.position_detail,status_request.status_detail,approve_request_log.comment,approve_request_log.comment_orther,approve_request_log.date_status FROM approve_request_log LEFT JOIN status_request ON status_request.status_id = approve_request_log.status_\
-        WHERE approve_request_log.employeeid=%s"
+        WHERE approve_request_log.employeeid=%s AND approve_request_log.status_ IS NOT NULL"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -551,25 +551,25 @@ def UpdateStatus_request(cursor):
                 sqlUp_L3 = "UPDATE approve_request SET status_=8 WHERE employeeid=%s AND tier_approve='L3'"
                 cursor.execute(sqlUp_L3,(data_new['employeeid']))
 
-                # sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
-                #                  WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L3'"
-                # cursor.execute(sql_reject_l3,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_l3 = toJson(cursor.fetchall(),columns)
-                #
-                # sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
-                #                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                #                        WHERE employee.employeeid=%s"
-                # cursor.execute(sql_reject_employee,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_employee = toJson(cursor.fetchall(),columns)
-                # em_name = result_reject_employee[0]['name_th']
-                # em_surname = result_reject_employee[0]['surname_th']
-                # em_position = result_reject_employee[0]['position_detail']
-                # em_org = result_reject_employee[0]['org_name_detail']
-                #
-                # for item in result_reject_l3:
-                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
+                                 WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L3'"
+                cursor.execute(sql_reject_l3,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_l3 = toJson(cursor.fetchall(),columns)
+
+                sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+                                                                                                                                                   LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                       WHERE employee.employeeid=%s"
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_employee = toJson(cursor.fetchall(),columns)
+                em_name = result_reject_employee[0]['name_th']
+                em_surname = result_reject_employee[0]['surname_th']
+                em_position = result_reject_employee[0]['position_detail']
+                em_org = result_reject_employee[0]['org_name_detail']
+
+                for item in result_reject_l3:
+                    sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -578,25 +578,25 @@ def UpdateStatus_request(cursor):
                 sqlUp_L2 = "UPDATE approve_request SET status_=8 WHERE employeeid=%s AND tier_approve='L2'"
                 cursor.execute(sqlUp_L2,(data_new['employeeid']))
 
-                # sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
-                #                  WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L2'"
-                # cursor.execute(sql_reject_l3,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_l3 = toJson(cursor.fetchall(),columns)
-                #
-                # sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
-                #                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                #                        WHERE employee.employeeid=%s"
-                # cursor.execute(sql_reject_employee,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_employee = toJson(cursor.fetchall(),columns)
-                # em_name = result_reject_employee[0]['name_th']
-                # em_surname = result_reject_employee[0]['surname_th']
-                # em_position = result_reject_employee[0]['position_detail']
-                # em_org = result_reject_employee[0]['org_name_detail']
-                #
-                # for item in result_reject_l3:
-                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
+                                 WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L2'"
+                cursor.execute(sql_reject_l3,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_l3 = toJson(cursor.fetchall(),columns)
+
+                sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+                                                                                                                                                   LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                       WHERE employee.employeeid=%s"
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_employee = toJson(cursor.fetchall(),columns)
+                em_name = result_reject_employee[0]['name_th']
+                em_surname = result_reject_employee[0]['surname_th']
+                em_position = result_reject_employee[0]['position_detail']
+                em_org = result_reject_employee[0]['org_name_detail']
+
+                for item in result_reject_l3:
+                    sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -624,25 +624,25 @@ def UpdateStatus_request(cursor):
                 sqlUp_L2 = "UPDATE approve_request SET status_=7,comment=NULL,comment_orther=NULL,date_status=NULL WHERE employeeid=%s AND tier_approve='L2'"
                 cursor.execute(sqlUp_L2,(data_new['employeeid']))
 
-                # sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
-                #                  WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L2'"
-                # cursor.execute(sql_reject_l3,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_l3 = toJson(cursor.fetchall(),columns)
-                #
-                # sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
-                #                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                #                        WHERE employee.employeeid=%s"
-                # cursor.execute(sql_reject_employee,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_employee = toJson(cursor.fetchall(),columns)
-                # em_name = result_reject_employee[0]['name_th']
-                # em_surname = result_reject_employee[0]['surname_th']
-                # em_position = result_reject_employee[0]['position_detail']
-                # em_org = result_reject_employee[0]['org_name_detail']
-                #
-                # for item in result_reject_l3:
-                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
+                                 WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L2'"
+                cursor.execute(sql_reject_l3,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_l3 = toJson(cursor.fetchall(),columns)
+
+                sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+                                                                                                                                                   LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                       WHERE employee.employeeid=%s"
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_employee = toJson(cursor.fetchall(),columns)
+                em_name = result_reject_employee[0]['name_th']
+                em_surname = result_reject_employee[0]['surname_th']
+                em_position = result_reject_employee[0]['position_detail']
+                em_org = result_reject_employee[0]['org_name_detail']
+
+                for item in result_reject_l3:
+                    sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -670,25 +670,25 @@ def UpdateStatus_request(cursor):
                 sqlUp_L1 = "UPDATE approve_request SET status_=6,comment=NULL,comment_orther=NULL,date_status=NULL WHERE employeeid=%s AND tier_approve='L1'"
                 cursor.execute(sqlUp_L1,(data_new['employeeid']))
 
-                # sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
-                #                  WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L1'"
-                # cursor.execute(sql_reject_l3,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_l3 = toJson(cursor.fetchall(),columns)
-                #
-                # sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
-                #                                                                                                                                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                #                        WHERE employee.employeeid=%s"
-                # cursor.execute(sql_reject_employee,(data_new['employeeid']))
-                # columns = [column[0] for column in cursor.description]
-                # result_reject_employee = toJson(cursor.fetchall(),columns)
-                # em_name = result_reject_employee[0]['name_th']
-                # em_surname = result_reject_employee[0]['surname_th']
-                # em_position = result_reject_employee[0]['position_detail']
-                # em_org = result_reject_employee[0]['org_name_detail']
-                #
-                # for item in result_reject_l3:
-                #     sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
+                sql_reject_l3 = "SELECT employee.name_eng,employee.surname_eng,employee.email FROM approve_request  LEFT JOIN employee ON approve_request.employeeid_reques = employee.employeeid\
+                                 WHERE approve_request.employeeid=%s AND approve_request.tier_approve='L1'"
+                cursor.execute(sql_reject_l3,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_l3 = toJson(cursor.fetchall(),columns)
+
+                sql_reject_employee = "SELECT employee.name_th,employee.surname_th,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+                                                                                                                                                   LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                       WHERE employee.employeeid=%s"
+                cursor.execute(sql_reject_employee,(data_new['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_reject_employee = toJson(cursor.fetchall(),columns)
+                em_name = result_reject_employee[0]['name_th']
+                em_surname = result_reject_employee[0]['surname_th']
+                em_position = result_reject_employee[0]['position_detail']
+                em_org = result_reject_employee[0]['org_name_detail']
+
+                for item in result_reject_l3:
+                    sendToMail_reject_request(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'])
 
             except Exception as e:
                 pass
@@ -1058,11 +1058,12 @@ def sendToMail_request(email, total_em,imageName):
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                    <b> ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงาน เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</b></br>
-                      <p>จะมีพนักงานรอการอนุมัติเข้าทำงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการดำเนินการ ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
+                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="http://hr.devops.inet.co.th">Hr Management</a>
+                    </p>
+                    <b>ขอบคุณค่ะ/ครับ</b></br>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1091,10 +1092,11 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
-                    <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
-                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="http://hr.devops.inet.co.th">Hr Management</a> </p>
+                    <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
+                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
