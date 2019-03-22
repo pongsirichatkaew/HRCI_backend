@@ -29,7 +29,7 @@ def QryEm_request(cursor):
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN company ON company.companyid = employee.company_id\
-        WHERE employee.employeeid=%s AND NOT employee.createby='Admin'"
+        WHERE employee.employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -181,12 +181,12 @@ def QryEm_request(cursor):
 @connect_sql()
 def QryEmployee_request(cursor):
     try:
-        status_id = ""
+        status_id = "WHERE NOT employee.createby='Admin'"
         try:
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            status_id = 'WHERE validstatus_request='+'"'+str(data_new['status_id'])+'"'
+            status_id = "WHERE validstatus_request='+'"'+str(data_new['status_id'])+'" AND NOT employee.createby='Admin'"
         except Exception as e:
             pass
         sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
