@@ -150,6 +150,11 @@ def QryEmployee_one_person(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
         sqlEmployee = "SELECT * FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\

@@ -27,6 +27,10 @@ def UpdateStatus_probation(cursor):
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
 
+        result_token = CheckTokenAssessor(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
         sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s AND version=%s"
         cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
@@ -681,6 +685,10 @@ def Abstract_hr(cursor):
         source = dataInput['source']
         data_new = source
         abstract = data_new['abstract']
+
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
 
         if (abstract=='Pass'):
 
@@ -1639,3 +1647,11 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
+@app.route('/userGetFileProbation/<employeeid>/<filetype>/<version>/<fileName>', methods=['GET'])
+def userGetFileProbation(employeeid,filetype,version,fileName):
+    path = '../app/uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # path = '../../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory(path, fileName)
+    # return send_from_directory('../uploads/' + path)
