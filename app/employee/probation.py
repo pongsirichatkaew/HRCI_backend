@@ -1243,6 +1243,12 @@ def Insert_ans_pro(cursor):
 
         type_action = "ADD"
 
+        try:
+            sqlUp_de = "DELETE FROM employee_pro WHERE version=%s AND employeeid=%s AND citizenid=%s "
+            cursor.execute(sqlUp_de,(data_new['version'],employeeid,result[0]['citizenid']))
+        except Exception as e:
+            pass
+
         i=0
         for i in xrange(len(data_new['answer_pro'])):
             sqlIn_be = "INSERT INTO employee_pro(version,employeeid,citizenid,question_pro_id,pro_values,type_check,group_q,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
