@@ -29,7 +29,7 @@ def QryEm_request(cursor):
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
                                       LEFT JOIN company ON company.companyid = employee.company_id\
-        WHERE employee.employeeid=%s"
+        WHERE employee.employeeid=%s AND NOT employee.createby='Admin'"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
