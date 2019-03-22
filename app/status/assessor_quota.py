@@ -24,7 +24,10 @@ def InsertAssessor_quota(cursor):
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        assessor_quota_id_last=result[0]['assessor_quota_id']+1
+        try:
+            assessor_quota_id_last = result[0]['assessor_quota_id']+1
+        except Exception as e:
+            assessor_quota_id_last = 1 
 
         sql = "INSERT INTO assessor_quota (assessor_quota_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(assessor_quota_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
