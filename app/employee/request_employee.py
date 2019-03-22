@@ -977,6 +977,80 @@ def Abstract_hr_request(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/AddApprove_request_together', methods=['POST'])
+@connect_sql()
+def AddApprove_request_together(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        try:
+            sql_check_empro = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_reques_2']))
+            columns = [column[0] for column in cursor.description]
+            result_check_empro = toJson(cursor.fetchall(),columns)
+            type_check = result_check_empro[0]['employeeid_reques']
+            return "employeeid_reques duplicate"
+        except Exception as e:
+            pass
+
+        sql = "SELECT tier_approve FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
+
+        sqlApprove = "INSERT INTO approve_request(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
+
+        type_action = "ADD_together"
+
+        sqlApprove_log = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlApprove_log,(data_new['employeeid'],data_new['employeeid_reques_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_quota WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_reques']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+        except Exception as e:
+
+            sqlQry = "SELECT assessor_quota_id FROM assessor_quota ORDER BY assessor_quota_id DESC LIMIT 1"
+            cursor.execute(sqlQry)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            assessor_quota_id_last=result[0]['assessor_quota_id']+1
+
+            sql = "INSERT INTO assessor_quota (assessor_quota_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(assessor_quota_id_last,data_new['employeeid_reques'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
+
+            type_action = "ADD"
+
+            sql_log = "INSERT INTO assessor_quota_log (assessor_quota_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(assessor_quota_id_last,data_new['employeeid_reques'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
+# @app.route('/QueryApprove_request_together', methods=['POST'])
+# @connect_sql()
+# def QueryApprove_request_together(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#
+#         sql = "SELECT * FROM approve_request_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_together'"
+#         cursor.execute(sql,(data_new['employeeid'],data_new['createby']))
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#         return jsonify(result)
+#     except Exception as e:
+#             logserver(e)
+#             return "fail"
 @app.route('/sendEmail_request', methods = ['GET'])
 @connect_sql()
 def sendEmail_request(cursor):
