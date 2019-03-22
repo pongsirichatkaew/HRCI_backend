@@ -1649,8 +1649,9 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
         return jsonify(result)
 @app.route('/userGetFileProbation/<employeeid>/<filetype>/<version>/<fileName>', methods=['GET'])
 def userGetFileProbation(employeeid,filetype,version,fileName):
-    path = '../app/uploads/' + employeeid + "/" + filetype + "/" + version + "/"
-    # path = '../../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # path = '../app/uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    path = '../../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # path = '../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
     # current_app.logger.info(path)
     # current_app.logger.info(fileName)
     return send_from_directory(path, fileName)
