@@ -539,7 +539,7 @@ def UpdateStatus_request(cursor):
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
 
-        sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+        sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='request_mail'"
         cursor.execute(sql_picture)
         columns = [column[0] for column in cursor.description]
         result_picture = toJson(cursor.fetchall(),columns)
