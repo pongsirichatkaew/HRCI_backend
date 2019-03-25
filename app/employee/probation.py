@@ -941,22 +941,22 @@ def removeApprove_pro_together(cursor):
         source = dataInput['source']
         data_new = source
         try:
-            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
-            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques_2']))
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_ans = toJson(cursor.fetchall(),columns)
             result_chs = result_check_ans[0]['name']
         except Exception as e:
             return "Not remove"
 
-        sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         Tier_Approve_Owner = result[0]['tier_approve']
 
-        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s,employeeid_reques=%s,tier_approve=%s,createby=%s"
-        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques_2'],result[0]['tier_approve'],data_new['createby']))
+        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s,employeeid_pro=%s,tier_approve=%s,createby=%s,version=%s"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],result[0]['tier_approve'],data_new['createby'],data_new['version']))
 
         return "Success"
     except Exception as e:
