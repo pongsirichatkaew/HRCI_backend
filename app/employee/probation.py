@@ -970,7 +970,7 @@ def QueryApprove_pro_together(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND createby=%s AND type_action='ADD_together' AND version=%s"
+        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND createby=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['createby'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)

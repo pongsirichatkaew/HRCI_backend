@@ -1081,7 +1081,7 @@ def QueryApprove_request_together(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND createby=%s AND type_action='ADD_together'"
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND createby=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['createby']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
