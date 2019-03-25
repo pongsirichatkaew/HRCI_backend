@@ -909,7 +909,7 @@ def AddApprove_pro_together(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_pro']))
+            cursor.execute(sql44,(data_new['companyid'],result[0]['tier_approve'],data_new['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
