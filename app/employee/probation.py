@@ -933,6 +933,35 @@ def AddApprove_pro_together(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/removeApprove_pro_together', methods=['POST'])
+@connect_sql()
+def removeApprove_pro_together(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques_2']))
+            columns = [column[0] for column in cursor.description]
+            result_check_ans = toJson(cursor.fetchall(),columns)
+            result_chs = result_check_ans[0]['name']
+        except Exception as e:
+            return "Not remove"
+
+        sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_reques=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
+
+        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s,employeeid_reques=%s,tier_approve=%s,createby=%s"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques_2'],result[0]['tier_approve'],data_new['createby']))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
 @app.route('/QueryApprove_pro_together', methods=['POST'])
 @connect_sql()
 def QueryApprove_pro_together(cursor):
