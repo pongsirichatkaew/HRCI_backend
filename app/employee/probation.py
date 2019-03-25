@@ -1122,6 +1122,15 @@ def DeleteApprove_probation(cursor):
         source = dataInput['source']
         data_new = source
 
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_ans = toJson(cursor.fetchall(),columns)
+            result_chs = result_check_ans[0]['name']
+        except Exception as e:
+            return "Not remove"
+
         sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]

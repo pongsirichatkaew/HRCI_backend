@@ -337,6 +337,15 @@ def Deleteapprove_request(cursor):
         source = dataInput['source']
         data_new = source
 
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques']))
+            columns = [column[0] for column in cursor.description]
+            result_check_ans = toJson(cursor.fetchall(),columns)
+            result_chs = result_check_ans[0]['name']
+        except Exception as e:
+            return "Not remove"
+
         sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
         columns = [column[0] for column in cursor.description]
