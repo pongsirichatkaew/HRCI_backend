@@ -955,7 +955,7 @@ def removeApprove_pro_together(cursor):
         result = toJson(cursor.fetchall(),columns)
         Tier_Approve_Owner = result[0]['tier_approve']
 
-        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s,employeeid_pro=%s,tier_approve=%s,createby=%s,version=%s"
+        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND tier_approve=%s AND createby=%s AND version=%s"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],result[0]['tier_approve'],data_new['createby'],data_new['version']))
 
         return "Success"
