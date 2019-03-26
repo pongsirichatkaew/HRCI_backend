@@ -1223,7 +1223,7 @@ def sendMail_starwork(email,star_work,position,contentemail,name,surname,name_hr
     send_to = email
     send_cc = email_hr
     send_bcc = email_hr
-    subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
+    subject = "เริ่มงานในตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
     text = contentemail
     text2 = """\
                 <html>
