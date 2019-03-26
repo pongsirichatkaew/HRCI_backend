@@ -15,6 +15,16 @@ def Insertquota(cursor):
         except Exception as e:
             quota_id_last = 1
 
+        try:
+            sqlQry_check = "SELECT member FROM quota WHERE year=%s AND companyid=%s AND position_id=%s"
+            cursor.execute(sqlQry_check,(request.form['year'],request.form['companyid'],request.form['position_id']))
+            columns = [column[0] for column in cursor.description]
+            result_check_1 = toJson(cursor.fetchall(),columns)
+            check_dup = result_check_1[0]['member']
+            return "quota is duplicate"
+        except Exception as e:
+            pass    
+
         sql = "INSERT INTO quota (quota_id,year,companyid,position_id,member,createby) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(quota_id_last,request.form['year'],request.form['companyid'],request.form['position_id'],request.form['member'],request.form['createby']))
 
