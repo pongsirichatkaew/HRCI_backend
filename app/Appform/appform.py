@@ -1134,20 +1134,48 @@ def get_Mail_appointment():
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/send_Mail_starwork', methods=['POST'])
-@connect_sql()
-def send_Mail_starwork(cursor):
-    dataInput = request.json
-    source = dataInput['source']
-    data_new = source
-    for item in data_new:
-        print(item)
-    newkey = len(list(data_new.keys()))
-    for max in range(newkey):
-        newvalues = str("%s,"*(max+1))
-        newvalues = newvalues[:-1]
-    print(newvalues)
-    return 'hello'
+@app.route('/Mail_starwork', methods=['POST'])
+def Mail_starwork():
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        connection = mysql3.connect()
+        cursor = connection.cursor()
+
+        sqlUp = "UPDATE Personal SET check_mail_starwork = 2 WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlUp,(data_new['EmploymentAppNo']))
+
+        sqlcheck = "SELECT NameTh,SurnameTh,Email FROM Personal WHERE EmploymentAppNo = %s"
+        cursor.execute(sqlcheck,(data_new['EmploymentAppNo']))
+        columns = [column[0] for column in cursor.description]
+        result_per = toJson(cursor.fetchall(),columns)
+        # for item in result_per:
+        prefix = ['นาย', 'นาง', 'นางสาว']
+        for i in xrange(len(prefix)):
+    	    Name_e = result_per[0]['NameTh'].split(prefix[i])
+            if len(Name_e)==2:
+                Name_ea = Name_e[1]
+        connection.commit()
+        connection.close()
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sqlIn4 = "INSERT INTO appoint_mail_log (EmploymentAppNo,appoint_day,position,create_by) VALUES (%s,%s,%s,%s)"
+        cursor.execute(sqlIn4,(data_new['EmploymentAppNo'],data_new['star_work'],data_new['position'],data_new['create_by']))
+
+        sqlhr = "SELECT name_hr,surname_hr,phone,nickname,email_hr FROM mail_hr WHERE employeeid = %s"
+        cursor.execute(sqlhr,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_hr = toJson(cursor.fetchall(),columns)
+
+        connection.commit()
+        connection.close()
+        sendMail_starwork(result_per[0]['Email'],data_new['star_work'],data_new['position'],data_new['contentemail'],Name_ea,result_per[0]['SurnameTh'],result_hr[0]['name_hr'],result_hr[0]['surname_hr'],result_hr[0]['email_hr'],result_hr[0]['phone'],result_hr[0]['nickname'])
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,contentemail,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
@@ -1190,49 +1218,25 @@ def sendMail_appointment(email,appoint_day,appoint_time,appoint_place,position,c
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,email_hr,phone,nickname):
+def sendMail_starwork(email,star_work,position,contentemail,name,surname,name_hr,surname_hr,email_hr,phone,nickname):
     send_from = " "+name_hr+" "+surname_hr+" <"+email_hr+">"
     send_to = email
-    subject = "ขอยืนยันผลสัมภาษณ์งานตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
-    text = """\
+    send_cc = email_hr
+    send_bcc = email_hr
+    subject = "ขอเรียนเชิญสัมภาษณ์งาน ตำแหน่ง "+position+" บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน)"
+    text = contentemail
+    text2 = """\
                 <html>
                   <body>
-                 <b>เรียน  """+name+""" """+surname+"""</b></br>
-                   <p>บริษัท อินเทอร์เน็ตประเทศไทย จำกัด (มหาชน) <br>
-                    ขอยืนยันวันเริ่มงาน ในวันที่ """+star_work+"""  ตำแหน่ง """+position+""" รบกวนเตรียมเอกสารดังนี้ </p>
-                   <p>เอกสารที่ต้องสแกนส่งทางอีเมลหากไม่ได้นำมาในวันเริ่มงาน ดังนี้</p></br>
-                   <p>- สำเนาบัตรประชาชน                                              จำนวน    2  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
-                   <p>- สำเนาทะเบียนบ้าน                                               จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
-                   <p>- สำเนาหลักฐานการศึกษา                                           จำนวน    1  ฉบับ (สำเนาถูกต้องด้วยหมึกปากกาสีน้ำเงินเท่านั้น)</p></br>
-                   <p>- รูปถ่าย 1นิ้ว ไม่เกิน 6 เดือน                                        จำนวน    1   ใบ</p></br>
-                   <p>เอกสารที่ต้องเตรียมในวันเริ่มงาน ดังนี้</p></br>
-                   <p>- สำเนาบัญชี ธนาคารกรุงไทย   พร้อมเซ็นสำเนาถูกต้อง</p></br>
-                   <p>- ใบรับรองแพทย์ตรวจสุขภาพทั่วไป 5 โรค  และตรวจเชื้อไวรัสตับอักเสบบี</p></br>
-                   <p>ตรวจสุขภาพทั่วไป 5 โรค</p></br>
-                   <p>1.วัณโรคในระยะแพร่กระจายเชื้อ</p></br>
-                   <p>2.โรคเท้าช้างในระยะที่ปรากฎอาการเป็นที่รังเกียจแก่สังคม</p></br>
-                   <p>3.โรคติดยาเสพติดให้โทษ</p></br>
-                   <p>4.โรคพิษสุราเรื้อรัง</p></br>
-                   <p>5.โรคติดต่อร้ายแรงหรือโรคเรื้อรังที่ปรากฏอาการเด่นชัดหรือรุนแรงและเป็นอุปสรรคต่อการปฏิบัติหน้าที่</p></br></br>
-                   <p>กรอกใบสมัครออนไลน์ <a href="http://career.inet.co.th/">http://career.inet.co.th/</a></p></br></br>
-                   <p>ทั้งนี้หากได้รับ Email หรือ มีการเปลี่ยนแปลงวันเริ่มงาน กรุณาตอบรับกลับทาง Email ครับ</p></br></br>
-                   <p>เส้นทางการเดินทาง</p></br>
-                   <p>- รถไฟฟ้าใต้ดิน ลงสถานีเพชรบุรี ออกทางออกที่ 1 ขึ้นบนผิวถนนมองทางซ้ายมือจะเห็นอาคารไทยซัมมิท</p></br>
-                   <p>เดินมาทางซ้ายมือ ข้ามสะพานลอยเข้าอาคาร</p></br>
-                   <p>- ทางเรือคลองแสนแสบ ลงท่าประสานมิตร ขึ้นท่าเรือจะเห็นสะพานข้ามคลอง เดินข้ามสะพานและเดินออกมาที่ถนนใหญ่</p></br>
-                   <p>ถึงถนนเพชรบุรีเลี้ยวขวา เดินเข้าตึกอาคารไทยซัมมิท</p></br>
-                   <p>- รถประจำทาง สาย 11, 23, 206, 113, 99, 72,58,93,60, 512,ปอ.พ.23,ปอ.พ.10,ปอ.185,ปอ.136 เป็นต้น</p></br>
-                   <p>เข้ามาในอาคารขึ้นบันไดเลื่อน ลิฟท์อยู่ทางซ้ายมือ  ( ลิฟท์ Medium Zone)  กดชั้น IT</p></br>
-                   <p>- แผนที่บริษัท <a href="http://www.inet.co.th/contact/"> http://www.inet.co.th/contact/</a></p></br></br>
-                   <p>--</p>
-                   <p>Best regards,</p>
-                   <p>"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
-                   <p>Human Resource Officer</p>
-                   <p>Internet Thailand Public Co., Ltd.</p>
-                   <p>Tel : """+phone+"""</p>
-                   <p>E-mail : """+email_hr+"""</p>
-                   <p>Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
-                    <img src="https://inet.co.th/images/inetlogo.png"></br>
+                      <p>--</p>
+                      <p style="font-size: 18px;">Best regards,</p></br>
+                      <p style="font-weight: bold; margin: 0px;font-size: 18px;">"""+name_hr+""" """+surname_hr+""" | """+nickname+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">Human Resource Officer</p>
+                      <p style="margin: 0px;font-size: 18px; font-style: italic;">Internet Thailand Public Co., Ltd.</p>
+                      <p style="margin: 0px;font-size: 18px;">Tel : """+phone+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">E-mail : """+email_hr+"""</p>
+                      <p style="margin: 0px;font-size: 18px;">Website : <a href="https://inet.co.th/"> https://inet.co.th/</a></p></br>
+                       <img src="https://inet.co.th/images/inetlogo.png"></br>
                   </body>
                 </html>
         """
@@ -1241,13 +1245,15 @@ def sendMail_starwork(email,name,surname,star_work,position,name_hr,surname_hr,e
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
+    msg['Cc'] = send_cc
+    msg['Bcc'] = send_bcc
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
-
+    msg.attach(MIMEText(text2, "html","utf-8"))
     try:
         smtp = smtplib.SMTP(server)
-        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
         smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
