@@ -550,7 +550,7 @@ def UpdateStatus_request(cursor):
         result_check_end = toJson(cursor.fetchall(),columns)
         check_endpro = int(result_check_end[0]['validstatus_request'])
         if check_endpro==9:
-            return "End Probation"
+            return "End request"
         if (tier_approve=='L4')&(status_=='Reject'):
 
             sqlUp = "UPDATE approve_request SET status_=8,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
@@ -722,7 +722,7 @@ def UpdateStatus_request(cursor):
             sqlUp = "UPDATE approve_request SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
             cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
-            sqlUp_main = "UPDATE employee SET validstatus_request=15 WHERE employeeid=%s"
+            sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
             sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
@@ -749,7 +749,7 @@ def UpdateStatus_request(cursor):
                 sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
 
-                sqlUp_main = "UPDATE employee SET validstatus_request=15 WHERE employeeid=%s"
+                sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
                 sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
@@ -940,52 +940,52 @@ def QryEmp_request_leader():
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Abstract_hr_request', methods=['POST'])
-@connect_sql()
-def Abstract_hr_request(cursor):
-    try:
-        dataInput = request.json
-        source = dataInput['source']
-        data_new = source
-        abstract = data_new['abstract']
-
-        if (abstract=='Pass'):
-
-            sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
-
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-
-            type_action = "abstract_pass"
-            status_last = "9"
-
-            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-
-        elif (abstract=='Not_pass'):
-
-            sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid']))
-
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-
-            type_action = "abstract_not_pass"
-            status_last = "11"
-
-            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-        else:
-            return "fail"
-        return "Success"
-    except Exception as e:
-        logserver(e)
-        return "fail"
+# @app.route('/Abstract_hr_request', methods=['POST'])
+# @connect_sql()
+# def Abstract_hr_request(cursor):
+#     try:
+#         dataInput = request.json
+#         source = dataInput['source']
+#         data_new = source
+#         abstract = data_new['abstract']
+#
+#         if (abstract=='Pass'):
+#
+#             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
+#             cursor.execute(sqlUp_main,(data_new['employeeid']))
+#
+#             sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+#             cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
+#             columns = [column[0] for column in cursor.description]
+#             result = toJson(cursor.fetchall(),columns)
+#
+#             type_action = "abstract_pass"
+#             status_last = "9"
+#
+#             sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+#             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+#
+#         elif (abstract=='Not_pass'):
+#
+#             sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
+#             cursor.execute(sqlUp_main,(data_new['employeeid']))
+#
+#             sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+#             cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
+#             columns = [column[0] for column in cursor.description]
+#             result = toJson(cursor.fetchall(),columns)
+#
+#             type_action = "abstract_not_pass"
+#             status_last = "11"
+#
+#             sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+#             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+#         else:
+#             return "fail"
+#         return "Success"
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/AddApprove_request_together', methods=['POST'])
 @connect_sql()
 def AddApprove_request_together(cursor):
