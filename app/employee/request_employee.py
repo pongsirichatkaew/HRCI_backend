@@ -261,6 +261,20 @@ def Update_quotaid(cursor):
         source = dataInput['source']
         data_new = source
 
+        sql_check11 = "SELECT member FROM quota WHERE quota_id=%s"
+        cursor.execute(sql_check11,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data11 = toJson(cursor.fetchall(),columns)
+
+        sql_check = "SELECT COUNT(employee.employeeid) AS now_member,  CONVERT(quota.member,SIGNED)-CONVERT(COUNT(employee.employeeid),SIGNED) AS remain_member\
+                    FROM employee LEFT JOIN quota ON employee.quota_id = quota.quota_id WHERE employee.quota_id = %s "
+        cursor.execute(sql_check,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+
+        if int(data11[0]['member'])<=int(data2[0]['now_member']):
+            return "full quata"
+
         sql = "SELECT * FROM employee WHERE employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
@@ -286,6 +300,20 @@ def Addapprove_request_many(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        sql_check11 = "SELECT member FROM quota WHERE quota_id=%s"
+        cursor.execute(sql_check11,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data11 = toJson(cursor.fetchall(),columns)
+
+        sql_check = "SELECT COUNT(employee.employeeid) AS now_member,  CONVERT(quota.member,SIGNED)-CONVERT(COUNT(employee.employeeid),SIGNED) AS remain_member\
+                    FROM employee LEFT JOIN quota ON employee.quota_id = quota.quota_id WHERE employee.quota_id = %s "
+        cursor.execute(sql_check,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+
+        if int(data11[0]['member'])<=int(data2[0]['now_member']):
+            return "full quata"
 
         sqlUp = "UPDATE employee SET quota_id=%s WHERE employeeid=%s"
         cursor.execute(sqlUp,(data_new['quota_id'],data_new['employeeid']))
