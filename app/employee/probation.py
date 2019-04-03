@@ -229,7 +229,7 @@ def UpdateStatus_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
             cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+            sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
@@ -256,7 +256,7 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
-                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
@@ -1334,6 +1334,52 @@ def QryEmp_pro_leader():
                                       LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
                                       LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
                                       LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND NOT Emp_probation.validstatus=1 "+status_id+" "
+        cursor.execute(sql,data_new['employeeid_pro'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for item in result:
+            long_date = []
+            date1 = item['EndWork_probation']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            d0 = date(year_s,Mon_s,Day_s)
+            today = str(date.today())
+            today = today.split("-")
+            Day_s = int(star_date[0])
+            Day_now = int(today[2])
+            Mon_now = int(today[1])
+            year_now = int(today[0])
+            d1 = date(year_now,Mon_now,Day_now)
+            delta = d0 - d1
+            str_date = str(delta)
+            split_str = str_date.split(",")
+            last = split_str[0]
+            item['long_date'] = last
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmpPro_l2_l4', methods=['POST'])
+def QryEmpPro_l2_l4():
+    try:
+
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+                                      LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
+                                      LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
+                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND Emp_probation.status_result IS NOT NULL "
         cursor.execute(sql,data_new['employeeid_pro'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
