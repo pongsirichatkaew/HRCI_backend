@@ -261,6 +261,20 @@ def Update_quotaid(cursor):
         source = dataInput['source']
         data_new = source
 
+        sql_check11 = "SELECT member FROM quota WHERE quota_id=%s"
+        cursor.execute(sql_check11,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data11 = toJson(cursor.fetchall(),columns)
+
+        sql_check = "SELECT COUNT(employee.employeeid) AS now_member,  CONVERT(quota.member,SIGNED)-CONVERT(COUNT(employee.employeeid),SIGNED) AS remain_member\
+                    FROM employee LEFT JOIN quota ON employee.quota_id = quota.quota_id WHERE employee.quota_id = %s "
+        cursor.execute(sql_check,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+
+        if int(data11[0]['member'])<=int(data2[0]['now_member']):
+            return "full quata"
+
         sql = "SELECT * FROM employee WHERE employeeid=%s"
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
@@ -286,6 +300,20 @@ def Addapprove_request_many(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        sql_check11 = "SELECT member FROM quota WHERE quota_id=%s"
+        cursor.execute(sql_check11,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data11 = toJson(cursor.fetchall(),columns)
+
+        sql_check = "SELECT COUNT(employee.employeeid) AS now_member,  CONVERT(quota.member,SIGNED)-CONVERT(COUNT(employee.employeeid),SIGNED) AS remain_member\
+                    FROM employee LEFT JOIN quota ON employee.quota_id = quota.quota_id WHERE employee.quota_id = %s "
+        cursor.execute(sql_check,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+
+        if int(data11[0]['member'])<=int(data2[0]['now_member']):
+            return "full quata"
 
         sqlUp = "UPDATE employee SET quota_id=%s WHERE employeeid=%s"
         cursor.execute(sqlUp,(data_new['quota_id'],data_new['employeeid']))
@@ -925,18 +953,101 @@ def QryEmp_request_leader():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
                                       LEFT JOIN section ON section.sect_id = employee.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                      LEFT JOIN status ON status.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
         cursor.execute(sql,data_new['employeeid_reques'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         connection.close()
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/UpdateStatus_request_all', methods=['POST'])
+@connect_sql()
+def UpdateStatus_request_all(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        tier_approve = str(data_new['tier_approve'])
+        status_ = str(data_new['status_'])
+
+        if (tier_approve =='L4'):
+            i=0
+            for i in xrange(len(data_new['employee'])):
+
+                sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+
+                sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
+                cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+                cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+
+                type_action = "send_director"
+                status_last = "9"
+
+                sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+
+        elif (tier_approve =='L3'):
+            i=0
+            for i in xrange(len(data_new['employee'])):
+
+                sqlcheck_L4 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L4'"
+                cursor.execute(sqlcheck_L4,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_L4 = toJson(cursor.fetchall(),columns)
+
+                if not result_check_L4:
+
+                    sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s "
+                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+
+                    sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
+                    cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_deputy_director"
+                    status_last = "9"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+
+                else:
+
+                    sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
+                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+
+                    sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
+                    cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_deputy_director"
+                    status_last = "5"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+        else:
+            return "no permission"
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -1175,10 +1286,10 @@ def sendToMail_request(email, total_em,imageName):
                   <body>
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
-                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="http://hr.devops.inet.co.th">Hr Management</a>
+                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="http://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1209,9 +1320,9 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
                   <body>
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
-                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="http://hr.devops.inet.co.th">Hr Management</a> </p>
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="http://hr-management.inet.co.th">Hr Management</a> </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
-                    <img style="width: 1024px; height: auto;" src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
