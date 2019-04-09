@@ -1700,7 +1700,7 @@ def Update_probation_active(cursor):
         if result_token!='pass':
             return 'token fail'
         i=0
-        for i in xrange(len(data_new['employee'])):
+        for i in xrange(len(data_new['employeeid_pro'])):
             sqlde = "UPDATE employee_pro SET validstatus=2 WHERE createby=%s AND version=%s"
             cursor.execute(sqlde,(data_new['employeeid_pro'][i]['createby_id'],data_new['employeeid_pro'][i]['version']))
         return "Success"
