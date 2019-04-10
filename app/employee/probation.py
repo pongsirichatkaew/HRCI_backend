@@ -1698,7 +1698,7 @@ def Qry_probation_active(cursor):
                 data4 = toJson(cursor.fetchall(),columns)
                 for i2 in data4 :
                     comment_title.append(i2)
-                i1['comment_title'] = comment_title
+                item['comment_title'] = comment_title
         return jsonify(result)
     except Exception as e:
         logserver(e)
