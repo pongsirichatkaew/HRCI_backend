@@ -1678,16 +1678,27 @@ def Qry_probation_active(cursor):
             version_id = data_new['version']
             question = []
             # sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 AND version={} ORDER BY question_pro_id ASC".format(employeeid_,version_id)
-            sql1pro = """SELECT employee_pro.question_pro_id, employee_pro.pro_values, employee_pro.type_check, employee_pro.group_q, question_pro_form.question_pro_detail FROM employee_pro \
+            sql1pro = """SELECT employee_pro.question_pro_id, employee_pro.pro_values, employee_pro.type_check,employee_pro.createby, employee_pro.group_q, question_pro_form.question_pro_detail FROM employee_pro \
                         INNER JOIN question_pro_form ON employee_pro.question_pro_id = question_pro_form.question_pro_id \
                         WHERE employee_pro.employeeid={} AND employee_pro.validstatus=1 AND employee_pro.version={} ORDER BY employee_pro.question_pro_id ASC""".format(employeeid_,version_id)
             cursor.execute(sql1pro)
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
-            for i2 in data2 :
-                question.append(i2)
+            for i3 in data2:
+                question.append(i3)
             item['question'] = question
+            for i1 in data2:
+                comment_title = []
+                sql1 = """  SELECT *
+                            FROM approve_probation
+                            WHERE employeeid_pro=%s AND employeeid=%s AND version=%s"""
+                cursor.execute(sql1,(i1['createby'],data_new['employeeid'],data_new['version']))
+                columns = [column[0] for column in cursor.description]
+                data4 = toJson(cursor.fetchall(),columns)
+                for i2 in data4 :
+                    comment_title.append(i2)
+                i1['comment_title'] = comment_title
         return jsonify(result)
     except Exception as e:
         logserver(e)
