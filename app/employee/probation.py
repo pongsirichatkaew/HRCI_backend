@@ -1677,7 +1677,10 @@ def Qry_probation_active(cursor):
             employeeid_ = data_new['employeeid']
             version_id = data_new['version']
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 AND version={} ORDER BY question_pro_id ASC".format(employeeid_,version_id)
+            # sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 AND version={} ORDER BY question_pro_id ASC".format(employeeid_,version_id)
+            sql1pro = """SELECT employee_pro.question_pro_id, employee_pro.pro_values, employee_pro.type_check, employee_pro.group_q, question_pro_form.question_pro_detail FROM employee_pro \
+                        INNER JOIN question_pro_form ON employee_pro.question_pro_id = question_pro_form.question_pro_id \
+                        WHERE employee_pro.employeeid={} AND employee_pro.validstatus=1 AND employee_pro.version={} ORDER BY employee_pro.question_pro_id ASC""".format(employeeid_,version_id)
             cursor.execute(sql1pro)
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]
