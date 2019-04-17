@@ -24,7 +24,10 @@ def Insertmail_hr(cursor):
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        mail_hr_id_last=result[0]['mail_hr_id']+1
+        try:
+            mail_hr_id_last=result[0]['mail_hr_id']+1
+        except Exception as e:
+            mail_hr_id_last = 1 
 
         sql = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql,(mail_hr_id_last,data_new['employeeid'],data_new['name_hr'],data_new['surname_hr'],data_new['nickname'],data_new['phone'],data_new['email_hr'],data_new['createby']))
@@ -44,7 +47,7 @@ def Editmail_hr(cursor):
         sqlUp = "DELETE FROM mail_hr WHERE mail_hr_id=%s"
         cursor.execute(sqlUp,(data_new['mail_hr_id']))
 
-        sqlIn = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlIn = "INSERT INTO mail_hr (mail_hr_id,employeeid,name_hr,surname_hr,nickname,phone,email_hr,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(data_new['mail_hr_id'],data_new['employeeid'],data_new['name_hr'],data_new['surname_hr'],data_new['nickname'],data_new['phone'],data_new['email_hr'],data_new['createby']))
         return "success"
     except Exception as e:

@@ -36,34 +36,9 @@ def TestgenEM(cursor):
     dataInput = request.json
     source = dataInput['source']
     data_new = source
-
-    section_ = ['iostest','test2','iostest3','iostest4']
-    org_name = ['','b','c','']
-    new_section_ = []
-    new_org_name = []
-    for i in xrange(len(section_)):
-        if section_[i].startswith("ios"):
-            last = section_[i].replace(section_[i],"")
-            new_section_.append(last)
-            if org_name[i]=="":
-              new_org_name.append(section_[i])
-            else:
-              new_org_name.append(org_name[i])
-        else:
-            last = section_[i]
-            new_section_.append(last)
-            new_org_name.append(org_name[i])
-    print("------------------------------------------------")
-    print(section_)
-    print(new_section_)
-    print("=================================================")
-    print(org_name)
-    print(new_org_name)
-    testA = ['aa','bb','cc','dd','aaa']
-    check_string = ('aaa','bb')
-    for k in testA:
-      if k.startswith(check_string):
-          print(k)
+    result_token = CheckTokenAssessor(data_new['createby'],data_new['token'])
+    if result_token!='pass':
+        return 'token fail'
     return "success"
 @app.route('/login', methods=['POST'])
 def login():
@@ -73,6 +48,7 @@ def login():
         data_new = source
         username = data_new['username']
         password = data_new['password']
+        Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
         sql = "SELECT * FROM user WHERE username = %s and password = %s"
@@ -100,6 +76,10 @@ def login():
             for i2 in _output_per :
                 sum_permisssion.append(i2)
             item['permission'] = sum_permisssion
+
+        sqlUp_token = "UPDATE Admin SET token=%s,time_token=now() WHERE username=%s"
+        cursor.execute(sqlUp_token,(Gen_token,_output[0]['username']))
+
         sql3 = "SELECT * FROM assessor_pro WHERE email_asp=%s"
         cursor.execute(sql3,_output[0]['username'])
         data3 = cursor.fetchall()
@@ -115,13 +95,14 @@ def login():
             for i3 in _output_per2 :
                 sum_permisssion2.append(i3)
             item2['tier_approve'] = sum_permisssion2
-        connection.commit()
-        connection.close()
+        # connection.commit()
+        # connection.close()
         result={}
         result['message'] = 'login success'
         result['userid'] = _output[0]['userid']
         result['name'] = _output[0]['name']
         result['username'] = _output[0]['username']
+        result['token'] = Gen_token
         try:
             result['permission'] = _output2[0]['permission']
         except Exception as e:
@@ -133,8 +114,12 @@ def login():
             result['permission'] = new_arr
         try:
             result['permission2'] = _output3[0]['tier_approve']
+            sqlUp_token2 = "UPDATE assessor_pro SET token=%s,time_token=now() WHERE email_asp=%s"
+            cursor.execute(sqlUp_token2,(Gen_token,_output[0]['username']))
         except Exception as e:
             result['permission2'] = ''
+        connection.commit()
+        connection.close()
         return jsonify(result)
     except Exception as e:
         logserver(e)

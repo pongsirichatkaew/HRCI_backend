@@ -9,7 +9,7 @@ def Qry_log_probation(cursor):
         source = dataInput['source']
         data_new = source
         sql = "SELECT approve_probation_log.version,approve_probation_log.id,approve_probation_log.employeeid,approve_probation_log.employeeid_pro,approve_probation_log.name,approve_probation_log.lastname,approve_probation_log.tier_approve,approve_probation_log.position_detail,status.status_detail,approve_probation_log.comment,approve_probation_log.comment_orther,approve_probation_log.date_status FROM approve_probation_log LEFT JOIN status ON status.status_id = approve_probation_log.status_\
-        WHERE approve_probation_log.employeeid=%s AND approve_probation_log.version=%s"
+        WHERE approve_probation_log.employeeid=%s AND approve_probation_log.version=%s AND approve_probation_log.status_ IS NOT NULL"
         cursor.execute(sql,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -26,6 +26,10 @@ def UpdateStatus_probation(cursor):
         data_new = source
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
+
+        result_token = CheckTokenAssessor(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
 
         sql_check_end = "SELECT validstatus FROM Emp_probation WHERE employeeid=%s AND version=%s"
         cursor.execute(sql_check_end,(data_new['employeeid'],data_new['version']))
@@ -63,8 +67,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -90,8 +99,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -136,8 +150,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -182,8 +201,13 @@ def UpdateStatus_probation(cursor):
                 em_position = result_reject_employee[0]['position_detail']
                 em_org = result_reject_employee[0]['org_name_detail']
 
+                sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+                cursor.execute(sql_picture)
+                columns = [column[0] for column in cursor.description]
+                result_picture = toJson(cursor.fetchall(),columns)
+
                 for item in result_reject_l3:
-                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org)
+                    sendToMail_reject(item['email'],item['name_eng'],item['surname_eng'],em_name,em_surname,em_position,em_org,result_picture[0]['imageName'],data_new['comment_orther'])
 
             except Exception as e:
                 pass
@@ -205,7 +229,7 @@ def UpdateStatus_probation(cursor):
             sqlUp = "UPDATE approve_probation SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
             cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+            sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
@@ -232,7 +256,7 @@ def UpdateStatus_probation(cursor):
                 sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
-                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
@@ -275,8 +299,8 @@ def UpdateStatus_probation(cursor):
 
             if not result_check_L3:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
@@ -293,8 +317,8 @@ def UpdateStatus_probation(cursor):
                 cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
@@ -330,11 +354,11 @@ def UpdateStatus_probation(cursor):
 
             if not result_check_L2:
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 if check_total_l1==1 :
-                    sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
                 else:
                     pass
@@ -351,11 +375,11 @@ def UpdateStatus_probation(cursor):
 
             elif (not result_check_L2)&(not result_check_L3):
 
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
                 if check_total_l1==1 :
-                    sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
                 else:
                     pass
@@ -371,25 +395,25 @@ def UpdateStatus_probation(cursor):
                 sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
 
-                if check_total_l1==1 :
-                    sqlUp_main = "UPDATE Emp_probation SET validstatus=3 WHERE employeeid=%s AND version=%s"
-                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
-                else:
-                    pass
+            if check_total_l1==1 :
+                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+            else:
+                pass
 
-                sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
-                columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(),columns)
+            sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
 
-                type_action = "send_head"
-                status_last = "3"
+            type_action = "send_head"
+            status_last = "3"
 
-                sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+            sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -662,10 +686,78 @@ def Abstract_hr(cursor):
         data_new = source
         abstract = data_new['abstract']
 
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
         if (abstract=='Pass'):
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=9 WHERE employeeid=%s AND version=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+            sqlUp__ = "UPDATE Emp_probation SET status_result='ผ่านทดลองงาน' WHERE employeeid=%s AND version=%s"
+            cursor.execute(sqlUp__,(data_new['employeeid'],data_new['version']))
+
+            sqlcheck_L1 = "SELECT COUNT(employeeid_pro) AS total_l1 FROM approve_probation WHERE employeeid=%s AND tier_approve='L1' AND version=%s"
+            cursor.execute(sqlcheck_L1,(data_new['employeeid'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_L1 = toJson(cursor.fetchall(),columns)
+            check_total_l1 = int(result_check_L1[0]['total_l1'])
+
+            sqlcheck_L2 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L2' AND version=%s"
+            # sqlcheck_L2 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
+            cursor.execute(sqlcheck_L2,(data_new['employeeid'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_L2 = toJson(cursor.fetchall(),columns)
+
+            # sqlcheck_L3 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L3'"
+            sqlcheck_L3 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L3' AND version=%s"
+            cursor.execute(sqlcheck_L3,(data_new['employeeid'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_L3 = toJson(cursor.fetchall(),columns)
+
+            if not result_check_L2:
+
+                # sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                # cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
+                # sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                # cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                # columns = [column[0] for column in cursor.description]
+                # result = toJson(cursor.fetchall(),columns)
+
+                # type_action = "send_head_no_L2"
+                # status_last = "4"
+                #
+                # sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                # cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+
+            elif (not result_check_L2)&(not result_check_L3):
+
+                # sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                # cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
+
+                # sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                # cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+                # columns = [column[0] for column in cursor.description]
+                # result = toJson(cursor.fetchall(),columns)
+
+                # type_action = "send_head_no_L2_L3"
+                # status_last = "5"
+                #
+                # sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                # cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+
+            # sqlUp_main = "UPDATE Emp_probation SET validstatus=9 WHERE employeeid=%s AND version=%s"
+            # cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['version']))
@@ -678,10 +770,49 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
+            sql_reject_l3 = "SELECT username FROM Admin WHERE employeeid=%s"
+            cursor.execute(sql_reject_l3,(data_new['createby']))
+            columns = [column[0] for column in cursor.description]
+            result_admin = toJson(cursor.fetchall(),columns)
+
+            sql_reject_employee = "SELECT employee.name_th,employee.surname_th,employee.email,position.position_detail,org_name.org_name_detail FROM employee LEFT JOIN position ON position.position_id = employee.position_id\
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id  WHERE employee.employeeid=%s"
+            cursor.execute(sql_reject_employee,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_reject_employee = toJson(cursor.fetchall(),columns)
+            em_name = result_reject_employee[0]['name_th']
+            em_surname = result_reject_employee[0]['surname_th']
+            em_position = result_reject_employee[0]['position_detail']
+            em_org = result_reject_employee[0]['org_name_detail']
+            email = result_reject_employee[0]['email']
+
+            sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+            cursor.execute(sql_picture)
+            columns = [column[0] for column in cursor.description]
+            result_picture = toJson(cursor.fetchall(),columns)
+
+            # sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin[0]['username'],result_picture[0]['imageName'])
+
         elif (abstract=='Not_pass'):
 
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=11 WHERE employeeid=%s AND version=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+            sqlUp__ = "UPDATE Emp_probation SET status_result='ไม่ผ่านทดลองงาน' WHERE employeeid=%s AND version=%s"
+            cursor.execute(sqlUp__,(data_new['employeeid'],data_new['version']))
+
+            if not result_check_L2:
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
+
+            elif (not result_check_L2)&(not result_check_L3):
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['version']))
@@ -695,8 +826,24 @@ def Abstract_hr(cursor):
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
         else:
-            sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
-            cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+            sqlUp__ = "UPDATE Emp_probation SET status_result='ขยายเวลาทดลองงาน' WHERE employeeid=%s AND version=%s"
+            cursor.execute(sqlUp__,(data_new['employeeid'],data_new['version']))
+
+            if not result_check_L2:
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=4 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
+
+            elif (not result_check_L2)&(not result_check_L3):
+
+                if check_total_l1==1 :
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                else:
+                    pass
 
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['version']))
@@ -715,8 +862,8 @@ def Abstract_hr(cursor):
             result14 = toJson(cursor.fetchall(),columns)
 
             version_last = int(result14[0]['version'])+1
-            date1 = data_new['start_work']
-            long_date = int(data_new['long_date'])
+            date1 = result14[0]['EndWork_probation']
+            long_date = 30
             star_date = date1.split("-")
             Day_s = int(star_date[0])
             Mon_s = int(star_date[1])
@@ -732,11 +879,11 @@ def Abstract_hr(cursor):
 
             sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby']))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],result14[0]['EndWork_probation'],End_probation_date,data_new['createby']))
 
             sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro_log,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
-            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['start_work'],End_probation_date,data_new['createby'],type_action))
+            data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],result14[0]['EndWork_probation'],End_probation_date,data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -858,7 +1005,7 @@ def AddApprove_pro_together(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid_pro']))
+            cursor.execute(sql44,(data_new['companyid'],result[0]['tier_approve'],data_new['employeeid_pro']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -882,6 +1029,35 @@ def AddApprove_pro_together(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/removeApprove_pro_together', methods=['POST'])
+@connect_sql()
+def removeApprove_pro_together(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_ans = toJson(cursor.fetchall(),columns)
+            result_chs = result_check_ans[0]['name']
+        except Exception as e:
+            return "Not remove"
+
+        sql = "SELECT tier_approve FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        Tier_Approve_Owner = result[0]['tier_approve']
+
+        sqlApprove = "DELETE FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND tier_approve=%s AND createby=%s AND version=%s"
+        cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_pro_2'],result[0]['tier_approve'],data_new['createby'],data_new['version']))
+
+        return "Success"
+    except Exception as e:
+            logserver(e)
+            return "fail"
 @app.route('/QueryApprove_pro_together', methods=['POST'])
 @connect_sql()
 def QueryApprove_pro_together(cursor):
@@ -890,7 +1066,7 @@ def QueryApprove_pro_together(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM approve_probation_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_together' AND version=%s"
+        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND createby=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['createby'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1042,6 +1218,15 @@ def DeleteApprove_probation(cursor):
         source = dataInput['source']
         data_new = source
 
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND date_status IS NULL"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            columns = [column[0] for column in cursor.description]
+            result_check_ans = toJson(cursor.fetchall(),columns)
+            result_chs = result_check_ans[0]['name']
+        except Exception as e:
+            return "Not remove"
+
         sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
         columns = [column[0] for column in cursor.description]
@@ -1092,7 +1277,7 @@ def QryEmployee_probation():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.status_result,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
@@ -1141,7 +1326,7 @@ def QryEmp_pro_leader():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.status_result,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
                                       LEFT JOIN position ON position.position_id = Emp_probation.position_id\
                                       LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
                                       LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
@@ -1149,6 +1334,52 @@ def QryEmp_pro_leader():
                                       LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
                                       LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
                                       LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND NOT Emp_probation.validstatus=1 "+status_id+" "
+        cursor.execute(sql,data_new['employeeid_pro'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for item in result:
+            long_date = []
+            date1 = item['EndWork_probation']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            d0 = date(year_s,Mon_s,Day_s)
+            today = str(date.today())
+            today = today.split("-")
+            Day_s = int(star_date[0])
+            Day_now = int(today[2])
+            Mon_now = int(today[1])
+            year_now = int(today[0])
+            d1 = date(year_now,Mon_now,Day_now)
+            delta = d0 - d1
+            str_date = str(delta)
+            split_str = str_date.split(",")
+            last = split_str[0]
+            item['long_date'] = last
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmpPro_l2_l4', methods=['POST'])
+def QryEmpPro_l2_l4():
+    try:
+
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+                                      LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
+                                      LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
+                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
+                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND Emp_probation.status_result IS NOT NULL "
         cursor.execute(sql,data_new['employeeid_pro'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1191,6 +1422,12 @@ def Insert_ans_pro(cursor):
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "ADD"
+
+        try:
+            sqlUp_de = "DELETE FROM employee_pro WHERE version=%s AND employeeid=%s AND citizenid=%s "
+            cursor.execute(sqlUp_de,(data_new['version'],employeeid,result[0]['citizenid']))
+        except Exception as e:
+            pass
 
         i=0
         for i in xrange(len(data_new['answer_pro'])):
@@ -1330,7 +1567,7 @@ def Qry_probation(cursor):
             employeeid_ = data_new['employeeid']
             version_id = data_new['version']
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 {} AND version={} ORDER BY question_pro_id ASC".format(employeeid_,createby_id,version_id)
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} {} AND version={} ORDER BY question_pro_id ASC".format(employeeid_,createby_id,version_id)
             cursor.execute(sql1pro)
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]
@@ -1339,6 +1576,148 @@ def Qry_probation(cursor):
                 question.append(i2)
             item['question'] = question
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_probation_active', methods=['POST'])
+@connect_sql()
+def Qry_probation_active(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        # createby_id = ""
+        # try:
+        #     createby_id = 'AND createby='+'"'+str(data_new['createby_id'])+'"'
+        # except Exception as e:
+        #     pass
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
+                                      LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        WHERE Emp_probation.employeeid=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['version']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for item in result:
+            long_date = []
+            date1 = result[0]['start_work']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            if   Mon_s==1:
+                 Mounth_name_str ="ม.ค."
+            elif Mon_s==2:
+                 Mounth_name_str="ก.พ."
+            elif Mon_s==3:
+                 Mounth_name_str="มี.ค."
+            elif Mon_s==4:
+                 Mounth_name_str="เม.ย."
+            elif Mon_s==5:
+                 Mounth_name_str="พ.ค."
+            elif Mon_s==6:
+                 Mounth_name_str="มิ.ย."
+            elif Mon_s==7:
+                 Mounth_name_str="ก.ค."
+            elif Mon_s==8:
+                 Mounth_name_str="ส.ค."
+            elif Mon_s==9:
+                 Mounth_name_str="ก.ย."
+            elif Mon_s==10:
+                 Mounth_name_str="ต.ค."
+            elif Mon_s==11:
+                 Mounth_name_str="พ.ย."
+            else:
+                 Mounth_name_str="ธ.ค."
+            year_str = str(year_s+543)
+            yer_last_str = year_str[-2:]
+            item['start_work']= str(Day_s)+" "+Mounth_name_str+" "+yer_last_str
+            next_3_m2 = result[0]['EndWork_probation']
+            end_date = next_3_m2.split("-")
+            int_day_e =int(end_date[0])
+            int_mon_e = int(end_date[1])
+            int_year_e = int(end_date[2])
+            if   int_mon_e==1:
+                 Mounth_name_end ="ม.ค."
+            elif int_mon_e==2:
+                 Mounth_name_end="ก.พ."
+            elif int_mon_e==3:
+                 Mounth_name_end="มี.ค."
+            elif int_mon_e==4:
+                 Mounth_name_end="เม.ย."
+            elif int_mon_e==5:
+                 Mounth_name_end="พ.ค."
+            elif int_mon_e==6:
+                 Mounth_name_end="มิ.ย."
+            elif int_mon_e==7:
+                 Mounth_name_end="ก.ค."
+            elif int_mon_e==8:
+                 Mounth_name_end="ส.ค."
+            elif int_mon_e==9:
+                 Mounth_name_end="ก.ย."
+            elif int_mon_e==10:
+                 Mounth_name_end="ต.ค."
+            elif int_mon_e==11:
+                 Mounth_name_end="พ.ย."
+            else:
+                 Mounth_name_end="ธ.ค."
+            year_end = str(int_year_e+543)
+            yer_last_end = year_end[-2:]
+            item['EndWork_probation']= str(int_day_e)+" "+Mounth_name_end+" "+yer_last_end
+            d0 = date(year_s,Mon_s,Day_s)
+            d1 = date(int_year_e,int_mon_e,int_day_e)
+            delta = d1 - d0
+            str_date = str(delta)
+            split_str = str_date.split(",")
+            last = split_str[0].split(" ")
+            item['long_date_pro'] = str(int(last[0])+1)
+
+            employeeid_ = data_new['employeeid']
+            version_id = data_new['version']
+            question = []
+            # sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 AND version={} ORDER BY question_pro_id ASC".format(employeeid_,version_id)
+            sql1pro = """SELECT employee_pro.question_pro_id, employee_pro.pro_values, employee_pro.type_check,employee_pro.createby, employee_pro.group_q, question_pro_form.question_pro_detail FROM employee_pro \
+                        INNER JOIN question_pro_form ON employee_pro.question_pro_id = question_pro_form.question_pro_id \
+                        WHERE employee_pro.employeeid={} AND employee_pro.validstatus=1 AND employee_pro.version={} ORDER BY employee_pro.question_pro_id ASC""".format(employeeid_,version_id)
+            cursor.execute(sql1pro)
+            # print(sql1pro)
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            for i3 in data2:
+                question.append(i3)
+            item['question'] = question
+            for i1 in data2:
+                comment_title = []
+                sql1 = """  SELECT *
+                            FROM approve_probation
+                            WHERE employeeid_pro=%s AND employeeid=%s AND version=%s"""
+                cursor.execute(sql1,(i1['createby'],data_new['employeeid'],data_new['version']))
+                columns = [column[0] for column in cursor.description]
+                data4 = toJson(cursor.fetchall(),columns)
+                for i2 in data4 :
+                    comment_title.append(i2)
+                item['comment_title'] = comment_title
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Update_probation_active', methods=['POST'])
+@connect_sql()
+def Update_probation_active(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+        i=0
+        for i in xrange(len(data_new['employeeid_pro'])):
+            sqlde = "UPDATE employee_pro SET validstatus=0 WHERE createby=%s AND version=%s"
+            cursor.execute(sqlde,(data_new['employeeid_pro'][i]['createby_id'],data_new['employeeid_pro'][i]['version']))
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
@@ -1417,6 +1796,11 @@ def Qry_upload_file(cursor):
 @app.route('/sendEmail', methods = ['GET'])
 @connect_sql()
 def send_email(cursor):
+    sql_picture = "SELECT mail_type,imageName FROM mail_pic WHERE mail_type='probation_mail'"
+    cursor.execute(sql_picture)
+    columns = [column[0] for column in cursor.description]
+    result_picture = toJson(cursor.fetchall(),columns)
+
     sql_L1 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L1' GROUP BY email_asp "
     cursor.execute(sql_L1)
     columns = [column[0] for column in cursor.description]
@@ -1433,7 +1817,7 @@ def send_email(cursor):
     for item in result:
         count = int(item['total_em'])
         if count>0:
-            sendToMail(item['email_asp'], item['total_em'])
+            sendToMail(item['email_asp'], item['total_em'],result_picture[0]['imageName'])
     sql_L2 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
     cursor.execute(sql_L2)
     columns = [column[0] for column in cursor.description]
@@ -1450,7 +1834,7 @@ def send_email(cursor):
     for item2 in result2:
         count2 = int(item2['total_em'])
         if count2>0:
-            sendToMail(item2['email_asp'], item2['total_em'])
+            sendToMail(item2['email_asp'], item2['total_em'],result_picture[0]['imageName'])
     sql_L3 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L3' GROUP BY email_asp "
     cursor.execute(sql_L3)
     columns = [column[0] for column in cursor.description]
@@ -1467,7 +1851,7 @@ def send_email(cursor):
     for item3 in result3:
         count3 = int(item3['total_em'])
         if count3>0:
-            sendToMail(item3['email_asp'], item3['total_em'])
+            sendToMail(item3['email_asp'], item3['total_em'],result_picture[0]['imageName'])
     sql_L4 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L4' GROUP BY email_asp "
     cursor.execute(sql_L4)
     columns = [column[0] for column in cursor.description]
@@ -1484,19 +1868,21 @@ def send_email(cursor):
     for item4 in result4:
         count4 = int(item4['total_em'])
         if count4>0:
-            sendToMail(item4['email_asp'], item4['total_em'])
+            sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
     return jsonify(result)
-def sendToMail(email, total_em):
+def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "แจ้งประเมินทดลองงานของพนักงาน"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
-                    <b>เรียน  ผู้บริหารและพนักงานทุกท่าน</b></br>
-                      <p>จะมีพนักงานผ่านการทดลองงานจำนวน """ + total_em + """ คน ขอเชิญผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน  ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งประเมินทดลองงานของพนักงานที่จะครบทดลองงาน """ + total_em + """ คน รบกวนต้นสังกัดประเมินพนักงานภายในระยะเวลา 15 วัน ก่อนครบทดลองงาน หากล่าช้าจะส่งผลต่อสวัสดิการพนักงาน
+                        ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงาน ได้ที่ <a href="http://hr-management.inet.co.th">Hr Management</a>
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""""></br>
                   </body>
                 </html>
         """
@@ -1518,17 +1904,19 @@ def sendToMail(email, total_em):
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org):
+def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
-    subject = "ประเมินพนักงานผ่านทดลองงาน"
+    subject = "ประเมินพนักงานผ่านทดลองงาน (ไม่ผ่านการอนุมัติ)"
     text = """\
                 <html>
                   <body>
-                  <img src="http://hr.devops.inet.co.th:8888/userGetFileImageMail/probation_mail/probation_mail.png"></br>
-                    <b>Dear  """ + name_eng + """ """ + surname_eng + """</b></br>
-                      <p>พนักงานไม่ได้รับการอนุมัติ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ขอเชิญผู้ประเมินเข้าไปทำการประเมินพนักงาน ได้ที่<br>
-                       <a href="http://hr.devops.inet.co.th">Hr Management</a></p>
+                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติการครบทดลองงาน</span>ของ """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจาก """ + comment + """ ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงานได้ที่
+                        <a href="http://hr-management.inet.co.th">Hr Management</a>
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1550,3 +1938,49 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
+def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imageName):
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    send_cc = email_hr
+    send_bcc = email_hr
+    subject = "แจ้งผ่านการทดลองงาน"
+    text = """\
+                <html>
+                  <body>
+                    <b style="font-size: 18px;">เรียน  """ + em_name + """ """ + em_surname + """</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ท่านได้ผ่านทดลองงาน สามารถใช้สวัสดิการพนักงานได้อย่างเต็มที่
+                    </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""">
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Cc'] = send_cc
+    msg['Bcc'] = send_bcc
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+@app.route('/userGetFileProbation/<employeeid>/<filetype>/<version>/<fileName>', methods=['GET'])
+def userGetFileProbation(employeeid,filetype,version,fileName):
+    # path = '../app/uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    path = '../../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # path = '../uploads/' + employeeid + "/" + filetype + "/" + version + "/"
+    # current_app.logger.info(path)
+    # current_app.logger.info(fileName)
+    return send_from_directory(path, fileName)
+    # return send_from_directory('../uploads/' + path)
