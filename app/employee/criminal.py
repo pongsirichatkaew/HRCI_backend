@@ -208,7 +208,7 @@ def export_criminal_by_month(cursor):
                 sheet['C'+str(offset + i)] = result[i]['ID_CardNo']
                 sheet['D'+str(offset + i)] = result[i]['Birthdate_name']
                 sheet['E'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
-                sheet['F'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
+                sheet['F'+str(offset + i)] = 'ที่อยู่ตามภูมิลำเนา : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
                 + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
                 result[i]['PostCode']
                 i = i + 1
@@ -277,7 +277,7 @@ def ExportToExcel(cursor):
                 sheet['D'+str(offset + i)] = result[i]['ID_CardNo']
                 sheet['E'+str(offset + i)] = result[i]['Birthdate_name']
                 sheet['F'+str(offset + i)] = result[i]['fatherName'] + ' ' + result[i]['fatherSurname'] + '\n' + result[i]['motherName'] + ' ' + result[i]['motherSurname']
-                sheet['G'+str(offset + i)] = 'ที่อยู่ปัจจุบัน : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
+                sheet['G'+str(offset + i)] = 'ที่อยู่ตามภูมิลำเนา : บ้านเลขที่ '.decode('utf-8') + result[i]['HouseNo'] + ' ถนน '.decode('utf-8') + result[i]['Street'] + ' อำเภอ/เขต '.decode('utf-8') \
                 + result[i]['DISTRICT_ID'] + ' ตำบล/แขวง '.decode('utf-8') + result[i]['AMPHUR_ID'] + ' จังหวัด '.decode('utf-8') + result[i]['PROVINCE_ID'] + ' รหัสไปรษณีย์ '.decode('utf-8') +\
                 result[i]['PostCode']
                 i = i + 1

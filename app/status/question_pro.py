@@ -210,7 +210,7 @@ def add_PreQuestion_Probation(cursor, question_pro_id_last_type):
         { 'question_pro_detail': '9.สภาพการมาปฏิบัติงาน', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
         { 'question_pro_detail': '10.ความประพฤติ และการปฏิบัติตามกฎระเบียบของบริษัท', 'type': '', 'group': 'SectQuestion', 'createby': 'SYSTEM' },
         { 'question_pro_detail': 'หลักเกณฑ์ในการประเมินผลทดลองงาน (KPI)', 'type': '', 'group': 'SectionKPI', 'createby': 'SYSTEM' },
-        # { 'question_pro_detail': 'ผลการปฎิบัติงานที่ได้ (เอกสารแนบ)', 'type': '', 'group': 'SectionKPI', 'createby': 'SYSTEM' },
+        { 'question_pro_detail': 'ผลการปฎิบัติงานที่ได้', 'type': '', 'group': 'SectionKPI', 'createby': 'SYSTEM' },
         { 'question_pro_detail': 'เห็นควรบรรจุเป็นพนักงานประจำปรับตำแหน่ง', 'type': 'CheckboxWithTextfield', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
         { 'question_pro_detail': 'ขยายระยะเวลาทดลองงานเป็นเวลา(วัน)', 'type': 'CheckboxWithTextfield', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },
         { 'question_pro_detail': 'แจ้งเลิกจ้าง', 'type': 'Checkbox', 'group': 'SectionSumPro', 'createby': 'SYSTEM' },

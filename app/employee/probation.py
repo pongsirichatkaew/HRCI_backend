@@ -1567,7 +1567,7 @@ def Qry_probation(cursor):
             employeeid_ = data_new['employeeid']
             version_id = data_new['version']
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 {} AND version={} ORDER BY question_pro_id ASC".format(employeeid_,createby_id,version_id)
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} {} AND version={} ORDER BY question_pro_id ASC".format(employeeid_,createby_id,version_id)
             cursor.execute(sql1pro)
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]
@@ -1576,6 +1576,148 @@ def Qry_probation(cursor):
                 question.append(i2)
             item['question'] = question
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_probation_active', methods=['POST'])
+@connect_sql()
+def Qry_probation_active(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        # createby_id = ""
+        # try:
+        #     createby_id = 'AND createby='+'"'+str(data_new['createby_id'])+'"'
+        # except Exception as e:
+        #     pass
+        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
+                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
+                                      LEFT JOIN company ON company.companyid = Emp_probation.company_id\
+        WHERE Emp_probation.employeeid=%s AND version=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['version']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for item in result:
+            long_date = []
+            date1 = result[0]['start_work']
+            star_date = date1.split("-")
+            Day_s = int(star_date[0])
+            Mon_s = int(star_date[1])
+            year_s = int(star_date[2])
+            if   Mon_s==1:
+                 Mounth_name_str ="ม.ค."
+            elif Mon_s==2:
+                 Mounth_name_str="ก.พ."
+            elif Mon_s==3:
+                 Mounth_name_str="มี.ค."
+            elif Mon_s==4:
+                 Mounth_name_str="เม.ย."
+            elif Mon_s==5:
+                 Mounth_name_str="พ.ค."
+            elif Mon_s==6:
+                 Mounth_name_str="มิ.ย."
+            elif Mon_s==7:
+                 Mounth_name_str="ก.ค."
+            elif Mon_s==8:
+                 Mounth_name_str="ส.ค."
+            elif Mon_s==9:
+                 Mounth_name_str="ก.ย."
+            elif Mon_s==10:
+                 Mounth_name_str="ต.ค."
+            elif Mon_s==11:
+                 Mounth_name_str="พ.ย."
+            else:
+                 Mounth_name_str="ธ.ค."
+            year_str = str(year_s+543)
+            yer_last_str = year_str[-2:]
+            item['start_work']= str(Day_s)+" "+Mounth_name_str+" "+yer_last_str
+            next_3_m2 = result[0]['EndWork_probation']
+            end_date = next_3_m2.split("-")
+            int_day_e =int(end_date[0])
+            int_mon_e = int(end_date[1])
+            int_year_e = int(end_date[2])
+            if   int_mon_e==1:
+                 Mounth_name_end ="ม.ค."
+            elif int_mon_e==2:
+                 Mounth_name_end="ก.พ."
+            elif int_mon_e==3:
+                 Mounth_name_end="มี.ค."
+            elif int_mon_e==4:
+                 Mounth_name_end="เม.ย."
+            elif int_mon_e==5:
+                 Mounth_name_end="พ.ค."
+            elif int_mon_e==6:
+                 Mounth_name_end="มิ.ย."
+            elif int_mon_e==7:
+                 Mounth_name_end="ก.ค."
+            elif int_mon_e==8:
+                 Mounth_name_end="ส.ค."
+            elif int_mon_e==9:
+                 Mounth_name_end="ก.ย."
+            elif int_mon_e==10:
+                 Mounth_name_end="ต.ค."
+            elif int_mon_e==11:
+                 Mounth_name_end="พ.ย."
+            else:
+                 Mounth_name_end="ธ.ค."
+            year_end = str(int_year_e+543)
+            yer_last_end = year_end[-2:]
+            item['EndWork_probation']= str(int_day_e)+" "+Mounth_name_end+" "+yer_last_end
+            d0 = date(year_s,Mon_s,Day_s)
+            d1 = date(int_year_e,int_mon_e,int_day_e)
+            delta = d1 - d0
+            str_date = str(delta)
+            split_str = str_date.split(",")
+            last = split_str[0].split(" ")
+            item['long_date_pro'] = str(int(last[0])+1)
+
+            employeeid_ = data_new['employeeid']
+            version_id = data_new['version']
+            question = []
+            # sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid={} AND validstatus=1 AND version={} ORDER BY question_pro_id ASC".format(employeeid_,version_id)
+            sql1pro = """SELECT employee_pro.question_pro_id, employee_pro.pro_values, employee_pro.type_check,employee_pro.createby, employee_pro.group_q, question_pro_form.question_pro_detail FROM employee_pro \
+                        INNER JOIN question_pro_form ON employee_pro.question_pro_id = question_pro_form.question_pro_id \
+                        WHERE employee_pro.employeeid={} AND employee_pro.validstatus=1 AND employee_pro.version={} ORDER BY employee_pro.question_pro_id ASC""".format(employeeid_,version_id)
+            cursor.execute(sql1pro)
+            # print(sql1pro)
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            for i3 in data2:
+                question.append(i3)
+            item['question'] = question
+            for i1 in data2:
+                comment_title = []
+                sql1 = """  SELECT *
+                            FROM approve_probation
+                            WHERE employeeid_pro=%s AND employeeid=%s AND version=%s"""
+                cursor.execute(sql1,(i1['createby'],data_new['employeeid'],data_new['version']))
+                columns = [column[0] for column in cursor.description]
+                data4 = toJson(cursor.fetchall(),columns)
+                for i2 in data4 :
+                    comment_title.append(i2)
+                item['comment_title'] = comment_title
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Update_probation_active', methods=['POST'])
+@connect_sql()
+def Update_probation_active(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+        i=0
+        for i in xrange(len(data_new['employeeid_pro'])):
+            sqlde = "UPDATE employee_pro SET validstatus=0 WHERE createby=%s AND version=%s"
+            cursor.execute(sqlde,(data_new['employeeid_pro'][i]['createby_id'],data_new['employeeid_pro'][i]['version']))
+        return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
