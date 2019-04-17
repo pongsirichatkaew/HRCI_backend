@@ -13,6 +13,7 @@ from status.employee_ga import *
 from status.employee_MD import*
 from status.assessor_probation import*
 from status.assessor_quota import*
+from status.assessor_kpi import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*

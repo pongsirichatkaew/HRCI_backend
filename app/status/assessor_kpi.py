@@ -11,8 +11,8 @@ def InsertAssessor_kpi(cursor):
         data_new = source
 
         try:
-            sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid']))
+            sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s AND org_name_id=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['employeeid'],data_new['org_name_id']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -29,13 +29,13 @@ def InsertAssessor_kpi(cursor):
         except Exception as e:
             assessor_kpi_id_last = 1
 
-        sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,cost_center_name_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['cost_center_name_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
+        sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby']))
 
         type_action = "ADD"
 
-        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,cost_center_name_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['cost_center_name_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type_action))
         return "success"
     except Exception as e:
         logserver(e)
@@ -49,8 +49,8 @@ def EditAssessor_kpi(cursor):
         data_new = source
 
         try:
-            sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['tier_approve'],data_new['employeeid']))
+            sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s"
+            cursor.execute(sql44,(data_new['companyid'],data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -65,14 +65,14 @@ def EditAssessor_kpi(cursor):
 
         type_action = "Edit"
 
-        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,cost_center_name_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(result[0]['assessor_kpi_id'],result[0]['employeeid'],result[0]['companyid'],result[0]['name_asp'],result[0]['surname_asp'],result[0]['cost_center_name_id'],result[0]['tier_approve'],result[0]['email_asp'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['assessor_kpi_id'],result[0]['employeeid'],result[0]['companyid'],result[0]['name_asp'],result[0]['surname_asp'],result[0]['org_name_id'],result[0]['email_asp'],data_new['createby'],type_action))
 
         sqlUp = "DELETE FROM assessor_kpi WHERE assessor_kpi_id=%s"
         cursor.execute(sqlUp,(data_new['assessor_kpi_id']))
 
-        sqlIn = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,cost_center_name_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['assessor_kpi_id'],data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['cost_center_name_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
+        sqlIn = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn,(result[0]['assessor_kpi_id'],data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -86,10 +86,10 @@ def QryAssessor_kpi(cursor):
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            company_id = 'WHERE assessor_kpi.companyid='+'"'+str(data_new['companyid'])+'"'+' '+'AND assessor_kpi.tier_approve IN'+"('L2','L3','L4')"
+            company_id = 'WHERE assessor_kpi.companyid='+'"'+str(data_new['companyid'])+'"'
         except Exception as e:
             pass
-        sql = "SELECT assessor_kpi.assessor_kpi_id,assessor_kpi.employeeid,assessor_kpi.companyid,company.companyname,assessor_kpi.name_asp,assessor_kpi.surname_asp,assessor_kpi.tier_approve,assessor_kpi.cost_center_name_id,cost_center_name.cost_detail,assessor_kpi.email_asp FROM assessor_kpi INNER JOIN company ON assessor_kpi.companyid = company.companyid INNER JOIN cost_center_name ON assessor_kpi.cost_center_name_id = cost_center_name.cost_center_name_id "+company_id+" "
+        sql = "SELECT assessor_kpi.assessor_kpi_id,assessor_kpi.employeeid,assessor_kpi.companyid,company.companyname,assessor_kpi.name_asp,assessor_kpi.surname_asp,assessor_kpi.org_name_id,org_name.org_name_detail,assessor_kpi.email_asp FROM assessor_kpi INNER JOIN company ON assessor_kpi.companyid = company.companyid INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id "+company_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -112,8 +112,8 @@ def DeleteAssessor_kpi(cursor):
 
         type_action = "Delete"
 
-        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,cost_center_name_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_log,(result[0]['assessor_kpi_id'],result[0]['employeeid'],result[0]['companyid'],result[0]['name_asp'],result[0]['surname_asp'],result[0]['cost_center_name_id'],result[0]['tier_approve'],result[0]['email_asp'],data_new['createby'],type_action))
+        sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_log,(result[0]['assessor_kpi_id'],result[0]['employeeid'],result[0]['companyid'],result[0]['name_asp'],result[0]['surname_asp'],result[0]['org_name_id'],result[0]['email_asp'],data_new['createby'],type_action))
 
         sqlUp = "DELETE FROM assessor_kpi WHERE assessor_kpi_id=%s"
         cursor.execute(sqlUp,(data_new['assessor_kpi_id']))
