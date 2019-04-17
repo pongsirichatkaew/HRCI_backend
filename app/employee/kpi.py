@@ -168,18 +168,18 @@ def Delete_emp_kpi(cursor):
         data_new = source
         employeeid = data_new['employeeid']
 
-        sql = "SELECT * FROM employee_kpi WHERE employeeid=%s"
-        cursor.execute(sql,(data_new['employeeid']))
+        sql = "SELECT * FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "Delete"
 
-        sql_be = "INSERT INTO employee_kpi_log(employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
+        sql_be = "INSERT INTO employee_kpi_log(year,term,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(result[0]['year'],result[0]['term'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
 
-        sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s"
-        cursor.execute(sqlI9de,data_new['employeeid'])
+        sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlI9de,data_new['employeeid'],data_new['year'],data_new['term'])
 
         return "Success"
     except Exception as e:
