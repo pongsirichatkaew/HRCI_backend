@@ -52,7 +52,7 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM user WHERE username = %s and password = %s"
+        sql = "SELECT * FROM user WHERE username = %s and password = %s ORDER BY id ASC LIMIT 1"
         cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
