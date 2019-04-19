@@ -13,6 +13,7 @@ from status.employee_ga import *
 from status.employee_MD import*
 from status.assessor_probation import*
 from status.assessor_quota import*
+from status.assessor_kpi import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*
@@ -51,7 +52,7 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM user WHERE username = %s and password = %s"
+        sql = "SELECT * FROM user WHERE username = %s and password = %s ORDER BY id ASC LIMIT 1"
         cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
@@ -128,4 +129,5 @@ def login():
         return jsonify(result2)
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0',threaded=True,port=5000)
+    context = ('ssl/inet.crt', 'ssl/inet.key')
+    app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
