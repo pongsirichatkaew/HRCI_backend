@@ -91,6 +91,35 @@ def Add_emp_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
 
+        now = datetime.datetime.now()
+        n = data_new['start_work']
+        date = n['date'].split("-")
+        date_day = int(date[0])
+        date_month = int(date[1])
+        date_year = int(date[2])
+        year = now.year
+        month = now.month
+        day = now.day
+        if date_day <= day :
+            if date_month <= month :
+                year = year - date_year
+                month = month - date_month
+            else :
+                year = (year - 1) - date_year
+                month = 12 - (date_month - month)
+            day = day - date_day
+        else :
+            if date_month >= month :
+                year = (year - 1) - date_year
+                month = 11 - (date_month - month)
+            else:
+                year = year - date_year
+                month = (month - 1) - date_month
+            day = 32 - (date_day - day)
+        work_year  =year
+        work_month = month
+        work_date  = day
+
         try:
             old_grade = data_new['old_grade']
         except Exception as e:
@@ -111,10 +140,10 @@ def Add_emp_kpi(cursor):
         type_action = "ADD"
 
         sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
+        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
 
         sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby'],type_action))
+        cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
