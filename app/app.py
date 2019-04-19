@@ -129,4 +129,5 @@ def login():
         return jsonify(result2)
 
 if __name__ == '__main__':
-    app.run(debug=True,host='0.0.0.0',threaded=True,port=5000)
+    context = ('ssl/inet.crt', 'ssl/inet.key')
+    app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
