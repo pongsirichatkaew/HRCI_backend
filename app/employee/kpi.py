@@ -91,9 +91,9 @@ def Add_emp_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
 
-        now = datetime.datetime.now()
+        now = datetime.now()
         n = data_new['start_work']
-        date = n['date'].split("-")
+        date = n.split("-")
         date_day = int(date[0])
         date_month = int(date[1])
         date_year = int(date[2])
