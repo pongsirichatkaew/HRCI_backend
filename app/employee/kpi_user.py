@@ -10,11 +10,11 @@ def Add_project(cursor):
         data_new = source
         employeeid = data_new['employeeid']
 
-        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
-        if result_token!='pass':
-            return 'token fail'
+        # result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        # if result_token!='pass':
+        #     return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,oldgrade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=0
@@ -54,7 +54,7 @@ def Edit_project(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,oldgrade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s"
@@ -87,11 +87,11 @@ def Delete_project(cursor):
         data_new = source
         employeeid = data_new['employeeid']
 
-        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
-        if result_token!='pass':
-            return 'token fail'
+        # result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        # if result_token!='pass':
+        #     return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,oldgrade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s"
