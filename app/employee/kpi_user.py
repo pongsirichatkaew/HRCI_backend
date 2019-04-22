@@ -17,20 +17,19 @@ def Add_project(cursor):
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
-        i=0
+        i=1
         for i in xrange(len(data_new['portfolioLists'])):
-
-            sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
-            cursor.execute(sqlQry)
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
             try:
-                project_kpi_id_last = result[0]['project_kpi_id']+1+i
+                sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
+                cursor.execute(sqlQry)
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+                project_kpi_id_last = int(result[0]['project_kpi_id'])+1
             except Exception as e:
-                project_kpi_id_last = 1+i
+                project_kpi_id_last = 1
 
             type_action = "ADD"
-            
+
             sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
 
