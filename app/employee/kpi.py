@@ -42,7 +42,10 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,comment_hr,group_kpi,star_date_kpi,status FROM employee_kpi WHERE employeeid=%s "
+        sql = "SELECT org_name.org_name_detail,position.position_detail,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+        INNER JOIN position ON employee_kpi.position = position.position_id\
+        WHERE employeeid=%s "
         cursor.execute(sql,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -51,6 +54,12 @@ def QryEmployee_kpi_one(cursor):
         cursor.execute(sql2,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
+
+        # if data_new['project_kpi_id'] :
+        sql3 = "SELECT * FROM project_kpi WHERE employeeid=%s"
+        cursor.execute(sql3,(data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result3 = toJson(cursor.fetchall(),columns)
 
         try:
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
@@ -65,6 +74,7 @@ def QryEmployee_kpi_one(cursor):
         sum={}
         sum["employee"] = result
         sum["board"] = result2
+        sum["project"] = result3
         sum["image"] = encoded_Image
 
         return jsonify(sum)
@@ -172,16 +182,62 @@ def Edit_emp_kpi(cursor):
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
 
+        now = datetime.now()
+        n = data_new['start_work']
+        date = n.split("-")
+        date_day = int(date[0])
+        date_month = int(date[1])
+        date_year = int(date[2])
+        year = now.year
+        month = now.month
+        day = now.day
+        if date_day <= day :
+            if date_month <= month :
+                year = year - date_year
+                month = month - date_month
+            else :
+                year = (year - 1) - date_year
+                month = 12 - (date_month - month)
+            day = day - date_day
+        else :
+            if date_month >= month :
+                year = (year - 1) - date_year
+                month = 11 - (date_month - month)
+            else:
+                year = year - date_year
+                month = (month - 1) - date_month
+            day = 32 - (date_day - day)
+        work_year = year
+        work_month = month
+        work_date  = day
+
+        try:
+            old_grade = data_new['old_grade']
+        except Exception as e:
+            old_grade = ''
+        try:
+            star_date_kpi = data_new['star_date_kpi']
+        except Exception as e:
+            star_date_kpi = ''
+        try:
+            group_kpi = data_new['group_kpi']
+        except Exception as e:
+            group_kpi = ''
+        try:
+            structure_salary = data_new['structure_salary']
+        except Exception as e:
+            structure_salary = ''
+
         type_action = "Edit"
 
         sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_test[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlI9de,data_new['employeeid'],data_new['year'],data_new['term'])
+        cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
 
         sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],data_new['structure_salary'],employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],data_new['work_date'],data_new['work_month'],data_new['work_year'],old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
+        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],data_new['structure_salary'],employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
 
         return "Success"
     except Exception as e:
@@ -204,10 +260,10 @@ def Delete_emp_kpi(cursor):
         type_action = "Delete"
 
         sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_test[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
+        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlI9de,data_new['employeeid'],data_new['year'],data_new['term'])
+        cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "Success"
     except Exception as e:
