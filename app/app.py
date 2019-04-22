@@ -25,6 +25,7 @@ from employee.criminal import *
 from employee.Contract import *
 from employee.probation import *
 from employee.kpi import *
+from employee.kpi_user import *
 from employee.request_employee import *
 from Appform.appform import *
 
