@@ -89,7 +89,7 @@ def QryAssessor_kpi(cursor):
             company_id = 'WHERE assessor_kpi.companyid='+'"'+str(data_new['companyid'])+'"'
         except Exception as e:
             pass
-        sql = "SELECT assessor_kpi.assessor_kpi_id,assessor_kpi.employeeid,assessor_kpi.companyid,company.companyname,company.company_short_name,assessor_kpi.name_asp,assessor_kpi.surname_asp,assessor_kpi.org_name_id,org_name.org_name_detail,assessor_kpi.email_asp FROM assessor_kpi INNER JOIN company ON assessor_kpi.companyid = company.companyid INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id "+company_id+" "
+        sql = "SELECT assessor_kpi.status,assessor_kpi.assessor_kpi_id,assessor_kpi.employeeid,assessor_kpi.companyid,company.companyname,company.company_short_name,assessor_kpi.name_asp,assessor_kpi.surname_asp,assessor_kpi.org_name_id,org_name.org_name_detail,assessor_kpi.email_asp FROM assessor_kpi INNER JOIN company ON assessor_kpi.companyid = company.companyid INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id "+company_id+" "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -118,6 +118,16 @@ def DeleteAssessor_kpi(cursor):
         sqlUp = "DELETE FROM assessor_kpi WHERE assessor_kpi_id=%s"
         cursor.execute(sqlUp,(data_new['assessor_kpi_id']))
 
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Not_edit_assessor_kpi', methods=['POST'])
+@connect_sql()
+def Not_edit_assessor_kpi(cursor):
+    try:
+        sqlUp_main = "UPDATE assessor_kpi SET status='deactive'"
+        cursor.execute(sqlUp_main)
         return "success"
     except Exception as e:
         logserver(e)

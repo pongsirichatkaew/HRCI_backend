@@ -113,7 +113,7 @@ def Delete_project(cursor):
 @app.route('/Add_emp_kpi_tranfer', methods=['POST'])
 @connect_sql()
 def Add_emp_kpi_tranfer(cursor):
-    # try:
+    try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
@@ -173,6 +173,45 @@ def Add_emp_kpi_tranfer(cursor):
         cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],employeeid_leadernew,result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
 
         return "Success"
-    # except Exception as e:
-    #     logserver(e)
-    #     return "fail"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Update_grade_GM', methods=['POST'])
+@connect_sql()
+def Update_grade_GM(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp_main = "UPDATE employee_kpi SET grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Qry_user_kpi_tranfer', methods=['POST'])
+@connect_sql()
+def Qry_user_kpi_tranfer(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        year_term = ""
+        
+        try:
+            year_term = 'AND employee_kpi_tranfer.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi_tranfer.term='+'"'+str(data_new['term'])+'"'
+        except Exception as e:
+            pass
+
+        sql = "SELECT employee_kpi_tranfer.*,employee_kpi.name,employee_kpi.surname FROM employee_kpi\
+                INNER JOIN employee_kpi_tranfer ON employee_kpi.employeeid = employee_kpi_tranfer.employeeid\
+        WHERE employee_kpi_tranfer.createby="+data_new['createby']+" "+year_term+""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
