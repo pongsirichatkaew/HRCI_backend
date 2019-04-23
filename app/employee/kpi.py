@@ -42,7 +42,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT org_name.org_name_detail,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+        sql = "SELECT org_name.org_name_detail,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
         INNER JOIN position ON employee_kpi.position = position.position_id\
         INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -559,7 +559,7 @@ def Delete_board_kpi(cursor):
         sqlIn_be2 = "INSERT INTO board_kpi_log(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],result[0]['employeeid'],result[0]['employeeid_board'],result[0]['name_kpi'],result[0]['surname_kpi'],result[0]['position_kpi'],data_new['createby'],type_action))
 
-        sqlde = "UPDATE board_kpi SET validstatus=0 WHERE employeeid=%s AND employeeid_board=%s year=%s term=%s"
+        sqlde = "UPDATE board_kpi SET validstatus=0 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s"
         cursor.execute(sqlde,(data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
