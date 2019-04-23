@@ -144,7 +144,7 @@ def AD_edit_assessor_kpi(cursor):
         return "fail"
 @app.route('/Not_edit_assessor_kpi_one', methods=['POST'])
 @connect_sql()
-def AD_edit_assessor_kpi(cursor):
+def Not_edit_assessor_kpi_one(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
@@ -158,7 +158,7 @@ def AD_edit_assessor_kpi(cursor):
         return "fail"
 @app.route('/AD_edit_assessor_kpi_one', methods=['POST'])
 @connect_sql()
-def AD_edit_assessor_kpi(cursor):
+def AD_edit_assessor_kpi_one(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
