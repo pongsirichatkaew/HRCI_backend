@@ -132,3 +132,41 @@ def Not_edit_assessor_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/AD_edit_assessor_kpi', methods=['POST'])
+@connect_sql()
+def AD_edit_assessor_kpi(cursor):
+    try:
+        sqlUp_main = "UPDATE assessor_kpi SET status='active'"
+        cursor.execute(sqlUp_main)
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Not_edit_assessor_kpi_one', methods=['POST'])
+@connect_sql()
+def AD_edit_assessor_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp_main = "UPDATE assessor_kpi SET status='deactive' WHERE assessor_kpi_id=%s"
+        cursor.execute(sqlUp_main,(data_new['assessor_kpi_id']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/AD_edit_assessor_kpi_one', methods=['POST'])
+@connect_sql()
+def AD_edit_assessor_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp_main = "UPDATE assessor_kpi SET status='active' WHERE assessor_kpi_id=%s "
+        cursor.execute(sqlUp_main,(data_new['assessor_kpi_id']))
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"

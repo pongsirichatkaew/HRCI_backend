@@ -337,6 +337,40 @@ def Qry_em_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_user_kpi_no_emid_leader', methods=['POST'])
+@connect_sql()
+def Qry_user_kpi_no_emid_leader(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+        WHERE employee_kpi.em_id_leader IS NULL"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/update_user_kpi_no_emid_leader', methods=['POST'])
+@connect_sql()
+def update_user_kpi_no_emid_leader(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['em_id_leader'],data_new['employeeid'],data_new['year'],data_new['term']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Qry_user_kpi', methods=['POST'])
 @connect_sql()
 def Qry_user_kpi(cursor):
