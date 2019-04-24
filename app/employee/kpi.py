@@ -396,13 +396,18 @@ def Qry_user_kpi_board(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""
+        try:
+            year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""+'AND employee_kpi_tranfer.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi_tranfer.term='+'"'+str(data_new['term'])+'"'
+        except Exception as e:
+            pass
+
         sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-                                                                                        INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE board_kpi.employeeid_board=%s AND employee_kpi.year=%s AND employeeid_kpi.term=%s AND board_kpi.validstatus=1 "
-        cursor.execute(sql,(data_new['employeeid_board'],data_new['year'],data_new['term']))
+        "+year_term+""
+        cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
