@@ -201,7 +201,7 @@ def cancel_emp_kpi_tranfer(cursor):
         result = toJson(cursor.fetchall(),columns)
 
         sql_revers = "SELECT createby FROM employee_kpi_tranfer WHERE employeeid=%s AND year=%s AND term=%s AND em_id_leader=%s"
-        cursor.execute(sql_test,(data_new['employeeid'],data_new['year'],data_new['term'],data_new['old_emid_leader']))
+        cursor.execute(sql_revers,(data_new['employeeid'],data_new['year'],data_new['term'],data_new['old_emid_leader']))
         columns = [column[0] for column in cursor.description]
         result_revers = toJson(cursor.fetchall(),columns)
 
@@ -213,7 +213,7 @@ def cancel_emp_kpi_tranfer(cursor):
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND em_id_leader=%s AND year=%s AND term=%s"
         cursor.execute(sqlI9de,(data_new['employeeid'],data_new['old_emid_leader'],data_new['year'],data_new['term']))
 
-        if not result_check_L2:
+        if not result_revers:
 
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
