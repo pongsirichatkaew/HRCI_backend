@@ -326,8 +326,14 @@ def Qry_board_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi WHERE employeeid=%s"
-        cursor.execute(sql,(data_new['employeeid']))
+        year_term = "WHERE employeeid="+data_new['employeeid']+""
+        try:
+            year_term = "WHERE employeeid="+data_new['employeeid']+" AND year="+data_new['year']+" AND term="+data_new['term']+""
+        except Exception as e:
+            pass
+
+        sql = "SELECT employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi "+year_term+""
+        cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -525,20 +531,20 @@ def Add_board_kpi_no_result(cursor):
             sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['createby']))
 
-        group_kpi_id = ""
+        group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'
+            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'" AND year='+data_new['year']+' AND term='+data_new['term']+' '
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
+            sql_emp_kpi = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             check_emid = result[0]['employeeid']
         except Exception as e:
-            sql_emp_kpi = "SELECT employeeid FROM employee_kpi "+group_kpi_id+" "
+            sql_emp_kpi = "SELECT year,term,employeeid FROM employee_kpi "+group_kpi_id+" "
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -551,19 +557,19 @@ def Add_board_kpi_no_result(cursor):
             if check_em_id==check_em_board:
                 pass
             else:
-                sqlIn_bet = "INSERT INTO board_kpi(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_bet,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
+                sqlIn_bet = "INSERT INTO board_kpi(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_bet,(result[i]['year'],result[i]['term'],result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby']))
 
         for i in xrange(len(result)):
             check_em_id = str(result[i]['employeeid'])
             check_em_board = str(data_new['employeeid_board'])
             if check_em_id==check_em_board:
                 type_action = "Copy_board"
-                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be_2,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(result[i]['year'],result[i]['term'],result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
             else:
-                sqlIn_be_2 = "INSERT INTO board_kpi_log(employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_be_2,(result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
+                sqlIn_be_2 = "INSERT INTO board_kpi_log(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_be_2,(result[i]['year'],result[i]['term'],result[i]['employeeid'],data_new['employeeid_board'],data_new['name_kpi'],data_new['surname_kpi'],data_new['position_kpi'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -586,8 +592,8 @@ def Delete_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board IS NULL "
-        cursor.execute(sqlUp2,(data_new['employeeid_board']))
+        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board IS NULL AND year=%s AND term=%s "
+        cursor.execute(sqlUp2,(data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
     except Exception as e:
@@ -712,14 +718,16 @@ def Update_board_kpi(cursor):
 def Export_kpi(cursor):
     try:
         try:
-            sql = "SELECT employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,grade,comment_hr,group_kpi,star_date_kpi,status FROM employee_kpi"
+            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+                                                                                INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                INNER JOIN position ON employee_kpi.position = position.position_id"
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for i1 in result:
                 kpi_ful = []
-                sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND validstatus=1"
-                cursor.execute(sql2,(i1['employeeid']))
+                sql2 = "SELECT name_kpi,surname_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND validstatus=1 AND year=%s AND term=%s"
+                cursor.execute(sql2,(i1['employeeid'],data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
@@ -739,6 +747,7 @@ def Export_kpi(cursor):
         if len(result) > 0:
 
             sheet = wb['Sheet1']
+            sheet['C'+str(2)] = data_new['year'] + '/' + data_new['term']
             offset = 4
             i = 0
             for i in xrange(len(result)):
