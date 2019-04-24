@@ -183,7 +183,7 @@ def cancel_emp_kpi_tranfer(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        employeeid_leadernew = str(data_new['employeeid_new'])
+        # employeeid_leadernew = str(data_new['employeeid_new'])
 
         try:
             sql_check = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND last_name IS NOT NULL"
