@@ -170,3 +170,24 @@ def AD_edit_assessor_kpi_one(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/qry_count_assessorKPI', methods=['POST'])
+@connect_sql()
+def qry_count_assessorKPI(cursor):
+    try:
+        sqlQry = "SELECT COUNT(employeeid) AS Total_active FROM assessor_kpi WHERE status='active'"
+        cursor.execute(sqlQry)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        sqlQry2 = "SELECT COUNT(employeeid) AS Total_deactive FROM assessor_kpi WHERE status='deactive'"
+        cursor.execute(sqlQry2)
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(),columns)
+
+        all={}
+        all['total_active'] = result[0]['Total_active']
+        all['total_deactive'] = result2[0]['Total_deactive']
+        return jsonify(all)
+    except Exception as e:
+        logserver(e)
+        return "fail"

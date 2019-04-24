@@ -67,6 +67,11 @@ def QryEmployee_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result_GM = toJson(cursor.fetchall(),columns)
 
+        sqlAss = "SELECT status,type FROM assessor_kpi WHERE employeeid=%s"
+        cursor.execute(sqlAss,(data_new['createby']))
+        columns = [column[0] for column in cursor.description]
+        result_ass = toJson(cursor.fetchall(),columns)
+
         try:
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
             open_path_ = urllib.urlopen(encoded_Image)
@@ -83,6 +88,7 @@ def QryEmployee_kpi_one(cursor):
         sum["project"] = result3
         sum["image"] = encoded_Image
         sum["grade_GM"] = result_GM
+        sum["permission_leader"] = result_ass
 
         return jsonify(sum)
     except Exception as e:
