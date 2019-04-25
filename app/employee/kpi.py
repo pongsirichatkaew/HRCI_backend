@@ -536,7 +536,7 @@ def Add_board_kpi_no_result(cursor):
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'" AND year='+data_new['year']+' AND term='+data_new['term']+' '
+            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
         except Exception as e:
             pass
         try:
