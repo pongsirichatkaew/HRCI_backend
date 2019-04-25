@@ -229,14 +229,14 @@ def cancel_emp_kpi_tranfer(cursor):
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
             sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-            cursor.execute(sqlUp_main,(data_new['comment_cancel']]))
+            cursor.execute(sqlUp_main,(data_new['comment_cancel']))
 
         else:
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_revers[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
             sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-            cursor.execute(sqlUp_main,(data_new['comment_cancel']]))
+            cursor.execute(sqlUp_main,(data_new['comment_cancel']))
 
         try:
             sqlI9de_tranfer = "DELETE FROM employee_kpi_tranfer WHERE employeeid=%s AND em_id_leader=%s AND year=%s AND term=%s"
