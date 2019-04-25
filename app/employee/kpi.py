@@ -73,7 +73,7 @@ def QryEmployee_kpi_one(cursor):
             columns = [column[0] for column in cursor.description]
             result_ass = toJson(cursor.fetchall(),columns)
         except Exception as e:
-            result_ass = '' 
+            result_ass = ''
         try:
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
             open_path_ = urllib.urlopen(encoded_Image)
@@ -488,7 +488,7 @@ def Add_board_kpi(cursor):
 @connect_sql()
 def board_qry(cursor):
     try:
-        sql = "SELECT employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
+        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -508,8 +508,8 @@ def Add_board_kpi_no_result(cursor):
         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
 
         try:
-            sql_check_board = "SELECT employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 "
-            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id']))
+            sql_check_board = "SELECT year,term,employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 AND year=%s AND term=%s "
+            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_check_board = toJson(cursor.fetchall(),columns)
             test_check_board = result_check_board[0]['employeeid_board']
@@ -517,8 +517,8 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sql_be = "INSERT INTO board_kpi_v2(employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
         try:
             permission = "board"
@@ -585,8 +585,8 @@ def Delete_board_kpi_no_result(cursor):
         source = dataInput['source']
         data_new = source
 
-        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s AND group_kpi=%s"
-        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['group_kpi']))
+        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s AND group_kpi=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['group_kpi'],data_new['year'],data_new['term']))
 
         try:
             sqlDe = "DELETE FROM Admin WHERE employeeid=%s AND permission='board'"
