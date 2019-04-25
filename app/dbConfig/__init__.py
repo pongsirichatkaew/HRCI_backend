@@ -183,7 +183,7 @@ def CheckTokenAssessor_kpi(employeeid,token):
     try:
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql3 = "SELECT employeeid FROM assessor_kpi WHERE employeeid={} AND token='{}' AND time_token LIKE '%{}-{}%'".format(employeeid,token,token_mounth,token_day)
+        sql3 = "SELECT employeeid FROM assessor_kpi WHERE employeeid={} AND status='active' AND token='{}' AND time_token LIKE '%{}-{}%'".format(employeeid,token,token_mounth,token_day)
         cursor.execute(sql3)
         data3 = cursor.fetchall()
         columns3 = [column[0] for column in cursor.description]
