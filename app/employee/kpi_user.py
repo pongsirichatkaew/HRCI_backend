@@ -317,8 +317,8 @@ def Update_grade_GM(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp_main = "UPDATE employee_kpi SET grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp_main,(data_new['grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp_main = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['old_grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
         return "success"
     except Exception as e:
         logserver(e)
