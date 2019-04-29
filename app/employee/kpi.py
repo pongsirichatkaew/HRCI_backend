@@ -69,6 +69,13 @@ def QryEmployee_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result_GM = toJson(cursor.fetchall(),columns)
 
+        if not result_GM:
+            sqlGM = "SELECT employee_kpi.old_grade_GM,employee_kpi.status_GM,employee_kpi.positionChange_GM,employee_kpi.specialMoney_GM,employee_kpi.newKpiDescriptions_GM FROM employee_kpi\
+            WHERE employee_kpi.employeeid=%s AND employee_kpi.year=%s AND employee_kpi.term=%s"
+            cursor.execute(sqlGM,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result_GM = toJson(cursor.fetchall(),columns)
+
         try:
             sqlAss = "SELECT status,type FROM assessor_kpi WHERE employeeid=%s"
             cursor.execute(sqlAss,(data_new['createby']))
