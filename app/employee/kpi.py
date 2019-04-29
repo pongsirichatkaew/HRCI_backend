@@ -427,7 +427,7 @@ def Qry_user_kpi_board(cursor):
         data_new = source
         year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""
         try:
-            year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""+'AND employee_kpi_tranfer.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi_tranfer.term='+'"'+str(data_new['term'])+'"'
+            year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
         except Exception as e:
             pass
 
