@@ -207,8 +207,8 @@ def QryName_leader_kpi(cursor):
         sql = "SELECT assessor_kpi.employeeid,assessor_kpi.name_asp,assessor_kpi.surname_asp,org_name.org_name_detail,assessor_kpi.email_asp FROM assessor_kpi\
         INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id\
         INNER JOIN employee_kpi ON assessor_kpi.employeeid = employee_kpi.em_id_leader\
-        WHERE assessor_kpi.employeeid=%s  "
-        cursor.execute(sql,(data_new['em_id_leader']))
+        WHERE assessor_kpi.employeeid=%s AND employee_kpi.employeeid=%s"
+        cursor.execute(sql,(data_new['em_id_leader'],data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -248,8 +248,8 @@ def EditName_leader_kpi_one(cursor):
             sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql_log,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type_action))
 
-        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE em_id_leader=%s"
-        cursor.execute(sqlUp_main,(data_new['employeeid_new'],data_new['employeeid']))
+        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE em_id_leader=%s AND employeeid=%s"
+        cursor.execute(sqlUp_main,(data_new['employeeid_new'],data_new['employeeid'],data_new['employeeid_self']))
 
         return jsonify(result)
     except Exception as e:
