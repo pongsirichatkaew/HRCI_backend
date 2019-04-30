@@ -931,6 +931,82 @@ def Export_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Export_kpi_hr', methods=['POST'])
+@connect_sql()
+def Export_kpi_hr(cursor):
+    try:
+        try:
+            sql = "SELECT employee.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,section.sect_detail,cost_center_name.cost_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee.start_work,employee.EndWork_probation,employee.nickname_employee,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney FROM employee\
+                                                                                INNER JOIN org_name ON employee.org_name = org_name.org_name_id\
+                                                                                INNER JOIN position ON employee.position = position.position_id\
+                                                                                INNER JOIN employee_kpi ON employee.position = employee_kpi.position_id\
+                                                                                INNER JOIN section ON employee.position = section.position_id\
+                                                                                INNER JOIN cost_center_name ON employee.position = cost_center_name.position_id\
+                                                                                INNER JOIN company ON employee.position = company.position_id\
+                                                                                "
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for i1 in result:
+                kpi_ful = []
+                sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
+                cursor.execute(sql2,(i1['em_id_leader']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                for i2 in data2 :
+                    kpi_ful.append(i2)
+                i1['kpi_ful'] = kpi_ful
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_kpi_hr.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['C'+str(2)] = data_new['year'] + '/' + data_new['term']
+            offset = 4
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name']
+                sheet['D'+str(offset + i)] = result[i]['surname']
+                sheet['E'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['F'+str(offset + i)] = result[i]['position_detail']
+                sheet['G'+str(offset + i)] = result[i]['sect_detail']
+                sheet['H'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['I'+str(offset + i)] = result[i]['cost_detail']
+                sheet['J'+str(offset + i)] = result[i]['kpi_ful'][0]['name_asp']+' '+result[i]['kpi_ful'][0]['surname_asp']
+                sheet['K'+str(offset + i)] = result[i]['start_work']
+                sheet['L'+str(offset + i)] = result[i]['EndWork_probation']
+                sheet['M'+str(offset + i)] = result[i]['work_year']
+                sheet['N'+str(offset + i)] = result[i]['work_month']
+                sheet['O'+str(offset + i)] = result[i]['work_date']
+                sheet['P'+str(offset + i)] = result[i]['gradeCompareWithPoint']
+                sheet['Q'+str(offset + i)] = result[i]['structure_salary']
+                sheet['R'+str(offset + i)] = result[i]['totalGradePercent']
+                sheet['S'+str(offset + i)] = result[i]['old_grade']
+                sheet['T'+str(offset + i)] = result[i]['status']
+                sheet['U'+str(offset + i)] = result[i]['positionChange']
+                sheet['V'+str(offset + i)] = result[i]['specialMoney']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):
     return send_from_directory('../uploads/', path)
