@@ -13,6 +13,7 @@ from status.employee_ga import *
 from status.employee_MD import*
 from status.assessor_probation import*
 from status.assessor_quota import*
+from status.assessor_kpi import*
 from status.signature_crime import*
 from status.employee_Deputy_Manager_Hr import*
 from status.employee_Deputy_Manager_PayRoll import*
@@ -24,6 +25,7 @@ from employee.criminal import *
 from employee.Contract import *
 from employee.probation import *
 from employee.kpi import *
+from employee.kpi_user import *
 from employee.request_employee import *
 from Appform.appform import *
 
@@ -51,7 +53,7 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM user WHERE username = %s and password = %s"
+        sql = "SELECT * FROM user WHERE username = %s and password = %s ORDER BY id ASC LIMIT 1"
         cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
@@ -95,6 +97,38 @@ def login():
             for i3 in _output_per2 :
                 sum_permisssion2.append(i3)
             item2['tier_approve'] = sum_permisssion2
+
+        sql5 = "SELECT * FROM assessor_quota WHERE email_asp=%s"
+        cursor.execute(sql5,_output[0]['username'])
+        data5 = cursor.fetchall()
+        columns5 = [column[0] for column in cursor.description]
+        _output5 = toJson(data5, columns5)
+        for item5 in _output5:
+            sum_permisssion5 = []
+            sql5_ = "SELECT tier_approve FROM assessor_quota WHERE email_asp=%s GROUP BY tier_approve"
+            cursor.execute(sql5_,_output[0]['username'])
+            data5 = cursor.fetchall()
+            columns5 = [column[0] for column in cursor.description]
+            _output_per5 = toJson(data5, columns5)
+            for i5 in _output_per5 :
+                sum_permisssion5.append(i5)
+            item5['tier_approve'] = sum_permisssion5
+
+        sql4 = "SELECT * FROM assessor_kpi WHERE email_asp=%s"
+        cursor.execute(sql4,_output[0]['username'])
+        data4 = cursor.fetchall()
+        columns4 = [column[0] for column in cursor.description]
+        _output4 = toJson(data4, columns4)
+        for item4 in _output4:
+            sum_permisssion4 = []
+            sql4_ = "SELECT type FROM assessor_kpi WHERE email_asp=%s GROUP BY type"
+            cursor.execute(sql4_,_output[0]['username'])
+            data4 = cursor.fetchall()
+            columns4 = [column[0] for column in cursor.description]
+            _output_per4 = toJson(data4, columns4)
+            for i4 in _output_per4 :
+                sum_permisssion4.append(i4)
+            item4['type'] = sum_permisssion4
         # connection.commit()
         # connection.close()
         result={}
@@ -118,6 +152,18 @@ def login():
             cursor.execute(sqlUp_token2,(Gen_token,_output[0]['username']))
         except Exception as e:
             result['permission2'] = ''
+        try:
+            result['permission4'] = _output4[0]['type']
+            sqlUp_token4 = "UPDATE assessor_kpi SET token=%s,time_token=now() WHERE email_asp=%s"
+            cursor.execute(sqlUp_token4,(Gen_token,_output[0]['username']))
+        except Exception as e:
+            result['permission4'] = ''
+        try:
+            result['permission3'] = _output5[0]['tier_approve']
+            sqlUp_token5 = "UPDATE assessor_quota SET token=%s,time_token=now() WHERE email_asp=%s"
+            cursor.execute(sqlUp_token5,(Gen_token,_output[0]['username']))
+        except Exception as e:
+            result['permission3'] = ''
         connection.commit()
         connection.close()
         return jsonify(result)
@@ -128,4 +174,10 @@ def login():
         return jsonify(result2)
 
 if __name__ == '__main__':
+<<<<<<< HEAD
     app.run(debug=True,host='0.0.0.0',threaded=True,port=8888)
+=======
+    # context = ('ssl/inet.crt', 'ssl/inet.key')
+    # app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
+    app.run(debug=True,host='0.0.0.0',threaded=True,port=5000)
+>>>>>>> Develop

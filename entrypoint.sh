@@ -39,13 +39,21 @@ echo "server {
 
 echo "
 server {
+<<<<<<< HEAD
   listen 8888;
   listen [::]:8888;
   # listen 5000 ssl;
   # listen [::]:5000 ssl;
+=======
+  # listen 5000;
+  # listen [::]:5000;
+  listen 5000 ssl;
+  listen [::]:5000 ssl;
+>>>>>>> Develop
 
-  # ssl_certificate PATH_OF_KEY.CERT ex.(/app/ssl/thaidotcom.cloud.cert) ;
-  # ssl_certificate_key PATH_OF_KEY.KEY ex.(/app/ssl/*.thaidotcom.key) ;
+  server_name hr-management.inet.co.th;
+  ssl_certificate /app/ssl/inet.crt;
+  ssl_certificate_key /app/ssl/inet.key;
 
   location / {
         try_files \$uri @app;
