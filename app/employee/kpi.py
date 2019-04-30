@@ -12,7 +12,7 @@ def QryEmployee_kpi(cursor):
             data_new = source
             year_ = ''
             try:
-                year_ = data_new['yaer']
+                year_ = data_new['year']
                 year_ = ' AND employee_kpi.year='+str(data_new['year'])
             except Exception as e:
                 pass
@@ -32,7 +32,7 @@ def QryEmployee_kpi(cursor):
             data_new = source
             year_ = ''
             try:
-                year_ = data_new['yaer']
+                year_ = data_new['year']
                 year_ = ' AND employee_kpi.year='+str(data_new['year'])
             except Exception as e:
                 pass
@@ -46,6 +46,8 @@ def QryEmployee_kpi(cursor):
             group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'+year_+term_
         except Exception as e:
             pass
+        # if (group_kpi_id =='')and(year_!=''):
+        #     group_kpi_id = 'WHERE'+'employee_kpi.term='+str(data_new['term'])+term_
         sql = "SELECT employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
@@ -69,7 +71,7 @@ def QryEmployee_kpi_oldkpi(cursor):
             data_new = source
             year_ = ''
             try:
-                year_ = data_new['yaer']
+                year_ = data_new['year']
                 year_ = ' AND employee_kpi.year='+str(data_new['year'])
             except Exception as e:
                 pass
@@ -89,7 +91,7 @@ def QryEmployee_kpi_oldkpi(cursor):
             data_new = source
             year_ = ''
             try:
-                year_ = data_new['yaer']
+                year_ = data_new['year']
                 year_ = ' AND employee_kpi.year='+str(data_new['year'])
             except Exception as e:
                 pass
