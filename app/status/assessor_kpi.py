@@ -226,7 +226,7 @@ def EditName_leader_kpi_one(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_kpi WHERE employeeid=%s AND companyid=%s"
-            cursor.execute(sql44,(data_new['employeeid'],data_new['companyid']))
+            cursor.execute(sql44,(data_new['employeeid_new'],data_new['companyid']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -241,17 +241,17 @@ def EditName_leader_kpi_one(cursor):
                 assessor_kpi_id_last = 1
 
             sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby']))
+            cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid_new'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby']))
 
             type_action = "ADD"
 
             sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type_action))
+            cursor.execute(sql_log,(assessor_kpi_id_last,data_new['employeeid_new'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type_action))
 
         sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE em_id_leader=%s AND employeeid=%s"
         cursor.execute(sqlUp_main,(data_new['employeeid_new'],data_new['employeeid'],data_new['employeeid_self']))
 
-        return jsonify(result)
+        return "success"
     except Exception as e:
         logserver(e)
         return "fail"
