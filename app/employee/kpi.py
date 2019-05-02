@@ -811,8 +811,12 @@ def Update_board_kpi(cursor):
 @connect_sql()
 def Export_kpi(cursor):
     try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
         try:
-            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail AS org_name,position.position_detail AS position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                 INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                 INNER JOIN position ON employee_kpi.position = position.position_id"
             cursor.execute(sql)
