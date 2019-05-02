@@ -195,7 +195,7 @@ def QryContract(cursor):
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
-        resultlast["starwork"] = result[0]['start_work']
+        resultlast["startwork"] = result[0]['start_work']
         resultlast["Endprobation"] = result[0]['EndWork_probation']
         resultlast["HouseNo"] = result__2[0]['HouseNo']
         resultlast["Street"] = result__2[0]['Street']
