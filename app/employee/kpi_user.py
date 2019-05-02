@@ -152,7 +152,7 @@ def Add_emp_kpi_tranfer(cursor):
             except Exception as e:
                 assessor_kpi_id_last = 1
             type = 'submain'
-            sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
+            sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(assessor_kpi_id_last,employeeid_leadernew,data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type))
 
             type_action = "ADDtranfer"
