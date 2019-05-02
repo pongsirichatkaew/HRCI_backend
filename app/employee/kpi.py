@@ -60,6 +60,26 @@ def QryEmployee_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmployee_kpi_search', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_search(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+        WHERE employee_kpi.year=%s AND employee_kpi.term =%s "
+        cursor.execute(sql,(data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryEmployee_kpi_oldkpi', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_oldkpi(cursor):
@@ -211,6 +231,8 @@ def Add_emp_kpi(cursor):
         cursor.execute(sql44,(data_new['companyid'],data_new['org_name']))
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
+        if not result_test:
+            return "no org_name"
 
         now = datetime.now()
         n = data_new['start_work']
