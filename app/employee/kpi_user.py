@@ -192,7 +192,7 @@ def cancel_emp_kpi_tranfer(cursor):
         source = dataInput['source']
         data_new = source
         # employeeid_leadernew = str(data_new['employeeid_new'])
-        result_token = CheckTokenAssessor_kpi(data_new['old_emid_leader'],data_new['token'])
+        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
         if result_token!='pass':
             return 'token fail'
 

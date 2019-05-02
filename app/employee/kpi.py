@@ -935,16 +935,16 @@ def Export_kpi(cursor):
 @connect_sql()
 def Export_kpi_hr(cursor):
     try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
         try:
-            sql = "SELECT employee.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,section.sect_detail,cost_center_name.cost_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee.start_work,employee.EndWork_probation,employee.nickname_employee,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney FROM employee\
-                                                                                INNER JOIN org_name ON employee.org_name = org_name.org_name_id\
-                                                                                INNER JOIN position ON employee.position = position.position_id\
-                                                                                INNER JOIN employee_kpi ON employee.position = employee_kpi.position_id\
-                                                                                INNER JOIN section ON employee.position = section.position_id\
-                                                                                INNER JOIN cost_center_name ON employee.position = cost_center_name.position_id\
-                                                                                INNER JOIN company ON employee.position = company.position_id\
-                                                                                "
-            cursor.execute(sql)
+            sql = "SELECT employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid FROM employee_kpi\
+                                                                                INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                INNER JOIN position ON employee_kpi.position = position.position_id\
+                                                                                INNER JOIN company ON employee_kpi.companyid = company.companyid\
+            WHERE employee_kpi.year=%s AND employee_kpi.term=%s"
+            cursor.execute(sql,(data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for i1 in result:
@@ -955,7 +955,34 @@ def Export_kpi_hr(cursor):
                 data2 = toJson(cursor.fetchall(),columns)
                 for i2 in data2 :
                     kpi_ful.append(i2)
-                i1['kpi_ful'] = kpi_ful
+                i1['name_leader'] = kpi_ful
+            for i3 in result:
+                kpi_ful2 = []
+                try:
+                    sql3 = "SELECT employee.start_work,employee.EndWork_probation,employee.nickname_employee,section.sect_detail,cost_center_name.cost_detail FROM employee\
+                                                                       INNER JOIN section ON employee.section_id = section.sect_id\
+                                                                       INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+                    WHERE employee.employeeid=%s "
+                    cursor.execute(sql3,(i3['employeeid']))
+                    columns = [column[0] for column in cursor.description]
+                    data3 = toJson(cursor.fetchall(),columns)
+                except Exception as e:
+                    data3 = ['']
+                for i4 in data3 :
+                    kpi_ful2.append(i4)
+                i3['sec_cost_center'] = kpi_ful2
+            for item in result:
+                if item['positionChange'] is not None:
+                    sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
+                    cursor.execute(sql5,(item['positionChange']))
+                    columns = [column[0] for column in cursor.description]
+                    data5 = toJson(cursor.fetchall(),columns)
+                    item['positionChange'] = data5[0]['position_detail']
+                else:
+                    item['positionChange'] = ''
+                if item['specialMoney'] is None:
+                    item['specialMoney']=''
+            return jsonify(result)
         except Exception as e:
             logserver(e)
             return "No_Data"
@@ -980,12 +1007,12 @@ def Export_kpi_hr(cursor):
                 sheet['D'+str(offset + i)] = result[i]['surname']
                 sheet['E'+str(offset + i)] = result[i]['nickname_employee']
                 sheet['F'+str(offset + i)] = result[i]['position_detail']
-                sheet['G'+str(offset + i)] = result[i]['sect_detail']
+                sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
                 sheet['H'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['I'+str(offset + i)] = result[i]['cost_detail']
-                sheet['J'+str(offset + i)] = result[i]['kpi_ful'][0]['name_asp']+' '+result[i]['kpi_ful'][0]['surname_asp']
-                sheet['K'+str(offset + i)] = result[i]['start_work']
-                sheet['L'+str(offset + i)] = result[i]['EndWork_probation']
+                sheet['I'+str(offset + i)] = result[i]['sec_cost_center'][0]['cost_detail']
+                sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
+                sheet['K'+str(offset + i)] = result[i]['sec_cost_center'][0]['start_work']
+                sheet['L'+str(offset + i)] = result[i]['sec_cost_center'][0]['EndWork_probation']
                 sheet['M'+str(offset + i)] = result[i]['work_year']
                 sheet['N'+str(offset + i)] = result[i]['work_month']
                 sheet['O'+str(offset + i)] = result[i]['work_date']
