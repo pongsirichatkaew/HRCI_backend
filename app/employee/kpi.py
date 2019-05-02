@@ -939,7 +939,7 @@ def Export_kpi_hr(cursor):
         source = dataInput['source']
         data_new = source
         try:
-            sql = "SELECT employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid FROM employee_kpi\
+            sql = "SELECT employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,company.company_short_name,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                 INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                 INNER JOIN position ON employee_kpi.position = position.position_id\
                                                                                 INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -982,7 +982,6 @@ def Export_kpi_hr(cursor):
                     item['positionChange'] = ''
                 if item['specialMoney'] is None:
                     item['specialMoney']=''
-            return jsonify(result)
         except Exception as e:
             logserver(e)
             return "No_Data"
@@ -1005,7 +1004,7 @@ def Export_kpi_hr(cursor):
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name']
                 sheet['D'+str(offset + i)] = result[i]['surname']
-                sheet['E'+str(offset + i)] = result[i]['nickname_employee']
+                sheet['E'+str(offset + i)] = result[i]['sec_cost_center'][0]['nickname_employee']
                 sheet['F'+str(offset + i)] = result[i]['position_detail']
                 sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
                 sheet['H'+str(offset + i)] = result[i]['org_name_detail']
