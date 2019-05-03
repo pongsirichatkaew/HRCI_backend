@@ -959,7 +959,7 @@ def Export_kpi(cursor):
 @app.route('/Export_kpi_hr', methods=['POST'])
 @connect_sql()
 def Export_kpi_hr(cursor):
-    try:
+    # try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
@@ -1054,11 +1054,10 @@ def Export_kpi_hr(cursor):
         os.remove(filename_tmp)
         displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
         displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
-        print(success)
         return jsonify(toDict(displayData,displayColumns))
-    except Exception as e:
-        logserver(e)
-        return "fail"
+    # except Exception as e:
+    #     logserver(e)
+    #     return "fail"
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):
     return send_from_directory('../uploads/', path)
