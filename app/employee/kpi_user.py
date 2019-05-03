@@ -60,7 +60,7 @@ def Edit_project(cursor):
         for i in xrange(len(data_new['portfolioLists'])):
             try:
                 sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['project_kpi_id'],data_new['year'],data_new['term']))
+                cursor.execute(sql,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
