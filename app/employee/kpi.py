@@ -1020,7 +1020,7 @@ def Export_kpi_hr(cursor):
         wb = load_workbook('../app/Template/Template_kpi.xlsx')
         if len(result) > 0:
 
-            sheet = wb['Sheet2']
+            sheet = wb['Sheet1']
             sheet['C'+str(2)] = data_new['year'] + '/' + data_new['term']
             offset = 4
             i = 0
