@@ -84,53 +84,16 @@ def QryEmployee_kpi_search(cursor):
 @connect_sql()
 def QryEmployee_kpi_oldkpi(cursor):
     try:
-        group_kpi_id = ""
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            year_ = ''
-            try:
-                year_ = data_new['year']
-                year_ = ' AND employee_kpi.year='+str(data_new['year'])
-            except Exception as e:
-                pass
-            term_ = ''
-            try:
-                term_ = data_new['term']
-                term_ = ' AND employee_kpi.term='+str(data_new['term'])
-            except Exception as e:
-                pass
-            group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+' AND employee_kpi.grade IS NOT NULL'+year_+term_
-        except Exception as e:
-            pass
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            year_ = ''
-            try:
-                year_ = data_new['year']
-                year_ = ' AND employee_kpi.year='+str(data_new['year'])
-            except Exception as e:
-                pass
-            term_ = ''
-            try:
-                term_ = data_new['term']
-                term_ = ' AND employee_kpi.term='+str(data_new['term'])
-            except Exception as e:
-                pass
-            group_2 = str(data_new['group_kpi_id2'])
-            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'+' AND employee_kpi.grade IS NOT NULL'+year_+term_
-        except Exception as e:
-            pass
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
         sql = "SELECT employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        "+group_kpi_id+" "
-        cursor.execute(sql)
+        WHERE employee_kpi.em_id_leader=%s"
+        cursor.execute(sql,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -150,8 +113,8 @@ def QryEmployee_kpi_oldkpi_search(cursor):
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE employee_kpi.year=%s AND employee_kpi.term =%s  "
-        cursor.execute(sql,(data_new['year'],data_new['term']))
+        WHERE employee_kpi.year=%s AND employee_kpi.term =%s AND em_id_leader=%s  "
+        cursor.execute(sql,(data_new['year'],data_new['term'],data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
