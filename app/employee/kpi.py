@@ -1015,9 +1015,9 @@ def Export_kpi_hr(cursor):
         reasonText = ""
         now = datetime.now()
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
-        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi_.xlsx'))
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_kpi_.xlsx')
+        wb = load_workbook('../app/Template/Template.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
