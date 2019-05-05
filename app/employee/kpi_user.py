@@ -370,3 +370,25 @@ def Qry_user_kpi_tranfer(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_Dashbroad', methods=['POST'])
+@connect_sql()
+def Qry_Dashbroad(cursor):
+    try:
+        sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade IS NULL) AS not_grade\
+                      ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
+         FROM employee_kpi LIMIT 1"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"

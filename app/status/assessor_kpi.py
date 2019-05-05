@@ -97,6 +97,19 @@ def QryAssessor_kpi(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            employee = []
+            kpi_ful = []
+            sql2 = "SELECT (SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s) AS total\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND old_grade IS NOT NULL) AS Do\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND `old_grade` IS NULL) AS Not_Do\
+            FROM assessor_kpi LIMIT 1"
+            cursor.execute(sql2,(i1['employeeid'],i1['employeeid'],i1['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            for i2 in data2 :
+                kpi_ful.append(i2)
+            i1['employee'] = kpi_ful
         return jsonify(result)
     except Exception as e:
         logserver(e)
