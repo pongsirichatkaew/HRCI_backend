@@ -1018,9 +1018,10 @@ def Export_kpi_hr(cursor):
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
 
         wb = load_workbook('../app/Template/Template_kpi.xlsx')
+        sheets = wb.sheetnames
         if len(result) > 0:
 
-            sheet = wb['Sheet2']
+            sheet = wb[""+sheets[1]+""]
             sheet['C'+str(2)] = data_new['year'] + '/' + data_new['term']
             offset = 4
             i = 0
