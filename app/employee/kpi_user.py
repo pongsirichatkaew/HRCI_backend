@@ -370,9 +370,9 @@ def Qry_user_kpi_tranfer(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/Qry_Dashbroad', methods=['POST'])
+@app.route('/Qry_Dashboard', methods=['POST'])
 @connect_sql()
-def Qry_Dashbroad(cursor):
+def Qry_Dashboard(cursor):
     try:
         sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
                       ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
