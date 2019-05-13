@@ -178,6 +178,16 @@ def QryEmployee_kpi_one(cursor):
         except Exception as e:
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
 
+        try:
+            # encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            open_path_ = urllib.urlopen(encoded_Image)
+            htmlSource = open_path_.read()
+            open_path_.close()
+            test= htmlSource.decode('utf-8')
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".JPG")
+        except Exception as e:
+            pass
+
         sum={}
         sum["employee"] = result
         sum["board"] = result2
