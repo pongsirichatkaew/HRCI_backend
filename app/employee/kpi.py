@@ -186,7 +186,7 @@ def QryEmployee_kpi_one(cursor):
             test= htmlSource.decode('utf-8')
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".JPG")
         except Exception as e:
-            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.JPG")
+            pass
 
         sum={}
         sum["employee"] = result
