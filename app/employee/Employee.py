@@ -264,6 +264,15 @@ def QryEmployee_one_person(cursor):
         except Exception as e:
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
         try:
+            # encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            open_path_ = urllib.urlopen(encoded_Image)
+            htmlSource = open_path_.read()
+            open_path_.close()
+            test= htmlSource.decode('utf-8')
+            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".JPG")
+        except Exception as e:
+            pass        
+        try:
             sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
             WHERE Personal.ID_CardNo=%s"
             cursor.execute(sql17,resultEmployee[0]['citizenid'])
