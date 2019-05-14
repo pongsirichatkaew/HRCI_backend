@@ -132,14 +132,20 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,(SELECT position.position_detail FROM employee_kpi INNER JOIN position ON employee_kpi.positionChange = position.position_id WHERE employee_kpi.employeeid=%s ) AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+        sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
         INNER JOIN position ON employee_kpi.position = position.position_id\
         INNER JOIN company ON employee_kpi.companyid = company.companyid\
         WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid'],data_new['year'],data_new['term']))
+        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT position_detail FROM position WHERE position_id=%s"
+            cursor.execute(sql2,(i1['positionChange_detail']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['positionChange_detail'] = data2[0]['position_detail']
 
         sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sql2,(data_new['employeeid'],data_new['year'],data_new['term']))
