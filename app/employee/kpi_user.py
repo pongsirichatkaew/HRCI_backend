@@ -75,8 +75,8 @@ def Add_project_bet(cursor):
             sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],type_action))
 
-            sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-            cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
+            sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "success"
     except Exception as e:
@@ -157,8 +157,8 @@ def Edit_project_bet(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=0
         for i in xrange(len(data_new['portfolioLists'])):
@@ -476,8 +476,8 @@ def Update_grade_GM(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp_main = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp_main,(data_new['old_grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp_main = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s,date_bet_gm=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['old_grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['date_bet_gm'],data_new['employeeid'],data_new['year'],data_new['term']))
         return "success"
     except Exception as e:
         logserver(e)

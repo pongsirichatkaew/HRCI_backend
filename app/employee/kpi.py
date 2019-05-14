@@ -132,7 +132,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employee_kpi.date_bet_gm,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,(SELECT position.position_detail FROM employee_kpi INNER JOIN position ON employee_kpi.positionChange = position.position_id WHERE employee_kpi.employeeid=%s ) AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+        sql = "SELECT employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,(SELECT position.position_detail FROM employee_kpi INNER JOIN position ON employee_kpi.positionChange = position.position_id WHERE employee_kpi.employeeid=%s ) AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
         INNER JOIN position ON employee_kpi.position = position.position_id\
         INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -160,7 +160,7 @@ def QryEmployee_kpi_one(cursor):
         result_GM = toJson(cursor.fetchall(),columns)
 
         if not result_GM:
-            sqlGM = "SELECT employee_kpi.old_grade_GM,employee_kpi.status_GM,employee_kpi.positionChange_GM,employee_kpi.specialMoney_GM,employee_kpi.newKpiDescriptions_GM FROM employee_kpi\
+            sqlGM = "SELECT employee_kpi.date_bet_gm,employee_kpi.old_grade_GM,employee_kpi.status_GM,employee_kpi.positionChange_GM,employee_kpi.specialMoney_GM,employee_kpi.newKpiDescriptions_GM FROM employee_kpi\
             WHERE employee_kpi.employeeid=%s AND employee_kpi.year=%s AND employee_kpi.term=%s"
             cursor.execute(sqlGM,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
