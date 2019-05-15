@@ -1202,7 +1202,7 @@ def Export_kpi_hr(cursor):
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
                                                                                     INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND companyid=%s"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s"
                 cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
