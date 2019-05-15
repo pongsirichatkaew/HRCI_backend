@@ -410,6 +410,24 @@ def UpdateApprove_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Update_Not_Approve_kpi', methods=['POST'])
+@connect_sql()
+def Update_Not_Approve_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        i=0
+        for i in xrange(len(data_new['employee'])):
+
+            sqlUp_main = "UPDATE employee_kpi_approve SET validstatus=3 WHERE employeeid=%s AND year=%s term=%s"
+            cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid'],data_new['employee'][i]['year'],data_new['employee'][i]['term']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/QryApprove_kpi', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi(cursor):
@@ -418,9 +436,9 @@ def QryApprove_kpi(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi.validstatus FROM employee_kpi_approve\
+        sql = "SELECT employee_kpi_approve.employeeid,employee_kpi_approve.name,employee_kpi_approve.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi_approve.validstatus FROM employee_kpi_approve\
                                 LEFT JOIN assessor_kpi ON employee_kpi.createby = assessor_kpi.employeeid\
-        WHERE employee_kpi.em_id_leader AND employee_kpi.year=%s AND employee_kpi.term =%s "
+        WHERE employee_kpi.em_id_leader AND employee_kpi.year=%s AND employee_kpi.term =%s AND "
         cursor.execute(sql,(data_new['em_id_leader'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
