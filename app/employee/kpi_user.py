@@ -515,23 +515,7 @@ def Qry_Dashboard(cursor):
         source = dataInput['source']
         data_new = source
 
-        if (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
-            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade IS NULL) AS not_grade\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi LIMIT 1 WHERE year=%s AND term=%s AND companyid=%s AND org_name=%s"
-            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid'],data_new['org_name']))
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-            return jsonify(result)
-        elif (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
+        if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
             sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
