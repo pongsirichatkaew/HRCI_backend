@@ -158,7 +158,7 @@ def QryEmployee_kpi_one(cursor):
         columns = [column[0] for column in cursor.description]
         result3 = toJson(cursor.fetchall(),columns)
 
-        sqlGM = "SELECT employee_kpi.old_grade_GM,employee_kpi.status_GM,position.position_detail AS positionChange_GM_detail,employee_kpi.positionChange_GM,employee_kpi.specialMoney_GM,employee_kpi.newKpiDescriptions_GM FROM employee_kpi\
+        sqlGM = "SELECT employee_kpi.date_bet_gm,employee_kpi.old_grade_GM,employee_kpi.status_GM,position.position_detail AS positionChange_GM_detail,employee_kpi.positionChange_GM,employee_kpi.specialMoney_GM,employee_kpi.newKpiDescriptions_GM FROM employee_kpi\
         INNER JOIN position ON employee_kpi.positionChange_GM = position.position_id\
         WHERE employee_kpi.employeeid=%s AND employee_kpi.year=%s AND employee_kpi.term=%s"
         cursor.execute(sqlGM,(data_new['employeeid'],data_new['year'],data_new['term']))
