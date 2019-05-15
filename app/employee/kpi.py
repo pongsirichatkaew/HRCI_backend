@@ -538,7 +538,7 @@ def Qry_user_kpi_board(cursor):
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
 
             try:
-                year_term = "WHERE employee_kpi.org_name="+str(data_new['org_name'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+                year_term = "WHERE employee_kpi.org_name="+str(data_new['org_name_id'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+'AND employee_kpi.companyid='+'"'+str(data_new['companyid'])+'"'
             except Exception as e:
                 pass
 
