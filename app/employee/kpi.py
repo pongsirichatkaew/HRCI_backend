@@ -446,13 +446,13 @@ def QryApprove_kpi(cursor):
         data_new = source
 
         sql = "SELECT employee_kpi_approve.employeeid,employee_kpi_approve.name,employee_kpi_approve.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi_approve.validstatus FROM employee_kpi_approve\
-                                LEFT JOIN assessor_kpi ON employee_kpi.createby = assessor_kpi.employeeid\
-        WHERE employee_kpi.em_id_leader"
+                                LEFT JOIN assessor_kpi ON employee_kpi_approve.createby = assessor_kpi.employeeid\
+        WHERE employee_kpi_approve.em_id_leader = %s"
         cursor.execute(sql,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-
-        return "Success"
+        return jsonify(result)
+        # return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
