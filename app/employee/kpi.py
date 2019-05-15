@@ -447,8 +447,8 @@ def QryApprove_kpi(cursor):
 
         sql = "SELECT employee_kpi_approve.employeeid,employee_kpi_approve.name,employee_kpi_approve.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi_approve.validstatus FROM employee_kpi_approve\
                                 LEFT JOIN assessor_kpi ON employee_kpi.createby = assessor_kpi.employeeid\
-        WHERE employee_kpi.em_id_leader AND employee_kpi.year=%s AND employee_kpi.term =%s AND "
-        cursor.execute(sql,(data_new['em_id_leader'],data_new['year'],data_new['term']))
+        WHERE employee_kpi.em_id_leader"
+        cursor.execute(sql,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
