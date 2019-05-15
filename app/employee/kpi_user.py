@@ -526,7 +526,7 @@ def Qry_Dashboard(cursor):
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade IS NULL) AS not_grade\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi LIMIT 1 WHERE year=%s AND term=%s AND companyid=%s"
+             FROM employee_kpi WHERE year=%s AND term=%s AND companyid=%s LIMIT 1"
             cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -542,7 +542,7 @@ def Qry_Dashboard(cursor):
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade IS NULL) AS not_grade\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi LIMIT 1 WHERE year=%s AND term=%s"
+             FROM employee_kpi WHERE year=%s AND term=%s LIMIT 1"
             cursor.execute(sql,(data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
