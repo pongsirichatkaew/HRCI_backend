@@ -131,21 +131,30 @@ def QryEmployee_kpi_one(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
-        sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
-        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-        INNER JOIN position ON employee_kpi.position = position.position_id\
-        INNER JOIN company ON employee_kpi.companyid = company.companyid\
-        WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        for i1 in result:
-            sql2 = "SELECT position_detail FROM position WHERE position_id=%s"
-            cursor.execute(sql2,(i1['positionChange_detail']))
+        try:
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+            INNER JOIN position ON employee_kpi.position = position.position_id\
+            INNER JOIN company ON employee_kpi.companyid = company.companyid\
+            WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
-            data2 = toJson(cursor.fetchall(),columns)
-            i1['positionChange_detail'] = data2[0]['position_detail']
+            result = toJson(cursor.fetchall(),columns)
+            for i1 in result:
+                sql2 = "SELECT position_detail FROM position WHERE position_id=%s"
+                cursor.execute(sql2,(i1['positionChange_detail']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                i1['positionChange_detail'] = data2[0]['position_detail']
+        except Exception as e:
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+            INNER JOIN position ON employee_kpi.position = position.position_id\
+            INNER JOIN company ON employee_kpi.companyid = company.companyid\
+            WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
 
         sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sql2,(data_new['employeeid'],data_new['year'],data_new['term']))
@@ -691,6 +700,28 @@ def Qry_user_kpi_board(cursor):
 
             try:
                 year_term = "WHERE employee_kpi.companyid="+str(data_new['companyid'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+            except Exception as e:
+                pass
+
+            sql = "SELECT employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+                                                                                            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                            INNER JOIN position ON employee_kpi.position = position.position_id\
+            "+year_term+""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for i1 in result:
+                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+                cursor.execute(sql2,(i1['company_short_name']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                i1['company_short_name'] = data2[0]['company_short_name']
+            return jsonify(result)
+
+        elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
+
+            try:
+                year_term = "WHERE employee_kpi.companyid="+str(data_new['companyid'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+'AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'
             except Exception as e:
                 pass
 
