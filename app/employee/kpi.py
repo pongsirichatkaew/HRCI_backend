@@ -379,7 +379,7 @@ def Add_emp_kpi_user(cursor):
         # sqlIn_be = "INSERT INTO employee_kpi_approve(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         # cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
 
-        if(str(data_new['type']=='main'):
+        if(str(data_new['type'])=='main'):
 
             type_action = "ADD"
 
