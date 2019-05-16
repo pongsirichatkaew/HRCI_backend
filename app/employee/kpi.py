@@ -439,6 +439,12 @@ def Update_Not_Approve_kpi(cursor):
             sqlUp_main = "UPDATE employee_kpi_approve SET validstatus=3 WHERE employeeid=%s AND year=%s term=%s"
             cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid'],data_new['employee'][i]['year'],data_new['employee'][i]['term']))
 
+            try:
+                sqlUp = "DELETE FROM employee_kpi WHERE  WHERE employeeid=%s AND year=%s term=%s"
+                cursor.execute(sqlUp,(data_new['employee'][i]['employeeid'],data_new['employee'][i]['year'],data_new['employee'][i]['term']))
+            except Exception as e:
+                pass
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -453,7 +459,25 @@ def QryApprove_kpi(cursor):
 
         sql = "SELECT employee_kpi_approve.term,employee_kpi_approve.year,employee_kpi_approve.employeeid,employee_kpi_approve.name,employee_kpi_approve.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi_approve.validstatus FROM employee_kpi_approve\
                                 LEFT JOIN assessor_kpi ON employee_kpi_approve.em_id_leader = assessor_kpi.employeeid\
-        WHERE employee_kpi_approve.em_id_leader = %s"
+        WHERE employee_kpi_approve.em_id_leader =%s AND employee_kpi_approve.validstatus=1 "
+        cursor.execute(sql,(data_new['em_id_leader']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryApprove_kpi_result', methods=['POST'])
+@connect_sql()
+def QryApprove_kpi_result(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        sql = "SELECT employee_kpi_approve.term,employee_kpi_approve.year,employee_kpi_approve.employeeid,employee_kpi_approve.name,employee_kpi_approve.surname,assessor_kpi.name_asp,assessor_kpi.surname_asp,employee_kpi_approve.validstatus FROM employee_kpi_approve\
+                                LEFT JOIN assessor_kpi ON employee_kpi_approve.em_id_leader = assessor_kpi.employeeid\
+        WHERE employee_kpi_approve.em_id_leader =%s AND employee_kpi_approve.validstatus IN (2,3)"
         cursor.execute(sql,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
