@@ -9,7 +9,7 @@ def QryContract(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.salary,company.imageName,Personal.ExpiryDate,employee.start_work,employee.EndWork_probation,employee.citizenid,employee.company_id,Personal.NameTh,Personal.SurnameTh,Personal.ID_CardNo,position.position_detail,company.companyname,company.company_short_name,company.address_company FROM employee INNER JOIN company ON employee.company_id = company.companyid\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
@@ -18,10 +18,8 @@ def QryContract(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlhome_address = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sqlhome_address = "SELECT Address.HouseNo,Address.Street,Address.AMPHUR_ID,Address.DISTRICT_ID,Address.PROVINCE_ID,Address.PostCode FROM employee\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
-                                      INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
-                                      INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s AND Address.AddressType='Home'"
         cursor.execute(sqlhome_address,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
@@ -197,6 +195,8 @@ def QryContract(cursor):
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
+        resultlast["startwork"] = result[0]['start_work']
+        resultlast["Endprobation"] = result[0]['EndWork_probation']
         resultlast["HouseNo"] = result__2[0]['HouseNo']
         resultlast["Street"] = result__2[0]['Street']
         resultlast['Path_logo_company'] = encoded_Image
@@ -253,10 +253,8 @@ def QryContract_sales(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
-        sqlhome_address = "SELECT * FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sqlhome_address = "SELECT Address.HouseNo,Address.Street,Address.AMPHUR_ID,Address.DISTRICT_ID,Address.PROVINCE_ID,Address.PostCode FROM employee\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
-                                      INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
-                                      INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s AND Address.AddressType='Home'"
         cursor.execute(sqlhome_address,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
@@ -449,6 +447,8 @@ def QryContract_sales(cursor):
         resultlast={}
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
+        resultlast["starwork"] = result[0]['start_work']
+        resultlast["Endprobation"] = result[0]['EndWork_probation']
         resultlast["HouseNo"] = result__2[0]['HouseNo']
         resultlast["Street"] = result__2[0]['Street']
         resultlast['Path_logo_company'] = encoded_Image
