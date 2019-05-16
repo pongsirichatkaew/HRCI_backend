@@ -95,7 +95,7 @@ def QryEmployee_kpi_oldkpi(cursor):
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE employee_kpi.em_id_leader=%s AND employee_kpi.structure_salary IS NULL"
+        WHERE employee_kpi.em_id_leader=%s AND employee_kpi.structure_salary=''"
         cursor.execute(sql,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -116,7 +116,7 @@ def QryEmployee_kpi_oldkpi_search(cursor):
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE employee_kpi.year=%s AND employee_kpi.term =%s AND em_id_leader=%s employee_kpi.structure_salary IS NULL  "
+        WHERE employee_kpi.year=%s AND employee_kpi.term =%s AND em_id_leader=%s employee_kpi.structure_salary=''"
         cursor.execute(sql,(data_new['year'],data_new['term'],data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
