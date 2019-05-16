@@ -741,14 +741,14 @@ def Qry_user_kpi_board(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""
+        year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
 
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
 
             try:
-                year_term = "WHERE employee_kpi.companyid="+str(data_new['companyid'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             except Exception as e:
-                pass
+                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"
 
             sql = "SELECT employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
@@ -766,12 +766,10 @@ def Qry_user_kpi_board(cursor):
             return jsonify(result)
 
         elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
-
             try:
-                year_term = "WHERE employee_kpi.companyid="+str(data_new['companyid'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+'AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'
+                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             except Exception as e:
-                pass
-
+                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'
             sql = "SELECT employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -789,7 +787,7 @@ def Qry_user_kpi_board(cursor):
 
         else:
             try:
-                year_term = "WHERE employee_kpi.em_id_leader="+str(data_new['em_id_leader'])+""+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+                year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             except Exception as e:
                 pass
 
