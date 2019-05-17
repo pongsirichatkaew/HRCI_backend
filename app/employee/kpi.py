@@ -1253,7 +1253,6 @@ def Export_kpi_hr(cursor):
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
                 for i1 in result:
-                    print(i1['em_id_leader'])
                     kpi_ful = []
                     sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
                     cursor.execute(sql2,(i1['em_id_leader']))
@@ -1401,7 +1400,7 @@ def Export_kpi_hr(cursor):
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
-        # os.remove(filename_tmp)
+        os.remove(filename_tmp)
         displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
         displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
         return jsonify(toDict(displayData,displayColumns))
