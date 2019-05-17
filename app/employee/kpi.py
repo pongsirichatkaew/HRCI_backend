@@ -1248,7 +1248,7 @@ def Export_kpi_hr(cursor):
                 sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s GROUP BY employee_kpi.employeeid "
                 cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
@@ -1302,7 +1302,7 @@ def Export_kpi_hr(cursor):
                 sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s GROUP BY employee_kpi.employeeid"
                 cursor.execute(sql,(data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
