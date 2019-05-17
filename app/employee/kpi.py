@@ -1277,14 +1277,15 @@ def Export_kpi_hr(cursor):
                         kpi_ful2.append(i4)
                     i3['sec_cost_center'] = kpi_ful2
                 for item in result:
-                    if item['positionChange'] is not None:
+                    if item['positionChange']=='':
                         sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
-                        item['positionChange'] = data5[0]['position_detail']
-                    else:
-                        item['positionChange'] = ''
+                        try:
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = ''
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
                 for item2 in result:
@@ -1330,14 +1331,15 @@ def Export_kpi_hr(cursor):
                         kpi_ful2.append(i4)
                     i3['sec_cost_center'] = kpi_ful2
                 for item in result:
-                    if item['positionChange'] is not None:
+                    if item['positionChange']=='':
                         sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
-                        item['positionChange'] = data5[0]['position_detail']
-                    else:
-                        item['positionChange'] = ''
+                        try:
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = ''
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
                 for item2 in result:
