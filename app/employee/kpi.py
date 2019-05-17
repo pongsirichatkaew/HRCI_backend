@@ -1253,6 +1253,7 @@ def Export_kpi_hr(cursor):
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
                 for i1 in result:
+                    print(i1['em_id_leader'])
                     kpi_ful = []
                     sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
                     cursor.execute(sql2,(i1['em_id_leader']))
@@ -1366,7 +1367,7 @@ def Export_kpi_hr(cursor):
             offset = 4
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['A'+str(offset + i)] = result[i]['companyid']
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name']
                 sheet['D'+str(offset + i)] = result[i]['surname']
@@ -1375,7 +1376,10 @@ def Export_kpi_hr(cursor):
                 sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
                 sheet['H'+str(offset + i)] = result[i]['org_name_detail']
                 sheet['I'+str(offset + i)] = result[i]['sec_cost_center'][0]['cost_detail']
-                sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
+                try:
+                    sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
+                except Exception as e:
+                    pass
                 sheet['K'+str(offset + i)] = result[i]['sec_cost_center'][0]['start_work']
                 sheet['L'+str(offset + i)] = result[i]['sec_cost_center'][0]['EndWork_probation']
                 sheet['M'+str(offset + i)] = result[i]['work_year']
@@ -1397,7 +1401,7 @@ def Export_kpi_hr(cursor):
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
-        os.remove(filename_tmp)
+        # os.remove(filename_tmp)
         displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
         displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
         return jsonify(toDict(displayData,displayColumns))
