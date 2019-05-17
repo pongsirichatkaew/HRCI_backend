@@ -1245,11 +1245,10 @@ def Export_kpi_hr(cursor):
         data_new = source
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
             try:
-                sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,company.company_short_name,employee_kpi.totalGradePercent FROM employee_kpi\
+                sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
-                                                                                    INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s GROUP BY employee_kpi.employeeid "
                 cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
@@ -1278,26 +1277,32 @@ def Export_kpi_hr(cursor):
                         kpi_ful2.append(i4)
                     i3['sec_cost_center'] = kpi_ful2
                 for item in result:
-                    if item['positionChange'] is not None:
+                    if item['positionChange']=='':
                         sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
-                        item['positionChange'] = data5[0]['position_detail']
-                    else:
-                        item['positionChange'] = ''
+                        try:
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = ''
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
+                for item2 in result:
+                    sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
+                    cursor.execute(sql2_,(item2['companyid']))
+                    columns = [column[0] for column in cursor.description]
+                    data2_ = toJson(cursor.fetchall(),columns)
+                    item2['companyid'] = data2_[0]['company_short_name']
             except Exception as e:
                 logserver(e)
                 return "No_Data"
         else:
             try:
-                sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,company.company_short_name,employee_kpi.totalGradePercent FROM employee_kpi\
+                sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
-                                                                                    INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s GROUP BY employee_kpi.employeeid"
                 cursor.execute(sql,(data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
@@ -1326,16 +1331,23 @@ def Export_kpi_hr(cursor):
                         kpi_ful2.append(i4)
                     i3['sec_cost_center'] = kpi_ful2
                 for item in result:
-                    if item['positionChange'] is not None:
+                    if item['positionChange']=='':
                         sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
-                        item['positionChange'] = data5[0]['position_detail']
-                    else:
-                        item['positionChange'] = ''
+                        try:
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = ''
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
+                for item2 in result:
+                    sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
+                    cursor.execute(sql2_,(item2['companyid']))
+                    columns = [column[0] for column in cursor.description]
+                    data2_ = toJson(cursor.fetchall(),columns)
+                    item2['companyid'] = data2_[0]['company_short_name']
             except Exception as e:
                 logserver(e)
                 return "No_Data"
@@ -1354,7 +1366,7 @@ def Export_kpi_hr(cursor):
             offset = 4
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['A'+str(offset + i)] = result[i]['companyid']
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name']
                 sheet['D'+str(offset + i)] = result[i]['surname']
@@ -1363,7 +1375,10 @@ def Export_kpi_hr(cursor):
                 sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
                 sheet['H'+str(offset + i)] = result[i]['org_name_detail']
                 sheet['I'+str(offset + i)] = result[i]['sec_cost_center'][0]['cost_detail']
-                sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
+                try:
+                    sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
+                except Exception as e:
+                    pass
                 sheet['K'+str(offset + i)] = result[i]['sec_cost_center'][0]['start_work']
                 sheet['L'+str(offset + i)] = result[i]['sec_cost_center'][0]['EndWork_probation']
                 sheet['M'+str(offset + i)] = result[i]['work_year']
