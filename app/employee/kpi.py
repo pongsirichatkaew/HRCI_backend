@@ -312,7 +312,11 @@ def Add_emp_kpi_user(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = str(data_new['employeeid'])
-        # check_board = str(data_new['employeeid_board'])
+        
+        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
         try:
             sql44 = "SELECT name FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
             cursor.execute(sql44,(employeeid,data_new['year'],data_new['term']))
