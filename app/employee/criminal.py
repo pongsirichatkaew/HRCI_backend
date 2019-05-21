@@ -30,8 +30,8 @@ def QryCriminal(cursor):
 @connect_sql()
 def QryEmployeeList(cursor):
     try:
-        sql = "SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
-                                      INNER JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,employee.company_id AS company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee\
+                                      INNER JOIN position ON position.position_id = employee.position_id\
                                       INNER JOIN section ON section.sect_id = employee.section_id\
                                       INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -39,6 +39,12 @@ def QryEmployeeList(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -52,8 +58,7 @@ def QryEmployeeList_month_year(cursor):
     year=str(data_new['year'])
     month=str(data_new['month'])
     try:
-        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
-                                      INNER JOIN company ON company.companyid = employee.company_id\
+        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,employee.company_id AS company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
                                       INNER JOIN section ON section.sect_id = employee.section_id\
                                       INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -61,6 +66,12 @@ def QryEmployeeList_month_year(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -75,8 +86,7 @@ def QryEmployeeList_month_year_company(cursor):
     month=str(data_new['month'])
     companyid=str(data_new['companyid'])
     try:
-        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
-                                      INNER JOIN company ON company.companyid = employee.company_id\
+        sql = """SELECT employee.name_th,employee.surname_th,employee.citizenid,employee.start_work,employee.company_id AS company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee INNER JOIN position ON position.position_id = employee.position_id\
                                       INNER JOIN section ON section.sect_id = employee.section_id\
                                       INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -84,6 +94,12 @@ def QryEmployeeList_month_year_company(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -232,8 +248,8 @@ def ExportToExcel(cursor):
         year=str(data_new['year'])
         month=str(data_new['month'])
         try:
-            sql4 ="""SELECT Personal.* ,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as companyid,employee.start_work as start_work,position.position_detail as position_detail,
-            section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,company.company_short_name,
+            sql4 ="""SELECT Personal.* ,Address.AddressType, Address.HouseNo, Address.Street, Address.DISTRICT_ID, Address.AMPHUR_ID, Address.PROVINCE_ID, Address.PostCode, Address.Tel, Address.Fax,homeTable.AddressType as homeAddress, homeTable.HouseNo as homeHouseNo, homeTable.Street as homeStreet,employee.company_id as company_short_name,employee.start_work as start_work,position.position_detail as position_detail,
+            section.sect_detail as sect_detail,org_name.org_name_detail as org_name_detail,cost_center_name.cost_detail as cost_detail,
             homeTable.DISTRICT_ID as homeDistrict, homeTable.AMPHUR_ID as homeAmphur, homeTable.PROVINCE_ID as homeProvince, homeTable.PostCode as homePostCode, homeTable.Tel as homeTel, homeTable.Fax as homeFax,employee.create_at as timedate,
             Family.Name as fatherName, Family.Surname as fatherSurname,motherTable.Name as motherName, motherTable.Surname as motherSurname
             FROM Personal
@@ -242,7 +258,6 @@ def ExportToExcel(cursor):
             LEFT JOIN section ON section.sect_id = employee.section_id
             LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
             LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
-            LEFT JOIN company ON employee.company_id = company.companyid
             LEFT JOIN Address ON Address.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
@@ -251,6 +266,12 @@ def ExportToExcel(cursor):
             cursor.execute(sql4)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
+            for i1 in result:
+                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+                cursor.execute(sql2,(i1['company_short_name']))
+                columns = [column[0] for column in cursor.description]
+                data2 = toJson(cursor.fetchall(),columns)
+                i1['company_short_name'] = data2[0]['company_short_name']
             companyname_ = result[0]['company_short_name']
         except Exception as e:
             logserver(e)
