@@ -9,7 +9,7 @@ def QryContract(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee.salary,employee.company_id,employee.EmploymentAppNo AS ExpiryDate,employee.start_work,employee.EndWork_probation,employee.citizenid,employee.company_id,employee.name_eng AS NameTh,employee.surname_eng AS SurnameTh,employee.citizenid AS ID_CardNo,position.position_detail,employee.id AS imageName,employee.quota_id AS companyname,employee.createby AS address_company FROM employee\
+        sql = "SELECT employee.salary,employee.company_id,employee.EmploymentAppNo AS ExpiryDate,employee.start_work,employee.EndWork_probation,employee.citizenid,employee.company_id AS company_short_name,employee.name_eng AS NameTh,employee.surname_eng AS SurnameTh,employee.citizenid AS ID_CardNo,position.position_detail,employee.id AS imageName,employee.quota_id AS companyname,employee.createby AS address_company FROM employee\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s"
@@ -18,10 +18,10 @@ def QryContract(cursor):
         result = toJson(cursor.fetchall(),columns)
         for i1 in result:
             sql2 = "SELECT company_short_name,imageName,companyname,address_company FROM company WHERE companyid=%s"
-            cursor.execute(sql2,(i1['company_id']))
+            cursor.execute(sql2,(i1['company_short_name']))
             columns = [column[0] for column in cursor.description]
             data2 = toJson(cursor.fetchall(),columns)
-            i1['company_id'] = data2[0]['company_short_name']
+            i1['company_short_name'] = data2[0]['company_short_name']
             i1['imageName'] = data2[0]['imageName']
             i1['companyname'] = data2[0]['companyname']
             i1['address_company'] = data2[0]['address_company']
