@@ -268,3 +268,18 @@ def EditName_leader_kpi_one(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryAssessor_status', methods=['POST'])
+@connect_sql()
+def QryAssessor_status(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql2 = "SELECT status FROM assessor_kpi WHERE employeeid=%s"
+        cursor.execute(sql2,(data_new['em_id_leader']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+        return jsonify(data2)
+    except Exception as e:
+        logserver(e)
+        return "fail"
