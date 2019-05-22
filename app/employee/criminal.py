@@ -18,7 +18,7 @@ def QryCriminal(cursor):
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Home' and Family.MemberType = 'Father' AND Personal.ID_CardNo = %s"""
+        WHERE Address.AddressType = 'Home' and Family.MemberType = 'Father' AND Personal.ID_CardNo = %s AND NOT Personal.createby='Admin'"""
         cursor.execute(sql,data_new['ID_CardNo'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -62,7 +62,7 @@ def QryEmployeeList_month_year(cursor):
                                       INNER JOIN section ON section.sect_id = employee.section_id\
                                       INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-        WHERE employee.start_work LIKE '%-{}-{}'""".format(month,year)
+        WHERE employee.start_work LIKE '%-{}-{}' AND NOT Personal.createby='Admin' """.format(month,year)
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -90,7 +90,7 @@ def QryEmployeeList_month_year_company(cursor):
                                       INNER JOIN section ON section.sect_id = employee.section_id\
                                       INNER JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                       INNER JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-        WHERE employee.company_id='{}' AND employee.start_work LIKE '%-{}-{}'""".format(month,year,companyid)
+        WHERE employee.company_id='{}' AND employee.start_work LIKE '%-{}-{}' AND NOT Personal.createby='Admin' """.format(month,year,companyid)
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -122,7 +122,7 @@ def QryAllEmployeeCrimeList(cursor):
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father'"""
+        WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND NOT Personal.createby='Admin' """
         cursor.execute(sql4)
         columns = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns)
@@ -161,7 +161,7 @@ def QryAllEmployee_by_month(cursor):
         LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo \
         LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
         LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-        WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='{}'""".format(month,year,companyid)
+        WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='{}' AND NOT Personal.createby='Admin' """.format(month,year,companyid)
         cursor.execute(sql4)
         columns = [column[0] for column in cursor.description]
         result4 = toJson(cursor.fetchall(),columns)
@@ -201,7 +201,7 @@ def export_criminal_by_month(cursor):
             LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-            WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='{}'""".format(month,year,companyid)
+            WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND employee.company_id='{}' AND NOT Personal.createby='Admin' """.format(month,year,companyid)
             cursor.execute(sql4)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -275,7 +275,7 @@ def ExportToExcel(cursor):
             LEFT JOIN Family ON Family.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN (SELECT * FROM Address WHERE AddressType = 'Home') AS homeTable ON homeTable.ID_CardNo = Personal.ID_CardNo
             LEFT JOIN (SELECT * FROM Family WHERE MemberType = 'Mother') AS motherTable ON motherTable.ID_CardNo = Personal.ID_CardNo
-            WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}'""".format(month,year)
+            WHERE Address.AddressType = 'Home' AND Family.MemberType = 'Father' AND employee.start_work LIKE '%-{}-{}' AND NOT Personal.createby='Admin' """.format(month,year)
             cursor.execute(sql4)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)

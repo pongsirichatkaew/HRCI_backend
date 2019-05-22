@@ -514,7 +514,8 @@ def QryListContract(cursor):
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
-                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id"
+                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+        WHERE NOT employee.createby='Admin' "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
