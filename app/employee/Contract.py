@@ -510,17 +510,21 @@ def QryContract_sales(cursor):
 @connect_sql()
 def QryListContract(cursor):
     try:
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,employee.company_id AS company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee\
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
-                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id"
+                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+        WHERE NOT employee.createby='Admin' "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        connection.close()
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
