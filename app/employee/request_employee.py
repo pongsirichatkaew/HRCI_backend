@@ -181,12 +181,12 @@ def QryEm_request(cursor):
 @connect_sql()
 def QryEmployee_request(cursor):
     try:
-        status_id = "WHERE NOT employee.createby='Admin'"
+        status_id = "WHERE NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         try:
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            status_id = 'WHERE validstatus_request='+'"'+str(data_new['status_id'])+'" AND NOT employee.createby="Admin"'
+            status_id = 'WHERE validstatus_request='+'"'+str(data_new['status_id'])+'" AND NOT employee.createby="Admin" AND employee.EmploymentAppNo IS NOT NULL'
         except Exception as e:
             pass
         sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
@@ -943,12 +943,12 @@ def UpdateStatus_request(cursor):
 @app.route('/QryEmp_request_leader', methods=['POST'])
 def QryEmp_request_leader():
     try:
-        status_id = ""
+        status_id = "AND employee.EmploymentAppNo IS NOT NULL"
         try:
             dataInput = request.json
             source = dataInput['source']
             data_new = source
-            status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'"'
+            status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL'
         except Exception as e:
             pass
         connection = mysql.connect()
