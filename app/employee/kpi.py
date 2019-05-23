@@ -715,7 +715,7 @@ def update_user_kpi_no_emid_leader(cursor):
         source = dataInput['source']
         data_new = source
 
-        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s,validstatus=1 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp_main,(data_new['em_id_leader'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "Success"
