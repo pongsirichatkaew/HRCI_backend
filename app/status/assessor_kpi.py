@@ -20,6 +20,17 @@ def InsertAssessor_kpi(cursor):
         except Exception as e:
             pass
 
+        if str(data_new['type'])=='main':
+            try:
+                sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
+                cursor.execute(sql44,(data_new['companyid'],data_new['org_name_id']))
+                columns = [column[0] for column in cursor.description]
+                result_test = toJson(cursor.fetchall(),columns)
+                name_test = result_test[0]['name_asp']
+                return "main more one"
+            except Exception as e:
+                pass
+
         sqlQry = "SELECT assessor_kpi_id FROM assessor_kpi ORDER BY assessor_kpi_id DESC LIMIT 1"
         cursor.execute(sqlQry)
         columns = [column[0] for column in cursor.description]
@@ -29,8 +40,8 @@ def InsertAssessor_kpi(cursor):
         except Exception as e:
             assessor_kpi_id_last = 1
 
-        sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby']))
+        sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql,(assessor_kpi_id_last,data_new['employeeid'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],data_new['type']))
 
         type_action = "ADD"
 
@@ -58,6 +69,17 @@ def EditAssessor_kpi(cursor):
         except Exception as e:
             pass
 
+        if str(data_new['type'])=='main':
+            try:
+                sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
+                cursor.execute(sql44,(data_new['companyid'],data_new['org_name_id']))
+                columns = [column[0] for column in cursor.description]
+                result_test = toJson(cursor.fetchall(),columns)
+                name_test = result_test[0]['name_asp']
+                return "main more one"
+            except Exception as e:
+                pass
+
         sqlQry = "SELECT * FROM assessor_kpi WHERE assessor_kpi_id=%s"
         cursor.execute(sqlQry,data_new['assessor_kpi_id'])
         columns = [column[0] for column in cursor.description]
@@ -72,7 +94,7 @@ def EditAssessor_kpi(cursor):
         cursor.execute(sqlUp,(data_new['assessor_kpi_id']))
 
         sqlIn = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn,(result[0]['assessor_kpi_id'],data_new['employeeid_new'],data_new['companyid_new'],data_new['name_asp_new'],data_new['surname_asp_new'],data_new['org_name_id_new'],data_new['email_asp_new'],data_new['createby'],result[0]['type']))
+        cursor.execute(sqlIn,(result[0]['assessor_kpi_id'],data_new['employeeid_new'],data_new['companyid_new'],data_new['name_asp_new'],data_new['surname_asp_new'],data_new['org_name_id_new'],data_new['email_asp_new'],data_new['createby'],data_new['type']))
 
         sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s WHERE em_id_leader=%s"
         cursor.execute(sqlUp_main,(data_new['employeeid_new'],data_new['employeeid']))
