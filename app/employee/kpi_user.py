@@ -420,7 +420,7 @@ def reverse_emp_kpi_tranfer(cursor):
             return 'token fail'
 
         try:
-            sql_check = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND last_name IS NOT NULL"
+            sql_check = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s OR validstatus=2 "
             cursor.execute(sql_check,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_check = toJson(cursor.fetchall(),columns)
