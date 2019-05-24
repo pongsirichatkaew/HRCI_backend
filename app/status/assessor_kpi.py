@@ -61,7 +61,7 @@ def EditAssessor_kpi(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['employeeid']))
+            cursor.execute(sql44,(data_new['companyid_new'],data_new['employeeid_new']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -72,7 +72,7 @@ def EditAssessor_kpi(cursor):
         if str(data_new['type'])=='main':
             try:
                 sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
-                cursor.execute(sql44,(data_new['companyid'],data_new['org_name_id']))
+                cursor.execute(sql44,(data_new['companyid_new'],data_new['org_name_id_new']))
                 columns = [column[0] for column in cursor.description]
                 result_test = toJson(cursor.fetchall(),columns)
                 name_test = result_test[0]['name_asp']
