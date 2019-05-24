@@ -9,14 +9,32 @@ def QryContract(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee.salary,company.imageName,Personal.ExpiryDate,employee.start_work,employee.EndWork_probation,employee.citizenid,employee.company_id,Personal.NameTh,Personal.SurnameTh,Personal.ID_CardNo,position.position_detail,company.companyname,company.company_short_name,company.address_company FROM employee INNER JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.salary,employee.company_id,employee.EmploymentAppNo AS ExpiryDate,employee.start_work,employee.EndWork_probation,employee.citizenid,employee.company_id AS company_short_name,employee.name_eng AS NameTh,employee.surname_eng AS SurnameTh,employee.citizenid AS ID_CardNo,position.position_detail,employee.id AS imageName,employee.quota_id AS companyname,employee.createby AS address_company FROM employee\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
-                                      INNER JOIN Personal ON employee.citizenid = Personal.ID_CardNo\
                                       INNER JOIN position ON employee.position_id = position.position_id\
         WHERE employee.employeeid=%s"
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT company_short_name,imageName,companyname,address_company FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
+            i1['imageName'] = data2[0]['imageName']
+            i1['companyname'] = data2[0]['companyname']
+            i1['address_company'] = data2[0]['address_company']
+        for i2 in result:
+            sql22 = "SELECT ExpiryDate,NameTh,SurnameTh,ID_CardNo FROM Personal WHERE ID_CardNo=%s"
+            cursor.execute(sql22,(i2['citizenid']))
+            columns = [column[0] for column in cursor.description]
+            data3 = toJson(cursor.fetchall(),columns)
+            i2['ExpiryDate'] = data3[0]['ExpiryDate']
+            i2['NameTh'] = data3[0]['NameTh']
+            i2['SurnameTh'] = data3[0]['SurnameTh']
+            i2['ID_CardNo'] = data3[0]['ID_CardNo']
+
 
         sqlhome_address = "SELECT Address.HouseNo,Address.Street,Address.AMPHUR_ID,Address.DISTRICT_ID,Address.PROVINCE_ID,Address.PostCode FROM employee\
                                       INNER JOIN Address ON employee.citizenid = Address.ID_CardNo\
@@ -193,6 +211,7 @@ def QryContract(cursor):
 
         decodesalary = "{:,}".format(int(decodesalary))
         resultlast={}
+
         resultlast["Name"] = result[0]['NameTh']
         resultlast["Now_year"] = date
         resultlast["startwork"] = result[0]['start_work']
@@ -491,17 +510,21 @@ def QryContract_sales(cursor):
 @connect_sql()
 def QryListContract(cursor):
     try:
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee LEFT JOIN company ON employee.company_id = company.companyid\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.position_id,employee.company_id AS company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail FROM employee\
                                       LEFT JOIN position ON employee.position_id = position.position_id\
                                       LEFT JOIN section ON employee.section_id = section.sect_id\
                                       LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id\
-                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id"
+                                      LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+        WHERE NOT employee.createby='Admin' "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        connection.close()
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)

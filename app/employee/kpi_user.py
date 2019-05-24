@@ -14,7 +14,7 @@ def Add_project(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=1
@@ -35,6 +35,48 @@ def Add_project(cursor):
 
             sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up'],type_action))
+
+        return "success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Add_project_bet', methods=['POST'])
+@connect_sql()
+def Add_project_bet(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        employeeid = data_new['employeeid']
+
+        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
+        # sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        # cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
+
+        i=1
+        for i in xrange(len(data_new['portfolioLists'])):
+            try:
+                sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
+                cursor.execute(sqlQry)
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+                project_kpi_id_last = int(result[0]['project_kpi_id'])+1
+            except Exception as e:
+                project_kpi_id_last = 1
+
+            type_action = "ADD"
+
+            sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio']))
+
+            sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],type_action))
+
+            sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s,validstatus=2  WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['positionChange_bet'],data_new['status'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "success"
     except Exception as e:
@@ -102,6 +144,68 @@ def Edit_project(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Edit_project_bet', methods=['POST'])
+@connect_sql()
+def Edit_project_bet(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        employeeid = data_new['employeeid']
+
+        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
+        sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['positionChange_bet'],data_new['status'],data_new['employeeid'],data_new['year'],data_new['term']))
+
+        i=0
+        for i in xrange(len(data_new['portfolioLists'])):
+            try:
+                sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+
+                type_action = "Edit"
+
+                try:
+                    sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],result[0]['expectedPortfolio'],result[0]['ExpectedLevel'],result[0]['CanDoLevel'],result[0]['summaryLevel'],result[0]['weightPortfolio'],result[0]['totalPoint'],result[0]['commentLevel_B_Up'],type_action))
+                except Exception as e:
+                    sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+                    cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                # try:
+                sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+                cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                # except Exception as e:
+                #     pass
+
+                sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio']))
+            except Exception as e:
+                try:
+                    sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
+                    cursor.execute(sqlQry)
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+                    project_kpi_id_last = int(result[0]['project_kpi_id'])+1
+                except Exception as e:
+                    project_kpi_id_last = 1
+
+                type_action = "ADD"
+
+                sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio) VALUES (%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio']))
+
+                sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],type_action))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/Delete_project', methods=['POST'])
 @connect_sql()
 def Delete_project(cursor):
@@ -117,6 +221,39 @@ def Delete_project(cursor):
 
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
+
+        sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['project_kpi_id'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "Delete"
+
+        sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][0]['project_kpi_id'],result[0]['expectedPortfolio'],result[0]['ExpectedLevel'],result[0]['CanDoLevel'],result[0]['summaryLevel'],result[0]['weightPortfolio'],result[0]['totalPoint'],result[0]['commentLevel_B_Up'],type_action))
+
+        sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+        cursor.execute(sqlde,(data_new['employeeid'],data_new['project_kpi_id'],data_new['year'],data_new['term']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Delete_project_bet', methods=['POST'])
+@connect_sql()
+def Delete_project_bet(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        employeeid = data_new['employeeid']
+
+        result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
+        if result_token!='pass':
+            return 'token fail'
+
+        # sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        # cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['project_kpi_id'],data_new['year'],data_new['term']))
@@ -238,7 +375,7 @@ def cancel_emp_kpi_tranfer(cursor):
         columns = [column[0] for column in cursor.description]
         result_revers = toJson(cursor.fetchall(),columns)
 
-        type_action = "canceltranfer"
+        type_action = "cancel_hr"
 
         sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader'],type_action))
@@ -250,14 +387,14 @@ def cancel_emp_kpi_tranfer(cursor):
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
-            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s,validstatus=4  WHERE employeeid=%s AND year=%s AND term=%s"
             cursor.execute(sqlUp_main,(data_new['comment_cancel'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         else:
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_revers[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
-            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s,validstatus=4  WHERE employeeid=%s AND year=%s AND term=%s"
             cursor.execute(sqlUp_main,(data_new['comment_cancel'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         try:
@@ -283,7 +420,7 @@ def reverse_emp_kpi_tranfer(cursor):
             return 'token fail'
 
         try:
-            sql_check = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND last_name IS NOT NULL"
+            sql_check = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s OR validstatus=2 "
             cursor.execute(sql_check,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_check = toJson(cursor.fetchall(),columns)
@@ -339,8 +476,8 @@ def Update_grade_GM(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp_main = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s  WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp_main,(data_new['old_grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp_main = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s,date_bet_gm=%s,validstatus=3  WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['old_grade_GM'],data_new['status_GM'],data_new['positionChange_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['date_bet_gm'],data_new['employeeid'],data_new['year'],data_new['term']))
         return "success"
     except Exception as e:
         logserver(e)
@@ -374,21 +511,42 @@ def Qry_user_kpi_tranfer(cursor):
 @connect_sql()
 def Qry_Dashboard(cursor):
     try:
-        sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade IS NULL) AS not_grade\
-                      ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-         FROM employee_kpi LIMIT 1"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
+             FROM employee_kpi WHERE year=%s AND term=%s AND companyid=%s GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            return jsonify(result)
+        else:
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
+             FROM employee_kpi WHERE year=%s AND term=%s GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
