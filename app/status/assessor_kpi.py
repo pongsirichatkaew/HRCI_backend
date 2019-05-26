@@ -124,7 +124,7 @@ def QryAssessor_kpi(cursor):
             kpi_ful = []
             sql2 = "SELECT (SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s) AS total\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND old_grade IS NOT NULL) AS Do\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND `old_grade` IS NULL) AS Not_Do\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND `old_grade` IS NULL OR validstatus=2 ) AS Not_Do\
             FROM assessor_kpi LIMIT 1"
             cursor.execute(sql2,(i1['employeeid'],i1['employeeid'],i1['employeeid']))
             columns = [column[0] for column in cursor.description]
