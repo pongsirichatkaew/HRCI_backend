@@ -239,7 +239,7 @@ def QryName_leader_kpi(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT assessor_kpi.employeeid,assessor_kpi.name_asp,assessor_kpi.surname_asp,org_name.org_name_detail,assessor_kpi.email_asp,assessor_kpi.companyid,assessor_kpi.org_name_id FROM assessor_kpi\
+        sql = "SELECT assessor_kpi.employeeid,assessor_kpi.name_asp,assessor_kpi.surname_asp,org_name.org_name_detail,assessor_kpi.email_asp,assessor_kpi.companyid,assessor_kpi.org_name_id,assessor_kpi.type,employee_kpi.term,employee_kpi.year FROM assessor_kpi\
         INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id\
         INNER JOIN employee_kpi ON assessor_kpi.employeeid = employee_kpi.em_id_leader\
         WHERE assessor_kpi.employeeid=%s AND employee_kpi.employeeid=%s"
