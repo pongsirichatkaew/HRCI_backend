@@ -1358,14 +1358,18 @@ def Export_kpi_hr(cursor):
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
                 for i1 in result:
-                    kpi_ful = []
-                    sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
-                    cursor.execute(sql2,(i1['em_id_leader']))
-                    columns = [column[0] for column in cursor.description]
-                    data2 = toJson(cursor.fetchall(),columns)
-                    for i2 in data2 :
-                        kpi_ful.append(i2)
-                    i1['name_leader'] = kpi_ful
+                    try:
+                        kpi_ful = []
+                        sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
+                        cursor.execute(sql2,(i1['em_id_leader']))
+                        columns = [column[0] for column in cursor.description]
+                        data2 = toJson(cursor.fetchall(),columns)
+                        for i2 in data2 :
+                            kpi_ful.append(i2)
+                        i1['name_leader'] = kpi_ful
+                    except Exception as e:
+                        kpi_ful = []
+                        i1['name_leader'] = kpi_ful
                 for i3 in result:
                     kpi_ful2 = []
                     try:
