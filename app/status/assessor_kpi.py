@@ -305,3 +305,18 @@ def QryAssessor_status(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/QryEmleader_hr', methods=['POST'])
+@connect_sql()
+def QryEmleader_hr(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql2 = "SELECT year,term,employeeid,name,surname,validstatus FROM employee_kpi WHERE em_id_leader=%s"
+        cursor.execute(sql2,(data_new['em_id_leader']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+        return jsonify(data2)
+    except Exception as e:
+        logserver(e)
+        return "fail"
