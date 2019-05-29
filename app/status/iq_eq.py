@@ -91,15 +91,3 @@ def DeleteIQ_question(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-@app.route('/QryPosition_Detail', methods=['POST'])
-@connect_sql()
-def QryPosition_Detail(cursor):
-    try:
-        sql = "SELECT position_id,position_detail FROM position"
-        cursor.execute(sql)
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        return jsonify(result)
-    except Exception as e:
-        logserver(e)
-        return "fail"
