@@ -516,34 +516,35 @@ def Qry_Dashboard(cursor):
         data_new = source
 
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
-            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi WHERE year=%s AND term=%s AND companyid=%s GROUP BY employeeid LIMIT 1"
-            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
+
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A' AND companyid=%s  AND year=%s AND term=%s) AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+'AND companyid=%s  AND year=%s AND term=%s) AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B' AND companyid=%s  AND year=%s AND term=%s) AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+'AND companyid=%s  AND year=%s AND term=%s) AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C' AND companyid=%s  AND year=%s AND term=%s) AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+'AND companyid=%s  AND year=%s AND term=%s) AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D' AND companyid=%s  AND year=%s AND term=%s) AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E' AND companyid=%s  AND year=%s AND term=%s) AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1 AND companyid=%s  AND year=%s AND term=%s) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE companyid=%s AND year=%s AND term=%s) AS Total_employee\
+             FROM employee_kpi GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             return jsonify(result)
         else:
-            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi WHERE year=%s AND term=%s GROUP BY employeeid LIMIT 1"
-            cursor.execute(sql,(data_new['year'],data_new['term']))
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A'  AND year=%s AND term=%s) AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+' AND year=%s AND term=%s) AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B'  AND year=%s AND term=%s) AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+' AND year=%s AND term=%s) AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C'  AND year=%s AND term=%s) AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+' AND year=%s AND term=%s) AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D'  AND year=%s AND term=%s) AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E'  AND year=%s AND term=%s) AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1  AND year=%s AND term=%s) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE year=%s AND term=%s) AS Total_employee\
+             FROM employee_kpi GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             return jsonify(result)
