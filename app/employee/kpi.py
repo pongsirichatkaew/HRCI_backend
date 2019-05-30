@@ -1340,7 +1340,10 @@ def Export_kpi_hr(cursor):
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
+                    try:
                         item['positionChange'] = data5[0]['position_detail']
+                    except Exception as e:
+                        item['positionChange'] = item['positionChange']
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
                 for item2 in result:
@@ -1395,7 +1398,10 @@ def Export_kpi_hr(cursor):
                         cursor.execute(sql5,(item['positionChange']))
                         columns = [column[0] for column in cursor.description]
                         data5 = toJson(cursor.fetchall(),columns)
+                    try:
                         item['positionChange'] = data5[0]['position_detail']
+                    except Exception as e:
+                        item['positionChange'] = item['positionChange']
                     if item['specialMoney'] is None:
                         item['specialMoney']=''
                 for item2 in result:
