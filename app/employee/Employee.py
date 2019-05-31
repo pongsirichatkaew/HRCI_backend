@@ -1748,20 +1748,62 @@ def Export_Emp_Ga_All_company(cursor):
                 sheet['J'+str(offset + i)] = result[i]['cost_detail']
                 sheet['K'+str(offset + i)] = result[i]['company_short_name']
                 sheet['L'+str(offset + i)] = result[i]['start_work']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
-                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
-                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
-                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
-                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
-                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
-                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
-                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
-                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
-                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
-                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -1841,20 +1883,62 @@ def Export_Emp_Ga_company(cursor):
                 sheet['J'+str(offset + i)] = result[i]['cost_detail']
                 sheet['K'+str(offset + i)] = result[i]['company_short_name']
                 sheet['L'+str(offset + i)] = result[i]['start_work']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
-                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
-                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
-                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
-                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
-                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
-                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
-                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
-                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
-                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
-                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
