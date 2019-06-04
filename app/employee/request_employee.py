@@ -1120,12 +1120,12 @@ def Export_quota(cursor):
                               LEFT JOIN company ON company.companyid = quota.companyid\
                               LEFT JOIN position ON position.position_id = quota.position_id\
         WHERE quota.quota_id=%s"
-        cursor.execute(sql_quota,(data_new['quita_id']))
+        cursor.execute(sql_quota,(data_new['quota_id']))
         columns = [column[0] for column in cursor.description]
         result_quota = toJson(cursor.fetchall(),columns)
         try:
             sql = "SELECT employeeid,name_th,surname_th,start_work FROM employee WHERE quota_id=%s"
-            cursor.execute(sql,(data_new['quita_id']))
+            cursor.execute(sql,(data_new['quota_id']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             employeeid = result[0]['employeeid']
