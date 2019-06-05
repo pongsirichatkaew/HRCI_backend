@@ -1143,10 +1143,10 @@ def Export_quota(cursor):
         if len(result) > 0:
 
             sheet = wb['Sheet1']
-            sheet['C'+str(2)] = result_quota[0]['company_short_name']
+            sheet['B'+str(3)] = result_quota[0]['company_short_name']
             sheet['C'+str(3)] = result_quota[0]['position_detail']
-            sheet['C'+str(4)] = result_quota[0]['year']
-            sheet['C'+str(5)] = result_quota[0]['member']
+            sheet['D'+str(3)] = result_quota[0]['year']
+            sheet['E'+str(3)] = result_quota[0]['member']
             offset = 6
             i = 0
             for i in xrange(len(result)):
