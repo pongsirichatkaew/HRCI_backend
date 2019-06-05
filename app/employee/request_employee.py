@@ -946,7 +946,7 @@ def QryEmp_request_leader():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        # status_id = "AND employee.EmploymentAppNo IS NOT NULL"
+        status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         if str((data_new['tier_approve'])=='L4'):
             try:
                 status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
