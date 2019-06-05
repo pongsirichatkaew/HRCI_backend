@@ -53,7 +53,7 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql_employee = "SELECT code FROM hrci WHERE username = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
+        sql_employee = "SELECT code FROM hrci WHERE email = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
         cursor.execute(sql_employee,(username))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
