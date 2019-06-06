@@ -1284,7 +1284,7 @@ def sendEmail_request(cursor):
         total_em = []
         sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(2,6)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(2,6) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         cursor.execute(sql1_total,(i1['employeeid']))
         columns = [column[0] for column in cursor.description]
         data1 = toJson(cursor.fetchall(),columns)
@@ -1301,7 +1301,7 @@ def sendEmail_request(cursor):
         total_em2 = []
         sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(3,7,8)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(3,7,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         cursor.execute(sql1_total2,(i2['employeeid']))
         columns = [column[0] for column in cursor.description]
         data2 = toJson(cursor.fetchall(),columns)
@@ -1318,7 +1318,7 @@ def sendEmail_request(cursor):
         total_em3 = []
         sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(4,8)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(4,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         cursor.execute(sql1_total3,(i3['employeeid']))
         columns = [column[0] for column in cursor.description]
         data3 = toJson(cursor.fetchall(),columns)
@@ -1335,7 +1335,7 @@ def sendEmail_request(cursor):
         total_em4 = []
         sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(5)"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(5) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         cursor.execute(sql1_total4,(i4['employeeid']))
         columns = [column[0] for column in cursor.description]
         data4 = toJson(cursor.fetchall(),columns)
@@ -1354,7 +1354,7 @@ def sendToMail_request(email, total_em,imageName):
                   <body>
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
-                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="http://hr-management.inet.co.th">Hr Management</a>
+                        ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
                     <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
@@ -1388,7 +1388,7 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
                   <body>
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
-                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="http://hr-management.inet.co.th">Hr Management</a> </p>
+                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="https://hr-management.inet.co.th">Hr Management</a> </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
                     <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
