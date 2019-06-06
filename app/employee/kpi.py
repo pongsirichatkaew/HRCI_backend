@@ -5,7 +5,7 @@ from dbConfig import *
 @connect_sql()
 def QryEmployee_kpi(cursor):
     try:
-        group_kpi_id = "WHERE employee_kpi.group_kpi IS NOT NULL OR NOT employee_kpi.group_kpi='' "
+        group_kpi_id = ""
         try:
             dataInput = request.json
             source = dataInput['source']
@@ -23,7 +23,7 @@ def QryEmployee_kpi(cursor):
             except Exception as e:
                 pass
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE employee_kpi.group_kpi='+'"'+group_+'"'+year_+term_
+            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+year_+term_
         except Exception as e:
             pass
         try:
@@ -43,7 +43,7 @@ def QryEmployee_kpi(cursor):
             except Exception as e:
                 pass
             group_2 = str(data_new['group_kpi_id2'])
-            group_kpi_id = 'WHERE employee_kpi.group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'+year_+term_
+            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'+year_+term_
         except Exception as e:
             pass
         sql = "SELECT employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
