@@ -211,7 +211,7 @@ def export_criminal_by_month(cursor):
                 columns = [column[0] for column in cursor.description]
                 data2 = toJson(cursor.fetchall(),columns)
                 i1['company_short_name'] = data2[0]['company_short_name']
-            companyname_ = result[0]['companyname']
+            companyname_ = result[0]['company_short_name']
         except Exception as e:
             logserver(e)
             return "No_Data"
