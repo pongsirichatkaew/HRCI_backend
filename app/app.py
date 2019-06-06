@@ -127,7 +127,7 @@ def login():
         _output4 = toJson(data4, columns4)
         for item4 in _output4:
             sum_permisssion4 = []
-            sql4_ = "SELECT type,companyid,org_name_id,status FROM assessor_kpi WHERE email_asp=%s AND status='active' GROUP BY type"
+            sql4_ = "SELECT type,companyid,org_name_id,status FROM assessor_kpi WHERE email_asp=%s  GROUP BY type"
             cursor.execute(sql4_,_output[0]['username'])
             data4 = cursor.fetchall()
             columns4 = [column[0] for column in cursor.description]
