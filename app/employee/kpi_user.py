@@ -14,8 +14,8 @@ def Add_project(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=1
         for i in xrange(len(data_new['portfolioLists'])):
@@ -75,8 +75,8 @@ def Add_project_bet(cursor):
             sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],type_action))
 
-            sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s,validstatus=2  WHERE employeeid=%s AND year=%s AND term=%s"
-            cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['positionChange_bet'],data_new['status'],data_new['employeeid'],data_new['year'],data_new['term']))
+            sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s,date_bet=%s,validstatus=2  WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['positionChange_bet'],data_new['status'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "success"
     except Exception as e:
@@ -95,8 +95,8 @@ def Edit_project(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=0
         for i in xrange(len(data_new['portfolioLists'])):
@@ -157,7 +157,7 @@ def Edit_project_bet(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s  WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp_main = "UPDATE employee_kpi SET Pass=%s,comment_pass=%s,date_bet=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,positionChange_bet=%s,status=%s,validstatus=2  WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp_main,(data_new['Pass'],data_new['comment_pass'],data_new['date_bet'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['positionChange_bet'],data_new['status'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         i=0
@@ -219,7 +219,7 @@ def Delete_project(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
@@ -252,8 +252,8 @@ def Delete_project_bet(cursor):
         if result_token!='pass':
             return 'token fail'
 
-        # sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s WHERE employeeid=%s AND year=%s AND term=%s"
-        # cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE employee_kpi SET validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['employeeid'],data_new['year'],data_new['term']))
 
         sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['project_kpi_id'],data_new['year'],data_new['term']))
@@ -333,8 +333,8 @@ def Add_emp_kpi_tranfer(cursor):
         sqlIn_tran = "INSERT INTO employee_kpi_tranfer(year,term,employeeid,em_id_leader,name_asp,surname_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_tran,(result[0]['year'],result[0]['term'],data_new['employeeid'],employeeid_leadernew,data_new['name_asp'],data_new['surname_asp'],data_new['createby']))
 
-        sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND em_id_leader=%s AND year=%s AND term=%s"
-        cursor.execute(sqlI9de,(data_new['employeeid'],data_new['createby'],data_new['year'],data_new['term']))
+        sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
 
         sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],employeeid_leadernew,result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
@@ -394,7 +394,7 @@ def cancel_emp_kpi_tranfer(cursor):
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_revers[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
-            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s,validstatus=4  WHERE employeeid=%s AND year=%s AND term=%s"
+            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s WHERE employeeid=%s AND year=%s AND term=%s"
             cursor.execute(sqlUp_main,(data_new['comment_cancel'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         try:
@@ -516,34 +516,35 @@ def Qry_Dashboard(cursor):
         data_new = source
 
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
-            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi WHERE year=%s AND term=%s AND companyid=%s GROUP BY employeeid LIMIT 1"
-            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
+
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A' AND companyid=%s  AND year=%s AND term=%s) AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+'AND companyid=%s  AND year=%s AND term=%s) AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B' AND companyid=%s  AND year=%s AND term=%s) AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+'AND companyid=%s  AND year=%s AND term=%s) AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C' AND companyid=%s  AND year=%s AND term=%s) AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+'AND companyid=%s  AND year=%s AND term=%s) AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D' AND companyid=%s  AND year=%s AND term=%s) AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E' AND companyid=%s  AND year=%s AND term=%s) AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1 AND companyid=%s  AND year=%s AND term=%s) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE companyid=%s AND year=%s AND term=%s) AS Total_employee\
+             FROM employee_kpi GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term'],data_new['companyid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             return jsonify(result)
         else:
-            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A') AS grade_A\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+') AS grade_B_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B') AS grade_B\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+') AS grade_C_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C') AS grade_C\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+') AS grade_D_plus\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D') AS grade_D\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E') AS grade_E\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1) AS not_grade\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi) AS Total_employee\
-             FROM employee_kpi WHERE year=%s AND term=%s GROUP BY employeeid LIMIT 1"
-            cursor.execute(sql,(data_new['year'],data_new['term']))
+            sql = "SELECT  (SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='A'  AND year=%s AND term=%s) AS grade_A\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B+' AND year=%s AND term=%s) AS grade_B_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='B'  AND year=%s AND term=%s) AS grade_B\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C+' AND year=%s AND term=%s) AS grade_C_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='C'  AND year=%s AND term=%s) AS grade_C\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D+' AND year=%s AND term=%s) AS grade_D_plus\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='D'  AND year=%s AND term=%s) AS grade_D\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE old_grade='E'  AND year=%s AND term=%s) AS grade_E\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE validstatus=1  AND year=%s AND term=%s) AS not_grade\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE year=%s AND term=%s) AS Total_employee\
+             FROM employee_kpi GROUP BY employeeid LIMIT 1"
+            cursor.execute(sql,(data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             return jsonify(result)

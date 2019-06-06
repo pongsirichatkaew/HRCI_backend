@@ -53,8 +53,14 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM user WHERE username = %s and password = %s ORDER BY id ASC LIMIT 1"
-        cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
+        sql_employee = "SELECT code FROM hrci WHERE email = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
+        cursor.execute(sql_employee,(username))
+        data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        check_employeeid = toJson(data, columns)
+
+        sql = "SELECT * FROM user WHERE username = %s and password = %s and userid=%s ORDER BY id ASC LIMIT 1"
+        cursor.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
         _output = toJson(data, columns)

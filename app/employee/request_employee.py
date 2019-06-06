@@ -943,28 +943,86 @@ def UpdateStatus_request(cursor):
 @app.route('/QryEmp_request_leader', methods=['POST'])
 def QryEmp_request_leader():
     try:
-        status_id = "AND employee.EmploymentAppNo IS NOT NULL"
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL'
-        except Exception as e:
-            pass
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                      LEFT JOIN position ON position.position_id = employee.position_id\
-                                      LEFT JOIN section ON section.sect_id = employee.section_id\
-                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
-        cursor.execute(sql,data_new['employeeid_reques'])
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+        if str((data_new['tier_approve'])=='L4'):
+            try:
+                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str((data_new['tier_approve'])=='L3'):
+            try:
+                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str((data_new['tier_approve'])=='L2'):
+            try:
+                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        else:
+            try:
+                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND NOT employee.validstatus_request=1 "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -1051,52 +1109,62 @@ def UpdateStatus_request_all(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-# @app.route('/Abstract_hr_request', methods=['POST'])
-# @connect_sql()
-# def Abstract_hr_request(cursor):
-#     try:
-#         dataInput = request.json
-#         source = dataInput['source']
-#         data_new = source
-#         abstract = data_new['abstract']
-#
-#         if (abstract=='Pass'):
-#
-#             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
-#             cursor.execute(sqlUp_main,(data_new['employeeid']))
-#
-#             sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-#             cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
-#             columns = [column[0] for column in cursor.description]
-#             result = toJson(cursor.fetchall(),columns)
-#
-#             type_action = "abstract_pass"
-#             status_last = "9"
-#
-#             sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-#             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-#
-#         elif (abstract=='Not_pass'):
-#
-#             sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
-#             cursor.execute(sqlUp_main,(data_new['employeeid']))
-#
-#             sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-#             cursor.execute(sql,(data_new['employeeid'], data_new['employeeid_reques']))
-#             columns = [column[0] for column in cursor.description]
-#             result = toJson(cursor.fetchall(),columns)
-#
-#             type_action = "abstract_not_pass"
-#             status_last = "11"
-#
-#             sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-#             cursor.execute(sqlReject,(result[0]['employeeid'],data_new['createby'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-#         else:
-#             return "fail"
-#         return "Success"
-#     except Exception as e:
-#         logserver(e)
-#         return "fail"
+@app.route('/Export_quota', methods=['POST'])
+@connect_sql()
+def Export_quota(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql_quota = "SELECT position.position_detail,company.company_short_name,quota.year,quota.member FROM quota\
+                              LEFT JOIN company ON company.companyid = quota.companyid\
+                              LEFT JOIN position ON position.position_id = quota.position_id\
+        WHERE quota.quota_id=%s"
+        cursor.execute(sql_quota,(data_new['quota_id']))
+        columns = [column[0] for column in cursor.description]
+        result_quota = toJson(cursor.fetchall(),columns)
+        try:
+            sql = "SELECT employeeid,name_th,surname_th,start_work FROM employee WHERE quota_id=%s"
+            cursor.execute(sql,(data_new['quota_id']))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            employeeid = result[0]['employeeid']
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_quota.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_quota.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['B'+str(3)] = result_quota[0]['company_short_name']
+            sheet['C'+str(3)] = result_quota[0]['position_detail']
+            sheet['D'+str(3)] = result_quota[0]['year']
+            sheet['E'+str(3)] = result_quota[0]['member']
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/AddApprove_request_together', methods=['POST'])
 @connect_sql()
 def AddApprove_request_together(cursor):

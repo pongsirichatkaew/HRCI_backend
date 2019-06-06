@@ -29,6 +29,20 @@ def QryBlacklist(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/Qry_iq_eq', methods=['POST'])
+@connect_sql()
+def Qry_iq_eq(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        EmploymentAppNo = data_new['EmploymentAppNo']
+        r = requests.post("http://eqtest.inet.co.th/api/jsonencode.php?appid="+EmploymentAppNo)
+        result = r.json()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 @app.route('/InsertBlacklist', methods=['POST'])
 def InsertBlacklist():
     try:

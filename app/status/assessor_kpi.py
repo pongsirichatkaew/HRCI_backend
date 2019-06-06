@@ -61,7 +61,7 @@ def EditAssessor_kpi(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s"
-            cursor.execute(sql44,(data_new['companyid'],data_new['employeeid']))
+            cursor.execute(sql44,(data_new['companyid_new'],data_new['employeeid_new']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
@@ -72,7 +72,7 @@ def EditAssessor_kpi(cursor):
         if str(data_new['type'])=='main':
             try:
                 sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
-                cursor.execute(sql44,(data_new['companyid'],data_new['org_name_id']))
+                cursor.execute(sql44,(data_new['companyid_new'],data_new['org_name_id_new']))
                 columns = [column[0] for column in cursor.description]
                 result_test = toJson(cursor.fetchall(),columns)
                 name_test = result_test[0]['name_asp']
@@ -123,8 +123,8 @@ def QryAssessor_kpi(cursor):
             employee = []
             kpi_ful = []
             sql2 = "SELECT (SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s) AS total\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND old_grade IS NOT NULL) AS Do\
-                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND `old_grade` IS NULL) AS Not_Do\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND validstatus=2) AS Do\
+                          ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND validstatus=1 ) AS Not_Do\
             FROM assessor_kpi LIMIT 1"
             cursor.execute(sql2,(i1['employeeid'],i1['employeeid'],i1['employeeid']))
             columns = [column[0] for column in cursor.description]
@@ -239,7 +239,7 @@ def QryName_leader_kpi(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT assessor_kpi.employeeid,assessor_kpi.name_asp,assessor_kpi.surname_asp,org_name.org_name_detail,assessor_kpi.email_asp,assessor_kpi.companyid,assessor_kpi.org_name_id FROM assessor_kpi\
+        sql = "SELECT assessor_kpi.employeeid,assessor_kpi.name_asp,assessor_kpi.surname_asp,org_name.org_name_detail,assessor_kpi.email_asp,assessor_kpi.companyid,assessor_kpi.org_name_id,assessor_kpi.type,employee_kpi.term,employee_kpi.year FROM assessor_kpi\
         INNER JOIN org_name ON assessor_kpi.org_name_id = org_name.org_name_id\
         INNER JOIN employee_kpi ON assessor_kpi.employeeid = employee_kpi.em_id_leader\
         WHERE assessor_kpi.employeeid=%s AND employee_kpi.employeeid=%s"
@@ -298,6 +298,21 @@ def QryAssessor_status(cursor):
         source = dataInput['source']
         data_new = source
         sql2 = "SELECT status FROM assessor_kpi WHERE employeeid=%s"
+        cursor.execute(sql2,(data_new['em_id_leader']))
+        columns = [column[0] for column in cursor.description]
+        data2 = toJson(cursor.fetchall(),columns)
+        return jsonify(data2)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmleader_hr', methods=['POST'])
+@connect_sql()
+def QryEmleader_hr(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql2 = "SELECT year,term,employeeid,name,surname,validstatus FROM employee_kpi WHERE em_id_leader=%s"
         cursor.execute(sql2,(data_new['em_id_leader']))
         columns = [column[0] for column in cursor.description]
         data2 = toJson(cursor.fetchall(),columns)

@@ -271,7 +271,7 @@ def QryEmployee_one_person(cursor):
             test= htmlSource.decode('utf-8')
             encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".JPG")
         except Exception as e:
-            pass        
+            pass
         try:
             sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
             WHERE Personal.ID_CardNo=%s"
@@ -1533,7 +1533,7 @@ def Export_Emp_benefit_All_company(cursor):
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND NOT employee.createby='Admin' """
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1581,13 +1581,34 @@ def Export_Emp_benefit_All_company(cursor):
                 sheet['G'+str(offset + i)] = result[i]['cost_detail']
                 sheet['H'+str(offset + i)] = result[i]['start_work']
                 sheet['I'+str(offset + i)] = result[i]['salary']
-                sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
-                sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
-                sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                try:
+                    sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -1615,7 +1636,7 @@ def Export_Emp_benefit_company(cursor):
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""' AND NOT employee.createby='Admin' """
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1663,13 +1684,34 @@ def Export_Emp_benefit_company(cursor):
                 sheet['G'+str(offset + i)] = result[i]['cost_detail']
                 sheet['H'+str(offset + i)] = result[i]['start_work']
                 sheet['I'+str(offset + i)] = result[i]['salary']
-                sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
-                sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
-                sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                try:
+                    sheet['J'+str(offset + i)] = result[i]['benefitsful'][0]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['K'+str(offset + i)] = result[i]['benefitsful'][1]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['L'+str(offset + i)] = result[i]['benefitsful'][2]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][3]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][4]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -1696,7 +1738,7 @@ def Export_Emp_Ga_All_company(cursor):
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND NOT employee.createby='Admin' """
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1748,20 +1790,62 @@ def Export_Emp_Ga_All_company(cursor):
                 sheet['J'+str(offset + i)] = result[i]['cost_detail']
                 sheet['K'+str(offset + i)] = result[i]['company_short_name']
                 sheet['L'+str(offset + i)] = result[i]['start_work']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
-                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
-                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
-                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
-                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
-                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
-                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
-                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
-                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
-                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
-                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -1789,7 +1873,7 @@ def Export_Emp_Ga_company(cursor):
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""'"""
+            WHERE employee.start_work LIKE '%""" + month + """-""" + year + """' AND employee.company_id='"""+companyid +"""' AND NOT employee.createby='Admin' """
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1841,20 +1925,62 @@ def Export_Emp_Ga_company(cursor):
                 sheet['J'+str(offset + i)] = result[i]['cost_detail']
                 sheet['K'+str(offset + i)] = result[i]['company_short_name']
                 sheet['L'+str(offset + i)] = result[i]['start_work']
-                sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
-                sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
-                sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
-                sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
-                sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
-                sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
-                sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
-                sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
-                sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
-                sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
-                sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
-                sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
-                sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
-                sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                try:
+                    sheet['M'+str(offset + i)] = result[i]['benefitsful'][5]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['N'+str(offset + i)] = result[i]['benefitsful'][6]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['O'+str(offset + i)] = result[i]['benefitsful'][7]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['P'+str(offset + i)] = result[i]['benefitsful'][8]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Q'+str(offset + i)] = result[i]['benefitsful'][9]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['R'+str(offset + i)] = result[i]['benefitsful'][10]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['S'+str(offset + i)] = result[i]['benefitsful'][11]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['T'+str(offset + i)] = result[i]['benefitsful'][12]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['U'+str(offset + i)] = result[i]['benefitsful'][13]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['V'+str(offset + i)] = result[i]['benefitsful'][14]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['W'+str(offset + i)] = result[i]['benefitsful'][15]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['X'+str(offset + i)] = result[i]['benefitsful'][16]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Y'+str(offset + i)] = result[i]['benefitsful'][17]['benefitsName']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['Z'+str(offset + i)] = result[i]['benefitsful'][18]['benefitsName']
+                except Exception as e:
+                    pass
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
