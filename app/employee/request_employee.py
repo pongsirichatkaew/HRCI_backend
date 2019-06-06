@@ -946,7 +946,7 @@ def QryEmp_request_leader():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+        # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         if str((data_new['tier_approve'])=='L4'):
             try:
                 status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
@@ -1023,6 +1023,52 @@ def QryEmp_request_leader():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmp_not_approve_md', methods=['POST'])
+def QryEmp_not_approve_md():
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.validstatus_request=8"
+        cursor.execute(sql,data_new['employeeid_reques'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/QryEmp_approve_md', methods=['POST'])
+def QryEmp_not_approve_md():
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        connection = mysql.connect()
+        cursor = connection.cursor()
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                      LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN section ON section.sect_id = employee.section_id\
+                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.validstatus_request=14"
+        cursor.execute(sql,data_new['employeeid_reques'])
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        connection.close()
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -1326,7 +1372,7 @@ def sendEmail_request(cursor):
     for item3 in result3:
         count3 = int(item3['total_em'])
         if count3>0:
-            sendToMail_request(item3['email_asp'], item3['total_em'],result_picture[0]['imageName'])
+            sendToMail_request_MD(item3['email_asp'], item3['total_em'],result_picture[0]['imageName'])
     sql_L4 = "SELECT employeeid,email_asp,tier_approve FROM assessor_quota WHERE tier_approve='L4' GROUP BY email_asp "
     cursor.execute(sql_L4)
     columns = [column[0] for column in cursor.description]
@@ -1343,7 +1389,7 @@ def sendEmail_request(cursor):
     for item4 in result4:
         count4 = int(item4['total_em'])
         if count4>0:
-            sendToMail_request(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
+            sendToMail_request_MD(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
     return jsonify(result)
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
@@ -1355,6 +1401,40 @@ def sendToMail_request(email, total_em,imageName):
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ต้นสังกัดตรวจสอบข้อมูลพนักงานจำนวน """ + total_em + """ คน โดยตรวจสอบข้อมูล เช่น เงินเดือนและสวัสดิการต่างๆรวมถึงสังกัดของพนักงานให้ถูกต้อง หากถูกต้องรบกวนยืนยันผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
                         ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
+                    </p>
+                    <b>ขอบคุณค่ะ/ครับ</b></br>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+def sendToMail_request_MD(email, total_em,imageName):
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
+    text = """\
+                <html>
+                  <body>
+                    <b style="font-size: 18px;">เรียน ผู้บริหาร</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">ฝ่ายทรัพยากรบุคคลขอให้ผู้บริหารยืนยันการจัดจ้างพนักงานผ่านระบบเพื่อให้ฝ่ายทรัพยากรบุคคลดำเนินการอนุมัติจัดจ้างพนักงานต่อไป</br>
+                        โดยสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
                     <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
