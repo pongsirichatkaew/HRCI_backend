@@ -53,8 +53,14 @@ def login():
         Gen_token = uuid.uuid4().hex
         connection = mysql2.connect()
         cursor = connection.cursor()
-        sql = "SELECT * FROM user WHERE username = %s and password = %s ORDER BY id ASC LIMIT 1"
-        cursor.execute(sql,(username, hashlib.sha512(password).hexdigest()))
+        sql_employee = "SELECT code FROM hrci WHERE email = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
+        cursor.execute(sql_employee,(username))
+        data = cursor.fetchall()
+        columns = [column[0] for column in cursor.description]
+        check_employeeid = toJson(data, columns)
+
+        sql = "SELECT * FROM user WHERE username = %s and password = %s and userid=%s ORDER BY id ASC LIMIT 1"
+        cursor.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
         _output = toJson(data, columns)
@@ -121,7 +127,7 @@ def login():
         _output4 = toJson(data4, columns4)
         for item4 in _output4:
             sum_permisssion4 = []
-            sql4_ = "SELECT type,companyid,org_name_id,status FROM assessor_kpi WHERE email_asp=%s AND status='active' GROUP BY type"
+            sql4_ = "SELECT type,companyid,org_name_id,status FROM assessor_kpi WHERE email_asp=%s  GROUP BY type"
             cursor.execute(sql4_,_output[0]['username'])
             data4 = cursor.fetchall()
             columns4 = [column[0] for column in cursor.description]
