@@ -1050,7 +1050,7 @@ def QryEmp_not_approve_md():
         logserver(e)
         return "fail"
 @app.route('/QryEmp_approve_md', methods=['POST'])
-def QryEmp_not_approve_md():
+def QryEmp_approve_md():
     try:
         dataInput = request.json
         source = dataInput['source']
