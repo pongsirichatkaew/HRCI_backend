@@ -947,7 +947,7 @@ def QryEmp_request_leader():
         source = dataInput['source']
         data_new = source
         # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
-        if str((data_new['tier_approve'])=='L4'):
+        if str(data_new['tier_approve'])=='L4':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
             except Exception as e:
@@ -966,7 +966,7 @@ def QryEmp_request_leader():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
-        elif str((data_new['tier_approve'])=='L3'):
+        elif str(data_new['tier_approve'])=='L3':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8)'
             except Exception as e:
@@ -985,7 +985,7 @@ def QryEmp_request_leader():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
-        elif str((data_new['tier_approve'])=='L2'):
+        elif str(data_new['tier_approve'])=='L2':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8)'
             except Exception as e:
