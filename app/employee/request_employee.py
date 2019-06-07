@@ -949,7 +949,7 @@ def QryEmp_request_leader():
         # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         if str((data_new['tier_approve'])=='L4'):
             try:
-                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -968,7 +968,7 @@ def QryEmp_request_leader():
             return jsonify(result)
         elif str((data_new['tier_approve'])=='L3'):
             try:
-                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -987,7 +987,7 @@ def QryEmp_request_leader():
             return jsonify(result)
         elif str((data_new['tier_approve'])=='L2'):
             try:
-                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -1006,7 +1006,7 @@ def QryEmp_request_leader():
             return jsonify(result)
         else:
             try:
-                status_id = 'AND validstatus_request='+'"'+str(data_new['status_id'])+'" AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
             except Exception as e:
                 pass
             connection = mysql.connect()
