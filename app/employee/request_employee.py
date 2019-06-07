@@ -1121,7 +1121,7 @@ def QryEmp_approve_md():
         # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         if str(data_new['tier_approve'])=='L4':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(14)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(9)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -1140,7 +1140,7 @@ def QryEmp_approve_md():
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L3':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,9)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -1159,7 +1159,7 @@ def QryEmp_approve_md():
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L2':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,9)'
             except Exception as e:
                 pass
             connection = mysql.connect()
@@ -1178,7 +1178,7 @@ def QryEmp_approve_md():
             return jsonify(result)
         else:
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,9)'
             except Exception as e:
                 pass
             connection = mysql.connect()
