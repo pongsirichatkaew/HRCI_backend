@@ -1032,20 +1032,83 @@ def QryEmp_not_approve_md():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                      LEFT JOIN position ON position.position_id = employee.position_id\
-                                      LEFT JOIN section ON section.sect_id = employee.section_id\
-                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.validstatus_request=8"
-        cursor.execute(sql,data_new['employeeid_reques'])
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
+        # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+        if str(data_new['tier_approve'])=='L4':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str(data_new['tier_approve'])=='L3':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(7)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str(data_new['tier_approve'])=='L2':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(6)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        else:
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -1055,20 +1118,83 @@ def QryEmp_approve_md():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        connection = mysql.connect()
-        cursor = connection.cursor()
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                      LEFT JOIN position ON position.position_id = employee.position_id\
-                                      LEFT JOIN section ON section.sect_id = employee.section_id\
-                                      LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                      LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                      LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.validstatus_request=14"
-        cursor.execute(sql,data_new['employeeid_reques'])
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        connection.close()
-        return jsonify(result)
+        # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+        if str(data_new['tier_approve'])=='L4':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(14)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str(data_new['tier_approve'])=='L3':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        elif str(data_new['tier_approve'])=='L2':
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
+        else:
+            try:
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(8,14)'
+            except Exception as e:
+                pass
+            connection = mysql.connect()
+            cursor = connection.cursor()
+            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+                                          LEFT JOIN position ON position.position_id = employee.position_id\
+                                          LEFT JOIN section ON section.sect_id = employee.section_id\
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            cursor.execute(sql,data_new['employeeid_reques'])
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            connection.close()
+            return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
