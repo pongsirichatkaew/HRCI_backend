@@ -265,8 +265,8 @@ def DeleteBlacklist():
         result = toJson(cursor.fetchall(),columns)
 
         type_action = "Delete"
-        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn5,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],data_new['Descriptions'],type_action))
+        sqlIn5 = "INSERT INTO blacklist_log (ID_CardNo,NameTh,SurnameTh,Mobile,createby,Description,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn5,(result[0]['ID_CardNo'],result[0]['NameTh'],result[0]['SurnameTh'],result[0]['Mobile'],data_new['createby'],result[0]['Description'],type_action))
 
 
         sqlUp = "DELETE FROM blacklist WHERE ID_CardNo=%s"
