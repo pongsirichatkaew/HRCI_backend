@@ -922,7 +922,7 @@ def Add_board_kpi(cursor):
 @connect_sql()
 def board_qry(cursor):
     try:
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
+        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE group_kpi IS NOT NULL "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -938,7 +938,7 @@ def board_qry_search(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s "
+        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE group_kpi IS NOT NULL AND year=%s AND term=%s "
         cursor.execute(sql,(data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
