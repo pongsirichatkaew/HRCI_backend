@@ -971,7 +971,7 @@ def Add_board_kpi_no_result(cursor):
         cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
 
         try:
-            permission = "board"
+            permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
             sql_test_admin = "SELECT username FROM Admin WHERE employeeid=%s"
             cursor.execute(sql_test_admin,(employeeid))
@@ -979,7 +979,7 @@ def Add_board_kpi_no_result(cursor):
             result_test_admin = toJson(cursor.fetchall(),columns)
             check_email = result_test_admin[i]['username']
         except Exception as e:
-            permission = "board"
+            permission = data_new['group_kpi_id']
             sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['createby']))
 
