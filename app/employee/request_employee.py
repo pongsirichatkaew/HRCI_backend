@@ -1124,7 +1124,7 @@ def QryEmp_request_leader():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
-        else:
+        elif str(data_new['tier_approve'])=='L1':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
             except Exception as e:

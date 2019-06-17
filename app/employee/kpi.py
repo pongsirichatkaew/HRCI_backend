@@ -1430,17 +1430,32 @@ def Export_kpi_hr(cursor):
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name']
                 sheet['D'+str(offset + i)] = result[i]['surname']
-                sheet['E'+str(offset + i)] = result[i]['sec_cost_center'][0]['nickname_employee']
+                try:
+                    sheet['E'+str(offset + i)] = result[i]['sec_cost_center'][0]['nickname_employee']
+                except Exception as e:
+                    pass
                 sheet['F'+str(offset + i)] = result[i]['position_detail']
-                sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
+                try:
+                    sheet['G'+str(offset + i)] = result[i]['sec_cost_center'][0]['sect_detail']
+                except Exception as e:
+                    pass
                 sheet['H'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['I'+str(offset + i)] = result[i]['sec_cost_center'][0]['cost_detail']
+                try:
+                    sheet['I'+str(offset + i)] = result[i]['sec_cost_center'][0]['cost_detail']
+                except Exception as e:
+                    pass
                 try:
                     sheet['J'+str(offset + i)] = result[i]['name_leader'][0]['name_asp']+' '+result[i]['name_leader'][0]['surname_asp']
                 except Exception as e:
                     pass
-                sheet['K'+str(offset + i)] = result[i]['sec_cost_center'][0]['start_work']
-                sheet['L'+str(offset + i)] = result[i]['sec_cost_center'][0]['EndWork_probation']
+                try:
+                    sheet['K'+str(offset + i)] = result[i]['sec_cost_center'][0]['start_work']
+                except Exception as e:
+                    pass
+                try:
+                    sheet['L'+str(offset + i)] = result[i]['sec_cost_center'][0]['EndWork_probation']
+                except Exception as e:
+                    pass
                 sheet['M'+str(offset + i)] = result[i]['work_year']
                 sheet['N'+str(offset + i)] = result[i]['work_month']
                 sheet['O'+str(offset + i)] = result[i]['work_date']
