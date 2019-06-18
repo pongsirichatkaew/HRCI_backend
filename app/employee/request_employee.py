@@ -1210,7 +1210,7 @@ def QryEmp_not_approve_md():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
-        else:
+        elif str(data_new['tier_approve'])=='L1':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(11)'
             except Exception as e:
@@ -1296,7 +1296,7 @@ def QryEmp_approve_md():
             result = toJson(cursor.fetchall(),columns)
             connection.close()
             return jsonify(result)
-        else:
+        elif str(data_new['tier_approve'])=='L1':
             try:
                 status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(9)'
             except Exception as e:
