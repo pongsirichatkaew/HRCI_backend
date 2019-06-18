@@ -665,7 +665,7 @@ def Qry_board_kpi(cursor):
         except Exception as e:
             pass
 
-        sql = "SELECT createby,year,term,employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,pass_board,comment,grade FROM employee_kpi "+year_term+""
+        sql = "SELECT createby,year,term,employeeid,employeeid_board,name_kpi,surname_kpi,org_name_kpi,grade_board,comment,grade FROM employee_kpi "+year_term+""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
