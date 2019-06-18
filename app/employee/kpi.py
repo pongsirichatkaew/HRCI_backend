@@ -612,8 +612,8 @@ def Update_grade_hr_board(cursor):
             sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['year'],data_new['term'],data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
 
-        sqlUp = "UPDATE employee_kpi SET grade=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['grade'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "Success"
     except Exception as e:
@@ -645,8 +645,8 @@ def Update_grade_hr_hall(cursor):
             sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be1,(data_new['year'],data_new['term'],data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
 
-        sqlUp = "UPDATE employee_kpi SET grade=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['grade'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "Success"
     except Exception as e:
