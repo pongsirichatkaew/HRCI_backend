@@ -1650,7 +1650,7 @@ def sendToMail_request(email, total_em,imageName):
                         ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th:5000/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1685,7 +1685,7 @@ def sendToMail_request_MD(email, total_em,imageName):
                         โดยสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th:5000/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
@@ -1719,7 +1719,7 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
                         ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="https://hr-management.inet.co.th">Hr Management</a> </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th:5000/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
