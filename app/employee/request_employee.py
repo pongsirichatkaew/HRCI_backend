@@ -1639,7 +1639,8 @@ def sendEmail_request(cursor):
     return jsonify(result)
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
