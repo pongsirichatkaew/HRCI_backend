@@ -1639,7 +1639,8 @@ def sendEmail_request(cursor):
     return jsonify(result)
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1673,7 +1674,8 @@ def sendToMail_request(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_request_MD(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1683,18 +1685,26 @@ def sendToMail_request_MD(email, total_em,imageName):
                         โดยสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th:5000/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    print(imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
@@ -1707,7 +1717,8 @@ def sendToMail_request_MD(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ผู้บริหารไม่อนุมัติการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
