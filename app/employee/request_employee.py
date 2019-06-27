@@ -1650,18 +1650,24 @@ def sendToMail_request(email, total_em,imageName):
                         ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
@@ -1685,14 +1691,12 @@ def sendToMail_request_MD(email, total_em,imageName):
                         โดยสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th:5000/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
     # INSERT
     responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
-    print(imageName)
     img = responseImg.read()
     # END
     msg = MIMEMultipart()
@@ -1703,7 +1707,7 @@ def sendToMail_request_MD(email, total_em,imageName):
     msg.attach(MIMEText(text, "html","utf-8"))
     # INSERT
     msg.attach(MIMEImage(img))
-    msg.attach(MIMEText('<h2>Best Regards.</h2>', "html", "utf-8"))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
     # END
 
     try:
@@ -1726,19 +1730,25 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
                         ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="https://hr-management.inet.co.th">Hr Management</a> </p>
-                    <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <b>ขอบคุณค่ะ/ครับ</b></br>
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
