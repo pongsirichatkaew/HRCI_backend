@@ -709,7 +709,7 @@ def Abstract_hr(cursor):
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
-        cursor.execute(sqlcheck_L1,(data_new['employeeid'],data_new['version']))
+        cursor.execute(sqlcheck_L4,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result_check_L4 = toJson(cursor.fetchall(),columns)
 
