@@ -364,7 +364,6 @@ def Deleteapprove_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
         try:
             sqlcheck_ans = "SELECT name FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
             cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques']))
@@ -374,8 +373,8 @@ def Deleteapprove_request(cursor):
         except Exception as e:
             return "Not remove"
 
-        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
@@ -384,8 +383,8 @@ def Deleteapprove_request(cursor):
         sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
-        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques']))
+        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
 
         return "Success"
     except Exception as e:
@@ -446,6 +445,16 @@ def Send_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        # NEW
+        sql_check_request_status = "SELECT validstatus_request FROM employee WHERE employeeid = %s"
+        cursor.execute(sql_check_request_status, (data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_request_status = toJson(cursor.fetchall(),columns)
+        if result_request_status[0]['validstatus_request'] != 1:
+            sql_reset = "UPDATE approve_request SET comment = NULL, comment_orther = NULL, date_status = NULL WHERE employeeid = %s"
+            cursor.execute(sql_reset, data_new['employeeid'])
+        # END NEW
 
         sqlcheck_L1 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L1'"
         cursor.execute(sqlcheck_L1,(data_new['employeeid']))
