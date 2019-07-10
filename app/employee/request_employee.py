@@ -189,8 +189,9 @@ def QryEmployee_request(cursor):
             status_id = 'WHERE validstatus_request='+'"'+str(data_new['status_id'])+'" AND NOT employee.createby="Admin" AND employee.EmploymentAppNo IS NOT NULL'
         except Exception as e:
             pass
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,Education.institute,Education.qualification,Education.major,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN Education ON Education.ID_CardNo = employee.citizenid\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request "+status_id+" "
         cursor.execute(sql)
