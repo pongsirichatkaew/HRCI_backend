@@ -650,8 +650,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -723,8 +723,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -770,8 +770,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -816,8 +816,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -862,8 +862,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -882,8 +882,8 @@ def UpdateStatus_request(cursor):
             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -909,8 +909,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -928,8 +928,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -955,8 +955,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -973,8 +973,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1012,8 +1012,8 @@ def UpdateStatus_request(cursor):
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
                     pass
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1034,8 +1034,8 @@ def UpdateStatus_request(cursor):
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1054,8 +1054,8 @@ def UpdateStatus_request(cursor):
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
