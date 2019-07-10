@@ -63,6 +63,59 @@ def QryEmployee_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+# ------------------------------------------------------------------------------------------------------
+
+@app.route('/QryEmployee_kpi_eiei', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_eiei(cursor):
+    try:
+
+        try:
+            dataInput = request.json
+            source = dataInput['source']
+            data_new = source
+            year_ = ''
+            try:
+                year_ ='"'+str(data_new['year'])+'"'
+                year_ = ' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
+            except Exception as e:
+                pass
+            term_ = ''
+            try:
+                term_ = '"'+str(data_new['term'])+'"'
+                term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+            except Exception as e:
+                pass
+            group_kpi_id = 'WHERE group_kpi IN '+str(tuple(group_list))+year_+term_
+        except Exception as e:
+            pass
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+        "+group_kpi_id+" GROUP BY employee_kpi.employeeid "
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        for i1 in result:
+            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            cursor.execute(sql2,(i1['company_short_name']))
+            columns = [column[0] for column in cursor.description]
+            data2 = toJson(cursor.fetchall(),columns)
+            i1['company_short_name'] = data2[0]['company_short_name']
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+
+
+
+
+
+
+
+# --------------------------------------------------------------------------------------------------------
 @app.route('/QryEmployee_kpi_search', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_search(cursor):
@@ -1090,11 +1143,17 @@ def Update_board_kpi(cursor):
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        grade_board = str(result[0]['grade_board'])
-        if grade_board is None:
+        # print (result)
+        # try:
+        #     grade_board = str(result[0]['grade_board'])
+        # except Exception as e:
+        #     grade_board = None
+        # grade_board = str(result[0]['grade_board'])
+        if result is None:
+            # grade_board = ''
             type_action = "Edit"
             sqlIn_be2 = "INSERT INTO answer_kpi_log(year,term,employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],result[0]['employeeid'],result[0]['employeeid_board'],grade_board,result[0]['comment'],data_new['createby'],type_action))
+            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],result[0]['employeeid'],result[0]['employeeid_board'],result[0]['grade_board'],result[0]['comment'],data_new['createby'],type_action))
         else:
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_log(year,term,employeeid,employeeid_board,grade_board,comment,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"

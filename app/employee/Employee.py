@@ -353,9 +353,9 @@ def EditEmployee(cursor):
 
         type_action = "Edit"
 
-        sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action,quota_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM_log,(result[0]['employeeid'],result[0]['citizenid'],result[0]['name_th'],result[0]['name_eng'],result[0]['surname_th'],result[0]['surname_eng'],result[0]['nickname_employee'],result[0]['salary'],result[0]['email'],result[0]['phone_company'],result[0]['position_id'],\
-        result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action))
+        result[0]['section_id'],result[0]['org_name_id'],result[0]['cost_center_name_id'],result[0]['company_id'],result[0]['start_work'],result[0]['EndWork_probation'],data_new['createby'],type_action,result[0]['quota_id']))
 
         try:
             sqlEM_pro_log = "INSERT INTO Emp_probation_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -384,10 +384,10 @@ def EditEmployee(cursor):
         sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s AND employeeid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid'],data_new['employeeid']))
 
-        sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby, EmploymentAppNo, quota_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
-        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby']))
+        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['EmploymentAppNo'], result[0]['quota_id']))
 
         # sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
         # cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
@@ -1441,6 +1441,62 @@ def Export_Employee_All_company(cursor):
             for i in xrange(len(result)):
                 sheet['A'+str(offset + i)] = result[i]['company_short_name']
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['E'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']
+                sheet['F'+str(offset + i)] = result[i]['email']
+                sheet['G'+str(offset + i)] = result[i]['position_detail']
+                sheet['H'+str(offset + i)] = result[i]['sect_detail']
+                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['J'+str(offset + i)] = result[i]['cost_detail']
+                sheet['K'+str(offset + i)] = result[i]['Mobile']
+                sheet['L'+str(offset + i)] = result[i]['start_work']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Payroll_All', methods=['POST'])
+@connect_sql()
+def Export_Payroll_All(cursor):
+    try:
+        try:
+            sql = """SELECT employee.employeeid,company.company_short_name, employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.citizenid,employee.salary,employee.start_work,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail
+            FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+            LEFT JOIN position ON position.position_id = employee.position_id
+            LEFT JOIN section ON section.sect_id = employee.section_id
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+            LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id"""
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_All.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Payroll_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            # sheet['C'+str(3)] = year + '/' + month
+            offset = 1
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
                 sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
                 sheet['E'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']

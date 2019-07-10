@@ -29,6 +29,7 @@ from os.path import basename
 from email.mime.application import MIMEApplication
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from email.mime.image import MIMEImage
 from email.utils import COMMASPACE, formatdate
 reload(sys)
 sys.setdefaultencoding('utf8')
