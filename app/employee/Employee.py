@@ -108,6 +108,11 @@ def InsertEmployee_resign(cursor):
             cursor.execute(UpApprove,(data_new['employeeid']))
         except Exception as e:
             pass
+        try:
+            UpPersonal= "DELETE FROM Personal  WHERE ID_CardNo=%s"
+            cursor.execute(UpPersonal,(result[0]['citizenid']))
+        except Exception as e:
+            pass
 
         return "Success"
     except Exception as e:
