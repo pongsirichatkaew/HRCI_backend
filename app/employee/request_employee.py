@@ -189,8 +189,9 @@ def QryEmployee_request(cursor):
             status_id = 'WHERE validstatus_request='+'"'+str(data_new['status_id'])+'" AND NOT employee.createby="Admin" AND employee.EmploymentAppNo IS NOT NULL'
         except Exception as e:
             pass
-        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+        sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.validstatus_request,employee.EndWork_probation,company.company_short_name,Education.institute,Education.qualification,Education.major,position.position_detail,org_name.org_name_detail,status_request.status_detail,status_request.path_color,status_request.font_color FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                       LEFT JOIN position ON position.position_id = employee.position_id\
+                                      LEFT JOIN Education ON Education.ID_CardNo = employee.citizenid\
                                       LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                       LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request "+status_id+" "
         cursor.execute(sql)
@@ -364,7 +365,6 @@ def Deleteapprove_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
         try:
             sqlcheck_ans = "SELECT name FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
             cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques']))
@@ -374,8 +374,8 @@ def Deleteapprove_request(cursor):
         except Exception as e:
             return "Not remove"
 
-        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
@@ -384,8 +384,8 @@ def Deleteapprove_request(cursor):
         sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
-        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques']))
+        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
 
         return "Success"
     except Exception as e:
@@ -446,6 +446,16 @@ def Send_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+
+        # NEW
+        sql_check_request_status = "SELECT validstatus_request FROM employee WHERE employeeid = %s"
+        cursor.execute(sql_check_request_status, (data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_request_status = toJson(cursor.fetchall(),columns)
+        if result_request_status[0]['validstatus_request'] != 1:
+            sql_reset = "UPDATE approve_request SET comment = NULL, comment_orther = NULL, date_status = NULL WHERE employeeid = %s"
+            cursor.execute(sql_reset, data_new['employeeid'])
+        # END NEW
 
         sqlcheck_L1 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L1'"
         cursor.execute(sqlcheck_L1,(data_new['employeeid']))
@@ -641,8 +651,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -714,8 +724,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -761,8 +771,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -807,8 +817,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -853,8 +863,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -873,8 +883,8 @@ def UpdateStatus_request(cursor):
             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -900,8 +910,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -919,8 +929,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -946,8 +956,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -964,8 +974,8 @@ def UpdateStatus_request(cursor):
                 sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1003,8 +1013,8 @@ def UpdateStatus_request(cursor):
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
                     pass
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1025,8 +1035,8 @@ def UpdateStatus_request(cursor):
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1045,8 +1055,8 @@ def UpdateStatus_request(cursor):
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1075,17 +1085,23 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,Education.institute,Education.qualification,Education.major,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            # SELECT *, MAX(EndYear)  FROM `Education` WHERE `ID_CardNo` LIKE '1100400779029'
             cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L3':
             try:
@@ -1094,7 +1110,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1105,6 +1121,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L2':
             try:
@@ -1113,7 +1134,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1124,6 +1145,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L1':
             try:
@@ -1132,7 +1158,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1143,6 +1169,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
     except Exception as e:
         logserver(e)
