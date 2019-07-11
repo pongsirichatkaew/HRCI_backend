@@ -1486,8 +1486,96 @@ def Export_Payroll_All(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Payroll_All.xlsx'))
 
-        # wb = load_workbook('../app/Template/Template_Payroll_All.xlsx')
-        wb = load_workbook('../Template/Template_Payroll_All.xlsx')
+        wb = load_workbook('../app/Template/Template_Payroll_All.xlsx')
+        # wb = load_workbook('../Template/Template_Payroll_All.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            # sheet['C'+str(3)] = year + '/' + month
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['company_short_name']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                thisPrefix = 'K.'
+                engname = "------------------"
+                prefix = ['Mr.', 'Ms.', 'Mrs.','Acting Sub Lt.','Acting Sub Ly.', 'Miss', 'MS.', 'MR.', 'MRS.']
+                for j in xrange(len(prefix)):
+                    checkPrefix = result[i]['name_eng'].split(prefix[j])
+                    if len(checkPrefix) > 1:
+                        thisPrefix = prefix[j]
+                        engname = checkPrefix[1]
+                thaiPrefix = ['นาย', 'นาง', 'นางสาว', 'ว่าที่ร้อยตรี', 'ว่าที่ร้อยตรีหญิง']
+                for k in xrange(len(thaiPrefix)):
+                    checkThaiPref = result[i]['name_th'].split(thaiPrefix[k])
+                    if len(checkThaiPref) > 1:
+                        thisThaiPref = thaiPrefix[k]
+                        thainame = ""
+                        if len(checkThaiPref) > 2:
+                            for l in xrange(len(checkThaiPref)):
+                                if l != 0:
+                                    thainame = thainame + checkThaiPref[l]
+                        else:
+                            thainame = checkThaiPref[1]
+                sheet['C'+str(offset + i)] = thisPrefix[0].upper() + thisPrefix[1:].lower()
+                sheet['D'+str(offset + i)] = thainame
+                sheet['E'+str(offset + i)] = result[i]['surname_th']
+                sheet['F'+str(offset + i)] = engname
+                sheet['G'+str(offset + i)] = result[i]['surname_eng']
+                sheet['H'+str(offset + i)] = result[i]['citizenid']
+                sheet['I'+str(offset + i)] = result[i]['citizenid']
+                sheet['J'+str(offset + i)] = 1
+                sheet['K'+str(offset + i)] = result[i]['start_work']
+                sheet['L'+str(offset + i)] = ""
+                sheet['M'+str(offset + i)] = result[i]['EndWork_probation']
+                if result[i]['salary'] is not None:
+                    sheet['N'+str(offset + i)] = base64.b64decode(result[i]['salary'])
+                else:
+                    sheet['N'+str(offset + i)] = ""
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+    except Exception as e:
+        logserver(e)
+        return "fail"
+@app.route('/Export_Payroll_By_Month', methods=['POST'])
+@connect_sql()
+def Export_Payroll_By_Month(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT employee.employeeid,company.company_short_name, employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.citizenid,employee.salary,employee.start_work,employee.EndWork_probation,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail
+            FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+            LEFT JOIN position ON position.position_id = employee.position_id
+            LEFT JOIN section ON section.sect_id = employee.section_id
+            LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+            LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+            WHERE employee.start_work LIKE '%{}-{}%'
+            """.format(month,year)
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Payroll_All.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Payroll_All.xlsx')
+        # wb = load_workbook('../Template/Template_Payroll_All.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']

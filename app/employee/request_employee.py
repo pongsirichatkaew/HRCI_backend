@@ -1085,20 +1085,23 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,Education.institute,Education.qualification,Education.major,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,Education.institute,Education.qualification,Education.major,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
-                                          LEFT JOIN Education ON Education.ID_CardNo = employee.citizenid\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
             # SELECT *, MAX(EndYear)  FROM `Education` WHERE `ID_CardNo` LIKE '1100400779029'
-            # TOMORROW
             cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L3':
             try:
@@ -1107,7 +1110,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1118,6 +1121,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L2':
             try:
@@ -1126,7 +1134,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1137,6 +1145,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L1':
             try:
@@ -1145,7 +1158,7 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
@@ -1156,6 +1169,11 @@ def QryEmp_request_leader():
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
     except Exception as e:
         logserver(e)
