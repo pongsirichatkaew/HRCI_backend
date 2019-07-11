@@ -1093,6 +1093,8 @@ def QryEmp_request_leader():
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            # SELECT *, MAX(EndYear)  FROM `Education` WHERE `ID_CardNo` LIKE '1100400779029'
+            # TOMORROW
             cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
