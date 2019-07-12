@@ -65,7 +65,7 @@ def QryContract(cursor):
         elif tranExpiryDate_idcard_Mounth==6:
              tranExpiryDate_idcard_Mounth="มิถุนายน"
         elif tranExpiryDate_idcard_Mounth==7:
-             tranExpiryDate_idcard_Mounth="กรกฏาคม"
+             tranExpiryDate_idcard_Mounth="กรกฎาคม"
         elif tranExpiryDate_idcard_Mounth==8:
              tranExpiryDate_idcard_Mounth="สิงหาคม"
         elif tranExpiryDate_idcard_Mounth==9:
@@ -95,7 +95,7 @@ def QryContract(cursor):
         elif tranExpiryDate_start_work_Mounth==6:
              tranExpiryDate_start_work_Mounth="มิถุนายน"
         elif tranExpiryDate_start_work_Mounth==7:
-             tranExpiryDate_start_work_Mounth="กรกฏาคม"
+             tranExpiryDate_start_work_Mounth="กรกฎาคม"
         elif tranExpiryDate_start_work_Mounth==8:
              tranExpiryDate_start_work_Mounth="สิงหาคม"
         elif tranExpiryDate_start_work_Mounth==9:
@@ -125,7 +125,7 @@ def QryContract(cursor):
         elif tranExpiryDate_EndWork_probation_Mounth==6:
              tranExpiryDate_EndWork_probation_Mounth="มิถุนายน"
         elif tranExpiryDate_EndWork_probation_Mounth==7:
-             tranExpiryDate_EndWork_probation_Mounth="กรกฏาคม"
+             tranExpiryDate_EndWork_probation_Mounth="กรกฎาคม"
         elif tranExpiryDate_EndWork_probation_Mounth==8:
              tranExpiryDate_EndWork_probation_Mounth="สิงหาคม"
         elif tranExpiryDate_EndWork_probation_Mounth==9:
@@ -165,7 +165,7 @@ def QryContract(cursor):
         elif tranExpiryDate_contract_date_Mounth==6:
              tranExpiryDate_contract_date_Mounth="มิถุนายน"
         elif tranExpiryDate_contract_date_Mounth==7:
-             tranExpiryDate_contract_date_Mounth="กรกฏาคม"
+             tranExpiryDate_contract_date_Mounth="กรกฎาคม"
         elif tranExpiryDate_contract_date_Mounth==8:
              tranExpiryDate_contract_date_Mounth="สิงหาคม"
         elif tranExpiryDate_contract_date_Mounth==9:
@@ -301,7 +301,7 @@ def QryContract_sales(cursor):
         elif tranExpiryDate_idcard_Mounth==6:
              tranExpiryDate_idcard_Mounth="มิถุนายน"
         elif tranExpiryDate_idcard_Mounth==7:
-             tranExpiryDate_idcard_Mounth="กรกฏาคม"
+             tranExpiryDate_idcard_Mounth="กรกฎาคม"
         elif tranExpiryDate_idcard_Mounth==8:
              tranExpiryDate_idcard_Mounth="สิงหาคม"
         elif tranExpiryDate_idcard_Mounth==9:
@@ -331,7 +331,7 @@ def QryContract_sales(cursor):
         elif tranExpiryDate_start_work_Mounth==6:
              tranExpiryDate_start_work_Mounth="มิถุนายน"
         elif tranExpiryDate_start_work_Mounth==7:
-             tranExpiryDate_start_work_Mounth="กรกฏาคม"
+             tranExpiryDate_start_work_Mounth="กรกฎาคม"
         elif tranExpiryDate_start_work_Mounth==8:
              tranExpiryDate_start_work_Mounth="สิงหาคม"
         elif tranExpiryDate_start_work_Mounth==9:
@@ -361,7 +361,7 @@ def QryContract_sales(cursor):
         elif tranExpiryDate_EndWork_probation_Mounth==6:
              tranExpiryDate_EndWork_probation_Mounth="มิถุนายน"
         elif tranExpiryDate_EndWork_probation_Mounth==7:
-             tranExpiryDate_EndWork_probation_Mounth="กรกฏาคม"
+             tranExpiryDate_EndWork_probation_Mounth="กรกฎาคม"
         elif tranExpiryDate_EndWork_probation_Mounth==8:
              tranExpiryDate_EndWork_probation_Mounth="สิงหาคม"
         elif tranExpiryDate_EndWork_probation_Mounth==9:
@@ -401,7 +401,7 @@ def QryContract_sales(cursor):
         elif tranExpiryDate_contract_date_Mounth==6:
              tranExpiryDate_contract_date_Mounth="มิถุนายน"
         elif tranExpiryDate_contract_date_Mounth==7:
-             tranExpiryDate_contract_date_Mounth="กรกฏาคม"
+             tranExpiryDate_contract_date_Mounth="กรกฎาคม"
         elif tranExpiryDate_contract_date_Mounth==8:
              tranExpiryDate_contract_date_Mounth="สิงหาคม"
         elif tranExpiryDate_contract_date_Mounth==9:
