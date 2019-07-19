@@ -990,6 +990,12 @@ def UpdateStatus_request(cursor):
             result_check_L1 = toJson(cursor.fetchall(),columns)
             check_total_l1 = int(result_check_L1[0]['total_l1'])
 
+            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+            cursor.execute(sqlcheckapprove_L1,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_check_approve_L1 = toJson(cursor.fetchall(),columns)
+            check_total_approve_l1 = int(result_check_approve_L1[0]['total_l1'])
+
             sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L2'"
             # sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
             cursor.execute(sqlcheck_L2,(data_new['employeeid']))
@@ -1007,7 +1013,7 @@ def UpdateStatus_request(cursor):
                 sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
@@ -1028,7 +1034,7 @@ def UpdateStatus_request(cursor):
                 sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
@@ -1048,7 +1054,7 @@ def UpdateStatus_request(cursor):
                 sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=3 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
@@ -1483,6 +1489,12 @@ def UpdateStatus_request_all(cursor):
                 result_check_L1 = toJson(cursor.fetchall(),columns)
                 check_total_l1 = int(result_check_L1[0]['total_l1'])
 
+                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+                cursor.execute(sqlcheckapprove_L1,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_approve_L1 = toJson(cursor.fetchall(),columns)
+                check_total_approve_l1 = int(result_check_approve_L1[0]['total_l1'])
+
                 sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L2'"
                 # sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
                 cursor.execute(sqlcheck_L2,(data_new['employee'][i]['employeeid']))
@@ -1500,7 +1512,7 @@ def UpdateStatus_request_all(cursor):
                     sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                     cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                    if check_total_l1==1 :
+                    if check_total_l1==check_total_approve_l1+1 :
                         sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                         cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
                     else:
@@ -1521,7 +1533,7 @@ def UpdateStatus_request_all(cursor):
                     sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                     cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                    if check_total_l1==1 :
+                    if check_total_l1==check_total_approve_l1+1 :
                         sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                         cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
                     else:
@@ -1541,7 +1553,7 @@ def UpdateStatus_request_all(cursor):
                     sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
                     cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                    if check_total_l1==1 :
+                    if check_total_l1==check_total_approve_l1+1 :
                         sqlUp_main = "UPDATE employee SET validstatus_request=3 WHERE employeeid=%s"
                         cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
                     else:
