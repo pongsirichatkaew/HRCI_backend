@@ -1032,6 +1032,9 @@ def EditEmployee_Employeeid(cursor):
             sqlUp_pro = "UPDATE Emp_probation SET employeeid=%s WHERE employeeid=%s"
             cursor.execute(sqlUp_pro,(data_new['employeeid'],data_new['Old_EmpId']))
 
+            sqlUp_prove = "UPDATE approve_request SET employeeid=%s WHERE employeeid=%s"
+            cursor.execute(sqlUp_prove,(data_new['employeeid'],data_new['Old_EmpId']))
+
             try:
                 sqlUp_prove = "UPDATE approve_probation SET employeeid=%s WHERE employeeid=%s"
                 cursor.execute(sqlUp_prove,(data_new['employeeid'],data_new['Old_EmpId']))
