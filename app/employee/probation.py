@@ -243,6 +243,24 @@ def UpdateStatus_probation(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
+            # sql_check_status = "SELECT status_result,email FROM Emp_probation WHERE employeeid=%s AND version=%s"
+            # cursor.execute(sql_check_status,(data_new['employeeid'],data_new['version']))
+            # columns = [column[0] for column in cursor.description]
+            # result_status = toJson(cursor.fetchall(),columns)
+            #
+            # status_result = str(result_status[0]['status_result'])
+            # email_employee = result_status[0]['email']
+            #
+            # if status_result=='่ผ่านทดลองงาน':
+            #     for item in result:
+            #         sendToMail_reject(data_new['comment_orther'])
+            # elif sstatus_result=='่ไม่ผ่านทดลองงาน':
+            #     for item in result:
+            #         sendToMail_reject(data_new['comment_orther'])
+            # elif status_result=='่ขยายเวลาทดลองงาน':
+            #     for item in result:
+            #         sendToMail_reject(data_new['comment_orther'])
+
         elif (tier_approve =='L3')&(status_=='Approve'):
 
             # sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L4'"
@@ -691,7 +709,7 @@ def Abstract_hr(cursor):
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
-        cursor.execute(sqlcheck_L1,(data_new['employeeid'],data_new['version']))
+        cursor.execute(sqlcheck_L4,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result_check_L4 = toJson(cursor.fetchall(),columns)
 

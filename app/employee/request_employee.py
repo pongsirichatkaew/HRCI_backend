@@ -364,18 +364,17 @@ def Deleteapprove_request(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
         try:
-            sqlcheck_ans = "SELECT name FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL"
-            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques']))
+            sqlcheck_ans = "SELECT name FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND date_status IS NULL AND tier_approve=%s"
+            cursor.execute(sqlcheck_ans,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result_check_ans = toJson(cursor.fetchall(),columns)
             result_chs = result_check_ans[0]['name']
         except Exception as e:
             return "Not remove"
 
-        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+        sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
@@ -384,8 +383,8 @@ def Deleteapprove_request(cursor):
         sqlApprove = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['employeeid'],data_new['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
-        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques']))
+        sqlDe = "DELETE FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_reques'],data_new['tier_approve']))
 
         return "Success"
     except Exception as e:
@@ -447,6 +446,16 @@ def Send_request(cursor):
         source = dataInput['source']
         data_new = source
 
+        # NEW
+        sql_check_request_status = "SELECT validstatus_request FROM employee WHERE employeeid = %s"
+        cursor.execute(sql_check_request_status, (data_new['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result_request_status = toJson(cursor.fetchall(),columns)
+        if request.args.get('reset') == 'true':
+            sql_reset = "UPDATE approve_request SET status_=1,comment = NULL, comment_orther = NULL, date_status = NULL WHERE employeeid = %s"
+            cursor.execute(sql_reset, data_new['employeeid'])
+        # END NEW
+
         sqlcheck_L1 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L1'"
         cursor.execute(sqlcheck_L1,(data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
@@ -462,10 +471,10 @@ def Send_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_check_L3 = toJson(cursor.fetchall(),columns)
 
-        try:
-            check_L3 = result_check_L3[0]['employeeid_reques']
-        except Exception as e:
-            return "No Level L3"
+        # try:
+        #     check_L3 = result_check_L3[0]['employeeid_reques']
+        # except Exception as e:
+        #     return "No Level L3"
 
         sqlcheck_L4 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L4'"
         cursor.execute(sqlcheck_L4,(data_new['employeeid']))
@@ -581,8 +590,8 @@ def UpdateStatus_request(cursor):
             return "End request"
         if (tier_approve=='L4')&(status_=='Reject'):
 
-            sqlUp = "UPDATE approve_request SET status_=8,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=8,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=8 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -641,8 +650,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -654,8 +663,8 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve=='L4')&(status_=='Notapprove'):
 
-            sqlUp = "UPDATE approve_request SET status_=11,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=11,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -714,8 +723,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -728,8 +737,8 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve =='L3')&(status_ =='Reject'):
 
-            sqlUp = "UPDATE approve_request SET status_=7,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=7,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=7 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -761,8 +770,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -774,8 +783,8 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve =='L3')&(status_ =='Notapprove'):
 
-            sqlUp = "UPDATE approve_request SET status_=11,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=11,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=11 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -807,8 +816,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -820,8 +829,8 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve =='L2')&(status_ =='Reject'):
 
-            sqlUp = "UPDATE approve_request SET status_=6,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=6,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=6 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
@@ -853,8 +862,8 @@ def UpdateStatus_request(cursor):
             except Exception as e:
                 pass
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -867,14 +876,14 @@ def UpdateStatus_request(cursor):
 
         elif (tier_approve =='L4')&(status_ =='Approve'):
 
-            sqlUp = "UPDATE approve_request SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+            sqlUp = "UPDATE approve_request SET status_=14,id_comment=%s,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sqlUp,(data_new['id_comment'],data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
             sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
             cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+            sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
@@ -894,14 +903,14 @@ def UpdateStatus_request(cursor):
 
             if not result_check_L4:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -913,14 +922,14 @@ def UpdateStatus_request(cursor):
 
             else:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -940,14 +949,14 @@ def UpdateStatus_request(cursor):
 
             if not result_check_L3:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -958,14 +967,14 @@ def UpdateStatus_request(cursor):
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve = %s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -981,6 +990,12 @@ def UpdateStatus_request(cursor):
             result_check_L1 = toJson(cursor.fetchall(),columns)
             check_total_l1 = int(result_check_L1[0]['total_l1'])
 
+            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+            cursor.execute(sqlcheckapprove_L1,(data_new['employeeid']))
+            columns = [column[0] for column in cursor.description]
+            result_check_approve_L1 = toJson(cursor.fetchall(),columns)
+            check_total_approve_l1 = int(result_check_approve_L1[0]['total_l1'])
+
             sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L2'"
             # sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
             cursor.execute(sqlcheck_L2,(data_new['employeeid']))
@@ -993,18 +1008,18 @@ def UpdateStatus_request(cursor):
             columns = [column[0] for column in cursor.description]
             result_check_L3 = toJson(cursor.fetchall(),columns)
 
-            if not result_check_L2:
+            if not result_check_L2 and result_check_L3:
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
                     pass
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1016,17 +1031,17 @@ def UpdateStatus_request(cursor):
 
             elif (not result_check_L2)&(not result_check_L3):
 
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1036,17 +1051,17 @@ def UpdateStatus_request(cursor):
                 sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
             else:
-                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
 
-                if check_total_l1==1 :
+                if check_total_l1==check_total_approve_l1+1 :
                     sqlUp_main = "UPDATE employee SET validstatus_request=3 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid']))
                 else:
                     pass
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
@@ -1066,82 +1081,104 @@ def QryEmp_request_leader():
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        # print(data_new['tier_approve'])
         # status_id = "AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
         if str(data_new['tier_approve'])=='L4':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(5) AND approve_request.tier_approve=%s'
             except Exception as e:
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
-            cursor.execute(sql,data_new['employeeid_reques'])
+            # SELECT *, MAX(EndYear)  FROM `Education` WHERE `ID_CardNo` LIKE '1100400779029'
+            cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L3':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(4,8) AND approve_request.tier_approve=%s'
             except Exception as e:
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
-            cursor.execute(sql,data_new['employeeid_reques'])
+            cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L2':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(3,7,8) AND approve_request.tier_approve=%s'
             except Exception as e:
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
-            cursor.execute(sql,data_new['employeeid_reques'])
+            cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
         elif str(data_new['tier_approve'])=='L1':
             try:
-                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6)'
+                status_id = 'AND employee.EmploymentAppNo IS NOT NULL AND employee.validstatus_request IN(2,6) AND approve_request.tier_approve=%s'
             except Exception as e:
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
+            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
                                           LEFT JOIN section ON section.sect_id = employee.section_id\
                                           LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
                                           LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
                                           LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
                                           LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
-            cursor.execute(sql,data_new['employeeid_reques'])
+            cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             connection.close()
+            for i in xrange(len(result)):
+                if result[i]['salary'] is not None:
+                    result[i]['salary'] = base64.b64decode(result[i]['salary'])
+                else:
+                    result[i]['salary'] = '-'
             return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -1332,22 +1369,22 @@ def UpdateStatus_request_all(cursor):
             i=0
             for i in xrange(len(data_new['employee'])):
 
-                sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                sqlUp = "UPDATE approve_request SET comment='Approve',comment_orther='Approve All',status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                 sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                 cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
 
-                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
 
                 type_action = "send_director"
                 status_last = "9"
 
-                sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+                sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action,comment,comment_orther) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action,"Approve","Approve All"))
 
         elif (tier_approve =='L3'):
             i=0
@@ -1360,43 +1397,178 @@ def UpdateStatus_request_all(cursor):
 
                 if not result_check_L4:
 
-                    sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s "
-                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    sqlUp = "UPDATE approve_request SET comment='Approve',comment_orther='Approve All',status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                     sqlUp_main = "UPDATE employee SET validstatus_request=9 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
 
-                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
                     columns = [column[0] for column in cursor.description]
                     result = toJson(cursor.fetchall(),columns)
 
                     type_action = "send_deputy_director"
                     status_last = "9"
 
-                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action,comment,comment_orther) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action,"Approve","Approve All"))
 
                 else:
 
-                    sqlUp = "UPDATE approve_request SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s"
-                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    sqlUp = "UPDATE approve_request SET status_=14,date_status=%s,comment='Approve',comment_orther='Approve All' WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
 
                     sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
                     cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
 
-                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s"
-                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques']))
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
                     columns = [column[0] for column in cursor.description]
                     result = toJson(cursor.fetchall(),columns)
 
                     type_action = "send_deputy_director"
                     status_last = "5"
 
-                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action,comment,comment_orther) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action,"Approve","Approve All"))
+        # old else
+        # else:
+        #     return "no permission"
+        # new elif
+        # Tier L2
+        elif (tier_approve == "L2"):
+            for i in xrange(len(data_new['employee'])):
+                sqlcheck_L3 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L3'"
+                cursor.execute(sqlcheck_L3,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_L3 = toJson(cursor.fetchall(),columns)
+
+                if not result_check_L3:
+
+                    sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+
+                    sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
+                    cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_hr_no_L3"
+                    status_last = "5"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,"Approve","Approve All",data_new['date_status'],data_new['createby'],type_action))
+                else:
+
+                    sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+
+                    sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
+                    cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_hr"
+                    status_last = "4"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,"Approve","Approve All",data_new['date_status'],data_new['createby'],type_action))
+        # Tier L1
         else:
-            return "no permission"
+            for i in xrange(len(data_new['employee'])):
+                sqlcheck_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1'"
+                cursor.execute(sqlcheck_L1,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_L1 = toJson(cursor.fetchall(),columns)
+                check_total_l1 = int(result_check_L1[0]['total_l1'])
+
+                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+                cursor.execute(sqlcheckapprove_L1,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_approve_L1 = toJson(cursor.fetchall(),columns)
+                check_total_approve_l1 = int(result_check_approve_L1[0]['total_l1'])
+
+                sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L2'"
+                # sqlcheck_L2 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
+                cursor.execute(sqlcheck_L2,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_L2 = toJson(cursor.fetchall(),columns)
+
+                # sqlcheck_L3 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND employeeid=%s AND tier_approve='L3'"
+                sqlcheck_L3 = "SELECT employeeid_reques FROM approve_request WHERE employeeid=%s AND tier_approve='L3'"
+                cursor.execute(sqlcheck_L3,(data_new['employee'][i]['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                result_check_L3 = toJson(cursor.fetchall(),columns)
+
+                if not result_check_L2 and result_check_L3:
+
+                    sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+
+                    if check_total_l1==check_total_approve_l1+1 :
+                        sqlUp_main = "UPDATE employee SET validstatus_request=4 WHERE employeeid=%s"
+                        cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+                    else:
+                        pass
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_head_no_L2"
+                    status_last = "4"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,"Approve","Approve All",data_new['date_status'],data_new['createby'],type_action))
+
+                elif (not result_check_L2)&(not result_check_L3):
+
+                    sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+
+                    if check_total_l1==check_total_approve_l1+1 :
+                        sqlUp_main = "UPDATE employee SET validstatus_request=5 WHERE employeeid=%s"
+                        cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+                    else:
+                        pass
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_head_no_L2_L3"
+                    status_last = "5"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,"Approve","Approve All",data_new['date_status'],data_new['createby'],type_action))
+                else:
+                    sqlUp = "UPDATE approve_request SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,("Approve","Approve All",data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+
+                    if check_total_l1==check_total_approve_l1+1 :
+                        sqlUp_main = "UPDATE employee SET validstatus_request=3 WHERE employeeid=%s"
+                        cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid']))
+                    else:
+                        pass
+
+                    sql = "SELECT * FROM approve_request WHERE employeeid=%s AND employeeid_reques=%s AND tier_approve=%s"
+                    cursor.execute(sql,(data_new['employee'][i]['employeeid'],data_new['employeeid_reques'],tier_approve))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+
+                    type_action = "send_head"
+                    status_last = "3"
+
+                    sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,"Approve","Approve All",data_new['date_status'],data_new['createby'],type_action))
         return "Success"
     except Exception as e:
         logserver(e)
@@ -1639,7 +1811,8 @@ def sendEmail_request(cursor):
     return jsonify(result)
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1649,18 +1822,24 @@ def sendToMail_request(email, total_em,imageName):
                         ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
@@ -1673,7 +1852,8 @@ def sendToMail_request(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_request_MD(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1683,18 +1863,24 @@ def sendToMail_request_MD(email, total_em,imageName):
                         โดยสามารถเข้าไปทำการดำเนินการได้ที่ <a href="https://hr-management.inet.co.th">Hr Management</a>
                     </p>
                     <b>ขอบคุณค่ะ/ครับ</b></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
@@ -1707,7 +1893,8 @@ def sendToMail_request_MD(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    send_to = email
+    # send_to = email
+    send_to = 'pittawat.so@inet.co.th'
     subject = "[HR] ผู้บริหารไม่อนุมัติการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1715,19 +1902,25 @@ def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_p
                     <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
                         ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติจัดจ้างพนักงาน</span> """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจากเงื่อนไขบางอย่าง รบกวนต้นสังกัดติดต่อ HR เพื่อทำการตรวจสอบและแก้ไขเพื่อดำเนินการขออนุมัติจัดจ้างพนักงานอีกครั้ง ทุกท่านสามารถเข้าไปทำการดำเนินการได้ที <a href="https://hr-management.inet.co.th">Hr Management</a> </p>
-                    <b>ขอบคุณค่ะ/ครับ</b></br></br></br>
-                    <img style="width: 1024px; height: auto;" src="https://hr-management.inet.co.th/userGetFileImageMail/"""+imageName+""""">
+                    <b>ขอบคุณค่ะ/ครับ</b></br>
                   </body>
                 </html>
         """
     server="mailtx.inet.co.th"
-
+    # INSERT
+    responseImg = urllib.urlopen('https://hr-management.inet.co.th:5000/userGetFileImageMail/' + imageName)
+    img = responseImg.read()
+    # END
     msg = MIMEMultipart()
     msg['From'] = send_from
     msg['To'] = send_to
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
+    # INSERT
+    msg.attach(MIMEImage(img))
+    msg.attach(MIMEText('<h2>Best Regards.</h2><b>Hr Recruitment@INET</b>', "html", "utf-8"))
+    # END
 
     try:
         smtp = smtplib.SMTP(server)
