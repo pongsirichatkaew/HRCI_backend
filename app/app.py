@@ -31,7 +31,7 @@ from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])
 def hello():
-    return 'Hello tester , Im build at 04/07/2019 16:05'
+    return 'Hello tester , Im updated at 08/08/2019 11:02'
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
