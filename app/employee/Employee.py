@@ -1039,8 +1039,10 @@ def EditEmployee_Employeeid(cursor):
             cursor.execute(sqlUp_prove2,(data_new['employeeid'],data_new['Old_EmpId']))
 
             try:
-                sqlUp_prove = "UPDATE approve_probation SET employeeid=%s WHERE employeeid=%s"
-                cursor.execute(sqlUp_prove,(data_new['employeeid'],data_new['Old_EmpId']))
+                sqlUp_prove_pro = "UPDATE approve_probation SET employeeid=%s WHERE employeeid=%s"
+                cursor.execute(sqlUp_prove_pro,(data_new['employeeid'],data_new['Old_EmpId']))
+                sqlUp_prove_pro2 = "UPDATE approve_probation SET employeeid_pro=%s WHERE employeeid_pro=%s"
+                cursor.execute(sqlUp_prove_pro2,(data_new['employeeid'],data_new['Old_EmpId']))
             except Exception as e:
                 pass
 

@@ -1070,7 +1070,11 @@ def UpdateStatus_request(cursor):
 
                 sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-
+        try:
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlReject,(data_new['employeeid'],data_new['employeeid_reques'],'Single approve log','No lastname',tier_approve,'No position',status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],'Admin',type_action))
+        except Exception as e:
+            pass
         return "Success"
     except Exception as e:
         logserver(e)
