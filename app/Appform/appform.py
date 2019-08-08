@@ -757,8 +757,8 @@ def QryDatbaseAppform():
                     date_contract = str(int(now_contract)+543)
                     date_sub_contract = date_contract[2:]
                     try:
-                        sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND year=%s ORDER BY contract_id DESC LIMIT 1"
-                        cursor.execute(sql_contract_id,(data_new['company_id'],date_contract))
+                        sql_contract_id = "SELECT contract_id,year FROM Contract WHERE companyid=%s AND year=%s AND contract_type = %s ORDER BY contract_id DESC LIMIT 1"
+                        cursor.execute(sql_contract_id,(data_new['company_id'],date_contract,data_new['EmployeeType']))
                         columns = [column[0] for column in cursor.description]
                         resultsql_contract_id = toJson(cursor.fetchall(),columns)
                         year_contract = resultsql_contract_id[0]['year']
@@ -772,8 +772,8 @@ def QryDatbaseAppform():
                         contract_id_ = 0
                     contract_id_last = int(contract_id_)+1
 
-                    sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,Authority_Distrinct_Id_Card) VALUES (%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,ID_CardNo,data_new['Authority_Distrinct_Id_Card']))
+                    sqlInContract = "INSERT INTO Contract (contract_id,companyid,year,ID_CardNo,Authority_Distrinct_Id_Card,contract_type) VALUES (%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlInContract,(contract_id_last,data_new['company_id'],date_contract,ID_CardNo,data_new['Authority_Distrinct_Id_Card'],data_new['EmployeeType']))
 
                     i=0
                     for i in xrange(len(result9)):
