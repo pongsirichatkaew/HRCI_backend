@@ -404,8 +404,8 @@ def EditEmployee(cursor):
         except Exception as e:
             pass
 
-        UpPersonal = "UPDATE Personal SET ID_CardNo=%s,NameTh=%s,SurnameTh=%s,NameEn=%s,SurnameEn=%s,NicknameEn=%s WHERE ID_CardNo=%s"
-        cursor.execute(UpPersonal,(data_new['ID_CardNo'],data_new['NameTh'],data_new['SurnameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],result[0]['citizenid']))
+        UpPersonal = "UPDATE Personal SET ID_CardNo=%s,NameTh=%s,SurnameTh=%s,NameEn=%s,SurnameEn=%s,NicknameEn=%s,NicknameTh=%s WHERE ID_CardNo=%s"
+        cursor.execute(UpPersonal,(data_new['ID_CardNo'],data_new['NameTh'],data_new['SurnameTh'],data_new['NameEn'],data_new['SurnameEn'],data_new['NicknameEn'],data_new['NicknameTh'],result[0]['citizenid']))
 
         try:
             UpAddress = "UPDATE Address SET ID_CardNo=%s WHERE ID_CardNo=%s"
