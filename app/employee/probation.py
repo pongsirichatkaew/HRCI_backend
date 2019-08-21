@@ -1411,7 +1411,7 @@ def QryEmp_pro_leader():
             source = dataInput['source']
             data_new = source
             if data_new['tier_approve'] == 'L1':
-                status_id = 'validstatus IN (2,6)'
+                status_id = 'validstatus IN (2,6,11)'
             elif data_new['tier_approve'] == 'L2':
                 status_id = 'validstatus IN (3,7)'
             elif data_new['tier_approve'] == 'L3':
