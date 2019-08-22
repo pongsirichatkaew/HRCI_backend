@@ -990,7 +990,7 @@ def UpdateStatus_request(cursor):
             result_check_L1 = toJson(cursor.fetchall(),columns)
             check_total_l1 = int(result_check_L1[0]['total_l1'])
 
-            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND status_=14"
             cursor.execute(sqlcheckapprove_L1,(data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_check_approve_L1 = toJson(cursor.fetchall(),columns)
@@ -1167,13 +1167,15 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                          LEFT JOIN position ON position.position_id = employee.position_id\
-                                          LEFT JOIN section ON section.sect_id = employee.section_id\
-                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            sql = """
+            SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve, approve_request.comment FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+                                          LEFT JOIN position ON position.position_id = employee.position_id
+                                          LEFT JOIN section ON section.sect_id = employee.section_id
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve=%s AND ( ( employee.validstatus_request = 6 AND approve_request.status_ = 6 ) OR ( employee.validstatus_request = 2 AND approve_request.status_ = 1 ) )
+            """
             cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1493,7 +1495,7 @@ def UpdateStatus_request_all(cursor):
                 result_check_L1 = toJson(cursor.fetchall(),columns)
                 check_total_l1 = int(result_check_L1[0]['total_l1'])
 
-                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND status_=14"
                 cursor.execute(sqlcheckapprove_L1,(data_new['employee'][i]['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_check_approve_L1 = toJson(cursor.fetchall(),columns)

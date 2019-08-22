@@ -389,10 +389,11 @@ def EditEmployee(cursor):
         sql_Up_EM = "DELETE FROM employee WHERE citizenid=%s AND employeeid=%s"
         cursor.execute(sql_Up_EM,(result[0]['citizenid'],data_new['employeeid']))
 
-        sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby, EmploymentAppNo, quota_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        sqlEM = "INSERT INTO employee (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby, EmploymentAppNo, quota_id, type_em, validstatus_request) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlEM,(data_new['employeeid'],data_new['ID_CardNo'],data_new['NameTh'],data_new['NameEn'],data_new['SurnameTh'],data_new['SurnameEn'],data_new['NicknameEn'],encodedsalary,data_new['Email'],\
         data_new['phone_company'],data_new['position_id'],\
-        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['EmploymentAppNo'], result[0]['quota_id']))
+        data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['Start_contract'],End_probation_date,data_new['createby'],result[0]['EmploymentAppNo'], result[0]['quota_id'],\
+        result[0]['type_em'],result[0]['validstatus_request']))
 
         # sql_Up_EM_pro = "DELETE FROM Emp_probation WHERE citizenid=%s AND employeeid=%s"
         # cursor.execute(sql_Up_EM_pro,(result[0]['citizenid'],data_new['employeeid']))
