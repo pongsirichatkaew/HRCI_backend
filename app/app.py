@@ -31,7 +31,7 @@ from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])
 def hello():
-    return 'Hello tester , Im updated at 22/08/2019 12:00'
+    return 'Hello tester , Im updated at 30/08/2019 18:30'
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
@@ -66,7 +66,11 @@ def login():
         _output = toJson(data, columns)
         connection.commit()
         connection.close()
-
+        # _output = []
+        # _output.append({})
+        # _output[0]['userid']='61330'
+        # _output[0]['name']='Korakot'
+        # _output[0]['username']='korakot.bu@inet.co.th'
         connection = mysql.connect()
         cursor = connection.cursor()
         sql2 = "SELECT * FROM Admin WHERE username=%s"
