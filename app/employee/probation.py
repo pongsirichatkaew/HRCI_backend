@@ -357,6 +357,10 @@ def UpdateStatus_probation(cursor):
             columns = [column[0] for column in cursor.description]
             result_check_L1 = toJson(cursor.fetchall(),columns)
             check_total_l1 = int(result_check_L1[0]['total_l1'])
+            sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND tier_approve=%s AND version=%s"
+            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+            result_transfer = toJson(cursor.fetchall(), [column[0] for column in cursor.description])
+            result_transfer = result_transfer[0]['comment']
 
             sqlcheck_L2 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L2' AND version=%s"
             # sqlcheck_L2 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid=%s AND tier_approve='L2'"
@@ -370,16 +374,23 @@ def UpdateStatus_probation(cursor):
             columns = [column[0] for column in cursor.description]
             result_check_L3 = toJson(cursor.fetchall(),columns)
 
-            if not result_check_L2:
-
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
-
-                if check_total_l1==1 :
+            if not result_check_L2 and result_check_L3:
+                # SAME CODE
+                if check_total_l1 > 1:
+                    if result_transfer!='Transfer':
+                        sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=13,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,("Approve",data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                    else:
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=14,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,(data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                else:
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
-                else:
-                    pass
+                    sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
                 cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
                 columns = [column[0] for column in cursor.description]
@@ -392,15 +403,24 @@ def UpdateStatus_probation(cursor):
                 cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
             elif (not result_check_L2)&(not result_check_L3):
-
-                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
-                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
-
-                if check_total_l1==1 :
+                # SAME CODE
+                if check_total_l1 > 1:
+                    if result_transfer!='Transfer':
+                        sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=13,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,("Approve",data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                    else:
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=14,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,(data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                else:
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
                     cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
-                else:
-                    pass
+                    sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
 
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
                 cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
@@ -415,23 +435,32 @@ def UpdateStatus_probation(cursor):
             else:
                 sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
                 cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                # SAME CODE
+                if check_total_l1 > 1:
+                    if result_transfer!='Transfer' :
+                        sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=13,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,("Approve",data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                    else:
+                        cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                        sqlUp = "UPDATE approve_probation SET status_=14,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                        cursor.execute(sqlUp,(data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                else:
+                    sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                    cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+                    sqlUp = "UPDATE approve_probation SET status_=14,comment=%s,comment_orther=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                    cursor.execute(sqlUp,(data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
 
-            if check_total_l1==1 :
-                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
-                cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
-            else:
-                pass
+                type_action = "send_head"
+                status_last = "3"
 
-            sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
-            cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],tier_approve))
-            columns = [column[0] for column in cursor.description]
-            result = toJson(cursor.fetchall(),columns)
-
-            type_action = "send_head"
-            status_last = "3"
-
-            sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
+                sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -1025,36 +1054,38 @@ def AddApprove_pro_tranfer(cursor):
         data_new = source
 
         try:
-            sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
+            sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+            cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version'],data_new['tier_approve']))
+            # sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+            # cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro_2'],data_new['version']))
             columns = [column[0] for column in cursor.description]
             result_check_empro = toJson(cursor.fetchall(),columns)
             type_check = result_check_empro[0]['employeeid_pro']
             return "employeeid_pro duplicate"
         except Exception as e:
             pass
-        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(),columns)
-        Tier_Approve_Owner = result[0]['tier_approve']
+        # sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+        # cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+        # columns = [column[0] for column in cursor.description]
+        # result = toJson(cursor.fetchall(),columns)
+        # Tier_Approve_Owner = result[0]['tier_approve']
 
-        sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby']))
+        sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,comment) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,'Transfer')"
+        cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby']))
 
         type_action = "ADD_tranfer"
 
         sqlApprove_log = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlApprove_log,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
+        cursor.execute(sqlApprove_log,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro_2'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby'],type_action))
 
-        sqlUp = "UPDATE approve_probation SET status_=13,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
-        cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version']))
+        sqlUp = "UPDATE approve_probation SET status_=13,comment=%s,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+        cursor.execute(sqlUp,(data_new['comment'],data_new['date_status'],data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],data_new['tier_approve']))
 
         type_action2 = "transfer"
         status_last = "13"
 
         sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlReject,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],result[0]['tier_approve'],data_new['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action2))
+        cursor.execute(sqlReject,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action2))
 
         try:
             sql44 = "SELECT name_asp FROM assessor_pro WHERE companyid=%s AND tier_approve=%s AND employeeid=%s"
@@ -1071,12 +1102,12 @@ def AddApprove_pro_tranfer(cursor):
             assessor_pro_id_last=result[0]['assessor_pro_id']+1
 
             sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby']))
+            cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
 
             type_action = "ADD"
 
             sql_log = "INSERT INTO assessor_pro_log (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],Tier_Approve_Owner,data_new['email_asp'],data_new['createby'],type_action))
+            cursor.execute(sql_log,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
@@ -1090,8 +1121,14 @@ def QueryApprove_pro_tranfer(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT * FROM approve_probation_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_tranfer' AND version=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['createby'],data_new['version']))
+        sql = """
+        SELECT *
+        FROM approve_probation
+        WHERE employeeid=%s AND comment='Transfer' AND version=%s
+        """
+        # sql = "SELECT * FROM approve_probation_log WHERE employeeid=%s AND createby=%s AND type_action='ADD_tranfer' AND version=%s"
+        # cursor.execute(sql,(data_new['employeeid'],data_new['createby',data_new['version']))
+        cursor.execute(sql,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
@@ -1156,6 +1193,31 @@ def AddApprove_pro_together(cursor):
     except Exception as e:
             logserver(e)
             return "fail"
+@app.route('/removeTransfer_pro', methods=['POST'])
+@connect_sql()
+def removeTransfer_pro(cursor):
+    try:
+        data = request.json
+        data = data['source']
+        try:
+            sqlcheck_ans = "SELECT name FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND date_status IS NULL AND tier_approve=%s"
+            cursor.execute(sqlcheck_ans,(data['employeeid'],data['employeeid_pro'],data['version'],data['tier_approve']))
+            result_check = toJson(cursor.fetchall(), [column[0] for column in cursor.description])
+            result_name = result_check[0]['name']
+        except Exception as e:
+            return "Not Remove"
+        sql = "DELETE FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+        cursor.execute(sql,(data['employeeid'],data['employeeid_pro'],data['version'],data['tier_approve']))
+        sql_check_all_transfer = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s AND comment='Transfer'"
+        cursor.execute(sql_check_all_transfer,(data['employeeid'],data['version']))
+        result_all_transfer = cursor.fetchall()
+        if len(result_all_transfer) == 0:
+            sql_update = "UPDATE approve_probation SET status_=1, date_status=NULL WHERE employeeid=%s AND version=%s AND tier_approve=%s"
+            cursor.execute(sql_update,(data['employeeid'],data['version'],data['tier_approve']))
+        return "success"
+    except Exception as e:
+        return "fail"
+
 @app.route('/removeApprove_pro_together', methods=['POST'])
 @connect_sql()
 def removeApprove_pro_together(cursor):
@@ -1208,7 +1270,7 @@ def QryApprove_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s ORDER BY tier_approve"
+        sql = "SELECT *,(SELECT COUNT(*) FROM employee_pro WHERE employee_pro.employeeid = approve_probation.employeeid AND employee_pro.createby = approve_probation.employeeid_pro) AS ans_count FROM approve_probation WHERE employeeid=%s AND version=%s ORDER BY tier_approve"
         cursor.execute(sql,(data_new['employeeid'],data_new['version']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1464,14 +1526,22 @@ def QryEmp_pro_leader():
             pass
         connection = mysql.connect()
         cursor = connection.cursor()
-        sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.status_result,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id\
-                                      LEFT JOIN position ON position.position_id = Emp_probation.position_id\
-                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id\
-                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id\
-                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id\
-                                      LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid\
-                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question\
-                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND "+status_id+" AND tier_approve = %s "
+        sql = """
+        SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.status_result,
+        Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,
+        company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,
+        status.status_detail,status.path_color,status.font_color,approve_probation.tier_approve,question_pro_type.question_pro_detail_type,
+        (SELECT COUNT(*) FROM approve_probation AS a WHERE a.employeeid = approve_probation.employeeid AND comment='Transfer' AND status_ = 14) AS transfer_approve,
+        (SELECT COUNT(*) FROM approve_probation AS a WHERE a.employeeid = approve_probation.employeeid AND comment='Transfer') AS total_transfer,
+        approve_probation.comment
+        FROM Emp_probation LEFT JOIN company ON company.companyid = Emp_probation.company_id
+                                      LEFT JOIN position ON position.position_id = Emp_probation.position_id
+                                      LEFT JOIN section ON section.sect_id = Emp_probation.section_id
+                                      LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
+                                      LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = Emp_probation.cost_center_name_id
+                                      LEFT JOIN approve_probation ON approve_probation.employeeid = Emp_probation.employeeid
+                                      LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question
+                                      LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND """ + status_id + " AND tier_approve = %s "
         cursor.execute(sql,(data_new['employeeid_pro'],data_new['tier_approve']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1562,8 +1632,8 @@ def Insert_ans_pro(cursor):
         type_action = "ADD"
 
         try:
-            sqlUp_de = "DELETE FROM employee_pro WHERE version=%s AND employeeid=%s AND citizenid=%s "
-            cursor.execute(sqlUp_de,(data_new['version'],employeeid,result[0]['citizenid']))
+            sqlUp_de = "DELETE FROM employee_pro WHERE version=%s AND employeeid=%s AND citizenid=%s AND createby=%s"
+            cursor.execute(sqlUp_de,(data_new['version'],employeeid,result[0]['citizenid'],data_new['createby']))
         except Exception as e:
             pass
 
@@ -1588,8 +1658,8 @@ def Edit_ans_pro(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT citizenid,question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid=%s AND question_pro_id=%s AND version=%s"
-        cursor.execute(sql,(data_new['employeeid'],data_new['question_pro_id'],data_new['version']))
+        sql = "SELECT citizenid,question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid=%s AND question_pro_id=%s AND version=%s AND createby=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['question_pro_id'],data_new['version'],data_new['createby']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
 
@@ -1598,8 +1668,8 @@ def Edit_ans_pro(cursor):
         sqlIn = "INSERT INTO employee_pro_log (version,employeeid,citizenid,question_pro_id,pro_values,type_check,group_q,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(data_new['version'],data_new['employeeid'],result[0]['citizenid'],result[0]['question_pro_id'],result[0]['pro_values'],result[0]['type_check'],result[0]['group_q'],data_new['createby'],type_action))
 
-        sqlde = "DELETE FROM employee_pro WHERE employeeid=%s AND question_pro_id=% AND version=%s"
-        cursor.execute(sqlde,(data_new['employeeid'],data_new['question_pro_id'],data_new['version']))
+        sqlde = "DELETE FROM employee_pro WHERE employeeid=%s AND question_pro_id=% AND version=%s AND createby=%s"
+        cursor.execute(sqlde,(data_new['employeeid'],data_new['question_pro_id'],data_new['version'],data_new['createby']))
 
         sqlIn = "INSERT INTO employee_pro(version,employeeid,citizenid,question_pro_id,pro_values,type_check,group_q,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn,(data_new['version'],data_new['employeeid'],data_new['citizenid'],data_new['question_pro_id'],data_new['pro_values'],data_new['type_check'],data_new['group_q'],data_new['createby']))
@@ -1616,7 +1686,7 @@ def Qry_probation(cursor):
         data_new = source
         createby_id = ""
         try:
-            createby_id = 'AND createby='+'"'+str(data_new['createby_id'])+'"'
+            createby_id = 'AND createby=' + '"' + str(data_new['createby_id']) + '"'
         except Exception as e:
             pass
         sql = "SELECT Emp_probation.version,Emp_probation.name_th,Emp_probation.employeeid,Emp_probation.surname_th,Emp_probation.type_question,Emp_probation.citizenid,Emp_probation.start_work,Emp_probation.EndWork_probation,Emp_probation.validstatus,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.imageName FROM Emp_probation LEFT JOIN position ON position.position_id = Emp_probation.position_id\
@@ -1705,7 +1775,7 @@ def Qry_probation(cursor):
             employeeid_ = data_new['employeeid']
             version_id = data_new['version']
             question = []
-            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid=%s AND version=%s ORDER BY question_pro_id ASC"
+            sql1pro = "SELECT question_pro_id,pro_values,type_check,group_q FROM employee_pro WHERE employeeid=%s AND version=%s " + createby_id + " ORDER BY question_pro_id ASC"
             cursor.execute(sql1pro,(employeeid_,version_id))
             # print(sql1pro)
             columns = [column[0] for column in cursor.description]

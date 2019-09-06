@@ -1557,6 +1557,118 @@ def Export_Payroll_All(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+# EXPORT PAYROLL
+# @app.route('/Export_Payroll_All', methods=['POST'])
+# @connect_sql()
+# def Export_Payroll_All(cursor):
+#     # try:
+#         try:
+#             sql1 = """
+#             SELECT employeeid, phone_company, employee.email, EmploymentAppNo, citizenid, name_th, surname_th, org_name_detail, position_detail FROM employee
+#             LEFT JOIN org_name ON org_name.id = employee.org_name_id
+#             LEFT JOIN position ON position.id = employee.position_id WHERE validstatus_request = 9
+#             """
+#             cursor.execute(sql1)
+#             data_hr = toJson(cursor.fetchall(), [column[0] for column in cursor.description])
+#             print("Finished Load HR")
+#             sql2 = """SELECT EmploymentAppNo, NameTH, SurnameTH, Birthdate, BirthCountry, Citizenship, Religion, EmergencyPerson, EmergencyTel, EmergencyRelation, BloodGroup, NicknameTh, Mobile,
+#             (SELECT HouseNo FROM Address WHERE p.EmploymentAppNo = Address.EmploymentAppNo AND AddressType = 'Home' LIMIT 1) AS Address,
+#             (SELECT Street FROM Address WHERE p.EmploymentAppNo = Address.EmploymentAppNo AND AddressType = 'Home' LIMIT 1) AS Street,
+#             (SELECT districts.DISTRICT_NAME FROM Address LEFT JOIN districts ON districts.DISTRICT_CODE = Address.DISTRICT_ID WHERE p.EmploymentAppNo = Address.EmploymentAppNo AND AddressType = 'Home' LIMIT 1) AS districts,
+#             (SELECT amphures.AMPHUR_NAME FROM Address LEFT JOIN amphures ON amphures.AMPHUR_ID = Address.AMPHUR_ID WHERE p.EmploymentAppNo = Address.EmploymentAppNo AND AddressType = 'Home' LIMIT 1) AS amphure,
+#             (SELECT provinces.PROVINCE_NAME FROM Address LEFT JOIN provinces ON provinces.PROVINCE_ID = Address.PROVINCE_ID WHERE p.EmploymentAppNo = Address.EmploymentAppNo AND AddressType = 'Home' LIMIT 1) AS province,
+#             (SELECT Address.PostCode FROM Address WHERE Address.EmploymentAppNo = p.EmploymentAppNo AND Address.AddressType = 'Home' LIMIT 1) AS postcode,
+#             (SELECT Institute FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS university,
+#             (SELECT Education.Qualification FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS faculty,
+#             (SELECT Education.Major FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS major,
+#             (SELECT Education.StartYear FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS startYear,
+#             (SELECT Education.EndYear FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS endYear,
+#             (SELECT Education.EducationLevel FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS educationLevel,
+#             (SELECT Education.GradeAvg FROM Education WHERE Education.EmploymentAppNo = p.EmploymentAppNo ORDER BY Education.EndYear DESC LIMIT 1) AS grade FROM `Personal` AS p"""
+#             connection = mysql3.connect()
+#             cursor = connection.cursor()
+#             cursor.execute(sql2)
+#             columns = [column[0] for column in cursor.description]
+#             t = cursor.fetchall()
+#             data_app = toJson(t,columns)
+#             print("Finished Load Appform")
+#             result = []
+#             for x in xrange(len(data_hr)):
+#                 for y in xrange(len(data_app)):
+#                     print(data_hr[x]['EmploymentAppNo'] + " " + data_app[y]['EmploymentAppNo'])
+#                     if data_hr[x]['EmploymentAppNo'] == data_app[y]['EmploymentAppNo']:
+#                         data_app[y].update({
+#                         'employeeid': data_hr[x]['employeeid'],
+#                         'phone_company': data_hr[x]['phone_company'],
+#                         'email': data_hr[x]['email'],
+#                         'citizenid': data_hr[x]['citizenid'],
+#                         'name_th': data_hr[x]['name_th'],
+#                         'surname_th': data_hr[x]['surname_th'],
+#                         'org_name_detail': data_hr[x]['org_name_detail'],
+#                         'position_detail': data_hr[x]['position_detail']
+#                         })
+#                         result.append(data_app[y])
+#                         print("Append")
+#                         break
+#             print("Finished Compare Data")
+#         except Exception as e:
+#             logserver(e)
+#             return "No_Data"
+#         isSuccess = True
+#         reasonCode = 200
+#         reasonText = ""
+#         now = datetime.now()
+#         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+#         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Payroll_All.xlsx'))
+#
+#         wb = load_workbook('../Template/Template_Payroll_All.xlsx')
+#         if len(result) > 0:
+#
+#             sheet = wb['Sheet1']
+#             offset = 2
+#             i = 0
+#             for i in xrange(len(result)):
+#                 sheet['A'+str(offset + i)] = result[i]['EmploymentAppNo']
+#                 sheet['B'+str(offset + i)] = result[i]['employeeid']
+#                 sheet['C'+str(offset + i)] = result[i]['name_th']
+#                 sheet['D'+str(offset + i)] = result[i]['surname_th']
+#                 sheet['E'+str(offset + i)] = result[i]['position_detail']
+#                 sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+#                 sheet['G'+str(offset + i)] = result[i]['NicknameTh']
+#                 sheet['H'+str(offset + i)] = result[i]['BirthCountry']
+#                 sheet['I'+str(offset + i)] = result[i]['Citizenship']
+#                 sheet['J'+str(offset + i)] = result[i]['Birthdate']
+#                 sheet['K'+str(offset + i)] = result[i]['BloodGroup']
+#                 sheet['L'+str(offset + i)] = result[i]['Address']
+#                 sheet['M'+str(offset + i)] = result[i]['Street']
+#                 sheet['N'+str(offset + i)] = result[i]['districts']
+#                 sheet['O'+str(offset + i)] = result[i]['amphure']
+#                 sheet['P'+str(offset + i)] = result[i]['province']
+#                 sheet['Q'+str(offset + i)] = result[i]['postcode']
+#                 sheet['R'+str(offset + i)] = result[i]['phone_company']
+#                 sheet['S'+str(offset + i)] = result[i]['email']
+#                 sheet['T'+str(offset + i)] = result[i]['EmergencyPerson']
+#                 sheet['U'+str(offset + i)] = result[i]['EmergencyTel']
+#                 sheet['V'+str(offset + i)] = result[i]['EmergencyRelation']
+#                 sheet['W'+str(offset + i)] = result[i]['university']
+#                 sheet['X'+str(offset + i)] = result[i]['faculty']
+#                 sheet['Y'+str(offset + i)] = result[i]['major']
+#                 sheet['Z'+str(offset + i)] = result[i]['startYear']
+#                 sheet['AA'+str(offset + i)] = result[i]['endYear']
+#                 sheet['AB'+str(offset + i)] = result[i]['educationLevel']
+#                 sheet['AC'+str(offset + i)] = result[i]['grade']
+#                 sheet['AD'+str(offset + i)] = result[i]['Mobile']
+#                 i = i + 1
+#         wb.save(filename_tmp)
+#         with open(filename_tmp, "rb") as f:
+#             encoded_string = base64.b64encode(f.read())
+#         os.remove(filename_tmp)
+#         displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+#         displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+#         return jsonify(toDict(displayData,displayColumns))
+#     # except Exception as e:
+#         logserver(e)
+#         return "fail"
 @app.route('/Export_Payroll_By_Month', methods=['POST'])
 @connect_sql()
 def Export_Payroll_By_Month(cursor):
