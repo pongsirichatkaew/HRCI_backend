@@ -452,6 +452,12 @@ def Send_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_request_status = toJson(cursor.fetchall(),columns)
         if request.args.get('reset') == 'true':
+            sql_check_total = "SELECT * FROM approve_request WHERE employeeid=%s"
+            cursor.execute(sql_check_total, data_new['employeeid'])
+            if len(cursor.fetchall()) == 0:
+                sql_update_emp = "UPDATE employee SET validstatus_request = 1 WHERE employeeid=%s"
+                cursor.execute(sql_update_emp, data_new['employeeid'])
+                return "Success"
             sql_reset = "UPDATE approve_request SET status_=1,comment = NULL, comment_orther = NULL, date_status = NULL WHERE employeeid = %s"
             cursor.execute(sql_reset, data_new['employeeid'])
         # END NEW
@@ -990,7 +996,7 @@ def UpdateStatus_request(cursor):
             result_check_L1 = toJson(cursor.fetchall(),columns)
             check_total_l1 = int(result_check_L1[0]['total_l1'])
 
-            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+            sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND status_=14"
             cursor.execute(sqlcheckapprove_L1,(data_new['employeeid']))
             columns = [column[0] for column in cursor.description]
             result_check_approve_L1 = toJson(cursor.fetchall(),columns)
@@ -1070,7 +1076,11 @@ def UpdateStatus_request(cursor):
 
                 sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlReject,(result[0]['employeeid'],result[0]['employeeid_reques'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
-
+        try:
+            sqlReject = "INSERT INTO approve_request_log(employeeid,employeeid_reques,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlReject,(data_new['employeeid'],data_new['employeeid_reques'],'Single approve log','No lastname',tier_approve,'No position',status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],'Admin',type_action))
+        except Exception as e:
+            pass
         return "Success"
     except Exception as e:
         logserver(e)
@@ -1163,13 +1173,15 @@ def QryEmp_request_leader():
                 pass
             connection = mysql.connect()
             cursor = connection.cursor()
-            sql = "SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
-                                          LEFT JOIN position ON position.position_id = employee.position_id\
-                                          LEFT JOIN section ON section.sect_id = employee.section_id\
-                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id\
-                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id\
-                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid\
-                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s "+status_id+" "
+            sql = """
+            SELECT (SELECT institute FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS institute,(SELECT major FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS major,(SELECT qualification FROM `Education` WHERE ID_CardNo = employee.citizenid ORDER BY EndYear DESC LIMIT 1) AS qualification,salary,employee.name_th,employee.employeeid,employee.surname_th,employee.citizenid,employee.start_work,employee.EndWork_probation,employee.EmploymentAppNo,company.company_short_name,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,status_request.status_detail,status_request.path_color,status_request.font_color,approve_request.tier_approve, approve_request.comment FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+                                          LEFT JOIN position ON position.position_id = employee.position_id
+                                          LEFT JOIN section ON section.sect_id = employee.section_id
+                                          LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+                                          LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+                                          LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid
+                                          LEFT JOIN status_request ON status_request.status_id = employee.validstatus_request WHERE employeeid_reques=%s AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve=%s AND ( ( employee.validstatus_request = 6 AND approve_request.status_ = 6 ) OR ( employee.validstatus_request = 2 AND approve_request.status_ = 1 ) )
+            """
             cursor.execute(sql,(data_new['employeeid_reques'],data_new['tier_approve']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1489,7 +1501,7 @@ def UpdateStatus_request_all(cursor):
                 result_check_L1 = toJson(cursor.fetchall(),columns)
                 check_total_l1 = int(result_check_L1[0]['total_l1'])
 
-                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND comment='Approve'"
+                sqlcheckapprove_L1 = "SELECT COUNT(employeeid_reques) AS total_l1 FROM approve_request WHERE employeeid=%s AND tier_approve='L1' AND status_=14"
                 cursor.execute(sqlcheckapprove_L1,(data_new['employee'][i]['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 result_check_approve_L1 = toJson(cursor.fetchall(),columns)
