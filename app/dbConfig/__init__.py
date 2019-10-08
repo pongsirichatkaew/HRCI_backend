@@ -42,6 +42,7 @@ app.config['MYSQL_DATABASE_USER'] = "root"
 app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
 app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_stateging'
 app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
+
 # app.config['MYSQL_DATABASE_USER'] = "root"
 # app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
 # app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_backup_test2'
@@ -190,6 +191,7 @@ def CheckTokenAssessor_kpi(employeeid,token):
         data3 = cursor.fetchall()
         columns3 = [column[0] for column in cursor.description]
         _output3 = toJson(data3, columns3)
+        print _output3
         connection.commit()
         connection.close()
         token_check = _output3[0]['employeeid']
