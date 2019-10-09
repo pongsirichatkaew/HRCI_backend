@@ -154,6 +154,7 @@ def QryEmployee_kpi_search(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        print len(result)
         return jsonify(result)
     except Exception as e:
         logserver(e)
