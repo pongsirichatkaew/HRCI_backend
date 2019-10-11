@@ -55,7 +55,7 @@ def QryEmployee_kpi(cursor):
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        print result[0]
+        # print result[0]
         for i1 in result:
             # sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
             # cursor.execute(sql2,(i1['company_short_name']))
@@ -120,7 +120,35 @@ def QryEmployee_kpi_eiei(cursor):
         return "fail"
 
 
-
+@app.route('/QryEmployee_kpi_result', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_result(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlserch = ''
+        for x in source:
+            x = str(x)
+            if source[x] is not None and source[x] != '':
+                source[x] = str(source[x])
+                sql = 'employee_kpi.' + x + '= "' + source[x] + '" and '
+                sqlserch += sql
+            # else:
+            #     sql = 'employee_kpi.' + x + '= "''" and '
+            #     sqlserch += sql
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+        WHERE " + sqlserch + "validstatus = 2"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 
 
@@ -156,6 +184,37 @@ def QryEmployee_kpi_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/QryEmployee_kpi_search_result', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_search_result(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlserch = ''
+        for x in source:
+            x = str(x)
+            if source[x] is not None and source[x] != '':
+                source[x] = str(source[x])
+                sql = 'employee_kpi.' + x + '= "' + source[x] + '" and '
+                sqlserch += sql
+            # else:
+            #     sql = 'employee_kpi.' + x + '= "''" and '
+            #     sqlserch += sql
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+        WHERE " + sqlserch + "validstatus = 2"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
 @app.route('/QryEmployee_kpi_oldkpi', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_oldkpi(cursor):
@@ -689,8 +748,8 @@ def Update_grade_gm(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         if(len(result)>0):
-            sqlUp = "UPDATE employee_kpi SET old_grade_GM=%s,status_GM=%s,positionChange_GM=%s,specialMoney_GM=%s,newKpiDescriptions_GM=%s WHERE employeeid=%s AND year=%s AND term=%s"
-            cursor.execute(sqlUp,(data_new['old_grade_GM'],data_new['status_GM'],data_new['position_GM'],data_new['specialMoney_GM'],data_new['newKpiDescriptions_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+            sqlUp = "UPDATE employee_kpi SET old_grade_GM=%s, validstatus=3 WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sqlUp,(data_new['old_grade_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
             return "Success"
         else:
             return "Fail to Update"
