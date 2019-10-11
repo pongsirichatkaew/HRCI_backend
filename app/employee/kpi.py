@@ -24,7 +24,7 @@ def QryEmployee_kpi(cursor):
             except Exception as e:
                 pass
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+year_+term_
+            # group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+year_+term_
         except Exception as e:
             pass
         try:
@@ -721,8 +721,8 @@ def Delete_emp_kpi(cursor):
 
         type_action = "Delete"
 
-        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
@@ -823,6 +823,41 @@ def Update_grade_hr_hall(cursor):
             commet_hr_edit = str(result[0]['comment_hr'])
             sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],result[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
+        else:
+            type_action = "Insert"
+            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be1,(data_new['year'],data_new['term'],data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
+
+        sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/Update_grade_hr', methods=['POST'])
+@connect_sql()
+def Update_grade_hr(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        comment_hr = data_new['comment_hr']
+        permission_hr = str(data_new['permission'])
+        print data_new
+        if permission_hr!="Hr":
+            return "hr no permission"
+        sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        grade_ = str(result[0]['grade'])
+        if grade_ is None:
+            type_action = "Edit"
+            commet_hr_edit = str(result[0]['comment_hr'])
+            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
         else:
             type_action = "Insert"
             sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
@@ -1106,7 +1141,7 @@ def Add_board_kpi(cursor):
 @connect_sql()
 def board_qry(cursor):
     try:
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
+        sql = "SELECT year,term,employeeid_board,name FROM board_kpi_v2 WHERE validstatus=1 "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1122,7 +1157,7 @@ def board_qry_search(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s "
+        sql = "SELECT year,term,employeeid_board,name FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s "
         cursor.execute(sql,(data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1138,12 +1173,12 @@ def Add_board_kpi_no_result(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = data_new['employeeid_board']
-
+        print data_new
         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
 
         try:
-            sql_check_board = "SELECT year,term,employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 AND year=%s AND term=%s "
-            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id'],data_new['year'],data_new['term']))
+            sql_check_board = "SELECT year,term,employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND validstatus=1 AND year=%s AND term=%s "
+            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_check_board = toJson(cursor.fetchall(),columns)
             test_check_board = result_check_board[0]['employeeid_board']
@@ -1151,12 +1186,13 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
 
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
+            # email admin
             sql_test_admin = "SELECT username FROM Admin WHERE employeeid=%s"
             cursor.execute(sql_test_admin,(employeeid))
             columns = [column[0] for column in cursor.description]
@@ -1164,13 +1200,15 @@ def Add_board_kpi_no_result(cursor):
             check_email = result_test_admin[i]['username']
         except Exception as e:
             permission = data_new['group_kpi_id']
-            sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['createby']))
+            sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+            # group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+            group_kpi_id = 'WHERE year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+
         except Exception as e:
             pass
         try:
@@ -1179,18 +1217,23 @@ def Add_board_kpi_no_result(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             check_emid = result[0]['employeeid']
+            print 'check_emid'
         except Exception as e:
+            print group_kpi_id
             sql_emp_kpi = "SELECT year,term,employeeid FROM employee_kpi "+group_kpi_id+" "
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
+            # print result
 
         type_action = "ADD"
 
         for i in xrange(len(result)):
             check_em_id = str(result[i]['employeeid'])
             check_em_board = str(data_new['employeeid_board'])
-            if check_em_id==check_em_board:
+            print check_em_id #62226 result of employee_kpi
+            print check_em_board #62224 board_kpi add
+            if check_em_id==check_em_board: #if the same guys pass
                 pass
             else:
                 sqlIn_bet = "INSERT INTO board_kpi(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -1211,6 +1254,7 @@ def Add_board_kpi_no_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Delete_board_kpi_no_result(cursor):
@@ -1219,8 +1263,8 @@ def Delete_board_kpi_no_result(cursor):
         source = dataInput['source']
         data_new = source
 
-        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s AND group_kpi=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['group_kpi'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s  AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         try:
             sqlDe = "DELETE FROM Admin WHERE employeeid=%s AND permission='board'"
@@ -1235,6 +1279,7 @@ def Delete_board_kpi_no_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_board_kpi', methods=['POST'])
 @connect_sql()
 def Delete_board_kpi(cursor):
@@ -1268,6 +1313,9 @@ def Update_board_kpi(cursor):
         data_new = source
         employeeid__ = str(data_new['employeeid'])
         check_board = str(data_new['employeeid_board'])
+        print employeeid__
+        print check_board
+        print source
         if employeeid__==check_board:
             return "employee is board"
         sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
@@ -1371,7 +1419,6 @@ def Export_kpi(cursor):
             cursor.execute(sql,(data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            print result
             for i1 in result:
                 kpi_ful = []
                 sql2 = "SELECT name_kpi,surname_kpi,grade_board,pass_board,comment FROM board_kpi WHERE employeeid=%s AND validstatus=1 AND year=%s AND term=%s"
