@@ -82,6 +82,20 @@ def Add_project_bet(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+@app.route('/test_upload', methods=['POST'])
+@connect_sql()
+def test_upload(cursor):
+    try:
+        if request.method == 'POST':
+            f= request.files['present']
+            print f
+            basedir = os.path.abspath(os.path.dirname(__file__))
+            f.save(os.path.join (basedir+"\\uploads", f.filename))
+            return 'upload file success'
+    except Exception as e:
+        print str(e)
+        return "fail"
+   
 @app.route('/Edit_project', methods=['POST'])
 @connect_sql()
 def Edit_project(cursor):
@@ -90,7 +104,7 @@ def Edit_project(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = data_new['employeeid']
-
+        print data_new
         result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
         if result_token!='pass':
             return 'token fail'
@@ -119,7 +133,7 @@ def Edit_project(cursor):
                 cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 # except Exception as e:
                 #     pass
-
+                
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
             except Exception as e:
@@ -143,6 +157,7 @@ def Edit_project(cursor):
         return "Success"
     except Exception as e:
         logserver(e)
+        print str(e)
         return "fail"
 @app.route('/Edit_project_bet', methods=['POST'])
 @connect_sql()
@@ -205,6 +220,7 @@ def Edit_project_bet(cursor):
         return "Success"
     except Exception as e:
         logserver(e)
+        print str(e)
         return "fail"
 @app.route('/Delete_project', methods=['POST'])
 @connect_sql()
