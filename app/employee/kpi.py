@@ -244,6 +244,7 @@ def QryEmployee_kpi_oldkpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryEmployee_kpi_oldkpi_search', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_oldkpi_search(cursor):
@@ -265,6 +266,7 @@ def QryEmployee_kpi_oldkpi_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+    
 @app.route('/QryEmployee_kpi_one', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_one(cursor):
@@ -554,6 +556,7 @@ def Add_emp_kpi_user(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/UpdateApprove_kpi', methods=['POST'])
 @connect_sql()
 def UpdateApprove_kpi(cursor):
@@ -585,6 +588,7 @@ def UpdateApprove_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_Not_Approve_kpi', methods=['POST'])
 @connect_sql()
 def Update_Not_Approve_kpi(cursor):
@@ -609,6 +613,7 @@ def Update_Not_Approve_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi(cursor):
@@ -627,6 +632,7 @@ def QryApprove_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi_result', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi_result(cursor):
@@ -645,6 +651,7 @@ def QryApprove_kpi_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi_status', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi_status(cursor):
@@ -663,6 +670,7 @@ def QryApprove_kpi_status(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Edit_emp_kpi', methods=['POST'])
 @connect_sql()
 def Edit_emp_kpi(cursor):
@@ -714,6 +722,7 @@ def Edit_emp_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_emp_kpi', methods=['POST'])
 @connect_sql()
 def Delete_emp_kpi(cursor):
@@ -811,6 +820,7 @@ def Update_grade_hr_board(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_grade_hr_hall', methods=['POST'])
 @connect_sql()
 def Update_grade_hr_hall(cursor):
@@ -879,6 +889,7 @@ def Update_grade_hr(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_board_kpi', methods=['POST'])
 @connect_sql()
 def Qry_board_kpi(cursor):
@@ -900,6 +911,7 @@ def Qry_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_em_board_kpi', methods=['POST'])
 @connect_sql()
 def Qry_em_board_kpi(cursor):
@@ -915,6 +927,7 @@ def Qry_em_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_user_kpi_no_emid_leader', methods=['POST'])
 @connect_sql()
 def Qry_user_kpi_no_emid_leader(cursor):
@@ -934,6 +947,7 @@ def Qry_user_kpi_no_emid_leader(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/update_user_kpi_no_emid_leader', methods=['POST'])
 @connect_sql()
 def update_user_kpi_no_emid_leader(cursor):
@@ -1021,6 +1035,7 @@ def Qry_user_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_user_kpi_board', methods=['POST'])
 @connect_sql()
 def Qry_user_kpi_board(cursor):
@@ -1096,6 +1111,7 @@ def Qry_user_kpi_board(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Add_board_kpi', methods=['POST'])
 @connect_sql()
 def Add_board_kpi(cursor):
@@ -1146,6 +1162,7 @@ def Add_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/board_qry', methods=['POST'])
 @connect_sql()
 def board_qry(cursor):
@@ -1158,6 +1175,7 @@ def board_qry(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/board_qry_search', methods=['POST'])
 @connect_sql()
 def board_qry_search(cursor):
@@ -1174,6 +1192,7 @@ def board_qry_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
