@@ -300,6 +300,8 @@ def Delete_project_bet(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+
 @app.route('/Add_emp_kpi_tranfer', methods=['POST'])
 @connect_sql()
 def Add_emp_kpi_tranfer(cursor):
@@ -307,7 +309,7 @@ def Add_emp_kpi_tranfer(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        print data_new
         result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
         if result_token!='pass':
             return 'token fail'
@@ -371,6 +373,8 @@ def Add_emp_kpi_tranfer(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+
 @app.route('/cancel_emp_kpi_tranfer', methods=['POST'])
 @connect_sql()
 def cancel_emp_kpi_tranfer(cursor):
