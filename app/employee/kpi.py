@@ -371,6 +371,7 @@ def Add_emp_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print data_new
         employeeid = str(data_new['employeeid'])
         # check_board = str(data_new['employeeid_board'])
         try:
@@ -1247,7 +1248,7 @@ def Add_board_kpi_no_result(cursor):
             check_emid = result[0]['employeeid']
             print 'check_emid'
         except Exception as e:
-            print group_kpi_id
+            # print group_kpi_id
             sql_emp_kpi = "SELECT year,term,employeeid FROM employee_kpi "+group_kpi_id+" "
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]

@@ -12,7 +12,7 @@ from datetime import datetime, date,timedelta
 import string
 import random
 import os
-
+import xlrd 
 import wget
 import base64
 import xlsxwriter
