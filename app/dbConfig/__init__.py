@@ -185,7 +185,7 @@ def CheckTokenAssessor(employeeid,token):
         chek_tk = 'Not pass'
     return chek_tk
 def CheckTokenAssessor_kpi(employeeid,token):
-    now = str(datetime.now()- timedelta(hours=7)) # +7
+    now = str(datetime.now()) 
     now = now.split("-")
     token_mounth = now[1]
     new_day = now[2].split(" ")
