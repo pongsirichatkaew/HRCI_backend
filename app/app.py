@@ -32,6 +32,7 @@ from Appform.appform import *
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'Hello tester , Im updated at 13/09/2019 11:10'
+    
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
@@ -42,6 +43,7 @@ def TestgenEM(cursor):
     if result_token!='pass':
         return 'token fail'
     return "success"
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
