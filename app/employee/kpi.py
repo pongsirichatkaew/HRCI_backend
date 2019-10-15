@@ -206,7 +206,7 @@ def QryEmployee_kpi_search_result(cursor):
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE " + sqlserch + "validstatus = 2"
+        WHERE " + sqlserch + "validstatus = 2 and validstatus = 3"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
