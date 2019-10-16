@@ -275,7 +275,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
         try:
-            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.pass_hr,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
             INNER JOIN position ON employee_kpi.position = position.position_id\
             INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -290,7 +290,7 @@ def QryEmployee_kpi_one(cursor):
                 data2 = toJson(cursor.fetchall(),columns)
                 i1['positionChange_detail'] = data2[0]['position_detail']
         except Exception as e:
-            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.pass_hr,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
             INNER JOIN position ON employee_kpi.position = position.position_id\
             INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -1194,6 +1194,7 @@ def board_qry_search(cursor):
         logserver(e)
         return "fail"
 
+## TODO ADD && DELETE 
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
@@ -1236,17 +1237,18 @@ def Add_board_kpi_no_result(cursor):
         try:
             group_ = str(data_new['group_kpi_id'])
             # group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
-            group_kpi_id = 'WHERE year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+            group_kpi_id = 'WHERE year='+'"'+data_new['year']+'"'+' AND term='+'"'+data_new['term']+'" AND present_kpi = "active" '
+            print 'group',group_kpi_id
 
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
+            sql_emp_kpi = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             check_emid = result[0]['employeeid']
-            print 'check_emid'
+            # print 'check_emid'
         except Exception as e:
             # print group_kpi_id
             sql_emp_kpi = "SELECT year,term,employeeid FROM employee_kpi "+group_kpi_id+" "
@@ -1260,8 +1262,8 @@ def Add_board_kpi_no_result(cursor):
         for i in xrange(len(result)):
             check_em_id = str(result[i]['employeeid'])
             check_em_board = str(data_new['employeeid_board'])
-            print check_em_id #62226 result of employee_kpi
-            print check_em_board #62224 board_kpi add
+            # print check_em_id #62226 result of employee_kpi
+            # print check_em_board #62224 board_kpi add
             if check_em_id==check_em_board: #if the same guys pass
                 pass
             else:
