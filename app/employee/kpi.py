@@ -59,12 +59,13 @@ def QryEmployee_kpi(cursor):
         #     pass
         print 'group_kpi_id',group_kpi_id
         sql = "SELECT employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
         "+group_kpi_id+"  "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        # print result
         # print result[0]
         for i1 in result:
             # sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
@@ -147,9 +148,9 @@ def QryEmployee_kpi_result(cursor):
             #     sql = 'employee_kpi.' + x + '= "''" and '
             #     sqlserch += sql
         sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
         WHERE " + sqlserch + "validstatus = 2 or validstatus = 3"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
@@ -182,9 +183,9 @@ def QryEmployee_kpi_search(cursor):
             #     sql = 'employee_kpi.' + x + '= "''" and '
             #     sqlserch += sql
         sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
         WHERE " + sqlserch + "1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
@@ -212,9 +213,9 @@ def QryEmployee_kpi_search_result(cursor):
             #     sql = 'employee_kpi.' + x + '= "''" and '
             #     sqlserch += sql
         sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
         WHERE " + sqlserch + "validstatus = 2 and validstatus = 3"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
@@ -266,7 +267,7 @@ def QryEmployee_kpi_oldkpi_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-    
+
 @app.route('/QryEmployee_kpi_one', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_one(cursor):
@@ -1450,9 +1451,9 @@ def readText():
 def readExcel(cursor):
     try:
         loc = ("../app/1.xlsx")
-        wb = xlrd.open_workbook(loc) 
-        sheet = wb.sheet_by_index(0) 
-        sheet.cell_value(0, 0) 
+        wb = xlrd.open_workbook(loc)
+        sheet = wb.sheet_by_index(0)
+        sheet.cell_value(0, 0)
         # arr_em_id = []
         for i in range(sheet.nrows):
             sql = "SELECT employeeid FROM `employee_kpi` WHERE employeeid = %s"
@@ -1460,7 +1461,7 @@ def readExcel(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             if(len(result)>0):
-                # print(result[0]['employeeid']) 
+                # print(result[0]['employeeid'])
                 sql_update = "UPDATE employee_kpi SET present_kpi = 'active' WHERE employeeid = %s"
                 cursor.execute(sql_update,(result[0]['employeeid']))
                 print 'update {}'.format(result[0]['employeeid'])
