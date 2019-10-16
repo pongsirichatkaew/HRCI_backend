@@ -93,21 +93,62 @@ def test_upload(cursor):
         print project_kpi_id
         year = request.form.get('year','')
         term = request.form.get('term','')
+        path = 'static/'+ year +'/' + term +'/'+ 'present'
+        if not os.path.exists(path):  
+            os.makedirs(path)
         if request.method == 'POST':
             f= request.files['present']
             print f
-            basedir = os.path.abspath(os.path.dirname(__file__))
+            # basedir = os.path.abspath(os.path.dirname(__file__))
             now = datetime.now()
             print code,now
             file_name = code+''+now.strftime('%m-%d-%y%H%M%S')+'.'+f.filename.split('.')[1]
-            f.save(os.path.join (basedir+"\\uploads",file_name))
+            f.save(os.path.join (path,file_name))
             sql = "UPDATE `project_kpi` SET present_file=%s WHERE project_kpi_id = %s AND year = %s and term = %s"
             cursor.execute(sql,(file_name,project_kpi_id,year,term))
             return 'upload file success'
     except Exception as e:
         print str(e)
         return "fail"
-   
+
+# @app.route('/add_main_menu', methods=['POST'])
+# @connect_sql()
+# def add_main_menu(cursor):
+    
+#     id_branch = request.form['id_branch']
+#     id_place = request.form['id_place']
+#     name = request.form['name']
+#     price = request.form['price']
+#     status_img = request.form['status_img']
+#     currentTime = datetime.datetime.today().strftime('%Y%m%d%H%M%S%f')
+#     # ------------------------------- gen foder
+#     print('tes',id_branch)
+#     path = 'static/img/'+ id_place +'/' + id_branch +'/'+ 'product'
+#     if not os.path.exists(path):  
+#         os.makedirs(path)
+#     if status_img == '1':
+#         file = request.files['file']
+#         # ------------------------------- add to main_menu
+#         sql = "INSERT INTO product_main (id_place,name,price) VALUES (%s,%s,%s)"
+#         cursor.execute(sql, (id_place,name,price))
+#         last_id_main = cursor.lastrowid
+#         # ------------------------------- set name imge by lastrowid form product_main
+#         file_name = str(cursor.lastrowid)
+#         filename = file_name +'_'+ currentTime + '.jpg'
+#         filePath = id_place +'/' + id_branch +'/'+ 'product'+'/' + filename
+#         file.save(os.path.join(path, filename))
+#         # ------------------------------- update name imge to DB
+#         sql = " UPDATE product_main SET picture = %s WHERE id = %s"
+#         cursor.execute(sql, (filePath,file_name))
+#     else:
+#         sql = "INSERT INTO product_main (id_place,name,price,picture) VALUES (%s,%s,%s,%s)"
+#         cursor.execute(sql, (id_place,name,price,"not"))
+#         last_id_main = cursor.lastrowid
+#     # ------------------------------- add to branch_menu 
+#     sql = "INSERT INTO product_branch (id_branch,id_product_main,price,status) VALUES (%s,%s,%s,%s)"
+#     cursor.execute(sql, (id_branch,last_id_main,price,'active'))
+#     return 'success'
+
 @app.route('/Edit_project', methods=['POST'])
 @connect_sql()
 def Edit_project(cursor):
