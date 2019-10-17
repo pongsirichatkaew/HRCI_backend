@@ -111,6 +111,16 @@ def test_upload(cursor):
         print str(e)
         return "fail"
 
+@app.route('/userGetPresent/<year>/<term>/<fileName>', methods=['GET'])
+def userGetPresent(year,term,fileName):
+    try:
+        path = '../static/'+ year +'/' + term +'/'+ 'present'
+        print path
+        return send_from_directory(path, fileName)
+    except Exception as e:
+        print str(e)
+
+
 # @app.route('/add_main_menu', methods=['POST'])
 # @connect_sql()
 # def add_main_menu(cursor):

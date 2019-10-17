@@ -1336,6 +1336,7 @@ def Delete_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_board_kpi', methods=['POST'])
 @connect_sql()
 def Update_board_kpi(cursor):
@@ -1471,6 +1472,8 @@ def readExcel(cursor):
     except Exception as e:
         print str(e)
         return str(e)
+
+
 
 @app.route('/Export_kpi', methods=['POST'])
 @connect_sql()
@@ -1922,6 +1925,8 @@ def Export_kpi_hr(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):
     return send_from_directory('../uploads/', path)
