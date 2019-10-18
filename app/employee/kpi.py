@@ -67,6 +67,7 @@ def QryEmployee_kpi(cursor):
         result = toJson(cursor.fetchall(),columns)
         # print result
         # print result[0]
+        # TODO 
         for i1 in result:
             # sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
             # cursor.execute(sql2,(i1['company_short_name']))
@@ -1048,7 +1049,7 @@ def Qry_user_kpi_board(cursor):
         data_new = source
         print data_new
         # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
-
+        # หัวหน้า บอลูก
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
 
             try:
@@ -1056,6 +1057,7 @@ def Qry_user_kpi_board(cursor):
             except Exception as e:
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
 
+            print 'yearterm',year_term
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -1070,27 +1072,29 @@ def Qry_user_kpi_board(cursor):
                 data2 = toJson(cursor.fetchall(),columns)
                 i1['company_short_name'] = data2[0]['company_short_name']
             return jsonify(result)
-
+        # หัวหน้า inet
         elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
             try:
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name LIKE'+'"'+'%'+str(data_new['org_name_id'])+'%'+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             except Exception as e:
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-                                                                                            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                            INNER JOIN position ON employee_kpi.position = position.position_id\
+            print 'yearterm',year_term
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+                                                                                            LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                            LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
             "+year_term+" "
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            for i1 in result:
-                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-                cursor.execute(sql2,(i1['company_short_name']))
-                columns = [column[0] for column in cursor.description]
-                data2 = toJson(cursor.fetchall(),columns)
-                i1['company_short_name'] = data2[0]['company_short_name']
+            # for i1 in result:
+            #     sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            #     cursor.execute(sql2,(i1['company_short_name']))
+            #     columns = [column[0] for column in cursor.description]
+            #     data2 = toJson(cursor.fetchall(),columns)
+            #     i1['company_short_name'] = data2[0]['company_short_name']
             return jsonify(result)
-
+        ### submain only
         else:
             try:
                 year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
