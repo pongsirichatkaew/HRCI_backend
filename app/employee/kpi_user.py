@@ -119,6 +119,7 @@ def userGetPresent(year,term,fileName):
         return send_from_directory(path, fileName)
     except Exception as e:
         print str(e)
+        return str(e)
 
 
 # @app.route('/add_main_menu', methods=['POST'])
