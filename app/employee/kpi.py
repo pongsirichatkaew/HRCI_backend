@@ -151,7 +151,7 @@ def QryEmployee_kpi_result(cursor):
                                                                                         LEFT JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         LEFT JOIN position ON employee_kpi.position = position.position_id\
-        WHERE " + sqlserch + "validstatus = 2 or validstatus = 3"
+        WHERE " + sqlserch + "validstatus IN (2, 3)"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -212,11 +212,12 @@ def QryEmployee_kpi_search_result(cursor):
             # else:
             #     sql = 'employee_kpi.' + x + '= "''" and '
             #     sqlserch += sql
+        print sqlserch
         sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
                                                                                         LEFT JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         LEFT JOIN position ON employee_kpi.position = position.position_id\
-        WHERE " + sqlserch + "validstatus = 2 and validstatus = 3"
+        WHERE " + sqlserch + "validstatus IN (2, 3)"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1195,7 +1196,7 @@ def board_qry_search(cursor):
         logserver(e)
         return "fail"
 
-## TODO ADD && DELETE 
+## TODO ADD && DELETE
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
