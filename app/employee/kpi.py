@@ -10,11 +10,19 @@ def QryEmployee_kpi(cursor):
             dataInput = request.json
             source = dataInput['source']
             data_new = source
+            print data_new
+            board_ = ''
+            try:
+                board = '"'+str(data_new['board'])+'"'
+                board_ = "employee_kpi.present_kpi = 'active' "
+            except Exception as e:
+                pass
             year_ = ''
             try:
                 year_ = '"'+str(data_new['year'])+'"'
-                year_ = ' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
+                year_ = 'AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
             except Exception as e:
+                print str(e)
                 pass
             term_ = ''
             try:
@@ -22,43 +30,64 @@ def QryEmployee_kpi(cursor):
                 term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             except Exception as e:
                 pass
-            group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+year_+term_
+
+            # group_ = str(data_new['group_kpi_id'])
+            group_kpi_id = 'WHERE '+board_+year_+term_
         except Exception as e:
             pass
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            year_ = ''
-            try:
-                year_ ='"'+str(data_new['year'])+'"'
-                year_ = ' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
-            except Exception as e:
-                pass
-            term_ = ''
-            try:
-                term_ = '"'+str(data_new['term'])+'"'
-                term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
-            except Exception as e:
-                pass
-            group_2 = str(data_new['group_kpi_id2'])
-            group_kpi_id = 'WHERE group_kpi IN ('+'"'+group_+'"'+','+'"'+group_2+'"'+')'+year_+term_
-        except Exception as e:
-            pass
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
-        "+group_kpi_id+" GROUP BY employee_kpi.employeeid "
+        # try:
+        #     dataInput = request.json
+        #     source = dataInput['source']
+        #     data_new = source
+        #     print data_new
+        #     year_ = ''
+        #     try:
+        #         year_ ='"'+str(data_new['year'])+'"'
+        #         year_ = '  employee_kpi.year='+'"'+str(data_new['year'])+'"'
+        #     except Exception as e:
+        #         print str(e)
+        #         pass
+        #     term_ = ''
+        #     try:
+        #         term_ = '"'+str(data_new['term'])+'"'
+        #         term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+        #     except Exception as e:
+        #         pass
+        #     group_2 = str(data_new['group_kpi_id2'])
+        #     group_kpi_id = 'WHERE '+year_+term_
+        # except Exception as e:
+        #     pass
+        print 'group_kpi_id',group_kpi_id
+        sql = "SELECT employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader,p.present_file,p.max_date AS edit_at \
+                    FROM employee_kpi \
+                    LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id \
+                    LEFT JOIN position ON employee_kpi.position = position.position_id \
+                    LEFT JOIN (SELECT project_kpi_log.employeeid,MAX(CAST(project_kpi_log.create_at AS CHAR))max_date,project_kpi.present_file FROM `project_kpi_log` INNER JOIN project_kpi ON project_kpi_log.employeeid = project_kpi.employeeid GROUP BY project_kpi_log.employeeid) AS p \
+                    ON employee_kpi.employeeid = p.employeeid \
+                    "+group_kpi_id+"  "
+        # sql = "SELECT employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+        #                                                                                 LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+        #                                                                                 LEFT JOIN position ON employee_kpi.position = position.position_id\
+        # "+group_kpi_id+"  "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        for i1 in result:
-            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-            cursor.execute(sql2,(i1['company_short_name']))
-            columns = [column[0] for column in cursor.description]
-            data2 = toJson(cursor.fetchall(),columns)
-            i1['company_short_name'] = data2[0]['company_short_name']
+        # print result
+        # print result[0]
+        # 
+        # for i1 in result:
+        #     # sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+        #     # cursor.execute(sql2,(i1['company_short_name']))
+        #     # columns = [column[0] for column in cursor.description]
+        #     # data2 = toJson(cursor.fetchall(),columns)
+
+        #     sql3 = "SELECT *, MAX(CAST(create_at AS CHAR))max_date FROM `project_kpi_log` WHERE employeeid = %s GROUP BY employeeid"
+        #     cursor.execute(sql3,(i1['employeeid']))
+        #     columns = [column[0] for column in cursor.description]
+        #     data3 = toJson(cursor.fetchall(),columns)
+        #     if len(data3) >0 :
+        #         i1['edit_at'] =  data3[0]['max_date']
+        #     # i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
@@ -66,50 +95,78 @@ def QryEmployee_kpi(cursor):
 
 # ------------------------------------------------------------------------------------------------------
 
-@app.route('/QryEmployee_kpi_eiei', methods=['POST'])
-@connect_sql()
-def QryEmployee_kpi_eiei(cursor):
-    try:
+# @app.route('/QryEmployee_kpi_eiei', methods=['POST'])
+# @connect_sql()
+# def QryEmployee_kpi_eiei(cursor):
+#     try:
 
-        try:
-            dataInput = request.json
-            source = dataInput['source']
-            data_new = source
-            year_ = ''
-            try:
-                year_ ='"'+str(data_new['year'])+'"'
-                year_ = ' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
-            except Exception as e:
-                pass
-            term_ = ''
-            try:
-                term_ = '"'+str(data_new['term'])+'"'
-                term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
-            except Exception as e:
-                pass
-            group_kpi_id = 'WHERE group_kpi IN '+str(tuple(group_list))+year_+term_
-        except Exception as e:
-            pass
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
-        "+group_kpi_id+" GROUP BY employee_kpi.employeeid "
+#         try:
+#             dataInput = request.json
+#             source = dataInput['source']
+#             data_new = source
+#             year_ = ''
+#             try:
+#                 year_ ='"'+str(data_new['year'])+'"'
+#                 year_ = ' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'
+#             except Exception as e:
+#                 pass
+#             term_ = ''
+#             try:
+#                 term_ = '"'+str(data_new['term'])+'"'
+#                 term_ = ' AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
+#             except Exception as e:
+#                 pass
+#             group_kpi_id = 'WHERE group_kpi IN '+str(tuple(group_list))+year_+term_
+#         except Exception as e:
+#             pass
+#         sql = "SELECT employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+#                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+#                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
+#         "+group_kpi_id+" GROUP BY employee_kpi.employeeid "
+#         cursor.execute(sql)
+#         columns = [column[0] for column in cursor.description]
+#         result = toJson(cursor.fetchall(),columns)
+#         for i1 in result:
+#             sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+#             cursor.execute(sql2,(i1['company_short_name']))
+#             columns = [column[0] for column in cursor.description]
+#             data2 = toJson(cursor.fetchall(),columns)
+#             i1['company_short_name'] = data2[0]['company_short_name']
+#         return jsonify(result)
+#     except Exception as e:
+#         logserver(e)
+#         return "fail"
+
+
+@app.route('/QryEmployee_kpi_result', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_result(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlserch = ''
+        for x in source:
+            x = str(x)
+            if source[x] is not None and source[x] != '':
+                source[x] = str(source[x])
+                sql = 'employee_kpi.' + x + '= "' + source[x] + '" and '
+                sqlserch += sql
+            # else:
+            #     sql = 'employee_kpi.' + x + '= "''" and '
+            #     sqlserch += sql
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
+        WHERE " + sqlserch + "validstatus IN (2, 3)"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        for i1 in result:
-            sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-            cursor.execute(sql2,(i1['company_short_name']))
-            columns = [column[0] for column in cursor.description]
-            data2 = toJson(cursor.fetchall(),columns)
-            i1['company_short_name'] = data2[0]['company_short_name']
         return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
-
-
-
 
 
 
@@ -123,19 +180,60 @@ def QryEmployee_kpi_search(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-                                                                                        INNER JOIN company ON employee_kpi.companyid = company.companyid\
-                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
-        WHERE employee_kpi.year=%s AND employee_kpi.term =%s "
-        cursor.execute(sql,(data_new['year'],data_new['term']))
+        sqlserch = ''
+        for x in source:
+            x = str(x)
+            if source[x] is not None and source[x] != '':
+                source[x] = str(source[x])
+                sql = 'employee_kpi.' + x + '= "' + source[x] + '" and '
+                sqlserch += sql
+            # else:
+            #     sql = 'employee_kpi.' + x + '= "''" and '
+            #     sqlserch += sql
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
+        WHERE " + sqlserch + "1"
+        cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/QryEmployee_kpi_search_result', methods=['POST'])
+@connect_sql()
+def QryEmployee_kpi_search_result(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sqlserch = ''
+        for x in source:
+            x = str(x)
+            if source[x] is not None and source[x] != '':
+                source[x] = str(source[x])
+                sql = 'employee_kpi.' + x + '= "' + source[x] + '" and '
+                sqlserch += sql
+            # else:
+            #     sql = 'employee_kpi.' + x + '= "''" and '
+            #     sqlserch += sql
+        print sqlserch
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
+                                                                                        LEFT JOIN company ON employee_kpi.companyid = company.companyid\
+                                                                                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        LEFT JOIN position ON employee_kpi.position = position.position_id\
+        WHERE " + sqlserch + "validstatus IN (2, 3)"
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
 @app.route('/QryEmployee_kpi_oldkpi', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_oldkpi(cursor):
@@ -144,7 +242,7 @@ def QryEmployee_kpi_oldkpi(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -156,6 +254,7 @@ def QryEmployee_kpi_oldkpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryEmployee_kpi_oldkpi_search', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_oldkpi_search(cursor):
@@ -165,7 +264,7 @@ def QryEmployee_kpi_oldkpi_search(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -177,6 +276,7 @@ def QryEmployee_kpi_oldkpi_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryEmployee_kpi_one', methods=['POST'])
 @connect_sql()
 def QryEmployee_kpi_one(cursor):
@@ -185,7 +285,7 @@ def QryEmployee_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
         try:
-            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.pass_hr,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
             INNER JOIN position ON employee_kpi.position = position.position_id\
             INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -200,7 +300,7 @@ def QryEmployee_kpi_one(cursor):
                 data2 = toJson(cursor.fetchall(),columns)
                 i1['positionChange_detail'] = data2[0]['position_detail']
         except Exception as e:
-            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
+            sql = "SELECT employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,org_name.org_name_detail,employee_kpi.positionChange,position.position_detail,company.company_short_name,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.org_name,employee_kpi.position,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.pass_hr,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.companyid,employee_kpi.year,employee_kpi.term,employee_kpi.structure_salary,employee_kpi.totalGrade,employee_kpi.totalGradePercent,employee_kpi.positionChange AS positionChange_detail,employee_kpi.specialMoney,employee_kpi.newKpiDescriptions FROM employee_kpi\
             INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
             INNER JOIN position ON employee_kpi.position = position.position_id\
             INNER JOIN company ON employee_kpi.companyid = company.companyid\
@@ -273,6 +373,7 @@ def QryEmployee_kpi_one(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Add_emp_kpi', methods=['POST'])
 @connect_sql()
 def Add_emp_kpi(cursor):
@@ -280,6 +381,7 @@ def Add_emp_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print data_new
         employeeid = str(data_new['employeeid'])
         # check_board = str(data_new['employeeid_board'])
         try:
@@ -292,11 +394,19 @@ def Add_emp_kpi(cursor):
         except Exception as e:
             pass
 
-        sql44 = "SELECT employeeid FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
-        cursor.execute(sql44,(data_new['companyid'],data_new['org_name']))
+        # sql44 = "SELECT employeeid FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
+        # sql44 = "SELECT employeeid FROM assessor_kpi WHERE companyid=%s AND type='main'"
+
+        # cursor.execute(sql44,(data_new['companyid']))
+        sql44_ = "SELECT employeeid FROM assessor_kpi WHERE employeeid=%s AND companyid=%s  AND type='main'"
+        cursor.execute(sql44_,(data_new['createby'],data_new['companyid']))
+
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
+        print data_new['org_name']
+        print data_new['companyid']
         if not result_test:
+            print "no org_name"
             return "no org_name"
 
         now = datetime.now()
@@ -336,10 +446,11 @@ def Add_emp_kpi(cursor):
             star_date_kpi = data_new['star_date_kpi']
         except Exception as e:
             star_date_kpi = ''
-        try:
-            group_kpi = data_new['group_kpi']
-        except Exception as e:
-            group_kpi = ''
+
+        # try:
+        #     group_kpi = data_new['group_kpi']
+        # except Exception as e:
+        #     group_kpi = ''
         try:
             structure_salary = data_new['structure_salary']
         except Exception as e:
@@ -347,16 +458,18 @@ def Add_emp_kpi(cursor):
 
         type_action = "ADD"
 
-        sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
+        sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,star_date_kpi,data_new['status'],data_new['createby']))
 
-        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,star_date_kpi,data_new['status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
         logserver(e)
+        print str(e)
         return "fail"
+
 @app.route('/Add_emp_kpi_user', methods=['POST'])
 @connect_sql()
 def Add_emp_kpi_user(cursor):
@@ -365,7 +478,6 @@ def Add_emp_kpi_user(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = str(data_new['employeeid'])
-
         result_token = CheckTokenAssessor_kpi(data_new['createby'],data_new['token'])
         if result_token!='pass':
             return 'token fail'
@@ -379,11 +491,13 @@ def Add_emp_kpi_user(cursor):
             return "employee is duplicate"
         except Exception as e:
             pass
-
-        sql44_ = "SELECT employeeid FROM assessor_kpi WHERE companyid=%s AND org_name_id=%s AND type='main'"
-        cursor.execute(sql44_,(data_new['companyid'],data_new['org_name']))
+        print data_new['companyid']
+        sql44_ = "SELECT employeeid FROM assessor_kpi WHERE employeeid=%s AND companyid=%s  AND type='main'"
+        cursor.execute(sql44_,(data_new['createby'],data_new['companyid']))
         columns = [column[0] for column in cursor.description]
         result_test = toJson(cursor.fetchall(),columns)
+        print result_test[0]
+
         if not result_test:
             return "no org_name"
 
@@ -439,20 +553,21 @@ def Add_emp_kpi_user(cursor):
         if(str(data_new['type'])=='main'):
 
             type_action = "ADD"
+            print result_test[0]['employeeid']
+            sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,star_date_kpi,data_new['status'],data_new['createby']))
 
-            sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
-
-            sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby'],type_action))
+            sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,star_date_kpi,data_new['status'],data_new['createby'],type_action))
         else:
-            sqlIn_be = "INSERT INTO employee_kpi_approve(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
+            sqlIn_be = "INSERT INTO employee_kpi_approve(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],structure_salary,employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],work_date,work_month,work_year,old_grade,star_date_kpi,data_new['status'],data_new['createby']))
 
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/UpdateApprove_kpi', methods=['POST'])
 @connect_sql()
 def UpdateApprove_kpi(cursor):
@@ -474,16 +589,17 @@ def UpdateApprove_kpi(cursor):
 
             type_action = "ADD"
 
-            sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
+            sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
 
-            sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
+            sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
 
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_Not_Approve_kpi', methods=['POST'])
 @connect_sql()
 def Update_Not_Approve_kpi(cursor):
@@ -508,6 +624,7 @@ def Update_Not_Approve_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi(cursor):
@@ -526,6 +643,7 @@ def QryApprove_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi_result', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi_result(cursor):
@@ -544,6 +662,7 @@ def QryApprove_kpi_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/QryApprove_kpi_status', methods=['POST'])
 @connect_sql()
 def QryApprove_kpi_status(cursor):
@@ -562,6 +681,7 @@ def QryApprove_kpi_status(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Edit_emp_kpi', methods=['POST'])
 @connect_sql()
 def Edit_emp_kpi(cursor):
@@ -600,19 +720,20 @@ def Edit_emp_kpi(cursor):
 
         type_action = "Edit"
 
-        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_test[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_test[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlI9de,(data_new['employeeid'],data_new['old_year'],data_new['old_term']))
 
-        sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],data_new['structure_salary'],employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],old_grade,group_kpi,star_date_kpi,data_new['status'],data_new['createby']))
+        sqlIn_be = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be,(data_new['year'],data_new['term'],data_new['companyid'],result_test[0]['employeeid'],data_new['structure_salary'],employeeid,data_new['name'],data_new['surname'],data_new['org_name'],data_new['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],old_grade,star_date_kpi,data_new['status'],data_new['createby']))
 
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_emp_kpi', methods=['POST'])
 @connect_sql()
 def Delete_emp_kpi(cursor):
@@ -629,8 +750,8 @@ def Delete_emp_kpi(cursor):
 
         type_action = "Delete"
 
-        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,group_kpi,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['group_kpi'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],employeeid,result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],result[0]['createby'],type_action))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
@@ -639,6 +760,44 @@ def Delete_emp_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/Update_grade_gm', methods=['POST'])
+@connect_sql()
+def Update_grade_gm(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        permission = str(data_new['permission'])
+        if permission!="GM":
+            return "GM no permission"
+
+        sql = "SELECT employeeid FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        if(len(result)>0):
+            sqlUp = "UPDATE employee_kpi SET old_grade_GM=%s, validstatus=3 WHERE employeeid=%s AND year=%s AND term=%s"
+            cursor.execute(sqlUp,(data_new['old_grade_GM'],data_new['employeeid'],data_new['year'],data_new['term']))
+            return "Success"
+        else:
+            return "Fail to Update"
+        # grade_ = str(result[0]['grade'])
+        # if grade_ is None:
+        #     type_action = "Edit"
+        #     commet_hr_edit = str(result[0]['comment_hr'])
+        #     sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
+        # else:
+        #     type_action = "Insert"
+        #     sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        #     cursor.execute(sqlIn_be1,(data_new['year'],data_new['term'],data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
+
+
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
 @app.route('/Update_grade_hr_board', methods=['POST'])
 @connect_sql()
 def Update_grade_hr_board(cursor):
@@ -672,6 +831,7 @@ def Update_grade_hr_board(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_grade_hr_hall', methods=['POST'])
 @connect_sql()
 def Update_grade_hr_hall(cursor):
@@ -705,6 +865,42 @@ def Update_grade_hr_hall(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/Update_grade_hr', methods=['POST'])
+@connect_sql()
+def Update_grade_hr(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        comment_hr = data_new['comment_hr']
+        permission_hr = str(data_new['permission'])
+        print data_new
+        if permission_hr!="Hr":
+            return "hr no permission"
+        sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sql,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        grade_ = str(result[0]['grade'])
+        if grade_ is None:
+            type_action = "Edit"
+            commet_hr_edit = str(result[0]['comment_hr'])
+            sqlIn_be2 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be2,(data_new['year'],data_new['term'],[0]['employeeid'],grade_,commet_hr_edit,result[0]['createby'],type_action))
+        else:
+            type_action = "Insert"
+            sqlIn_be1 = "INSERT INTO answer_kpi_hr_log(year,term,employeeid,grade,comment_hr,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_be1,(data_new['year'],data_new['term'],data_new['employeeid'],data_new['grade'],comment_hr,data_new['createby'],type_action))
+
+        sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
+
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
 @app.route('/Qry_board_kpi', methods=['POST'])
 @connect_sql()
 def Qry_board_kpi(cursor):
@@ -726,6 +922,7 @@ def Qry_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_em_board_kpi', methods=['POST'])
 @connect_sql()
 def Qry_em_board_kpi(cursor):
@@ -741,6 +938,7 @@ def Qry_em_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_user_kpi_no_emid_leader', methods=['POST'])
 @connect_sql()
 def Qry_user_kpi_no_emid_leader(cursor):
@@ -748,7 +946,7 @@ def Qry_user_kpi_no_emid_leader(cursor):
         # dataInput = request.json
         # source = dataInput['source']
         # data_new = source
-        sql = "SELECT employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+        sql = "SELECT employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -760,6 +958,7 @@ def Qry_user_kpi_no_emid_leader(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/update_user_kpi_no_emid_leader', methods=['POST'])
 @connect_sql()
 def update_user_kpi_no_emid_leader(cursor):
@@ -836,7 +1035,7 @@ def Qry_user_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql = "SELECT employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+        sql = "SELECT employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                         INNER JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id"
@@ -847,6 +1046,7 @@ def Qry_user_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Qry_user_kpi_board', methods=['POST'])
 @connect_sql()
 def Qry_user_kpi_board(cursor):
@@ -854,8 +1054,9 @@ def Qry_user_kpi_board(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print data_new
         # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
-
+        # หัวหน้า บอลูก
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
 
             try:
@@ -863,64 +1064,72 @@ def Qry_user_kpi_board(cursor):
             except Exception as e:
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
 
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-                                                                                            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                            INNER JOIN position ON employee_kpi.position = position.position_id\
-            "+year_term+" GROUP BY employee_kpi.employeeid"
+            print 'yearterm',year_term
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+                                                                                            LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                            LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
+            "+year_term+""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            for i1 in result:
-                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-                cursor.execute(sql2,(i1['company_short_name']))
-                columns = [column[0] for column in cursor.description]
-                data2 = toJson(cursor.fetchall(),columns)
-                i1['company_short_name'] = data2[0]['company_short_name']
+            # for i1 in result:
+            #     sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            #     cursor.execute(sql2,(i1['company_short_name']))
+            #     columns = [column[0] for column in cursor.description]
+            #     data2 = toJson(cursor.fetchall(),columns)
+            #     i1['company_short_name'] = data2[0]['company_short_name']
             return jsonify(result)
-
+        # หัวหน้า inet
         elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
             try:
+                print 'try'
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name LIKE'+'"'+'%'+str(data_new['org_name_id'])+'%'+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             except Exception as e:
+                print str(e)
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-                                                                                            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                            INNER JOIN position ON employee_kpi.position = position.position_id\
-            "+year_term+" GROUP BY employee_kpi.employeeid"
+            print 'yearterm',year_term
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+                                                                                            LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                            LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
+            "+year_term+" "
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            for i1 in result:
-                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-                cursor.execute(sql2,(i1['company_short_name']))
-                columns = [column[0] for column in cursor.description]
-                data2 = toJson(cursor.fetchall(),columns)
-                i1['company_short_name'] = data2[0]['company_short_name']
+            # for i1 in result:
+            #     sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            #     cursor.execute(sql2,(i1['company_short_name']))
+            #     columns = [column[0] for column in cursor.description]
+            #     data2 = toJson(cursor.fetchall(),columns)
+            #     i1['company_short_name'] = data2[0]['company_short_name']
             return jsonify(result)
-
+        ### submain only
         else:
             try:
                 year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             except Exception as e:
                 year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
 
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-                                                                                            INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                            INNER JOIN position ON employee_kpi.position = position.position_id\
-            "+year_term+" GROUP BY employee_kpi.employeeid"
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+                                                                                            LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                            LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
+            "+year_term+""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            for i1 in result:
-                sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
-                cursor.execute(sql2,(i1['company_short_name']))
-                columns = [column[0] for column in cursor.description]
-                data2 = toJson(cursor.fetchall(),columns)
-                i1['company_short_name'] = data2[0]['company_short_name']
+            # for i1 in result:
+            #     sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
+            #     cursor.execute(sql2,(i1['company_short_name']))
+            #     columns = [column[0] for column in cursor.description]
+            #     data2 = toJson(cursor.fetchall(),columns)
+            #     i1['company_short_name'] = data2[0]['company_short_name']
             return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Add_board_kpi', methods=['POST'])
 @connect_sql()
 def Add_board_kpi(cursor):
@@ -971,11 +1180,12 @@ def Add_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/board_qry', methods=['POST'])
 @connect_sql()
 def board_qry(cursor):
     try:
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 "
+        sql = "SELECT year,term,employeeid_board,name FROM board_kpi_v2 WHERE validstatus=1 "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -983,6 +1193,7 @@ def board_qry(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/board_qry_search', methods=['POST'])
 @connect_sql()
 def board_qry_search(cursor):
@@ -991,7 +1202,7 @@ def board_qry_search(cursor):
         source = dataInput['source']
         data_new = source
 
-        sql = "SELECT year,term,employeeid_board,name,group_kpi FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s "
+        sql = "SELECT year,term,employeeid_board,name FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s "
         cursor.execute(sql,(data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -999,6 +1210,8 @@ def board_qry_search(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+## TODO ADD && DELETE
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
@@ -1007,12 +1220,12 @@ def Add_board_kpi_no_result(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = data_new['employeeid_board']
-
+        print data_new
         nameKpi__ = str(data_new['name_kpi'])+" "+str(data_new['surname_kpi'])
 
         try:
-            sql_check_board = "SELECT year,term,employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND group_kpi=%s AND validstatus=1 AND year=%s AND term=%s "
-            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['group_kpi_id'],data_new['year'],data_new['term']))
+            sql_check_board = "SELECT year,term,employeeid_board FROM board_kpi_v2 WHERE employeeid_board=%s AND validstatus=1 AND year=%s AND term=%s "
+            cursor.execute(sql_check_board,(data_new['employeeid_board'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_check_board = toJson(cursor.fetchall(),columns)
             test_check_board = result_check_board[0]['employeeid_board']
@@ -1020,12 +1233,13 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,group_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['group_kpi_id'],data_new['createby']))
+        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
 
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
+            # email admin
             sql_test_admin = "SELECT username FROM Admin WHERE employeeid=%s"
             cursor.execute(sql_test_admin,(employeeid))
             columns = [column[0] for column in cursor.description]
@@ -1033,33 +1247,41 @@ def Add_board_kpi_no_result(cursor):
             check_email = result_test_admin[i]['username']
         except Exception as e:
             permission = data_new['group_kpi_id']
-            sql = "INSERT INTO Admin (employeeid,username,name,permission,createby) VALUES (%s,%s,%s,%s,%s)"
-            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['createby']))
+            sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
             group_ = str(data_new['group_kpi_id'])
-            group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+            # group_kpi_id = 'WHERE group_kpi='+'"'+group_+'"'+'AND year='+'"'+data_new['year']+'"'+'AND term='+'"'+data_new['term']+'"'
+            group_kpi_id = 'WHERE year='+'"'+data_new['year']+'"'+' AND term='+'"'+data_new['term']+'" AND present_kpi = "active" '
+            print 'group',group_kpi_id
+
         except Exception as e:
             pass
         try:
-            sql_emp_kpi = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND employee_kpi.grade IS NULL AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
+            sql_emp_kpi = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid FROM employee_kpi INNER JOIN board_kpi ON employee_kpi.employeeid = board_kpi.employeeid "+group_kpi_id+" AND board_kpi.validstatus=1 GROUP BY board_kpi.employeeid"
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             check_emid = result[0]['employeeid']
+            # print 'check_emid'
         except Exception as e:
+            # print group_kpi_id
             sql_emp_kpi = "SELECT year,term,employeeid FROM employee_kpi "+group_kpi_id+" "
             cursor.execute(sql_emp_kpi)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
+            # print result
 
         type_action = "ADD"
 
         for i in xrange(len(result)):
             check_em_id = str(result[i]['employeeid'])
             check_em_board = str(data_new['employeeid_board'])
-            if check_em_id==check_em_board:
+            # print check_em_id #62226 result of employee_kpi
+            # print check_em_board #62224 board_kpi add
+            if check_em_id==check_em_board: #if the same guys pass
                 pass
             else:
                 sqlIn_bet = "INSERT INTO board_kpi(year,term,employeeid,employeeid_board,name_kpi,surname_kpi,position_kpi,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -1080,6 +1302,7 @@ def Add_board_kpi_no_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Delete_board_kpi_no_result(cursor):
@@ -1088,8 +1311,8 @@ def Delete_board_kpi_no_result(cursor):
         source = dataInput['source']
         data_new = source
 
-        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s AND group_kpi=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['group_kpi'],data_new['year'],data_new['term']))
+        sqlUp = "UPDATE board_kpi_v2 SET validstatus=0 WHERE employeeid_board=%s  AND year=%s AND term=%s"
+        cursor.execute(sqlUp,(data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         try:
             sqlDe = "DELETE FROM Admin WHERE employeeid=%s AND permission='board'"
@@ -1104,6 +1327,7 @@ def Delete_board_kpi_no_result(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Delete_board_kpi', methods=['POST'])
 @connect_sql()
 def Delete_board_kpi(cursor):
@@ -1128,6 +1352,7 @@ def Delete_board_kpi(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
 @app.route('/Update_board_kpi', methods=['POST'])
 @connect_sql()
 def Update_board_kpi(cursor):
@@ -1137,6 +1362,9 @@ def Update_board_kpi(cursor):
         data_new = source
         employeeid__ = str(data_new['employeeid'])
         check_board = str(data_new['employeeid_board'])
+        print employeeid__
+        print check_board
+        print source
         if employeeid__==check_board:
             return "employee is board"
         sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
@@ -1224,6 +1452,45 @@ def Update_board_kpi(cursor):
 #     except Exception as e:
 #         logserver(e)
 #         return "fail"
+@app.route('/test_read_text', methods=['POST'])
+def readText():
+    try:
+        loc = ("../app/exp.txt")
+        count = 0
+        with open(loc) as f:
+            lines = f.readlines()
+            print lines
+        return 'success'
+    except Exception as e:
+        print str(e)
+        return str(e)
+
+@app.route('/test_read_excel', methods=['POST'])
+@connect_sql()
+def readExcel(cursor):
+    try:
+        loc = ("../app/1.xlsx")
+        wb = xlrd.open_workbook(loc)
+        sheet = wb.sheet_by_index(0)
+        sheet.cell_value(0, 0)
+        # arr_em_id = []
+        for i in range(sheet.nrows):
+            sql = "SELECT employeeid FROM `employee_kpi` WHERE employeeid = %s"
+            cursor.execute(sql,(sheet.cell_value(i, 0)))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            if(len(result)>0):
+                # print(result[0]['employeeid'])
+                sql_update = "UPDATE employee_kpi SET present_kpi = 'active' WHERE employeeid = %s"
+                cursor.execute(sql_update,(result[0]['employeeid']))
+                print 'update {}'.format(result[0]['employeeid'])
+        return jsonify({'result':'success'})
+    except Exception as e:
+        print str(e)
+        return str(e)
+
+
+
 @app.route('/Export_kpi', methods=['POST'])
 @connect_sql()
 def Export_kpi(cursor):
@@ -1231,12 +1498,12 @@ def Export_kpi(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        print data_new
         try:
-            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail AS org_name,position.position_detail AS position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.group_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail AS org_name,position.position_detail AS position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                 INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                 INNER JOIN position ON employee_kpi.position = position.position_id\
-            WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.grade IS NOT NULL"
+            WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.present_kpi='active'"
             cursor.execute(sql,(data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -1259,7 +1526,7 @@ def Export_kpi(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_kpi.xlsx')
+        wb = load_workbook('Template/Template_kpi.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
@@ -1277,7 +1544,7 @@ def Export_kpi(cursor):
                 sheet['H'+str(offset + i)] = result[i]['work_month']
                 sheet['I'+str(offset + i)] = result[i]['work_year']
                 sheet['J'+str(offset + i)] = result[i]['star_date_kpi']
-                sheet['K'+str(offset + i)] = result[i]['group_kpi']
+                sheet['K'+str(offset + i)] = result[i]['present_kpi']
                 sheet['L'+str(offset + i)] = result[i]['old_grade']
                 sheet['M'+str(offset + i)] = result[i]['status']
                 sheet['N'+str(offset + i)] = result[i]['grade']
@@ -1360,65 +1627,197 @@ def Export_kpi_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
-            try:
-                sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
-                                                                                    INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-                                                                                    INNER JOIN position ON employee_kpi.position = position.position_id\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s GROUP BY employee_kpi.employeeid "
-                cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
-                columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(),columns)
-                for i1 in result:
-                    kpi_ful = []
-                    sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
-                    cursor.execute(sql2,(i1['em_id_leader']))
+        print data_new
+        sql = "SELECT companyid,type FROM assessor_kpi WHERE employeeid = %s"
+        cursor.execute(sql,(data_new['code']))
+        columns = [column[0] for column in cursor.description]
+        resultCompany = toJson(cursor.fetchall(),columns)
+        if len(resultCompany)>0:
+            companyId = resultCompany[0]['companyid']
+            typeUser = resultCompany[0]['type']
+            print companyId,typeUser
+            if (str(typeUser)=='main')and(str(companyId)!='23'):
+                try:
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                    WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s GROUP BY employee_kpi.employeeid "
+                    cursor.execute(sql,(data_new['year'],data_new['term'],data_new['companyid']))
                     columns = [column[0] for column in cursor.description]
-                    data2 = toJson(cursor.fetchall(),columns)
-                    for i2 in data2 :
-                        kpi_ful.append(i2)
-                    i1['name_leader'] = kpi_ful
-                for i3 in result:
-                    kpi_ful2 = []
-                    try:
-                        sql3 = "SELECT employee.start_work,employee.EndWork_probation,employee.nickname_employee,section.sect_detail,cost_center_name.cost_detail FROM employee\
-                                                                           INNER JOIN section ON employee.section_id = section.sect_id\
-                                                                           INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
-                        WHERE employee.employeeid=%s "
-                        cursor.execute(sql3,(i3['employeeid']))
+                    result = toJson(cursor.fetchall(),columns)
+                    for i1 in result:
+                        kpi_ful = []
+                        sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
+                        cursor.execute(sql2,(i1['em_id_leader']))
                         columns = [column[0] for column in cursor.description]
-                        data3 = toJson(cursor.fetchall(),columns)
-                    except Exception as e:
-                        data3 = ['']
-                    for i4 in data3 :
-                        kpi_ful2.append(i4)
-                    i3['sec_cost_center'] = kpi_ful2
-                for item in result:
-                    try:
-                        sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
-                        cursor.execute(sql5,(item['positionChange']))
+                        data2 = toJson(cursor.fetchall(),columns)
+                        for i2 in data2 :
+                            kpi_ful.append(i2)
+                        i1['name_leader'] = kpi_ful
+                    for i3 in result:
+                        kpi_ful2 = []
+                        try:
+                            sql3 = "SELECT employee.start_work,employee.EndWork_probation,employee.nickname_employee,section.sect_detail,cost_center_name.cost_detail FROM employee\
+                                                                            INNER JOIN section ON employee.section_id = section.sect_id\
+                                                                            INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+                            WHERE employee.employeeid=%s "
+                            cursor.execute(sql3,(i3['employeeid']))
+                            columns = [column[0] for column in cursor.description]
+                            data3 = toJson(cursor.fetchall(),columns)
+                        except Exception as e:
+                            data3 = ['']
+                        for i4 in data3 :
+                            kpi_ful2.append(i4)
+                        i3['sec_cost_center'] = kpi_ful2
+                    for item in result:
+                        try:
+                            sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
+                            cursor.execute(sql5,(item['positionChange']))
+                            columns = [column[0] for column in cursor.description]
+                            data5 = toJson(cursor.fetchall(),columns)
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = item['positionChange']
+                        if item['specialMoney'] is None:
+                            item['specialMoney']=''
+                    for item2 in result:
+                        sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
+                        cursor.execute(sql2_,(item2['companyid']))
                         columns = [column[0] for column in cursor.description]
-                        data5 = toJson(cursor.fetchall(),columns)
-                        item['positionChange'] = data5[0]['position_detail']
-                    except Exception as e:
-                        item['positionChange'] = item['positionChange']
-                    if item['specialMoney'] is None:
-                        item['specialMoney']=''
-                for item2 in result:
-                    sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
-                    cursor.execute(sql2_,(item2['companyid']))
+                        data2_ = toJson(cursor.fetchall(),columns)
+                        item2['companyid'] = data2_[0]['company_short_name']
+                except Exception as e:
+                    logserver(e)
+                    return "No_Data"
+            elif (str(typeUser)=='main')and(str(companyId)=='23'):
+                try:
+                    print 'inet'
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
+                                                                                        INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                                                                                        INNER JOIN position ON employee_kpi.position = position.position_id\
+                    WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid = %s GROUP BY employee_kpi.employeeid\
+                    UNION \
+                    SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
+                    FROM employee_kpi \
+                    INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                    INNER JOIN position ON employee_kpi.position = position.position_id\
+                    WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.em_id_leader = %s GROUP BY employee_kpi.employeeid"
+                    cursor.execute(sql,(data_new['year'],data_new['term'],companyId,data_new['year'],data_new['term'],data_new['code']))
                     columns = [column[0] for column in cursor.description]
-                    data2_ = toJson(cursor.fetchall(),columns)
-                    item2['companyid'] = data2_[0]['company_short_name']
-            except Exception as e:
-                logserver(e)
-                return "No_Data"
+                    result = toJson(cursor.fetchall(),columns)
+                    for i1 in result:
+                        try:
+                            kpi_ful = []
+                            sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
+                            cursor.execute(sql2,(i1['em_id_leader']))
+                            columns = [column[0] for column in cursor.description]
+                            data2 = toJson(cursor.fetchall(),columns)
+                            for i2 in data2 :
+                                kpi_ful.append(i2)
+                            i1['name_leader'] = kpi_ful
+                        except Exception as e:
+                            kpi_ful = []
+                            i1['name_leader'] = kpi_ful
+                    for i3 in result:
+                        kpi_ful2 = []
+                        try:
+                            sql3 = "SELECT employee.start_work,employee.EndWork_probation,employee.nickname_employee,section.sect_detail,cost_center_name.cost_detail FROM employee\
+                                                                            INNER JOIN section ON employee.section_id = section.sect_id\
+                                                                            INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+                            WHERE employee.employeeid=%s "
+                            cursor.execute(sql3,(i3['employeeid']))
+                            columns = [column[0] for column in cursor.description]
+                            data3 = toJson(cursor.fetchall(),columns)
+                        except Exception as e:
+                            data3 = ['']
+                        for i4 in data3 :
+                            kpi_ful2.append(i4)
+                        i3['sec_cost_center'] = kpi_ful2
+                    for item in result:
+                        try:
+                            sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
+                            cursor.execute(sql5,(item['positionChange']))
+                            columns = [column[0] for column in cursor.description]
+                            data5 = toJson(cursor.fetchall(),columns)
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = item['positionChange']
+                        if item['specialMoney'] is None:
+                            item['specialMoney']=''
+                    for item2 in result:
+                        sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
+                        cursor.execute(sql2_,(item2['companyid']))
+                        columns = [column[0] for column in cursor.description]
+                        data2_ = toJson(cursor.fetchall(),columns)
+                        item2['companyid'] = data2_[0]['company_short_name']
+                except Exception as e:
+                    logserver(e)
+                    return "No_Data"
+            elif (str(typeUser)=='submain')and(str(companyId)=='23'):
+                try:
+                    print 'inet submain'
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
+                    FROM employee_kpi \
+                    INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+                    INNER JOIN position ON employee_kpi.position = position.position_id\
+                    WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.em_id_leader = %s GROUP BY employee_kpi.employeeid"
+                    cursor.execute(sql,(data_new['year'],data_new['term'],data_new['code']))
+                    columns = [column[0] for column in cursor.description]
+                    result = toJson(cursor.fetchall(),columns)
+                    for i1 in result:
+                        try:
+                            kpi_ful = []
+                            sql2 = "SELECT name_asp,surname_asp FROM assessor_kpi WHERE employeeid=%s"
+                            cursor.execute(sql2,(i1['em_id_leader']))
+                            columns = [column[0] for column in cursor.description]
+                            data2 = toJson(cursor.fetchall(),columns)
+                            for i2 in data2 :
+                                kpi_ful.append(i2)
+                            i1['name_leader'] = kpi_ful
+                        except Exception as e:
+                            kpi_ful = []
+                            i1['name_leader'] = kpi_ful
+                    for i3 in result:
+                        kpi_ful2 = []
+                        try:
+                            sql3 = "SELECT employee.start_work,employee.EndWork_probation,employee.nickname_employee,section.sect_detail,cost_center_name.cost_detail FROM employee\
+                                                                            INNER JOIN section ON employee.section_id = section.sect_id\
+                                                                            INNER JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id\
+                            WHERE employee.employeeid=%s "
+                            cursor.execute(sql3,(i3['employeeid']))
+                            columns = [column[0] for column in cursor.description]
+                            data3 = toJson(cursor.fetchall(),columns)
+                        except Exception as e:
+                            data3 = ['']
+                        for i4 in data3 :
+                            kpi_ful2.append(i4)
+                        i3['sec_cost_center'] = kpi_ful2
+                    for item in result:
+                        try:
+                            sql5 = "SELECT position_detail FROM position WHERE position_id=%s"
+                            cursor.execute(sql5,(item['positionChange']))
+                            columns = [column[0] for column in cursor.description]
+                            data5 = toJson(cursor.fetchall(),columns)
+                            item['positionChange'] = data5[0]['position_detail']
+                        except Exception as e:
+                            item['positionChange'] = item['positionChange']
+                        if item['specialMoney'] is None:
+                            item['specialMoney']=''
+                    for item2 in result:
+                        sql2_ = "SELECT company_short_name FROM company WHERE companyid=%s"
+                        cursor.execute(sql2_,(item2['companyid']))
+                        columns = [column[0] for column in cursor.description]
+                        data2_ = toJson(cursor.fetchall(),columns)
+                        item2['companyid'] = data2_[0]['company_short_name']
+                except Exception as e:
+                    logserver(e)
+                    return "No_Data"
         else:
             try:
                 sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
-                WHERE employee_kpi.year=%s AND employee_kpi.term=%s GROUP BY employee_kpi.employeeid"
+                WHERE employee_kpi.year=%s AND employee_kpi.term=%s "
                 cursor.execute(sql,(data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
                 result = toJson(cursor.fetchall(),columns)
@@ -1477,7 +1876,7 @@ def Export_kpi_hr(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_kpi.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_kpi_.xlsx')
+        wb = load_workbook('Template/Template_kpi_.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
@@ -1542,6 +1941,8 @@ def Export_kpi_hr(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):
     return send_from_directory('../uploads/', path)

@@ -452,6 +452,12 @@ def Send_request(cursor):
         columns = [column[0] for column in cursor.description]
         result_request_status = toJson(cursor.fetchall(),columns)
         if request.args.get('reset') == 'true':
+            sql_check_total = "SELECT * FROM approve_request WHERE employeeid=%s"
+            cursor.execute(sql_check_total, data_new['employeeid'])
+            if len(cursor.fetchall()) == 0:
+                sql_update_emp = "UPDATE employee SET validstatus_request = 1 WHERE employeeid=%s"
+                cursor.execute(sql_update_emp, data_new['employeeid'])
+                return "Success"
             sql_reset = "UPDATE approve_request SET status_=1,comment = NULL, comment_orther = NULL, date_status = NULL WHERE employeeid = %s"
             cursor.execute(sql_reset, data_new['employeeid'])
         # END NEW

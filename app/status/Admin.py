@@ -34,7 +34,7 @@ def EditAdmin(cursor):
         result = toJson(cursor.fetchall(),columns)
 
         type_action= "Edit"
-
+    
         sqlIn_log = "INSERT INTO Admin_log (employeeid,username,name,permission,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_log,(result[0]['employeeid'],result[0]['username'],result[0]['name'],result[0]['permission'],data_new['createby'],type_action))
 

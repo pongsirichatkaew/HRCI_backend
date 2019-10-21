@@ -8,10 +8,11 @@ from flaskext.mysql import MySQL
 import hashlib
 import base64
 import datetime
-from datetime import datetime, date
+from datetime import datetime, date,timedelta
 import string
 import random
 import os
+import xlrd 
 import wget
 import base64
 import xlsxwriter
@@ -54,6 +55,7 @@ app2.config['MYSQL_DATABASE_USER'] = "root"
 app2.config['MYSQL_DATABASE_PASSWORD'] = "l^9i@xib,kIlkily,ryoTN"
 app2.config['MYSQL_DATABASE_DB'] = 'intranetdb'
 app2.config['MYSQL_DATABASE_HOST'] = '203.150.57.159'
+
 mysql2 = MySQL()
 mysql2.init_app(app2)
 
@@ -177,7 +179,7 @@ def CheckTokenAssessor(employeeid,token):
         chek_tk = 'Not pass'
     return chek_tk
 def CheckTokenAssessor_kpi(employeeid,token):
-    now = str(datetime.now())
+    now = str(datetime.now()) 
     now = now.split("-")
     token_mounth = now[1]
     new_day = now[2].split(" ")
@@ -190,6 +192,7 @@ def CheckTokenAssessor_kpi(employeeid,token):
         data3 = cursor.fetchall()
         columns3 = [column[0] for column in cursor.description]
         _output3 = toJson(data3, columns3)
+        print _output3
         connection.commit()
         connection.close()
         token_check = _output3[0]['employeeid']

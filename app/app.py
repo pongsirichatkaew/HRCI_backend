@@ -42,6 +42,7 @@ def TestgenEM(cursor):
     if result_token!='pass':
         return 'token fail'
     return "success"
+
 @app.route('/login', methods=['POST'])
 def login():
     try:
@@ -58,7 +59,7 @@ def login():
         data = cursor.fetchall()
         columns = [column[0] for column in cursor.description]
         check_employeeid = toJson(data, columns)
-
+        print check_employeeid
         sql = "SELECT * FROM user WHERE username = %s and password = %s and userid=%s ORDER BY id ASC LIMIT 1"
         cursor.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
         data = cursor.fetchall()

@@ -265,7 +265,7 @@ def gen_employeeid():
     dataInput = request.json
     source = dataInput['source']
     data_new = source
-
+    print 'data_new',data_new
     connection = mysql.connect()
     cursor = connection.cursor()
     sql_type_em = "SELECT * FROM company_em WHERE company_id=%s AND typeEm_detail=%s"
@@ -279,11 +279,19 @@ def gen_employeeid():
     split_str_date = start_date_.split("-")
     year_last = split_str_date[2]
     str_date_year = split_str_date[2]
+    print 'max_all',max_all
+    print 'first_char',first_character
+    print 'type_year',type_year
+    print 'start_date_',start_date_
+    print 'split_str_date',split_str_date
+    print 'year_last',year_last
     if type_year=='christ':
         str_date_year = str_date_year[2:]
     else:
         new_star = str(int(str_date_year)+543)
         str_date_year = new_star[2:]
+    print 'str_date_year',str_date_year
+    
     sql = "SELECT RIGHT(MAX(employeeid),{}) AS max_employeeid FROM employee WHERE company_id={} AND type_em='{}' AND start_work LIKE '%-%-{}'".format(max_all,data_new['company_id'],data_new['typeEm_detail'],year_last)
     cursor.execute(sql)
     columns = [column[0] for column in cursor.description]
@@ -315,6 +323,7 @@ def gen_employeeid():
     resultAppform = toJson(cursor.fetchall(),columns)
     connection.commit()
     connection.close()
+    Name_ea = ''
     for item in resultAppform:
         prefix = ['Mr.', 'MS.', 'Mrs.','Acting Sub Lt.','Acting Sub Ly.']
         for i in xrange(len(prefix)):
