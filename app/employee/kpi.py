@@ -1083,8 +1083,10 @@ def Qry_user_kpi_board(cursor):
         # หัวหน้า inet
         elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
             try:
+                print 'try'
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name LIKE'+'"'+'%'+str(data_new['org_name_id'])+'%'+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             except Exception as e:
+                print str(e)
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             print 'yearterm',year_term
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
