@@ -74,7 +74,7 @@ def QryEmployee_kpi(cursor):
         result = toJson(cursor.fetchall(),columns)
         # print result
         # print result[0]
-        # 
+        #
         # for i1 in result:
         #     # sql2 = "SELECT company_short_name FROM company WHERE companyid=%s"
         #     # cursor.execute(sql2,(i1['company_short_name']))
@@ -1084,7 +1084,7 @@ def Qry_user_kpi_board(cursor):
         elif (str(data_new['type'])=='main')and(str(data_new['companyid'])=='23'):
             try:
                 print 'try'
-                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name LIKE'+'"'+'%'+str(data_new['org_name_id'])+'%'+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
+                year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name ='+'"'+str(data_new['org_name_id'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             except Exception as e:
                 print str(e)
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
