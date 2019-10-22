@@ -114,7 +114,7 @@ def test_upload(cursor):
 @app.route('/userGetPresent/<year>/<term>/<fileName>', methods=['GET'])
 def userGetPresent(year,term,fileName):
     try:
-        path = '../static/'+ year +'/' + term +'/'+ 'present'
+        path = '../static/'+ year +'/' + term +'/'+ 'present'   
         print path
         return send_from_directory(path, fileName)
     except Exception as e:
