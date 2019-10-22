@@ -109,7 +109,7 @@ def InsertEmployee_resign(cursor):
         except Exception as e:
             pass
         try:
-            UpPersonal= "DELETE FROM Personal  WHERE ID_CardNo=%s"
+            UpPersonal= "DELETE FROM Personal WHERE ID_CardNo=%s"
             cursor.execute(UpPersonal,(result[0]['citizenid']))
         except Exception as e:
             pass

@@ -1823,8 +1823,7 @@ def sendEmail_request(cursor):
     return jsonify(result)
 def sendToMail_request(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    # send_to = email
-    send_to = 'pittawat.so@inet.co.th'
+    send_to = email
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1864,8 +1863,7 @@ def sendToMail_request(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_request_MD(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    # send_to = email
-    send_to = 'pittawat.so@inet.co.th'
+    send_to = email
     subject = "[HR] ต้นสังกัดยืนยันการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>
@@ -1905,8 +1903,7 @@ def sendToMail_request_MD(email, total_em,imageName):
         return jsonify(result)
 def sendToMail_reject_request(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
-    # send_to = email
-    send_to = 'pittawat.so@inet.co.th'
+    send_to = email
     subject = "[HR] ผู้บริหารไม่อนุมัติการจัดจ้างพนักงานเข้าสังกัด"
     text = """\
                 <html>

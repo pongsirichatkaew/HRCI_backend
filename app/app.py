@@ -31,8 +31,7 @@ from Appform.appform import *
 
 @app.route('/hello', methods=['GET'])
 def hello():
-    return 'Hello tester , Im updated at 13/09/2019 11:10'
-    
+    return 'Hello tester , Im updated at 30/08/2019 18:30'
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):
@@ -68,7 +67,11 @@ def login():
         _output = toJson(data, columns)
         connection.commit()
         connection.close()
-
+        # _output = []
+        # _output.append({})
+        # _output[0]['userid']='61330'
+        # _output[0]['name']='Korakot'
+        # _output[0]['username']='korakot.bu@inet.co.th'
         connection = mysql.connect()
         cursor = connection.cursor()
         sql2 = "SELECT * FROM Admin WHERE username=%s"
@@ -182,12 +185,6 @@ def login():
         return jsonify(result2)
 
 if __name__ == '__main__':
-# <<<<<<< HEAD
-    # context = ('ssl/inet.crt', 'ssl/inet.key')
-    # app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=8888)
-    app.run(debug=True,host='0.0.0.0',threaded=True,port=8888)
-# =======
     # context = ('ssl/inet.crt', 'ssl/inet.key')
     # app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
-    # app.run(debug=True,host='0.0.0.0',threaded=True,port=5000)
-# >>>>>>> Develop
+    app.run(debug=True,host='0.0.0.0',threaded=True,port=8888)

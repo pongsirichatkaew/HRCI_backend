@@ -1,10 +1,10 @@
 version: '2'
 
 services:
-    hrci_state:
-        image: hrci_state
+    hrci_back_dev:
+        image: hrci_back_dev
         ports:
-            - "8888:8888"
+            - "3000:5000"
         environment:
             - ISENV=dev
         volumes:
