@@ -4,7 +4,7 @@ services:
     hrci_state:
         image: hrci_state
         ports:
-            - "8888:8888"
+            - "5000:5000"
         environment:
             - ISENV=dev
         volumes:
