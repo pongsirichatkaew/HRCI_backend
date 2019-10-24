@@ -2,20 +2,19 @@
 version: '2'
 
 services:
-    hrci_state:
-        image: hrci_state
-        container_name: hrci_state
+    hrci_back:
+        image: hrci_back
         ports:
-            - "8888:8888"
+            - "5000:5000"
         environment:
             - ISENV=pro
         volumes:
             - ./:/code
-            - "/home/ubuntu/state/HRCI/uploads:/app/uploads"
-            - "/home/ubuntu/state/HRCI/Template:/app/Template"
+            - "/home/ubuntu/pro/HRCI/uploads:/app/uploads"
+            - "/home/ubuntu/pro/HRCI/Template:/app/Template"
         restart: always
         networks:
-            - backend-network-state
+            - backend-network
 networks:
-    backend-network-state:
+    backend-network:
         driver: bridge
