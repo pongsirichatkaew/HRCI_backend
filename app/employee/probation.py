@@ -1472,7 +1472,7 @@ def DeleteApprove_probation(cursor):
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],result[0]['status_'],data_new['createby'],type_action))
 
         sqlDe = "DELETE FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
-        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],data_new['tier_approve']))
+        cursor.execute(sqlDe,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],result[0]['tier_approve']))
 
         return "Success"
     except Exception as e:
