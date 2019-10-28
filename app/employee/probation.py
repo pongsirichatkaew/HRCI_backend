@@ -1610,7 +1610,6 @@ def QryEmp_pro_leader():
                                       LEFT JOIN approve_probation AS b ON b.employeeid = Emp_probation.employeeid AND b.version = Emp_probation.version
                                       LEFT JOIN question_pro_type ON question_pro_type.question_pro_id_type = Emp_probation.type_question
                                       LEFT JOIN status ON status.status_id = Emp_probation.validstatus WHERE employeeid_pro=%s AND """ + status_id + " AND tier_approve = %s"
-        print(sql)
         cursor.execute(sql,(data_new['employeeid_pro'],data_new['tier_approve']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
