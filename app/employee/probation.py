@@ -2116,6 +2116,7 @@ def send_email(cursor):
     for item in result:
         count = int(item['total_em'])
         if count>0:
+            print 'count',count
             sendToMail(item['email_asp'], item['total_em'],result_picture[0]['imageName'])
     sql_L2 = "SELECT employeeid,email_asp,tier_approve FROM assessor_pro WHERE tier_approve='L2' GROUP BY email_asp "
     cursor.execute(sql_L2)
@@ -2193,11 +2194,11 @@ def sendToMail(email, total_em,imageName):
     msg['Date'] = formatdate(localtime=True)
     msg['Subject'] = subject
     msg.attach(MIMEText(text, "html","utf-8"))
-
+    print 'send_to',send_to
     try:
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from, send_to, msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
