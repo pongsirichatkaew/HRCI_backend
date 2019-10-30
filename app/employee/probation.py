@@ -2196,9 +2196,9 @@ def sendToMail(email, total_em,imageName):
     msg.attach(MIMEText(text, "html","utf-8"))
 
     try:
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from, send_to, msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
