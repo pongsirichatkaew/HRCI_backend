@@ -811,10 +811,12 @@ def Abstract_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print 'AbstractHR',data_new
         abstract = data_new['abstract']
 
         result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
         if result_token!='pass':
+            
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
