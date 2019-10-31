@@ -60,7 +60,7 @@ def Delete_type_Question_pro(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        print 'DeleteQuestionProType',data_new
         sql = "SELECT * FROM question_pro_type WHERE question_pro_id_type=%s"
         cursor.execute(sql,(data_new['question_pro_id_type']))
         columns = [column[0] for column in cursor.description]
@@ -73,6 +73,10 @@ def Delete_type_Question_pro(cursor):
 
         sqlUp = "DELETE FROM question_pro_type WHERE question_pro_id_type=%s"
         cursor.execute(sqlUp,(data_new['question_pro_id_type']))
+
+        sqlUp = "UPDATE question_pro_form SET validstatus=0 WHERE question_pro_id_type=%s"
+        cursor.execute(sqlUp,(data_new['question_pro_id_type']))
+
         return "success"
     except Exception as e:
         logserver(e)
@@ -153,7 +157,7 @@ def Delete_form_Question_pro(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        print 'sourcedel',data_new
         sql = "SELECT * FROM question_pro_form WHERE question_pro_id=%s AND question_pro_id_type=%s"
         cursor.execute(sql,(data_new['question_pro_id'],data_new['question_pro_id_type']))
         columns = [column[0] for column in cursor.description]
@@ -177,7 +181,7 @@ def Qry_form_Question_pro(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        print 'datanewQuestion',data_new
         sql = "SELECT question_pro_detail_type FROM question_pro_type WHERE question_pro_id_type=%s"
         cursor.execute(sql,(data_new['question_pro_id_type']))
         columns = [column[0] for column in cursor.description]
