@@ -811,10 +811,12 @@ def Abstract_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print 'AbstractHR',data_new
         abstract = data_new['abstract']
 
         result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
         if result_token!='pass':
+
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
@@ -2169,7 +2171,32 @@ def send_email(cursor):
         count4 = int(item4['total_em'])
         if count4>0:
             sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
-    return jsonify(result)
+            
+    ## SEND MAIL EMP_PROBATION
+    sql_prob = """SELECT  Emp_probation.employeeid,Emp_probation.email,Emp_probation.name_th,Emp_probation.surname_th,Emp_probation.name_eng,Emp_probation.surname_eng,Emp_probation.email_status,
+                    Emp_probation.status_result,org_name.org_name_detail,position.position_detail FROM `Emp_probation`
+                    LEFT JOIN position ON Emp_probation.position_id = position.position_id
+                    LEFT JOIN org_name ON Emp_probation.org_name_id = org_name.org_name_id
+                    WHERE `validstatus` = 10"""
+    cursor.execute(sql_prob)
+    columns = [column[0] for column in cursor.description]
+    result5 = toJson(cursor.fetchall(),columns)
+    for prob in result5:
+        # print 'mail_status',prob['email_status']
+        if prob['email_status'] != 1:
+            print str(prob['status_result'])
+            if str(prob['status_result']) == 'ผ่านทดลองงาน':
+                isPass = sendpass_probation(prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'])
+                # print 'sendpass_probation',isPass
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid']))
+            else:
+                isRejected = sendToMail_reject(prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                # print 'sendpass_probation',isPass
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid']))
+                
+    return jsonify('success')
 def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
@@ -2231,9 +2258,9 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
 
     try:
         # not send email
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from, send_to, msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
@@ -2268,9 +2295,9 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     msg.attach(MIMEText(text, "html","utf-8"))
 
     try:
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
@@ -2285,3 +2312,85 @@ def userGetFileProbation(employeeid,filetype,version,fileName):
     # current_app.logger.info(fileName)
     return send_from_directory(path, fileName)
     # return send_from_directory('../uploads/' + path)
+
+@app.route('/Export_Employee_Probation', methods=['POST'])
+@connect_sql()
+def Export_Employee_Probation(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name, Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail FROM `Emp_probation`
+                    LEFT JOIN position ON position.position_id = Emp_probation.position_id
+                    LEFT JOIN section ON section.sect_id = Emp_probation.section_id
+                    LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
+                    LEFT JOIN ((SELECT position.position_detail, org_name.org_name_detail, Emp_probation_log.type_action, Emp_probation_log.employeeid FROM Emp_probation_log
+                                LEFT JOIN position ON position.position_id = Emp_probation_log.position_id
+                    			LEFT JOIN org_name ON org_name.org_name_id = Emp_probation_log.org_name_id ) as table1)
+                                ON table1.employeeid = Emp_probation.employeeid
+                    WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND Emp_probation.status_result = 'ผ่านทดลองงาน'
+                    AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """' """
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            # return jsonify(result)
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Probation.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee_Probation.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['D'+str(2)] = year + '/' + month
+            # sheet['C'+str(3)] = companyname_
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                date1 = result[i]['EndWork_probation']
+                one_date = 1
+                star_date = date1.split("-")
+                Day_s = int(star_date[0])
+                Mon_s = int(star_date[1])
+                year_s = int(star_date[2])
+                next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=one_date)
+                next_3_m2 = str(next_3_mm)
+                end_date = next_3_m2.split("-")
+                Day_e = end_date[2]
+                Mon_e =end_date[1]
+                year_e = end_date[0]
+                End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['old_position']
+                sheet['E'+str(offset + i)] = result[i]['old_org_name']
+                sheet['F'+str(offset + i)] = result[i]['start_work']
+                sheet['G'+str(offset + i)] = result[i]['EndWork_probation']
+                sheet['H'+str(offset + i)] = result[i]['status_result']
+                sheet['I'+str(offset + i)] = result[i]['position_detail']
+                sheet['J'+str(offset + i)] = result[i]['sect_detail']
+                sheet['K'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['L'+str(offset + i)] = End_probation_date
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+        # return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
