@@ -816,7 +816,7 @@ def Abstract_hr(cursor):
 
         result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
         if result_token!='pass':
-            
+
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
@@ -2288,3 +2288,85 @@ def userGetFileProbation(employeeid,filetype,version,fileName):
     # current_app.logger.info(fileName)
     return send_from_directory(path, fileName)
     # return send_from_directory('../uploads/' + path)
+
+@app.route('/Export_Employee_Probation', methods=['POST'])
+@connect_sql()
+def Export_Employee_Probation(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        year=str(data_new['year'])
+        month=str(data_new['month'])
+        try:
+            sql = """SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name, Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail FROM `Emp_probation`
+                    LEFT JOIN position ON position.position_id = Emp_probation.position_id
+                    LEFT JOIN section ON section.sect_id = Emp_probation.section_id
+                    LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
+                    LEFT JOIN ((SELECT position.position_detail, org_name.org_name_detail, Emp_probation_log.type_action, Emp_probation_log.employeeid FROM Emp_probation_log
+                                LEFT JOIN position ON position.position_id = Emp_probation_log.position_id
+                    			LEFT JOIN org_name ON org_name.org_name_id = Emp_probation_log.org_name_id ) as table1)
+                                ON table1.employeeid = Emp_probation.employeeid
+                    WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND Emp_probation.status_result = 'ผ่านทดลองงาน'
+                    AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """' """
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            # return jsonify(result)
+        except Exception as e:
+            logserver(e)
+            return "No_Data"
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Probation.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee_Probation.xlsx')
+        if len(result) > 0:
+
+            sheet = wb['Sheet1']
+            sheet['D'+str(2)] = year + '/' + month
+            # sheet['C'+str(3)] = companyname_
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                date1 = result[i]['EndWork_probation']
+                one_date = 1
+                star_date = date1.split("-")
+                Day_s = int(star_date[0])
+                Mon_s = int(star_date[1])
+                year_s = int(star_date[2])
+                next_3_mm = date(year_s,Mon_s,Day_s) + relativedelta(days=one_date)
+                next_3_m2 = str(next_3_mm)
+                end_date = next_3_m2.split("-")
+                Day_e = end_date[2]
+                Mon_e =end_date[1]
+                year_e = end_date[0]
+                End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
+
+                sheet['A'+str(offset + i)] = i+1
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['old_position']
+                sheet['E'+str(offset + i)] = result[i]['old_org_name']
+                sheet['F'+str(offset + i)] = result[i]['start_work']
+                sheet['G'+str(offset + i)] = result[i]['EndWork_probation']
+                sheet['H'+str(offset + i)] = result[i]['status_result']
+                sheet['I'+str(offset + i)] = result[i]['position_detail']
+                sheet['J'+str(offset + i)] = result[i]['sect_detail']
+                sheet['K'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['L'+str(offset + i)] = End_probation_date
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        os.remove(filename_tmp)
+        displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify(toDict(displayData,displayColumns))
+        # return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
