@@ -2171,7 +2171,7 @@ def send_email(cursor):
         count4 = int(item4['total_em'])
         if count4>0:
             sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
-            
+
     ## SEND MAIL EMP_PROBATION
     sql_prob = """SELECT  Emp_probation.employeeid,Emp_probation.email,Emp_probation.name_th,Emp_probation.surname_th,Emp_probation.name_eng,Emp_probation.surname_eng,Emp_probation.email_status,
                     Emp_probation.status_result,org_name.org_name_detail,position.position_detail FROM `Emp_probation`
@@ -2195,7 +2195,7 @@ def send_email(cursor):
                 # print 'sendpass_probation',isPass
                 sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
                 cursor.execute(sql_update_email_status,(prob['employeeid']))
-                
+
     return jsonify('success')
 def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
@@ -2320,7 +2320,8 @@ def Export_Employee_Probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        year=str(data_new['year'])
+        print data_new
+        year=str(int(data_new['year']) - 543)
         month=str(data_new['month'])
         try:
             sql = """SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name, Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail FROM `Emp_probation`
