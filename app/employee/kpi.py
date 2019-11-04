@@ -1945,6 +1945,57 @@ def Export_kpi_hr(cursor):
         logserver(e)
         return "fail"
 
+@app.route('/export_employee', methods=['GET'])
+@connect_sql()
+def export_employee(cursor):
+    try:
+        sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,position.position_detail,section.sect_detail,org_name.org_name_detail,
+                    cost_center_name.cost_detail,Education.EducationLevel,Education.Institute,Education.Qualification,Education.Major,Education.GradeAvg
+                    FROM employee
+                    LEFT JOIN position ON employee.position_id = position.position_id
+                    LEFT JOIN section ON employee.section_id = section.sect_id
+                    LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id
+                    LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id
+                    LEFT JOIN Education ON employee.citizenid = Education.ID_CardNo"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['C'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['sect_detail']
+                sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['G'+str(offset + i)] = result[i]['cost_detail']
+                sheet['H'+str(offset + i)] = result[i]['EducationLevel']
+                sheet['I'+str(offset + i)] = result[i]['Institute']
+                sheet['J'+str(offset + i)] = result[i]['Qualification']
+                sheet['K'+str(offset + i)] = result[i]['Major']
+                sheet['L'+str(offset + i)] = result[i]['GradeAvg']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        # os.remove(filename_tmp)
+        # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify("aaa")
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):

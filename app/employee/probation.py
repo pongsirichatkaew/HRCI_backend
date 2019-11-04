@@ -811,12 +811,10 @@ def Abstract_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        print 'AbstractHR',data_new
         abstract = data_new['abstract']
 
         result_token = CheckTokenAdmin(data_new['createby'],data_new['token'])
         if result_token!='pass':
-
             return 'token fail'
 
         sqlcheck_L4 = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND tier_approve='L4' AND version=%s"
@@ -913,7 +911,9 @@ def Abstract_hr(cursor):
 
             # sqlUp_main = "UPDATE Emp_probation SET validstatus=9 WHERE employeeid=%s AND version=%s"
             # cursor.execute(sqlUp_main,(data_new['employeeid'],data_new['version']))
+            # print 'AbstractHR_Pass',data_new
 
+            
             sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND version=%s"
             cursor.execute(sql,(data_new['employeeid'],data_new['version']))
             columns = [column[0] for column in cursor.description]
@@ -947,7 +947,33 @@ def Abstract_hr(cursor):
             result_picture = toJson(cursor.fetchall(),columns)
 
             # sendpass_probation(email,em_name,em_surname,em_position,em_org,result_admin[0]['username'],result_picture[0]['imageName'])
-
+            
+            ## update to Emp_probation
+            
+            sql_check_prob = """SELECT employeeid FROM Emp_probation WHERE employeeid = %s AND version = %s AND position_id = %s AND section_id = %s AND org_name_id = %s AND cost_center_name_id = %s AND company_id = %s"""
+            cursor.execute(sql_check_prob,(data_new['employeeid'],data_new['version'],data_new['position_id'],data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id']))
+            columns = [column[0] for column in cursor.description]
+            result_check_prob = toJson(cursor.fetchall(),columns)
+            # print 'result_check_prob',result_check_prob
+            if(len(result_check_prob)>0):
+                print 'probExists'
+                pass
+            else:
+                print 'probNotExists'
+                sql_update_prob = """UPDATE `Emp_probation` SET position_id = %s ,section_id = %s, org_name_id = %s , cost_center_name_id = %s, company_id = %s WHERE employeeid = %s AND version = %s"""
+                cursor.execute(sql_update_prob,(data_new['position_id'],data_new['section_id'],data_new['org_name_id'],data_new['cost_center_name_id'],data_new['company_id'],data_new['employeeid'],data_new['version']))
+                
+                sql_prob = """SELECT * FROM Emp_probation WHERE employeeid=%s AND version=%s"""
+                cursor.execute(sql_prob,(data_new['employeeid'],data_new['version']))
+                columns = [column[0] for column in cursor.description]
+                result_prob = toJson(cursor.fetchall(),columns)                
+                type_action = 'relocate_pass'
+                sqlEM_pro_log = "INSERT INTO Emp_probation_log (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlEM_pro_log,(result_prob[0]['version'],result_prob[0]['employeeid'],result_prob[0]['citizenid'],result_prob[0]['name_th'],result_prob[0]['name_eng'],result_prob[0]['surname_th'],result_prob[0]['surname_eng'],result_prob[0]['nickname_employee'],result_prob[0]['salary'],result_prob[0]['email'],result_prob[0]['phone_company'],result_prob[0]['position_id'],\
+                result_prob[0]['section_id'],result_prob[0]['org_name_id'],result_prob[0]['cost_center_name_id'],result_prob[0]['company_id'],result_prob[0]['start_work'],result_prob[0]['EndWork_probation'],result_prob[0]['createby'],type_action))
+            
+            
+          
         elif (abstract=='Not_pass'): #REJECT PROBATION
 
             if not result_check_L2:
@@ -1030,7 +1056,7 @@ def Abstract_hr(cursor):
             sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,comment,comment_orther,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlReject,(data_new['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['comment'],data_new['comment_orther'],data_new['date_status'],data_new['createby'],type_action))
         else: # EXTEND PROBATION
-
+            print 'EXTEND'
             if not result_check_L2:
 
                 sqlUp__ = "UPDATE Emp_probation SET validstatus=4,status_result='ขยายเวลาทดลองงาน' WHERE employeeid=%s AND version=%s"
@@ -1074,7 +1100,8 @@ def Abstract_hr(cursor):
             Mon_e =end_date[1]
             year_e = end_date[0]
             End_probation_date = Day_e+"-"+Mon_e+"-"+year_e
-            encodedsalary = base64.b64encode(data_new['salary'])
+            # encodedsalary = base64.b64encode(data_new['salary'])
+            encodedsalary = data_new['salary']
 
             sqlEM_pro = "INSERT INTO Emp_probation (version,employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlEM_pro,(version_last,result14[0]['employeeid'],result14[0]['citizenid'],result14[0]['name_th'],result14[0]['name_eng'],result14[0]['surname_th'],result14[0]['surname_eng'],result14[0]['nickname_employee'],encodedsalary,result14[0]['email'],result14[0]['phone_company'],data_new['position_id'],\
@@ -2056,7 +2083,7 @@ def upload_user(cursor):
             if file and allowed_file(fileList.filename):
                 fileList.save(os.path.join(path, fileList.filename))
                 PathFile = employeeid+'/'+'probation'+'/'+str(request.form['version'])+'/'+str(fileList.filename)
-                sql = "INSERT INTO employee_upload(version,ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s,%s)"
+                sql = "INSERT INTO employee_upload (version,ID_CardNo,FileName,Type,PathFile,createby) VALUES (%s,%s,%s,%s,%s,%s)"
                 # cursor.execute(sql,(ID_CardNo,Type,PathFile,request.form['createby']))
                 cursor.execute(sql,(version,ID_CardNo,fileName,Type,PathFile,request.form['createby']))
             else:
@@ -2173,7 +2200,7 @@ def send_email(cursor):
             sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
 
     ## SEND MAIL EMP_PROBATION
-    sql_prob = """SELECT  Emp_probation.employeeid,Emp_probation.email,Emp_probation.name_th,Emp_probation.surname_th,Emp_probation.name_eng,Emp_probation.surname_eng,Emp_probation.email_status,
+    sql_prob = """SELECT  Emp_probation.version,Emp_probation.employeeid,Emp_probation.citizenid,Emp_probation.email,Emp_probation.name_th,Emp_probation.surname_th,Emp_probation.name_eng,Emp_probation.surname_eng,Emp_probation.email_status,
                     Emp_probation.status_result,org_name.org_name_detail,position.position_detail FROM `Emp_probation`
                     LEFT JOIN position ON Emp_probation.position_id = position.position_id
                     LEFT JOIN org_name ON Emp_probation.org_name_id = org_name.org_name_id
@@ -2186,16 +2213,39 @@ def send_email(cursor):
         if prob['email_status'] != 1:
             print str(prob['status_result'])
             if str(prob['status_result']) == 'ผ่านทดลองงาน':
-                isPass = sendpass_probation(prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'])
-                # print 'sendpass_probation',isPass
-                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
-                cursor.execute(sql_update_email_status,(prob['employeeid']))
-            else:
-                isRejected = sendToMail_reject(prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
-                # print 'sendpass_probation',isPass
-                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
-                cursor.execute(sql_update_email_status,(prob['employeeid']))
-
+                sql_relocate =  """SELECT * FROM `Emp_probation_log`
+                                    WHERE employeeid = %s AND version = %s AND type_action = 'relocate_pass'"""
+                cursor.execute(sql_relocate,(prob['employeeid'],prob['version']))
+                columns = [column[0] for column in cursor.description]
+                result_relocate = toJson(cursor.fetchall(),columns)
+                if(len(result_relocate)>0):
+                    sql_old_relocate =  """SELECT org_name.org_name_detail,position.position_detail FROM `Emp_probation_log`
+                                    LEFT JOIN position ON Emp_probation_log.position_id = position.position_id 
+                                    LEFT JOIN org_name ON Emp_probation_log.org_name_id = org_name.org_name_id
+                                    WHERE Emp_probation_log.create_at<(SELECT MAX(Emp_probation_log.create_at) FROM Emp_probation_log) AND 
+                                    employeeid = %s AND version = %s ORDER BY Emp_probation_log.create_at DESC"""
+                    cursor.execute(sql_old_relocate,(prob['employeeid'],prob['version']))
+                    columns = [column[0] for column in cursor.description]
+                    result_old = toJson(cursor.fetchall(),columns)
+                    isRelocate = sendpass_relocate(prob['version'],prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'],result_old[0])
+                    sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s AND version = %s"""
+                    cursor.execute(sql_update_email_status,(prob['employeeid'],prob['version']))
+                else:
+                    isPass = sendpass_probation(prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'])
+                    # isPass = sendpass_probation(prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'])
+                    sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s AND version = %s"""
+                    cursor.execute(sql_update_email_status,(prob['employeeid'],prob['version']))
+            elif str(prob['status_result']) == 'ไม่ผ่านทดลองงาน':
+                isRejected = sendToMail_reject(prob['version'],prob['employeeid'],prob['citizenid'],prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                # isRejected = sendToMail_reject(prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s AND version = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid'],prob['version']))
+            elif str(prob['status_result']) == 'ขยายเวลาทดลองงาน':
+                isExtended = sendextend_probation(prob['version'],prob['employeeid'],prob['citizenid'],prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                # isRejected = sendToMail_reject(prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s AND version = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid'],prob['version']))
+                
     return jsonify('success')
 def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
@@ -2231,18 +2281,49 @@ def sendToMail(email, total_em,imageName):
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
-def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
+
+@connect_sql()
+def sendToMail_reject(cursor,version,employeeid,citizenid,email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
+    sql_reject_kpi = """SELECT * FROM `employee_pro` WHERE employeeid = %s AND version = %s AND group_q = 'SectionKPI'"""
+    cursor.execute(sql_reject_kpi,(employeeid,version))
+    columns = [column[0] for column in cursor.description]
+    result_reject = toJson(cursor.fetchall(),columns)
+    index = 1
+    kpi_html = ""
+    for i in result_reject:
+        kpi_html = kpi_html+"""<p style="font-size: 16px;">"""+str(index)+') '+i['pro_values']+"""</p>"""
+        index = index + 1
+    print 'kpi_html',kpi_html
+    
+    sql_user_kpi = """SELECT * FROM `employee_upload` WHERE ID_CardNo = %s AND version = %s """
+    cursor.execute(sql_user_kpi,(citizenid,version))
+    columns = [column[0] for column in cursor.description]
+    result_user = toJson(cursor.fetchall(),columns)
+    index = 1
+    kpi_user = ""
+    for i in result_user:
+        ### TODO fixed tag a to real host ###
+        kpi_user = kpi_user+ """<p style="font-size: 16px;">"""+str(index)+""") <a href="http://localhost:8888/userGetFileProbation/"""+i['PathFile']+"""">"""+i['FileName']+"""</a></p>"""
+        print 'pathFile',i['PathFile']
+        index = index + 1
+    print 'kpi_user',kpi_user
+    
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
     subject = "ประเมินพนักงานผ่านทดลองงาน (ไม่ผ่านการอนุมัติ)"
     text = """\
                 <html>
                   <body>
-                    <b style="font-size: 18px;">เรียน ต้นสังกัดที่เกี่ยวข้อง</b></br>
-                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
-                        ฝ่ายทรัพยากรบุคคลขอแจ้งให้ทราบว่า <span style="text-decoration: underline; font-weight: bold;">ผู้บริหารไม่อนุมัติการครบทดลองงาน</span>ของ """ + em_name + """ """ + em_surname + """ ตำแหน่ง """ + em_position + """ """ + em_org + """ เนื่องจาก """ + comment + """ ผู้ประเมินทุกท่านสามารถเข้าไปทำการประเมินพนักงานได้ที่
-                        <a href="http://hr-management.inet.co.th">Hr Management</a>
+                    <b style="font-size: 18px;">เรียนคุณ  """ + em_name + """ """ + em_surname + """</b></br>
+                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        เนื่องจากทางต้นสังกัดได้ประเมินผลการปฏิบัติงานของ คุณ""" + em_name + """ """ + em_surname + """ ซึ่งผลการปฏิบัติงานคือ “ไม่ผ่านทดลองงาน” โดยทางต้นสังกัดให้เหตุผลว่า ไม่ผ่าน KPI ค่ะ ซึ่ง KPI ที่ทางต้นสังกัดให้ปฏิบัติมีดังนี้
                     </p>
+                    """+kpi_html+"""
+                    <p style="font-size: 16px;">และผลงานที่คุณ""" + em_name + """ """ + em_surname +""" สามารถปฏิบัติได้มีดังนี้ </p>
+                    """+kpi_user+"""
+                    <p style="font-size: 16px;">ทั้งนี้หากมีข้อสงสัยในผลการประเมิน</p>
+                    <p style="font-size: 16px;">กรุณาติดต่อทางต้นสังกัดค่ะ</p>
+                    <p style="font-size: 16px;">Best Regard</p>
                     <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
                   </body>
                 </html>
@@ -2266,6 +2347,66 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
+
+@connect_sql()
+def sendextend_probation(cursor,version,employeeid,citizenid,email,name_eng,surname_eng,em_name,em_surname,em_position,em_org,imageName,comment):
+    sql_work_probation = """SELECT * FROM Emp_probation Where employeeid = %s AND version = %s"""
+    cursor.execute(sql_work_probation,(employeeid,str(int(version)+1)))
+    columns = [column[0] for column in cursor.description]
+    result_work = toJson(cursor.fetchall(),columns)
+    
+    sql_user_kpi = """SELECT * FROM `employee_upload` WHERE ID_CardNo = %s AND version = %s """
+    cursor.execute(sql_user_kpi,(citizenid,version))
+    columns = [column[0] for column in cursor.description]
+    result_user = toJson(cursor.fetchall(),columns)
+    index = 1
+    kpi_user = ""
+    for i in result_user:
+        ### TODO fixed tag a to real host ###
+        kpi_user = kpi_user+ """<p style="font-size: 16px;">"""+str(index)+""") <a href="http://localhost:8888/userGetFileProbation/"""+i['PathFile']+"""">"""+i['FileName']+"""</a></p>"""
+        print 'pathFile',i['PathFile']
+        index = index + 1
+    print 'kpi_user',kpi_user
+    
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    subject = "ประเมินพนักงานผ่านทดลองงาน (ขยายเวลาทดลองงาน)"
+    text = """\
+                <html>
+                  <body>
+                    <b style="font-size: 18px;">เรียนคุณ  """ + em_name + """ """ + em_surname + """</b></br>
+                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        เนื่องจาก คุณ""" + em_name + """ """ + em_surname + """ มีผลการประเมิน “ขยายทดลองงาน” ตั้งแต่วันที่ """+result_work[0]['start_work']+"""ถึงวันที่ """+result_work[0]['EndWork_probation']+""" (ตามที่ต้นสังกัดได้ประเมินมา)
+                    </p>
+                    <p style="font-size: 16px;">ซึ่ง KPI ในช่วงขยายทดลองงานมีดังนี้</p>
+                    """+kpi_user+"""
+                    <p style="font-size: 16px;">ฝ่ายทรัพยากรบุคคลขอเป็นกำลังใจให้ คุณ""" + em_name + """ """ + em_surname +"""</p>
+                    <p style="font-size: 16px;">ตั้งใจปฏิบัติงานตาม KPI ในช่วงขยายทดลองงานต่อไปค่ะ</p>
+                    <p style="font-size: 16px;">Best Regard</p>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+""""">
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        # not send email
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+
 def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
@@ -2275,10 +2416,11 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     text = """\
                 <html>
                   <body>
-                    <b style="font-size: 18px;">เรียน  """ + em_name + """ """ + em_surname + """</b></br>
+                    <b style="font-size: 18px;">เรียนคุณ  """ + em_name + """ """ + em_surname + """</b></br>
                     <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
-                        ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ """ + em_name + """ """ + em_surname + """ """ + em_position + """ """ + em_org + """ ท่านได้ผ่านทดลองงาน สามารถใช้สวัสดิการพนักงานได้อย่างเต็มที่
+                        ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ คุณ""" + em_name + """ """ + em_surname + """  เนื่องจาก คุณ""" + em_name + """ """ + em_surname +""" มีผลการประเมิน “ผ่านทดลองงาน” ในตำแหน่ง """+ em_position + """ """ + em_org + """ ซึ่งมีผลในวันที่ """ +datetime.now().strftime("%x")+ """ ค่ะ
                     </p>
+                    <p style="font-size: 16px;">Best Regard </p>
                     <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""">
                   </body>
                 </html>
@@ -2303,6 +2445,51 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     except:
         result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
         return jsonify(result)
+
+@connect_sql()
+def sendpass_relocate(cursor,version,email,em_name,em_surname,em_position,em_org,email_hr,imageName,relocate):
+    print 'relocate',relocate['position_detail']
+    send_from = "Hr Management <recruitment@inet.co.th>"
+    send_to = email
+    send_cc = email_hr
+    send_bcc = email_hr
+    subject = "แจ้งผ่านการทดลองงาน(ปรับตำแหน่ง)"
+    text = """\
+                <html>
+                  <body>
+                    <b style="font-size: 18px;">เรียนคุณ  """ + em_name + """ """ + em_surname + """</b></br>
+                    <p style="text-indent: 30px; font-size: 16px; padding: 10px;">
+                        ฝ่ายทรัพยากรบุคคลขอแสดงความยินดีกับ คุณ""" + em_name + """ """ + em_surname + """  เนื่องจาก คุณ""" + em_name + """ """ + em_surname +""" มีผลการประเมิน “ผ่านทดลองงาน” และปรับตำแหน่งจาก """+ relocate['position_detail'] + """ """ + relocate['org_name_detail'] + """
+                        เป็นตำแหน่ง """+ em_position+""" ฝ่าย """+em_org+""" ซึ่งมีผลในวันที่ """ +datetime.now().strftime("%x")+ """ ค่ะ
+                    </p>
+                    <p style="font-size: 16px;">Best Regard </p>
+                    <img style="width: 1024px; height: auto;" src="http://hr-management.inet.co.th:8888/userGetFileImageMail/"""+imageName+"""">
+                  </body>
+                </html>
+        """
+    server="mailtx.inet.co.th"
+
+    msg = MIMEMultipart()
+    msg['From'] = send_from
+    msg['To'] = send_to
+    msg['Cc'] = send_cc
+    msg['Bcc'] = send_bcc
+    msg['Date'] = formatdate(localtime=True)
+    msg['Subject'] = subject
+    msg.attach(MIMEText(text, "html","utf-8"))
+
+    try:
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
+        smtp.close()
+        result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
+        return jsonify(result)
+    except:
+        result = {'status' : 'error', 'statusDetail' : 'Send email has error : This system cannot send email'}
+        return jsonify(result)
+
+
+
 @app.route('/userGetFileProbation/<employeeid>/<filetype>/<version>/<fileName>', methods=['GET'])
 def userGetFileProbation(employeeid,filetype,version,fileName):
     # path = '../app/uploads/' + employeeid + "/" + filetype + "/" + version + "/"
