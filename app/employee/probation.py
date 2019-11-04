@@ -2172,7 +2172,32 @@ def send_email(cursor):
         count4 = int(item4['total_em'])
         if count4>0:
             sendToMail(item4['email_asp'], item4['total_em'],result_picture[0]['imageName'])
-    return jsonify(result)
+            
+    ## SEND MAIL EMP_PROBATION
+    sql_prob = """SELECT  Emp_probation.employeeid,Emp_probation.email,Emp_probation.name_th,Emp_probation.surname_th,Emp_probation.name_eng,Emp_probation.surname_eng,Emp_probation.email_status,
+                    Emp_probation.status_result,org_name.org_name_detail,position.position_detail FROM `Emp_probation`
+                    LEFT JOIN position ON Emp_probation.position_id = position.position_id
+                    LEFT JOIN org_name ON Emp_probation.org_name_id = org_name.org_name_id
+                    WHERE `validstatus` = 10"""
+    cursor.execute(sql_prob)
+    columns = [column[0] for column in cursor.description]
+    result5 = toJson(cursor.fetchall(),columns)
+    for prob in result5:
+        # print 'mail_status',prob['email_status']
+        if prob['email_status'] != 1:
+            print str(prob['status_result'])
+            if str(prob['status_result']) == 'ผ่านทดลองงาน':
+                isPass = sendpass_probation(prob['email'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],'Hr Management <recruitment@inet.co.th>',result_picture[0]['imageName'])
+                # print 'sendpass_probation',isPass
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid']))
+            else:
+                isRejected = sendToMail_reject(prob['email'],prob['name_eng'],prob['surname_eng'],prob['name_th'],prob['surname_th'],prob['position_detail'],prob['org_name_detail'],result_picture[0]['imageName'],str(prob['status_result']))
+                # print 'sendpass_probation',isPass
+                sql_update_email_status = """UPDATE Emp_probation SET email_status = 1 WHERE employeeid = %s"""
+                cursor.execute(sql_update_email_status,(prob['employeeid']))
+                
+    return jsonify('success')
 def sendToMail(email, total_em,imageName):
     send_from = "Hr Management <recruitment@inet.co.th>"
     send_to = email
@@ -2234,9 +2259,9 @@ def sendToMail_reject(email,name_eng,surname_eng,em_name,em_surname,em_position,
 
     try:
         # not send email
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from, send_to, msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from, send_to, msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
@@ -2271,9 +2296,9 @@ def sendpass_probation(email,em_name,em_surname,em_position,em_org,email_hr,imag
     msg.attach(MIMEText(text, "html","utf-8"))
 
     try:
-        # smtp = smtplib.SMTP(server)
-        # smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
-        # smtp.close()
+        smtp = smtplib.SMTP(server)
+        smtp.sendmail(send_from,[send_to,send_cc,send_bcc], msg.as_string())
+        smtp.close()
         result = {'status' : 'done', 'statusDetail' : 'Send email has done'}
         return jsonify(result)
     except:
