@@ -508,15 +508,15 @@ def UpdateStatus_probation_all(cursor):
         data_new = source
         tier_approve = str(data_new['tier_approve'])
         status_ = str(data_new['status_'])
-
+        print data_new
         if (tier_approve =='L4'):
             i=0
             for i in xrange(len(data_new['employee'])):
 
-                sqlUp = "UPDATE approve_probation SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
+                sqlUp = "UPDATE approve_probation SET status_=14,comment='อนุมัติ',date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
                 cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_pro'],data_new['employee'][i]['version']))
 
-                sqlUp_main = "UPDATE Emp_probation SET validstatus=15 WHERE employeeid=%s AND version=%s"
+                sqlUp_main = "UPDATE Emp_probation SET validstatus=10 WHERE employeeid=%s AND version=%s"
                 cursor.execute(sqlUp_main,(data_new['employee'][i]['employeeid'],data_new['employee'][i]['version']))
 
                 sql = "SELECT * FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s"
@@ -527,8 +527,8 @@ def UpdateStatus_probation_all(cursor):
                 type_action = "send_director"
                 status_last = "9"
 
-                sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlReject,(data_new['employee'][i]['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+                sqlReject = "INSERT INTO approve_probation_log(version,employeeid,comment,employeeid_pro,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                cursor.execute(sqlReject,(data_new['employee'][i]['version'],result[0]['employeeid'],'อนุมัติ',result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
 
         elif (tier_approve =='L3'):
             i=0
@@ -561,7 +561,7 @@ def UpdateStatus_probation_all(cursor):
 
                 else:
 
-                    sqlUp = "UPDATE approve_probation SET status_=14,date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
+                    sqlUp = "UPDATE approve_probation SET status_=14,comment='อนุมัติ',date_status=%s WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
                     cursor.execute(sqlUp,(data_new['date_status'],data_new['employee'][i]['employeeid'],data_new['employeeid_pro'],data_new['employee'][i]['version'],tier_approve))
 
                     sqlUp_main = "UPDATE Emp_probation SET validstatus=5 WHERE employeeid=%s AND version=%s"
@@ -575,8 +575,9 @@ def UpdateStatus_probation_all(cursor):
                     type_action = "send_deputy_director"
                     status_last = "5"
 
-                    sqlReject = "INSERT INTO approve_probation_log(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlReject,(data_new['employee'][i]['version'],result[0]['employeeid'],result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+                    sqlReject = "INSERT INTO approve_probation_log(version,employeeid,comment,employeeid_pro,name,lastname,tier_approve,position_detail,status_,date_status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+                    cursor.execute(sqlReject,(data_new['employee'][i]['version'],result[0]['employeeid'],'อนุมัติ',result[0]['employeeid_pro'],result[0]['name'],result[0]['lastname'],result[0]['tier_approve'],result[0]['position_detail'],status_last,data_new['date_status'],data_new['createby'],type_action))
+        
         # DEVELOPING IN PROGRESS
         elif (tier_approve =='L2'):
             for i in xrange(len(data_new['employee'])):
