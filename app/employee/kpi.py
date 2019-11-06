@@ -1238,7 +1238,7 @@ def Add_board_kpi_no_result(cursor):
 
         sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
-
+        
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
@@ -1252,6 +1252,7 @@ def Add_board_kpi_no_result(cursor):
             permission = data_new['group_kpi_id']
             sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
+        
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
