@@ -312,7 +312,7 @@ def QryEmployee_kpi_one(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
-        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,pass_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus=1"
+        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,pass_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(1,2)"
         cursor.execute(sql2,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
@@ -1324,7 +1324,7 @@ def Delete_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board IS NULL OR pass_board IS NULL AND year=%s AND term=%s "
+        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND (grade_board IS NULL OR pass_board IS NULL) AND year=%s AND term=%s AND validstatus = 1"
         cursor.execute(sqlUp2,(data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
@@ -1395,7 +1395,7 @@ def Update_board_kpi(cursor):
         except Exception as e:
             comment_board = ''
 
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['pass_board'],comment_board,data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
