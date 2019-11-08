@@ -28,6 +28,7 @@ from employee.kpi import *
 from employee.kpi_user import *
 from employee.request_employee import *
 from Appform.appform import *
+from mobile.kpi_mobile import *
 
 @app.route('/hello', methods=['GET'])
 def hello():

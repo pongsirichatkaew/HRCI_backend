@@ -346,19 +346,22 @@ def QryEmployee_one_person(cursor):
 
 @connect_sql2()
 def EditIntranetEmployee(cursor,employee,position_detail,org_name_detail,cost_center_name,sect_detail):
-    print 'employee',employee['employeeid']
-    print 'sec',sect_detail
+    eng_name = employee['NameEn'].split('.')
+    prefix = eng_name[0]
+    if(prefix == 'MS'):
+        prefix = 'Ms'
+    firstname = prefix+'. '+eng_name[1]
     sql_update = """UPDATE `hrci` SET `thainame`=%s,`engname`=%s,`positionname`=%s,`orgname`=%s,
             `costcentername`=%s,`section`=%s,
             `nicknameth`=%s,`email`=%s,`phonenumber`=%s WHERE code = %s"""
     cursor.execute(sql_update,(employee['NameTh']+' '+employee['SurnameTh'],
-                               employee['NameEn']+' '+employee['SurnameEn'],
+                               firstname+' '+employee['SurnameEn'],
                                position_detail,org_name_detail,cost_center_name,sect_detail,
                                employee['NicknameTh'],employee['Email'],
                                employee['phone_company'],employee['employeeid']))
     
     sql_update_email = """ Update user SET name = %s ,username =%s ,department=%s WHERE userid =%s """
-    cursor.execute(sql_update_email,(employee['NameEn']+' '+employee['SurnameEn'],employee['Email'],org_name_detail,employee['employeeid']))
+    cursor.execute(sql_update_email,(firstname+' '+employee['SurnameEn'],employee['Email'],org_name_detail,employee['employeeid']))
     # columns = [column[0] for column in cursor.description]
     # result = toJson(cursor.fetchall(),columns)
     
@@ -376,8 +379,6 @@ def EditEmployee(cursor):
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        
-
         
         # print 'resultEm',result
         type_action = "Edit"
