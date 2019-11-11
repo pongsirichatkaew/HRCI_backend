@@ -2672,7 +2672,7 @@ def Export_Employee_Probation(cursor):
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
         filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Probation.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_Employee_Probation.xlsx')
+        wb = load_workbook('Template/Template_Employee_Probation.xlsx')
         if len(result) > 0:
 
             sheet = wb['Sheet1']
