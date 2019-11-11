@@ -13,7 +13,9 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         employee = result[0]
         print employee['type'],employee['companyid']
         year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'"'
-        
+        resultJson = {}
+        resultJson.update({'status_onechat':employee['status_onechat']})
+
         # หัวหน้า บอลูก
         if (employee['type']=='main')and(str(employee['companyid'])!='23'):
 
@@ -31,7 +33,8 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            return jsonify(result)
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
         
         # หัวหน้า inet
         elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
@@ -50,13 +53,15 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            return jsonify(result)
+        
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
         ### submain only
         else:
             # try:
             #     year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             # except Exception as e:
-            # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(employee['employeeid'])+'"'
+            year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(employee['employeeid'])+'"'
 
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
@@ -66,8 +71,9 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            return jsonify(result)
-        return jsonify(result)
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
+        return jsonify(resultJson)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -132,4 +138,19 @@ def cancel_emp_kpi_mobile(cursor):
         return "Success"
     except Exception as e:
         logserver(e)
+        return "fail"
+    
+@app.route('/confirm_all_kpi_mobile', methods=['POST'])
+@connect_sql()
+def confirm_all_kpi(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql_update_status = """UPDATE `assessor_kpi` SET `status_onechat`=1 WHERE employeeid = %s"""
+        cursor.execute(sql_update_status,(data_new['employeeid']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        print str(e)
         return "fail"

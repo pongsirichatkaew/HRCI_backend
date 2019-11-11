@@ -1385,7 +1385,19 @@ def AddApprove_probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
+        # print 'AddApprove_probation',data_new
+        
+        try:
+            sql_check_empro = "SELECT * FROM `assessor_pro` WHERE employeeid = %s"
+            cursor.execute(sql_check_empro,(data_new['employeeid_pro']))
+            columns = [column[0] for column in cursor.description]
+            result_assessor_pro = toJson(cursor.fetchall(),columns)
+            type_check = result_assessor_pro[0]
+            if(type_check['tier_approve'] != data_new['tier_approve']):
+                return "employeeid_pro duplicate"
+        except Exception as e:
+            pass
+        
         try:
             sql_check_empro = "SELECT employeeid_pro FROM approve_probation WHERE employeeid=%s AND employeeid_pro=%s AND version=%s AND tier_approve=%s"
             cursor.execute(sql_check_empro,(data_new['employeeid'],data_new['employeeid_pro'],data_new['version'],data_new['tier_approve']))
@@ -1395,7 +1407,7 @@ def AddApprove_probation(cursor):
             return "employeeid_pro duplicate"
         except Exception as e:
             pass
-
+        
         sqlApprove = "INSERT INTO approve_probation(version,employeeid,employeeid_pro,name,lastname,tier_approve,position_detail,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlApprove,(data_new['version'],data_new['employeeid'],data_new['employeeid_pro'],data_new['name'],data_new['lastname'],data_new['tier_approve'],data_new['position_detail'],data_new['createby']))
 
@@ -1411,12 +1423,15 @@ def AddApprove_probation(cursor):
             result_test = toJson(cursor.fetchall(),columns)
             name_test = result_test[0]['name_asp']
         except Exception as e:
-
             sqlQry = "SELECT assessor_pro_id FROM assessor_pro ORDER BY assessor_pro_id DESC LIMIT 1"
             cursor.execute(sqlQry)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            assessor_pro_id_last=result[0]['assessor_pro_id']+1
+            if(len(result)<1):
+                assessor_pro_id_last = 1
+            else:
+                assessor_pro_id_last=result[0]['assessor_pro_id']+1
+            print 'idassessor_pro',assessor_pro_id_last
 
             sql = "INSERT INTO assessor_pro (assessor_pro_id,employeeid,companyid,name_asp,surname_asp,position_id,tier_approve,email_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(assessor_pro_id_last,data_new['employeeid_pro'],data_new['companyid'],data_new['name'],data_new['lastname'],data_new['position_id'],data_new['tier_approve'],data_new['email_asp'],data_new['createby']))
