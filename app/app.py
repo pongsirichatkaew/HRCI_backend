@@ -32,7 +32,7 @@ from mobile.kpi_mobile import *
 
 @app.route('/hello', methods=['GET'])
 def hello():
-    return 'Hello tester , Im updated at 30/08/2019 18:30'
+    return 'Hello pm2.5 , Im updated at 30/08/2019 18:30'
 @app.route('/TestgenEM', methods=['POST'])
 @connect_sql()
 def TestgenEM(cursor):

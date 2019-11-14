@@ -11,8 +11,8 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
-        print employee['type'],employee['companyid']
         year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'"'
+        print 'year_term',year_term
         resultJson = {}
         resultJson.update({'status_onechat':employee['status_onechat']})
 
@@ -90,7 +90,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             # try:
             #     year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
             # except Exception as e:
-            year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(employee['employeeid'])+'" GROUP BY employee_kpi.em_id_leader'
+            # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(employee['employeeid'])+'" GROUP BY employee_kpi.em_id_leader'
             
             # sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
             #             employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
@@ -294,4 +294,99 @@ def edit_project_mobile(cursor):
     except Exception as e:
         logserver(e)
         print str(e)
+        return "fail"
+
+@app.route('/Qry_user_present_mobile/<employee_id>', methods=['GET'])
+@connect_sql()
+def Qry_user_present_mobile(cursor,employee_id):
+    try:
+        sql_select_accessor = """SELECT * FROM `assessor_kpi` WHERE employeeid = %s GROUP BY employeeid"""
+        cursor.execute(sql_select_accessor,(employee_id))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        employee = result[0]
+        year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'" AND employee_kpi.present_kpi ="active"'
+        print 'year_term',year_term
+        resultJson = {}
+        resultJson.update({'status_onechat':employee['status_onechat']})
+
+        if (employee['type']=='main')and(str(employee['companyid'])!='23'):
+            
+            print 'yearterm',year_term
+            sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
+                        employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,
+                        employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
+                        employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,
+                        employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file  
+                        FROM employee_kpi LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
+                        LEFT JOIN position ON employee_kpi.position = position.position_id
+                         """+year_term
+                        
+            # sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            #                                                                                 LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
+            #                                                                                 LEFT JOIN position ON employee_kpi.position = position.position_id\
+            # "+year_term+" GROUP BY employee_kpi.employeeid"
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            
+            for employee in result:
+                sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
+                cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
+                columns = [column[0] for column in cursor.description]
+                result_projects = toJson(cursor.fetchall(),columns)
+                employee.update({'projectKpi':result_projects})
+                
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
+        
+        # หัวหน้า inet
+        elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
+        
+            sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
+                        employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
+                        employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,
+                        employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,
+                        employee_kpi.status,employee_kpi.present_file FROM employee_kpi
+                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
+                        LEFT JOIN position ON employee_kpi.position = position.position_id
+                         """+year_term
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            
+            for employee in result:
+                sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
+                cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
+                columns = [column[0] for column in cursor.description]
+                result_projects = toJson(cursor.fetchall(),columns)
+                employee.update({'projectKpi':result_projects})
+
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
+        ### submain only
+        else:
+            sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
+                        employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
+                        employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,
+                        employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,
+                        employee_kpi.status,employee_kpi.present_file FROM employee_kpi
+                        LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
+                        LEFT JOIN position ON employee_kpi.position = position.position_id
+                        """+year_term
+
+            cursor.execute(sql)
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            for employee in result:
+                sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
+                cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
+                columns = [column[0] for column in cursor.description]
+                result_projects = toJson(cursor.fetchall(),columns)
+                employee.update({'projectKpi':result_projects})
+            resultJson.update({'employeeLists':result})
+            return jsonify(resultJson)
+        return jsonify(resultJson)
+    except Exception as e:
+        logserver(e)
         return "fail"

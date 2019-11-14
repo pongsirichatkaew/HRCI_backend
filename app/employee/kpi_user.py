@@ -104,8 +104,8 @@ def test_upload(cursor):
             print code,now
             file_name = code+''+now.strftime('%m-%d-%y%H%M%S')+'.'+f.filename.split('.')[1]
             f.save(os.path.join (path,file_name))
-            sql = "UPDATE `project_kpi` SET present_file=%s WHERE project_kpi_id = %s AND year = %s and term = %s"
-            cursor.execute(sql,(file_name,project_kpi_id,year,term))
+            sql = "UPDATE `employee_kpi` SET present_file=%s WHERE employeeid = %s AND year = %s and term = %s"
+            cursor.execute(sql,(file_name,code,year,term))
             return 'upload file success'
     except Exception as e:
         print str(e)
