@@ -1486,6 +1486,7 @@ def Export_Employee_All_company(cursor):
         data_new = source
         year=str(data_new['year'])
         month=str(data_new['month'])
+        print year,month
         try:
             sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,Personal.NicknameTh,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
@@ -1499,6 +1500,7 @@ def Export_Employee_All_company(cursor):
             result = toJson(cursor.fetchall(),columns)
             companyname_ = result[0]['company_short_name']
         except Exception as e:
+            print str(e)
             logserver(e)
             return "No_Data"
         isSuccess = True
@@ -1510,25 +1512,28 @@ def Export_Employee_All_company(cursor):
 
         wb = load_workbook('../app/Template/Template_Employee_All.xlsx')
         if len(result) > 0:
-
             sheet = wb['Sheet1']
             sheet['C'+str(3)] = year + '/' + month
             offset = 6
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['company_short_name']
-                sheet['B'+str(offset + i)] = result[i]['employeeid']
-                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
-                sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
-                sheet['E'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']
-                sheet['F'+str(offset + i)] = result[i]['email']
-                sheet['G'+str(offset + i)] = result[i]['position_detail']
-                sheet['H'+str(offset + i)] = result[i]['sect_detail']
-                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['J'+str(offset + i)] = result[i]['cost_detail']
-                sheet['K'+str(offset + i)] = result[i]['Mobile']
-                sheet['L'+str(offset + i)] = result[i]['start_work']
-                i = i + 1
+                try:
+                    sheet['A'+str(offset + i)] = result[i]['company_short_name'].encode('utf-8')
+                    sheet['B'+str(offset + i)] = result[i]['employeeid'].encode('utf-8')
+                    sheet['C'+str(offset + i)] = (result[i]['name_th'] + ' ' + result[i]['surname_th']).encode('utf-8')
+                    sheet['D'+str(offset + i)] =  (result[i]['name_eng'] + ' ' + result[i]['surname_eng']).encode('utf-8')
+                    sheet['E'+str(offset + i)] = (result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']).encode('utf-8')
+                    sheet['F'+str(offset + i)] = result[i]['email'].encode('utf-8')
+                    sheet['G'+str(offset + i)] = result[i]['position_detail'].encode('utf-8')
+                    sheet['H'+str(offset + i)] = result[i]['sect_detail'].encode('utf-8')
+                    sheet['I'+str(offset + i)] = result[i]['org_name_detail'].encode('utf-8')
+                    sheet['J'+str(offset + i)] = result[i]['cost_detail'].encode('utf-8')
+                    sheet['K'+str(offset + i)] = result[i]['Mobile'].encode('utf-8')
+                    sheet['L'+str(offset + i)] = result[i]['start_work'].encode('utf-8')
+                    i = i + 1
+                except Exception as e:
+                    print str(e)
+               
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
