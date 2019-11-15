@@ -58,17 +58,11 @@ def QryEmployee_kpi(cursor):
         # except Exception as e:
         #     pass
         print 'group_kpi_id',group_kpi_id
-        sql = "SELECT employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader,p.present_file,p.max_date AS edit_at \
+        sql = "SELECT employee_kpi.present_file,employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader \
                     FROM employee_kpi \
                     LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id \
                     LEFT JOIN position ON employee_kpi.position = position.position_id \
-                    LEFT JOIN (SELECT project_kpi_log.employeeid,MAX(CAST(project_kpi_log.create_at AS CHAR))max_date,project_kpi.present_file FROM `project_kpi_log` INNER JOIN project_kpi ON project_kpi_log.employeeid = project_kpi.employeeid GROUP BY project_kpi_log.employeeid) AS p \
-                    ON employee_kpi.employeeid = p.employeeid \
                     "+group_kpi_id+"  "
-        # sql = "SELECT employee_kpi.previous_grade,employee_kpi.validstatus,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
-        #                                                                                 LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-        #                                                                                 LEFT JOIN position ON employee_kpi.position = position.position_id\
-        # "+group_kpi_id+"  "
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -191,12 +185,10 @@ def QryEmployee_kpi_search(cursor):
             #     sql = 'employee_kpi.' + x + '= "''" and '
             #     sqlserch += sql
         print sqlserch
-        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader,p.present_file,p.max_date AS edit_at FROM employee_kpi\
+        sql = "SELECT employee_kpi.validstatus,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,company.company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.em_id_leader FROM employee_kpi\
                                                                                         LEFT JOIN company ON employee_kpi.companyid = company.companyid\
                                                                                         LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         LEFT JOIN position ON employee_kpi.position = position.position_id\
-                                                                                        LEFT JOIN (SELECT project_kpi_log.employeeid,MAX(CAST(project_kpi_log.create_at AS CHAR))max_date,project_kpi.present_file FROM `project_kpi_log` INNER JOIN project_kpi ON project_kpi_log.employeeid = project_kpi.employeeid GROUP BY project_kpi_log.employeeid) AS p \
-                                                                                        ON employee_kpi.employeeid = p.employeeid \
         WHERE " + sqlserch + "1"
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
@@ -312,7 +304,7 @@ def QryEmployee_kpi_one(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
 
-        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,pass_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus=1"
+        sql2 = "SELECT employeeid_board,name_kpi,surname_kpi,position_kpi,grade_board,pass_board,comment FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(1,2)"
         cursor.execute(sql2,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result2 = toJson(cursor.fetchall(),columns)
@@ -1057,7 +1049,7 @@ def Qry_user_kpi_board(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        print data_new
+        print 'Qry_user_kpi_board',data_new
         # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
         # หัวหน้า บอลูก
         if (str(data_new['type'])=='main')and(str(data_new['companyid'])!='23'):
@@ -1068,10 +1060,9 @@ def Qry_user_kpi_board(cursor):
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
 
             print 'yearterm',year_term
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
-                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
             "+year_term+""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
@@ -1092,10 +1083,9 @@ def Qry_user_kpi_board(cursor):
                 print str(e)
                 year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(data_new['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
             print 'yearterm',year_term
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
-                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
             "+year_term+" "
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
@@ -1114,10 +1104,9 @@ def Qry_user_kpi_board(cursor):
             except Exception as e:
                 year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'
 
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
-                                                                                            LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid\
             "+year_term+""
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
@@ -1238,7 +1227,7 @@ def Add_board_kpi_no_result(cursor):
 
         sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
         cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
-
+        
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
@@ -1252,6 +1241,7 @@ def Add_board_kpi_no_result(cursor):
             permission = data_new['group_kpi_id']
             sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
+        
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
@@ -1323,7 +1313,7 @@ def Delete_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND grade_board IS NULL OR pass_board IS NULL AND year=%s AND term=%s "
+        sqlUp2 = "UPDATE board_kpi SET validstatus=0 WHERE employeeid_board=%s AND (grade_board IS NULL OR pass_board IS NULL) AND year=%s AND term=%s AND validstatus = 1"
         cursor.execute(sqlUp2,(data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
@@ -1394,7 +1384,7 @@ def Update_board_kpi(cursor):
         except Exception as e:
             comment_board = ''
 
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['pass_board'],comment_board,data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
@@ -1945,6 +1935,57 @@ def Export_kpi_hr(cursor):
         logserver(e)
         return "fail"
 
+@app.route('/export_employee', methods=['GET'])
+@connect_sql()
+def export_employee(cursor):
+    try:
+        sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,position.position_detail,section.sect_detail,org_name.org_name_detail,
+                    cost_center_name.cost_detail,Education.EducationLevel,Education.Institute,Education.Qualification,Education.Major,Education.GradeAvg
+                    FROM employee
+                    LEFT JOIN position ON employee.position_id = position.position_id
+                    LEFT JOIN section ON employee.section_id = section.sect_id
+                    LEFT JOIN org_name ON employee.org_name_id = org_name.org_name_id
+                    LEFT JOIN cost_center_name ON employee.cost_center_name_id = cost_center_name.cost_center_name_id
+                    LEFT JOIN Education ON employee.citizenid = Education.ID_CardNo"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 6
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
+                sheet['C'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['sect_detail']
+                sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['G'+str(offset + i)] = result[i]['cost_detail']
+                sheet['H'+str(offset + i)] = result[i]['EducationLevel']
+                sheet['I'+str(offset + i)] = result[i]['Institute']
+                sheet['J'+str(offset + i)] = result[i]['Qualification']
+                sheet['K'+str(offset + i)] = result[i]['Major']
+                sheet['L'+str(offset + i)] = result[i]['GradeAvg']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        # os.remove(filename_tmp)
+        # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify("aaa")
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):

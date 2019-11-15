@@ -1,0 +1,56 @@
+SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name, Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail, benefit_1.pro_values AS value_1,benefit_2.pro_values AS value_2,benefit_3.pro_values AS value_3,benefit_4.pro_values AS value_4,benefit_5.pro_values AS value_5, benefit_6.sales_volume FROM `Emp_probation`
+LEFT JOIN position ON position.position_id = Emp_probation.position_id
+LEFT JOIN section ON section.sect_id = Emp_probation.section_id
+LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
+LEFT JOIN ((SELECT position.position_detail, org_name.org_name_detail, Emp_probation_log.type_action, Emp_probation_log.employeeid FROM Emp_probation_log
+           LEFT JOIN position ON position.position_id = Emp_probation_log.position_id
+           LEFT JOIN org_name ON org_name.org_name_id = Emp_probation_log.org_name_id ) as table1)
+           ON table1.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_1 ) 
+           ON benefit_1.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_2 ) 
+           ON benefit_2.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_3 ) 
+           ON benefit_3.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_4 ) 
+           ON benefit_4.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_5 ) 
+           ON benefit_5.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Contract_log_sales.ID_CardNo, Contract_log_sales.sales_volume FROM Emp_probation
+		   LEFT JOIN Contract_log_sales ON Contract_log_sales.ID_CardNo = Emp_probation.citizenid ) as benefit_6 ) 
+           ON benefit_6.ID_CardNo = Emp_probation.citizenid
+WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND Emp_probation.status_result = 'ผ่านทดลองงาน' AND Emp_probation.EndWork_probation LIKE '%07-2019' AND benefit_1.question_pro_id = 24 AND benefit_2.question_pro_id = 26 AND benefit_3.question_pro_id = 25 AND benefit_4.question_pro_id = 28 AND benefit_5.question_pro_id = 27
+
+
+SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name, Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail, benefit_1.pro_values AS value_1,benefit_2.pro_values AS value_2,benefit_3.pro_values AS value_3,benefit_4.pro_values AS value_4,benefit_5.pro_values AS value_5, benefit_6.sales_volume FROM `Emp_probation`
+LEFT JOIN position ON position.position_id = Emp_probation.position_id
+LEFT JOIN section ON section.sect_id = Emp_probation.section_id
+LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
+LEFT JOIN ((SELECT position.position_detail, org_name.org_name_detail, Emp_probation_log.type_action, Emp_probation_log.employeeid FROM Emp_probation_log
+           LEFT JOIN position ON position.position_id = Emp_probation_log.position_id
+           LEFT JOIN org_name ON org_name.org_name_id = Emp_probation_log.org_name_id ) as table1)
+           ON table1.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_1 ) 
+           ON benefit_1.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_2 ) 
+           ON benefit_2.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_3 ) 
+           ON benefit_3.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_4 ) 
+           ON benefit_4.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, 			     employee_pro.pro_values FROM `Emp_probation`
+           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_5 ) 
+           ON benefit_5.employeeid = Emp_probation.employeeid
+LEFT JOIN ((SELECT Contract_log_sales.ID_CardNo, Contract_log_sales.sales_volume FROM Emp_probation
+		   LEFT JOIN Contract_log_sales ON Contract_log_sales.ID_CardNo = Emp_probation.citizenid ) as benefit_6 ) 
+           ON benefit_6.ID_CardNo = Emp_probation.citizenid
+WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND Emp_probation.status_result = 'ขยายเวลาทดลองงาน' AND Emp_probation.EndWork_probation LIKE '%07-2019' AND benefit_1.question_pro_id = 24 AND benefit_2.question_pro_id = 26 AND benefit_3.question_pro_id = 25 AND benefit_4.question_pro_id = 28 AND benefit_5.question_pro_id = 27

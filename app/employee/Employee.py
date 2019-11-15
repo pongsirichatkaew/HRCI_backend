@@ -343,6 +343,29 @@ def QryEmployee_one_person(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@connect_sql2()
+def EditIntranetEmployee(cursor,employee,position_detail,org_name_detail,cost_center_name,sect_detail):
+    eng_name = employee['NameEn'].split('.')
+    prefix = eng_name[0]
+    if(prefix == 'MS'):
+        prefix = 'Ms'
+    firstname = prefix+'. '+eng_name[1]
+    sql_update = """UPDATE `hrci` SET `thainame`=%s,`engname`=%s,`positionname`=%s,`orgname`=%s,
+            `costcentername`=%s,`section`=%s,
+            `nicknameth`=%s,`email`=%s,`phonenumber`=%s WHERE code = %s"""
+    cursor.execute(sql_update,(employee['NameTh']+' '+employee['SurnameTh'],
+                               firstname+' '+employee['SurnameEn'],
+                               position_detail,org_name_detail,cost_center_name,sect_detail,
+                               employee['NicknameTh'],employee['Email'],
+                               employee['phone_company'],employee['employeeid']))
+    
+    sql_update_email = """ Update user SET name = %s ,username =%s ,department=%s WHERE userid =%s """
+    cursor.execute(sql_update_email,(firstname+' '+employee['SurnameEn'],employee['Email'],org_name_detail,employee['employeeid']))
+    # columns = [column[0] for column in cursor.description]
+    # result = toJson(cursor.fetchall(),columns)
+    
+
 @app.route('/EditEmployee', methods=['POST'])
 @connect_sql()
 def EditEmployee(cursor):
@@ -350,12 +373,14 @@ def EditEmployee(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-
-        sql = "SELECT * FROM employee WHERE employeeid=%s"
+        # print 'editEmploye',data_new
+        
+        sql = """SELECT * FROM employee WHERE employeeid = %s"""
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-
+        
+        # print 'resultEm',result
         type_action = "Edit"
 
         sqlEM_log = "INSERT INTO employee_log (employeeid,citizenid,name_th,name_eng,surname_th,surname_eng,nickname_employee,salary,email,phone_company,position_id,section_id,org_name_id,cost_center_name_id,company_id,start_work,EndWork_probation,createby,type_action,quota_id) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -492,6 +517,33 @@ def EditEmployee(cursor):
             UpTrainingCourse= "UPDATE TrainingCourse SET ID_CardNo=%s WHERE ID_CardNo=%s"
             cursor.execute(UpTrainingCourse,(data_new['ID_CardNo'],result[0]['citizenid']))
         except Exception as e:
+            pass
+
+        try:
+            # print 'source',data_new
+            sql_position = """SELECT * FROM position WHERE position_id = %s"""
+            cursor.execute(sql_position,(data_new['position_id']))
+            columns = [column[0] for column in cursor.description]
+            result_position = toJson(cursor.fetchall(),columns)
+            
+            sql_org_name = """SELECT * FROM org_name WHERE org_name_id = %s"""
+            cursor.execute(sql_org_name,(data_new['org_name_id']))
+            columns = [column[0] for column in cursor.description]
+            result_org_name = toJson(cursor.fetchall(),columns)
+            
+            sql_cost_center = """SELECT * FROM cost_center_name WHERE cost_center_name_id = %s"""
+            cursor.execute(sql_cost_center,(data_new['cost_center_name_id']))
+            columns = [column[0] for column in cursor.description]
+            result_cost_center = toJson(cursor.fetchall(),columns)
+            
+            sql_section = """SELECT * FROM section WHERE sect_id = %s"""
+            cursor.execute(sql_section,(data_new['section_id']))
+            columns = [column[0] for column in cursor.description]
+            result_section = toJson(cursor.fetchall(),columns)
+            
+            EditIntranetEmployee(data_new,result_position[0]['position_detail'].encode("utf-8"),result_org_name[0]['org_name_detail'].encode("utf-8"),result_cost_center[0]['cost_detail'].encode("utf-8"),result_section[0]['sect_detail'].encode("utf-8"))
+        except Exception as e:
+            print (str(e))
             pass
 
         return "Success"
@@ -716,7 +768,7 @@ def EditEmployee_EmergencyContact(cursor):
         columns = [column[0] for column in cursor.description]
         result_Personal = toJson(cursor.fetchall(),columns)
 
-        sqlUp_EmerContact = "UPDATE Personal SET EmergencyPerson=%s,EmergencyRelation=%s,EmergencyAddress=%s,EmergencyTel=%s WHERE ID_CardNo=%s"
+        sqlUp_EmerContact = "UPDATE Personal SET EmergencyPerson=%s,EmergencyRelatio/EditEmployee_Employeeidn=%s,EmergencyAddress=%s,EmergencyTel=%s WHERE ID_CardNo=%s"
         cursor.execute(sqlUp_EmerContact,(data_new['EmergencyPerson'],data_new['EmergencyRelation'],data_new['EmergencyAddress'],data_new['EmergencyTel'],result[0]['citizenid']))
         return "Success"
     except Exception as e:
@@ -1000,6 +1052,17 @@ def EditEmployee_TrainingCourse(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+# @connect_sql2()
+# def editEmployeeEmployeeidIntranet(cursor,employee):
+#     sql = """"""
+#     # sql = """UPDATE `hrci` SET `thainame`=%s,`engname`=%s,`positionname`=%s,`orgname`=%s,
+#     #         `costcentername`=%s,`section`=%s,`division`=%s,
+#     #         `nicknameth`=%s,`companycode`=%s,`startdate`=%s,`email`=%s,`phonenumber`=%s,`birthdate`=%s WHERE 1"""
+#     # cursor.execute(sql,employee['employeeid'])
+#     # columns = [column[0] for column in cursor.description]
+#     # result = toJson(cursor.fetchall(),columns)
+    
 @app.route('/EditEmployee_Employeeid', methods=['POST'])
 @connect_sql()
 def EditEmployee_Employeeid(cursor):
@@ -1423,6 +1486,7 @@ def Export_Employee_All_company(cursor):
         data_new = source
         year=str(data_new['year'])
         month=str(data_new['month'])
+        print year,month
         try:
             sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,employee.name_eng,employee.surname_eng,employee.nickname_employee,Personal.NicknameTh,employee.email,employee.start_work,Personal.Mobile,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.company_short_name FROM employee LEFT JOIN company ON company.companyid = employee.company_id\
                                           LEFT JOIN position ON position.position_id = employee.position_id\
@@ -1436,6 +1500,7 @@ def Export_Employee_All_company(cursor):
             result = toJson(cursor.fetchall(),columns)
             companyname_ = result[0]['company_short_name']
         except Exception as e:
+            print str(e)
             logserver(e)
             return "No_Data"
         isSuccess = True
@@ -1447,25 +1512,28 @@ def Export_Employee_All_company(cursor):
 
         wb = load_workbook('../app/Template/Template_Employee_All.xlsx')
         if len(result) > 0:
-
             sheet = wb['Sheet1']
             sheet['C'+str(3)] = year + '/' + month
             offset = 6
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['company_short_name']
-                sheet['B'+str(offset + i)] = result[i]['employeeid']
-                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
-                sheet['D'+str(offset + i)] =  result[i]['name_eng'] + ' ' + result[i]['surname_eng']
-                sheet['E'+str(offset + i)] = result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']
-                sheet['F'+str(offset + i)] = result[i]['email']
-                sheet['G'+str(offset + i)] = result[i]['position_detail']
-                sheet['H'+str(offset + i)] = result[i]['sect_detail']
-                sheet['I'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['J'+str(offset + i)] = result[i]['cost_detail']
-                sheet['K'+str(offset + i)] = result[i]['Mobile']
-                sheet['L'+str(offset + i)] = result[i]['start_work']
-                i = i + 1
+                try:
+                    sheet['A'+str(offset + i)] = result[i]['company_short_name'].encode('utf-8')
+                    sheet['B'+str(offset + i)] = result[i]['employeeid'].encode('utf-8')
+                    sheet['C'+str(offset + i)] = (result[i]['name_th'] + ' ' + result[i]['surname_th']).encode('utf-8')
+                    sheet['D'+str(offset + i)] =  (result[i]['name_eng'] + ' ' + result[i]['surname_eng']).encode('utf-8')
+                    sheet['E'+str(offset + i)] = (result[i]['nickname_employee'] + ' ' + result[i]['NicknameTh']).encode('utf-8')
+                    sheet['F'+str(offset + i)] = result[i]['email'].encode('utf-8')
+                    sheet['G'+str(offset + i)] = result[i]['position_detail'].encode('utf-8')
+                    sheet['H'+str(offset + i)] = result[i]['sect_detail'].encode('utf-8')
+                    sheet['I'+str(offset + i)] = result[i]['org_name_detail'].encode('utf-8')
+                    sheet['J'+str(offset + i)] = result[i]['cost_detail'].encode('utf-8')
+                    sheet['K'+str(offset + i)] = result[i]['Mobile'].encode('utf-8')
+                    sheet['L'+str(offset + i)] = result[i]['start_work'].encode('utf-8')
+                    i = i + 1
+                except Exception as e:
+                    print str(e)
+               
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
