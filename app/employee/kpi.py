@@ -868,9 +868,9 @@ def Update_grade_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
+        print data_new
         comment_hr = data_new['comment_hr']
         permission_hr = str(data_new['permission'])
-        print data_new
         if permission_hr!="Hr":
             return "hr no permission"
         sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
@@ -891,6 +891,25 @@ def Update_grade_hr(cursor):
         sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
 
+
+        ## onechat ##
+        try:
+            payload = {"staff_id": data_new['employeeid']}
+            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            ond_id =  response_onechat_id['staff_data']['one_id']
+            bot_id = "B3b756d16c6f2504e90562cfc8ba44687"
+            tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+            payload_msg =  {
+                "bot_id":bot_id,
+                "to": ond_id,
+                "type":"text",
+                "message": "ยินดีด้วยท่านได้รับเกรด " +data_new['grade']
+            }
+            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+        except Exception as e:
+            pass
+       
         return "Success"
     except Exception as e:
         logserver(e)
