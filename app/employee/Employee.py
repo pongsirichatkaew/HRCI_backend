@@ -1901,7 +1901,8 @@ def Export_Emp_benefit_All_company(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for item_ in result:
-                item_['salary'] = base64.b64decode(item_['salary'])
+                if item_['salary'] is not None:
+                    item_['salary'] = base64.b64decode(item_['salary'])
             companyname_ = result[0]['company_short_name']
             for i1 in result:
                 benefitsful = []
@@ -2004,7 +2005,8 @@ def Export_Emp_benefit_company(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for item_ in result:
-                item_['salary'] = base64.b64decode(item_['salary'])
+                if item_['salary'] is not None:
+                    item_['salary'] = base64.b64decode(item_['salary'])
             companyname_ = result[0]['company_short_name']
             for i1 in result:
                 benefitsful = []
@@ -2106,7 +2108,8 @@ def Export_Emp_Ga_All_company(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for item_ in result:
-                item_['salary'] = base64.b64decode(item_['salary'])
+                if item_['salary'] is not None:
+                    item_['salary'] = base64.b64decode(item_['salary'])
             companyname_ = result[0]['company_short_name']
             for i1 in result:
                 benefitsful = []
@@ -2241,7 +2244,8 @@ def Export_Emp_Ga_company(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             for item_ in result:
-                item_['salary'] = base64.b64decode(item_['salary'])
+                if item_['salary'] is not None:
+                    item_['salary'] = base64.b64decode(item_['salary'])
             companyname_ = result[0]['company_short_name']
             for i1 in result:
                 benefitsful = []
