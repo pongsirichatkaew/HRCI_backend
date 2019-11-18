@@ -1222,7 +1222,6 @@ def board_qry_search(cursor):
         logserver(e)
         return "fail"
 
-## TODO ADD && DELETE
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
@@ -1243,9 +1242,10 @@ def Add_board_kpi_no_result(cursor):
             return "employee board is duplicate"
         except Exception as e:
             pass
-
-        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
+        
+        uuid_onechat = str(uuid.uuid4())
+        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby'],uuid_onechat))
         
         try:
             permission = data_new['group_kpi_id']
