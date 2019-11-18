@@ -12,7 +12,7 @@ from datetime import datetime, date,timedelta
 import string
 import random
 import os
-import xlrd 
+import xlrd
 import wget
 import base64
 import xlsxwriter
@@ -60,14 +60,14 @@ mysql2 = MySQL()
 mysql2.init_app(app2)
 
 app3 = Flask(__name__)
-app3.config['MYSQL_DATABASE_USER'] = "root"
-app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
-app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
-app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
 # app3.config['MYSQL_DATABASE_USER'] = "root"
 # app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
-# app3.config['MYSQL_DATABASE_DB'] = 'applicationform_dev'
+# app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
 # app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
+app3.config['MYSQL_DATABASE_USER'] = "root"
+app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
+app3.config['MYSQL_DATABASE_DB'] = 'applicationform_dev'
+app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
 mysql3 = MySQL()
 mysql3.init_app(app3)
 
@@ -179,7 +179,7 @@ def CheckTokenAssessor(employeeid,token):
         chek_tk = 'Not pass'
     return chek_tk
 def CheckTokenAssessor_kpi(employeeid,token):
-    now = str(datetime.now()) 
+    now = str(datetime.now())
     now = now.split("-")
     token_mounth = now[1]
     new_day = now[2].split(" ")
