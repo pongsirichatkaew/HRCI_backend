@@ -897,7 +897,7 @@ def Update_grade_hr(cursor):
             payload = {"staff_id": data_new['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             ond_id =  response_onechat_id['staff_data']['one_id']
-            bot_id = "B3b756d16c6f2504e90562cfc8ba44687"
+            bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
             tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
             payload_msg =  {
                 "bot_id":bot_id,
