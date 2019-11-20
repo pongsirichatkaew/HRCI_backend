@@ -1403,7 +1403,7 @@ def Update_board_kpi(cursor):
         except Exception as e:
             comment_board = ''
 
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2,status_onechat=1 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['pass_board'],comment_board,data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
