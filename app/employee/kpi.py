@@ -868,7 +868,6 @@ def Update_grade_hr(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        print data_new
         comment_hr = data_new['comment_hr']
         permission_hr = str(data_new['permission'])
         if permission_hr!="Hr":
@@ -894,22 +893,59 @@ def Update_grade_hr(cursor):
 
         ## onechat ##
         try:
+            sqlcheck = """SELECT employee_kpi.employeeid, employee_kpi.pass_hr, position.position_detail  FROM `employee_kpi`
+                          LEFT JOIN position ON position.position_id = employee_kpi.positionChange
+                          WHERE employeeid=%s AND year=%s AND term=%s"""
+            cursor.execute(sqlcheck,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result2 = toJson(cursor.fetchall(),columns)
+
             payload = {"staff_id": data_new['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             ond_id =  response_onechat_id['staff_data']['one_id']
             bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
             tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+
+            try:
+                if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
+                    position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
+                else:
+                    position_change = "ไม่ผ่าน"
+            except Exception as e:
+                print str(e)
+
             payload_msg =  {
                 "bot_id":bot_id,
                 "to": ond_id,
                 "type":"text",
-                "message": "ยินดีด้วยท่านได้รับเกรด " +data_new['grade']
+                "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
             }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+
+            sql_board = """SELECT employeeid_board  FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus = 2"""
+            cursor.execute(sql_board,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result3 = toJson(cursor.fetchall(),columns)
+            for employee_board in result3:
+                payload = {"staff_id": employee_board['employeeid_board']}
+                response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
+                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+
+                payload_msg =  {
+                    "bot_id":bot_id,
+                    "to": ond_id_leader,
+                    "type":"text",
+                    "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+
         except Exception as e:
             pass
-       
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -1242,11 +1278,11 @@ def Add_board_kpi_no_result(cursor):
             return "employee board is duplicate"
         except Exception as e:
             pass
-        
+
         uuid_onechat = str(uuid.uuid4())
         sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s)"
         cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby'],uuid_onechat))
-        
+
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
@@ -1260,7 +1296,7 @@ def Add_board_kpi_no_result(cursor):
             permission = data_new['group_kpi_id']
             sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
-        
+
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
