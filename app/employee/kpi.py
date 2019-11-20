@@ -910,7 +910,7 @@ def Update_grade_hr(cursor):
                 if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
                     position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
                 else:
-                    position_change = "ไม่ผ่าน"
+                    position_change = "ไม่ปรับตำแหน่ง"
             except Exception as e:
                 print str(e)
 
