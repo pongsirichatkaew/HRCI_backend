@@ -64,7 +64,18 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
-                
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
+ 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         
@@ -85,7 +96,18 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
-
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
+                
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         ### submain only
@@ -104,6 +126,17 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -320,6 +353,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
                 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
@@ -345,6 +389,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
@@ -367,6 +422,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -413,6 +479,17 @@ def Qry_user_board_mobile(cursor,employee_id):
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
                 resultEmployeeList.append(employee)
+                try:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    open_path_ = urllib.urlopen(encoded_Image)
+                    htmlSource = open_path_.read()
+                    open_path_.close()
+                    test= htmlSource.decode('utf-8')
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                    employee.update({'image':encoded_Image})
+                except Exception as e:
+                    encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                    employee.update({'image':encoded_Image})
             except Exception as e:
                 pass 
         resultJson.update({'employeeLists':resultEmployeeList})
