@@ -903,8 +903,8 @@ def Update_grade_hr(cursor):
             payload = {"staff_id": data_new['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             ond_id =  response_onechat_id['staff_data']['one_id']
-            bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-            tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+            bot_id = botId()
+            tokenBot = botToken()
 
             try:
                 if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
@@ -922,17 +922,17 @@ def Update_grade_hr(cursor):
             }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-
-            sql_board = """SELECT employeeid_board  FROM board_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus = 2"""
-            cursor.execute(sql_board,(data_new['employeeid'],data_new['year'],data_new['term']))
+            #assessor
+            sql_assessor = """SELECT em_id_leader_default  FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(2,3)"""
+            cursor.execute(sql_assessor,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result3 = toJson(cursor.fetchall(),columns)
-            for employee_board in result3:
-                payload = {"staff_id": employee_board['employeeid_board']}
+            for employee_assessor in result3:
+                payload = {"staff_id": employee_assessor['em_id_leader_default']}
                 response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
                 ond_id_leader =  response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+                bot_id = botId()
+                tokenBot = botToken()
 
                 payload_msg =  {
                     "bot_id":bot_id,
