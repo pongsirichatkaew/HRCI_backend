@@ -870,7 +870,6 @@ def Update_grade_hr(cursor):
         data_new = source
         comment_hr = data_new['comment_hr']
         permission_hr = str(data_new['permission'])
-        print data_new
         if permission_hr!="Hr":
             return "hr no permission"
         sql = "SELECT employeeid,grade,comment_hr FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
@@ -890,6 +889,62 @@ def Update_grade_hr(cursor):
 
         sqlUp = "UPDATE employee_kpi SET grade=%s,pass_hr=%s,comment_hr=%s WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['grade'],data_new['pass_hr'],comment_hr,data_new['employeeid'],data_new['year'],data_new['term']))
+
+
+        ## onechat ##
+        try:
+            sqlcheck = """SELECT employee_kpi.employeeid, employee_kpi.pass_hr, position.position_detail  FROM `employee_kpi`
+                          LEFT JOIN position ON position.position_id = employee_kpi.positionChange
+                          WHERE employeeid=%s AND year=%s AND term=%s"""
+            cursor.execute(sqlcheck,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result2 = toJson(cursor.fetchall(),columns)
+
+            payload = {"staff_id": data_new['employeeid']}
+            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            ond_id =  response_onechat_id['staff_data']['one_id']
+            bot_id = botId()
+            tokenBot = botToken()
+
+            try:
+                if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
+                    position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
+                else:
+                    position_change = "ไม่ปรับตำแหน่ง"
+            except Exception as e:
+                print str(e)
+
+            payload_msg =  {
+                "bot_id":bot_id,
+                "to": ond_id,
+                "type":"text",
+                "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+            }
+            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            #assessor
+            sql_assessor = """SELECT em_id_leader_default  FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(2,3)"""
+            cursor.execute(sql_assessor,(data_new['employeeid'],data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result3 = toJson(cursor.fetchall(),columns)
+            for employee_assessor in result3:
+                payload = {"staff_id": employee_assessor['em_id_leader_default']}
+                response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                bot_id = botId()
+                tokenBot = botToken()
+
+                payload_msg =  {
+                    "bot_id":bot_id,
+                    "to": ond_id_leader,
+                    "type":"text",
+                    "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+
+        except Exception as e:
+            pass
 
         return "Success"
     except Exception as e:
@@ -1203,7 +1258,6 @@ def board_qry_search(cursor):
         logserver(e)
         return "fail"
 
-## TODO ADD && DELETE
 @app.route('/Add_board_kpi_no_result', methods=['POST'])
 @connect_sql()
 def Add_board_kpi_no_result(cursor):
@@ -1225,9 +1279,10 @@ def Add_board_kpi_no_result(cursor):
         except Exception as e:
             pass
 
-        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby) VALUES (%s,%s,%s,%s,%s)"
-        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby']))
-        
+        uuid_onechat = str(uuid.uuid4())
+        sql_be = "INSERT INTO board_kpi_v2(year,term,employeeid_board,name,createby,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sql_be,(data_new['year'],data_new['term'],data_new['employeeid_board'],nameKpi__,data_new['createby'],uuid_onechat))
+
         try:
             permission = data_new['group_kpi_id']
             # for i in xrange(len(data_new['emp_board'])):
@@ -1241,7 +1296,7 @@ def Add_board_kpi_no_result(cursor):
             permission = data_new['group_kpi_id']
             sql = "INSERT INTO Admin (employeeid,username,name,permission,position,createby) VALUES (%s,%s,%s,%s,%s,%s)"
             cursor.execute(sql,(data_new['employeeid_board'],data_new['username'],nameKpi__,permission,data_new['position_kpi'],data_new['createby']))
-        
+
 
         group_kpi_id = "WHERE year="+data_new['year']+" AND term="+data_new['term']+""
         try:
@@ -1384,7 +1439,7 @@ def Update_board_kpi(cursor):
         except Exception as e:
             comment_board = ''
 
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2,status_onechat=1 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['pass_board'],comment_board,data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"

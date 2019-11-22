@@ -1,6 +1,37 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 from dbConfig import *
+
+@app.route('/checkuuidAccessor/<uuid>', methods=['GET'])
+@connect_sql()
+def checkuuidAccessor(cursor,uuid):
+    try:
+        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s"""
+        cursor.execute(sql_update_status,(uuid))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        print result[0]['employeeid']
+        return jsonify(result[0]['employeeid'])
+    except Exception as e:
+        logserver(e)
+        print str(e)
+        return "fail"
+
+@app.route('/checkuuidBoard/<uuid>', methods=['GET'])
+@connect_sql()
+def checkuuidBoard(cursor,uuid):
+    try:
+        sql_update_status = """SELECT * FROM `board_kpi_v2` WHERE uuid_onechat =%s"""
+        cursor.execute(sql_update_status,(uuid))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        print result[0]['employeeid_board']
+        return jsonify(result[0]['employeeid_board'])
+    except Exception as e:
+        logserver(e)
+        print str(e)
+        return "fail"
+
 @app.route('/Qry_user_kpi_mobile/<employee_id>', methods=['GET'])
 @connect_sql()
 def Qry_user_kpi_mobile(cursor,employee_id):
@@ -18,21 +49,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
 
         # หัวหน้า บอลูก
         if (employee['type']=='main')and(str(employee['companyid'])!='23'):
-
-            # try:
-            #     year_term = "WHERE employee_kpi.companyid="+"'"+employee['companyid']+"'"+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
-            # except Exception as e:
-            # year_term = "WHERE employee_kpi.companyid="+"'"+str(employee['companyid'])+"''employee_kpi.em_id_leader='+'"'+str(employee['employeeid'])+'"'
-
             print 'yearterm',year_term
-            # sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
-            #             employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,
-            #             employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
-            #             employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,
-            #             employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,project_kpi.present_file 
-            #             FROM employee_kpi LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
-            #             LEFT JOIN position ON employee_kpi.position = position.position_id
-            #             LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid """+year_term
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
@@ -47,27 +64,24 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
-                
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
+ 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         
         # หัวหน้า inet
         elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
-            # try:
-            #     print 'try'
-            #     year_term = "WHERE employee_kpi.companyid="+"'"+str(data_new['companyid'])+"'"+' AND employee_kpi.org_name ='+'"'+str(data_new['org_name_id'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(data_new['em_id_leader'])+'"'
-            # except Exception as e:
-            #     print str(e)
-            # year_term = "WHERE employee_kpi.companyid="+"'"+str(employee['companyid'])+"'"+' AND employee_kpi.org_name='+'"'+str(employee['org_name_id'])+'"'+' OR employee_kpi.em_id_leader='+'"'+str(employee['employeeid'])+'"'
             print 'yearterm',year_term,'elseif'
-            # sql = """"SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
-            #             employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
-            #             employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,
-            #             employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,
-            #             employee_kpi.status,project_kpi.present_file FROM employee_kpi
-            #             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
-            #             LEFT JOIN position ON employee_kpi.position = position.position_id
-            #             LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid """+year_term
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
@@ -82,25 +96,22 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
-
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
+                
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         ### submain only
         else:
-            # try:
-            #     year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(data_new['em_id_leader'])+'"'+' AND employee_kpi.year='+'"'+str(data_new['year'])+'"'+'AND employee_kpi.term='+'"'+str(data_new['term'])+'"'
-            # except Exception as e:
-            # year_term = "WHERE employee_kpi.em_id_leader="+'"'+str(employee['employeeid'])+'" GROUP BY employee_kpi.em_id_leader'
-            
-            # sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
-            #             employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
-            #             employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,
-            #             employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,
-            #             employee_kpi.status,project_kpi.present_file FROM employee_kpi\
-            #             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
-            #             LEFT JOIN position ON employee_kpi.position = position.position_id
-            #             LEFT JOIN project_kpi ON project_kpi.employeeid = employee_kpi.employeeid """+year_term
-            
             sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
@@ -115,6 +126,17 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -170,7 +192,7 @@ def cancel_emp_kpi_mobile(cursor):
             sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],result_revers[0]['createby'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['old_emid_leader']))
 
-            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s WHERE employeeid=%s AND year=%s AND term=%s"
+            sqlUp_main = "UPDATE employee_kpi SET comment_cancel=%s,validstatus=4  WHERE employeeid=%s AND year=%s AND term=%s"
             cursor.execute(sqlUp_main,(data_new['comment_cancel'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         try:
@@ -231,6 +253,24 @@ def add_project_mobile(cursor):
             cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up'],type_action))
 
         return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/QryEmployeeMobile', methods=['POST'])
+@connect_sql()
+def QryEmployeeMobile(cursor):
+    try:
+        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.email,employee.start_work,company.company_short_name,company.companyname,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail 
+                    FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+                    LEFT JOIN position ON position.position_id = employee.position_id
+                    LEFT JOIN section ON section.sect_id = employee.section_id
+                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+                    LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
     except Exception as e:
         logserver(e)
         return "fail"
@@ -321,11 +361,6 @@ def Qry_user_present_mobile(cursor,employee_id):
                         FROM employee_kpi LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
                         LEFT JOIN position ON employee_kpi.position = position.position_id
                          """+year_term
-                        
-            # sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
-            #                                                                                 LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
-            #                                                                                 LEFT JOIN position ON employee_kpi.position = position.position_id\
-            # "+year_term+" GROUP BY employee_kpi.employeeid"
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -336,6 +371,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
                 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
@@ -361,6 +407,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
 
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
@@ -383,6 +440,17 @@ def Qry_user_present_mobile(cursor,employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(),columns)
                 employee.update({'projectKpi':result_projects})
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -406,19 +474,43 @@ def Qry_user_board_mobile(cursor,employee_id):
                     employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
                     employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,
                     employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file  
-                    FROM employee_kpi LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
+                    FROM employee_kpi 
+                    LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
                     LEFT JOIN position ON employee_kpi.position = position.position_id
                         """+year_term
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
+        resultEmployeeList = []
         for employee in result:
-            sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
-            cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
-            columns = [column[0] for column in cursor.description]
-            result_projects = toJson(cursor.fetchall(),columns)
-            employee.update({'projectKpi':result_projects})
-        resultJson.update({'employeeLists':result})
+            try:
+                sql_board = """SELECT * FROM board_kpi WHERE employeeid = %s AND year = %s AND term = %s AND employeeid_board = %s AND status_onechat = 0 AND validstatus = 1"""
+                cursor.execute(sql_board,(employee['employeeid'],employee['year'],employee['term'],employee_id))
+                columns = [column[0] for column in cursor.description]
+                result_board = toJson(cursor.fetchall(),columns)
+                board = result_board[0]
+                employee.update({'status_onechat':board['status_onechat']})
+                
+                sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
+                cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
+                columns = [column[0] for column in cursor.description]
+                result_projects = toJson(cursor.fetchall(),columns)
+                employee.update({'projectKpi':result_projects})
+                resultEmployeeList.append(employee)
+                # try:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     open_path_ = urllib.urlopen(encoded_Image)
+                #     htmlSource = open_path_.read()
+                #     open_path_.close()
+                #     test= htmlSource.decode('utf-8')
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
+                #     employee.update({'image':encoded_Image})
+                # except Exception as e:
+                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
+                #     employee.update({'image':encoded_Image})
+            except Exception as e:
+                pass 
+        resultJson.update({'employeeLists':resultEmployeeList})
         return jsonify(resultJson)      
     except Exception as e:
         logserver(e)

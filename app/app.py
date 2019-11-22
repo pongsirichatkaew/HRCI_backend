@@ -29,6 +29,7 @@ from employee.kpi_user import *
 from employee.request_employee import *
 from Appform.appform import *
 from mobile.kpi_mobile import *
+from apiAlertOnechat import *
 
 @app.route('/hello', methods=['GET'])
 def hello():

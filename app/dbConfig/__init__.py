@@ -264,3 +264,11 @@ def toDict(data,columns):
 def allowed_file(filename):
     return '.' in filename and \
     filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
+
+def botId():
+    bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
+    return bot_id
+
+def botToken():
+    token_bot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+    return token_bot
