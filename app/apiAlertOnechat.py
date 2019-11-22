@@ -60,7 +60,7 @@ def api_notice_estimate_employee(cursor):
                 tokenBot = botToken()
                 uuid_onechat = employee_assessor['uuid_onechat']
                 quick_reply_element = []
-
+                date = '....'
                 quick_reply_element.append({
                 "label" : "ประเมินผล",
                 "type" : "webview",
@@ -71,7 +71,7 @@ def api_notice_estimate_employee(cursor):
                 payload_msg =  {
                                 "to" : ond_id_leader,
                                 "bot_id" : bot_id,
-                                "message": "โปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง .....) \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "message": "โปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
                                 "quick_reply" :  quick_reply_element
                             }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
@@ -301,11 +301,11 @@ def api_notice_upload_present(cursor):
                 "url" : "http://203.150.37.130/kpiupload/"+uuid_onechat,
                 "size" : "full"
                 })
-
+                date = "...."
                 payload_msg =  {
                                 "to" : ond_id_leader,
                                 "bot_id" : bot_id,
-                                "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง ..... \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง "+date+" \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
                                 "quick_reply" :  quick_reply_element
                             }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",

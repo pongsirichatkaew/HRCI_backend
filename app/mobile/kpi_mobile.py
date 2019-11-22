@@ -205,7 +205,112 @@ def cancel_emp_kpi_mobile(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
-    
+
+@app.route('/transfer_kpi_mobile', methods=['POST'])
+@connect_sql()
+def transfer_kpi_mobile(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        employeeid_leadernew = str(data_new['employeeid_new'])
+        try:
+            sql44 = "SELECT name FROM employee_kpi WHERE employeeid=%s AND em_id_leader=%s AND year=%s AND term=%s"
+            cursor.execute(sql44,(data_new['employeeid'],employeeid_leadernew,data_new['year'],data_new['term']))
+            columns = [column[0] for column in cursor.description]
+            result_44 = toJson(cursor.fetchall(),columns)
+            name = result_44[0]['name']
+            return "employee is duplicate"
+        except Exception as e:
+            pass
+
+        try:
+            sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s AND org_name_id=%s"
+            cursor.execute(sql44,(data_new['companyid'],employeeid_leadernew,data_new['org_name_id']))
+            columns = [column[0] for column in cursor.description]
+            result_test = toJson(cursor.fetchall(),columns)
+            name_test = result_test[0]['name_asp']
+        except Exception as e:
+            try:
+                sqlQry = "SELECT assessor_kpi_id FROM assessor_kpi ORDER BY assessor_kpi_id DESC LIMIT 1"
+                cursor.execute(sqlQry)
+                columns = [column[0] for column in cursor.description]
+                result_ass = toJson(cursor.fetchall(),columns)
+                assessor_kpi_id_last = result_ass[0]['assessor_kpi_id']+1
+            except Exception as e:
+                assessor_kpi_id_last = 1
+                
+            uuid_onechat = str(uuid.uuid4())
+            type = 'submain'
+            sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql,(assessor_kpi_id_last,employeeid_leadernew,data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type,uuid_onechat))
+
+            type_action = "ADDtranfer"
+
+            sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sql_log,(assessor_kpi_id_last,employeeid_leadernew,data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type_action))
+
+
+        sql_test = "SELECT * FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sql_test,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        type_action = "tranfer"
+
+        sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_be2,(result[0]['year'],result[0]['term'],result[0]['companyid'],result[0]['employeeid'],result[0]['structure_salary'],data_new['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby'],type_action))
+
+        sqlIn_tran = "INSERT INTO employee_kpi_tranfer(year,term,employeeid,em_id_leader,name_asp,surname_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_tran,(result[0]['year'],result[0]['term'],data_new['employeeid'],employeeid_leadernew,data_new['name_asp'],data_new['surname_asp'],data_new['createby']))
+
+        sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlI9de,(data_new['employeeid'],data_new['year'],data_new['term']))
+
+        sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,em_id_leader_default,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+        cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],employeeid_leadernew,result[0]['em_id_leader_default'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
+        
+        try:
+            sql_select_uuid = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
+            cursor.execute(sql_select_uuid,(employeeid_leadernew))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(),columns)
+            uuid_onechat = result[0]['uuid_onechat']
+            
+            payload = {"staff_id": str(employeeid_leadernew)}
+            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            ond_id_leader =  response_onechat_id['staff_data']['one_id']
+            bot_id = botId()
+            tokenBot = botToken()
+
+            quick_reply_element = []
+            quick_reply_element.append({
+            "label" : "ประเมินผล",
+            "type" : "webview",
+            "url" : "http://203.150.37.130/kpionline/"+uuid_onechat,
+            "size" : "full"
+            })
+
+            payload_msg =  {
+                            "to" : ond_id_leader,
+                            "bot_id" : bot_id,
+                            "message": "ขณะนี้อยู่ในช่วงการตรวจสอบรายชื่อพนักงานใต้บังคับบัญชา \nโปรดเลือกเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                            "quick_reply" :  quick_reply_element
+                        }
+            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            
+            print response_msg
+        except Exception as e:
+            pass
+        
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+
 @app.route('/confirm_all_kpi_mobile', methods=['POST'])
 @connect_sql()
 def confirm_all_kpi(cursor):
@@ -261,7 +366,7 @@ def add_project_mobile(cursor):
 @connect_sql()
 def QryEmployeeMobile(cursor):
     try:
-        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.email,employee.start_work,company.company_short_name,company.companyname,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail 
+        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.email,employee.start_work,company.company_short_name,company.companyname,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,company.companyid,org_name.org_name_id,position.position_id
                     FROM employee LEFT JOIN company ON company.companyid = employee.company_id
                     LEFT JOIN position ON position.position_id = employee.position_id
                     LEFT JOIN section ON section.sect_id = employee.section_id
