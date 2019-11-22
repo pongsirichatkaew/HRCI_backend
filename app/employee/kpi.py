@@ -1071,12 +1071,13 @@ def update_user_kpi_no_emid_leader(cursor):
                 cursor.execute(sql,(assessor_kpi_id_last,data_new['em_id_leader'],data_new['companyid'],data_new['name_asp'],data_new['surname_asp'],data_new['org_name_id'],data_new['email_asp'],data_new['createby'],type))
 
 
-        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s,validstatus=1 WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp_main,(data_new['em_id_leader'],data_new['employeeid'],data_new['year'],data_new['term']))
+        sqlUp_main = "UPDATE employee_kpi SET em_id_leader=%s,em_id_leader_default=%s,validstatus=1 WHERE employeeid=%s AND year=%s AND term=%s"
+        cursor.execute(sqlUp_main,(data_new['em_id_leader'],data_new['em_id_leader'],data_new['employeeid'],data_new['year'],data_new['term']))
 
         return "Success"
     except Exception as e:
         logserver(e)
+        print e
         return "fail"
 @app.route('/Qry_user_kpi', methods=['POST'])
 @connect_sql()
