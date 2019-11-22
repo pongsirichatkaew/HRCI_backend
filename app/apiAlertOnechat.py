@@ -13,27 +13,30 @@ def api_notice_list_employee(cursor):
         for employee_assessor in result:
             payload = {"staff_id": employee_assessor['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-            ond_id_leader =  response_onechat_id['staff_data']['one_id']
-            bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-            tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
-            uuid_onechat = employee_assessor['uuid_onechat']
-            quick_reply_element = []
+            try:
+                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                bot_id = botId()
+                tokenBot = botToken()
+                uuid_onechat = employee_assessor['uuid_onechat']
+                quick_reply_element = []
 
-            quick_reply_element.append({
-            "label" : "ตรวจสอบรายชื่อพนักงาน",
-            "type" : "webview",
-            "url" : "http://203.150.37.130/accessor/"+uuid_onechat,
-            "size" : "full"
-            })
+                quick_reply_element.append({
+                "label" : "ตรวจสอบรายชื่อพนักงาน",
+                "type" : "webview",
+                "url" : "http://203.150.37.130/accessor/"+uuid_onechat,
+                "size" : "full"
+                })
 
-            payload_msg =  {
-                            "to" : ond_id_leader,
-                            "bot_id" : bot_id,
-                            "message": "ขณะนี้อยู่ในช่วงการตรวจสอบรายชื่อพนักงานใต้บังคับบัญชา \nโปรดเลือกเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                            "quick_reply" :  quick_reply_element
-                        }
-            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
-            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                payload_msg =  {
+                                "to" : ond_id_leader,
+                                "bot_id" : bot_id,
+                                "message": "ขณะนี้อยู่ในช่วงการตรวจสอบรายชื่อพนักงานใต้บังคับบัญชา \nโปรดเลือกเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "quick_reply" :  quick_reply_element
+                            }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            except Exception as e:
+                pass
         return "Success"
     except Exception as e:
         logserver(e)
@@ -51,51 +54,53 @@ def api_notice_estimate_employee(cursor):
         for employee_assessor in result:
             payload = {"staff_id": employee_assessor['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-            ond_id_leader =  response_onechat_id['staff_data']['one_id']
-            bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-            tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
-            uuid_onechat = employee_assessor['uuid_onechat']
-            quick_reply_element = []
+            try:
+                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                bot_id = botId()
+                tokenBot = botToken()
+                uuid_onechat = employee_assessor['uuid_onechat']
+                quick_reply_element = []
 
-            quick_reply_element.append({
-            "label" : "ประเมินผล",
-            "type" : "webview",
-            "url" : "http://203.150.37.130/kpionline/"+uuid_onechat,
-            "size" : "full"
-            })
+                quick_reply_element.append({
+                "label" : "ประเมินผล",
+                "type" : "webview",
+                "url" : "http://203.150.37.130/kpionline/"+uuid_onechat,
+                "size" : "full"
+                })
 
-            payload_msg =  {
-                            "to" : ond_id_leader,
-                            "bot_id" : bot_id,
-                            "message": "โปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง .....) \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                            "quick_reply" :  quick_reply_element
-                        }
-            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
-            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                payload_msg =  {
+                                "to" : ond_id_leader,
+                                "bot_id" : bot_id,
+                                "message": "โปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง .....) \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "quick_reply" :  quick_reply_element
+                            }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            except Exception as e:
+                pass
         return "Success"
     except Exception as e:
         logserver(e)
         return "fail"
 
-@app.route('/api_update_grade_leader', methods=['POST'])
+@app.route('/api_notice_grade_employee', methods=['POST'])
 @connect_sql()
-def api_update_grade_leader(cursor):
+def api_notice_grade_employee(cursor):
     try:
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql_employee = """SELECT employeeid, gradeCompareWithPoint, present_kpi FROM `employee_kpi` WHERE validstatus= 2 AND year=%s AND term=%s"""
+        sql_employee = """SELECT employeeid, gradeCompareWithPoint, present_kpi FROM `employee_kpi` WHERE validstatus IN(2,3) AND year=%s AND term=%s"""
         cursor.execute(sql_employee,(data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for employee in result:
+            payload = {"staff_id": employee['employeeid']}
+            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
-                print employee['employeeid']
-                payload = {"staff_id": employee['employeeid']}
-                response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
                 ond_id =  response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+                bot_id = botId()
+                tokenBot = botToken()
                 try:
                     if employee['present_kpi'] == 'active':
                         payload_msg =  {
@@ -129,18 +134,17 @@ def api_notice_employee_present(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql_employee = """SELECT employeeid FROM `employee_kpi` WHERE validstatus= 2 AND year=%s AND term=%s AND present_kpi = 'active'"""
+        sql_employee = """SELECT employeeid FROM `employee_kpi` WHERE validstatus IN(2,3) AND year=%s AND term=%s AND present_kpi = 'active'"""
         cursor.execute(sql_employee,(data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         for employee in result:
+            payload = {"staff_id": employee['employeeid']}
+            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
-                print employee['employeeid']
-                payload = {"staff_id": employee['employeeid']}
-                response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
                 ond_id =  response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+                bot_id = botId()
+                tokenBot = botToken()
                 try:
                     payload_msg =  {
                         "bot_id":bot_id,
@@ -175,8 +179,8 @@ def api_notice_board(cursor):
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+                bot_id = botId()
+                tokenBot = botToken()
                 json = {
                     "to" : one_id_board,
                     "bot_id" : bot_id,
@@ -209,8 +213,8 @@ def api_notice_board_before_present(cursor):
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
+                bot_id = botId()
+                tokenBot = botToken()
                 json = {
                     "to" : one_id_board,
                     "bot_id" : bot_id,
@@ -238,21 +242,32 @@ def api_notice_board_present(cursor):
         cursor.execute(sql_employee, (data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
+
         for employee in result:
             payload = {"staff_id": employee['employeeid_board']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
-                bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-                tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
-                json = {
-                    "to" : one_id_board,
-                    "bot_id" : bot_id,
-                    "type" : "text",
-                    "message" : "วันนี้ เวลา 10.30 น.\nอย่าลืม เข้าร่วมประเมินผลงานที่ห้อง .... นะคะ"
-                }
-                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
+                bot_id = botId()
+                tokenBot = botToken()
+                uuid_onechat = employee['uuid_onechat']
+                quick_reply_element = []
+
+                quick_reply_element.append({
+                "label" : "ประเมินผล",
+                "type" : "webview",
+                "url" : "http://203.150.37.130/kpiboard/"+uuid_onechat,
+                "size" : "full"
+                })
+                payload_msg =  {
+                                "to" : one_id_board,
+                                "bot_id" : bot_id,
+                                "message": "วันนี้ เวลา 10.30 น.\nอย่าลืม เข้าร่วมประเมินผลงานที่ห้อง .... นะคะ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "quick_reply" :  quick_reply_element
+                            }
+
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
             except Exception as e:
                 print str(e)
                 pass
@@ -273,27 +288,30 @@ def api_notice_upload_present(cursor):
         for employee_assessor in result:
             payload = {"staff_id": employee_assessor['employeeid']}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-            ond_id_leader =  response_onechat_id['staff_data']['one_id']
-            bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
-            tokenBot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
-            uuid_onechat = employee_assessor['uuid_onechat']
-            quick_reply_element = []
+            try:
+                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                bot_id = botId()
+                tokenBot = botToken()
+                uuid_onechat = employee_assessor['uuid_onechat']
+                quick_reply_element = []
 
-            quick_reply_element.append({
-            "label" : "อัปโหลดไฟล์พรีเซนต์",
-            "type" : "webview",
-            "url" : "http://203.150.37.130/kpiupload/"+uuid_onechat,
-            "size" : "full"
-            })
+                quick_reply_element.append({
+                "label" : "อัปโหลดไฟล์พรีเซนต์",
+                "type" : "webview",
+                "url" : "http://203.150.37.130/kpiupload/"+uuid_onechat,
+                "size" : "full"
+                })
 
-            payload_msg =  {
-                            "to" : ond_id_leader,
-                            "bot_id" : bot_id,
-                            "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง ..... \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                            "quick_reply" :  quick_reply_element
-                        }
-            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
-            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                payload_msg =  {
+                                "to" : ond_id_leader,
+                                "bot_id" : bot_id,
+                                "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง ..... \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "quick_reply" :  quick_reply_element
+                            }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            except Exception as e:
+                pass
         return "Success"
     except Exception as e:
         logserver(e)
