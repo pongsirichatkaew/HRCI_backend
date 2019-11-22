@@ -36,7 +36,7 @@ def checkuuidBoard(cursor,uuid):
 @connect_sql()
 def Qry_user_kpi_mobile(cursor,employee_id):
     try:
-        print 'id',employee_id        
+        print 'id',employee_id
         sql_select_accessor = """SELECT * FROM `assessor_kpi` WHERE employeeid = %s GROUP BY employeeid"""
         cursor.execute(sql_select_accessor,(employee_id))
         columns = [column[0] for column in cursor.description]
@@ -57,7 +57,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            
+
             for employee in result:
                 sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
                 cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
@@ -75,10 +75,10 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 # except Exception as e:
                 #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
                 #     employee.update({'image':encoded_Image})
- 
+
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
-        
+
         # หัวหน้า inet
         elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
             print 'yearterm',year_term,'elseif'
@@ -89,7 +89,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            
+
             for employee in result:
                 sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
                 cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
@@ -107,7 +107,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                 # except Exception as e:
                 #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
                 #     employee.update({'image':encoded_Image})
-                
+
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
         ### submain only
@@ -116,7 +116,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
             "+year_term+" GROUP BY employee_kpi.employeeid"
-            
+
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
@@ -240,7 +240,7 @@ def transfer_kpi_mobile(cursor):
                 assessor_kpi_id_last = result_ass[0]['assessor_kpi_id']+1
             except Exception as e:
                 assessor_kpi_id_last = 1
-                
+
             uuid_onechat = str(uuid.uuid4())
             type = 'submain'
             sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -270,14 +270,14 @@ def transfer_kpi_mobile(cursor):
 
         sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,em_id_leader_default,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],employeeid_leadernew,result[0]['em_id_leader_default'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
-        
+
         try:
             sql_select_uuid = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
             cursor.execute(sql_select_uuid,(employeeid_leadernew))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             uuid_onechat = result[0]['uuid_onechat']
-            
+
             payload = {"staff_id": str(employeeid_leadernew)}
             response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
             ond_id_leader =  response_onechat_id['staff_data']['one_id']
@@ -288,7 +288,7 @@ def transfer_kpi_mobile(cursor):
             quick_reply_element.append({
             "label" : "ประเมินผล",
             "type" : "webview",
-            "url" : "http://203.150.37.130/kpionline/"+uuid_onechat,
+            "url" :  url+"/kpionline/"+uuid_onechat,
             "size" : "full"
             })
 
@@ -300,11 +300,11 @@ def transfer_kpi_mobile(cursor):
                         }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-            
+
             print response_msg
         except Exception as e:
             pass
-        
+
         return "Success"
     except Exception as e:
         logserver(e)
@@ -325,7 +325,7 @@ def confirm_all_kpi(cursor):
         logserver(e)
         print str(e)
         return "fail"
-    
+
 @app.route('/add_project_mobile', methods=['POST'])
 @connect_sql()
 def add_project_mobile(cursor):
@@ -389,7 +389,7 @@ def edit_project_mobile(cursor):
         data_new = source
         employeeid = data_new['employeeid']
         print data_new
-        
+
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
 
@@ -414,7 +414,7 @@ def edit_project_mobile(cursor):
                 cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 # except Exception as e:
                 #     pass
-                
+
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
             except Exception as e:
@@ -456,20 +456,20 @@ def Qry_user_present_mobile(cursor,employee_id):
         resultJson.update({'status_onechat':employee['status_onechat']})
 
         if (employee['type']=='main')and(str(employee['companyid'])!='23'):
-            
+
             print 'yearterm',year_term
             sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
                         employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,
                         employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
                         employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,
-                        employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file  
+                        employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file
                         FROM employee_kpi LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
                         LEFT JOIN position ON employee_kpi.position = position.position_id
                          """+year_term
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            
+
             for employee in result:
                 sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
                 cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
@@ -487,13 +487,13 @@ def Qry_user_present_mobile(cursor,employee_id):
                 # except Exception as e:
                 #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
                 #     employee.update({'image':encoded_Image})
-                
+
             resultJson.update({'employeeLists':result})
             return jsonify(resultJson)
-        
+
         # หัวหน้า inet
         elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
-        
+
             sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
                         employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,
                         employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,
@@ -505,7 +505,7 @@ def Qry_user_present_mobile(cursor,employee_id):
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            
+
             for employee in result:
                 sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
                 cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
@@ -562,7 +562,7 @@ def Qry_user_present_mobile(cursor,employee_id):
     except Exception as e:
         logserver(e)
         return "fail"
-    
+
 @app.route('/Qry_board_present_mobile/<employee_id>', methods=['GET'])
 @connect_sql()
 def Qry_user_board_mobile(cursor,employee_id):
@@ -578,8 +578,8 @@ def Qry_user_board_mobile(cursor,employee_id):
                     employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,
                     employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
                     employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,
-                    employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file  
-                    FROM employee_kpi 
+                    employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status,employee_kpi.present_file
+                    FROM employee_kpi
                     LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
                     LEFT JOIN position ON employee_kpi.position = position.position_id
                         """+year_term
@@ -595,7 +595,7 @@ def Qry_user_board_mobile(cursor,employee_id):
                 result_board = toJson(cursor.fetchall(),columns)
                 board = result_board[0]
                 employee.update({'status_onechat':board['status_onechat']})
-                
+
                 sql_projects = """SELECT * FROM project_kpi WHERE employeeid = %s AND year = %s AND term = %s"""
                 cursor.execute(sql_projects,(employee['employeeid'],employee['year'],employee['term']))
                 columns = [column[0] for column in cursor.description]
@@ -614,9 +614,9 @@ def Qry_user_board_mobile(cursor,employee_id):
                 #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
                 #     employee.update({'image':encoded_Image})
             except Exception as e:
-                pass 
+                pass
         resultJson.update({'employeeLists':resultEmployeeList})
-        return jsonify(resultJson)      
+        return jsonify(resultJson)
     except Exception as e:
         logserver(e)
         return "fail"

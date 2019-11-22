@@ -278,3 +278,7 @@ def botId():
 def botToken():
     token_bot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
     return token_bot
+
+def webmobile():
+    webmobile = "http://203.150.37.130:82"
+    return webmobile

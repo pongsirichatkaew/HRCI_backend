@@ -19,11 +19,11 @@ def api_notice_list_employee(cursor):
                 tokenBot = botToken()
                 uuid_onechat = employee_assessor['uuid_onechat']
                 quick_reply_element = []
-
+                url = webmobile()
                 quick_reply_element.append({
                 "label" : "ตรวจสอบรายชื่อพนักงาน",
                 "type" : "webview",
-                "url" : "http://203.150.37.130/accessor/"+uuid_onechat,
+                "url" : url+"/accessor/"+uuid_onechat,
                 "size" : "full"
                 })
 
@@ -58,13 +58,14 @@ def api_notice_estimate_employee(cursor):
                 ond_id_leader =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
                 tokenBot = botToken()
+                url = webmobile()
                 uuid_onechat = employee_assessor['uuid_onechat']
                 quick_reply_element = []
                 date = '....'
                 quick_reply_element.append({
                 "label" : "ประเมินผล",
                 "type" : "webview",
-                "url" : "http://203.150.37.130/kpionline/"+uuid_onechat,
+                "url" :  url+"/kpionline/"+uuid_onechat,
                 "size" : "full"
                 })
 
@@ -256,7 +257,7 @@ def api_notice_board_present(cursor):
                 quick_reply_element.append({
                 "label" : "ประเมินผล",
                 "type" : "webview",
-                "url" : "http://203.150.37.130/kpiboard/"+uuid_onechat,
+                "url" :  url+"/kpiboard/"+uuid_onechat,
                 "size" : "full"
                 })
                 payload_msg =  {
@@ -292,13 +293,14 @@ def api_notice_upload_present(cursor):
                 ond_id_leader =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
                 tokenBot = botToken()
+                url = webmobile()
                 uuid_onechat = employee_assessor['uuid_onechat']
                 quick_reply_element = []
 
                 quick_reply_element.append({
                 "label" : "อัปโหลดไฟล์พรีเซนต์",
                 "type" : "webview",
-                "url" : "http://203.150.37.130/kpiupload/"+uuid_onechat,
+                "url" :  url+"/kpiupload/"+uuid_onechat,
                 "size" : "full"
                 })
                 date = "...."
