@@ -257,6 +257,24 @@ def add_project_mobile(cursor):
         logserver(e)
         return "fail"
 
+@app.route('/QryEmployeeMobile', methods=['POST'])
+@connect_sql()
+def QryEmployeeMobile(cursor):
+    try:
+        sql = """SELECT employee.name_th,employee.employeeid,employee.surname_th,employee.email,employee.start_work,company.company_short_name,company.companyname,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail 
+                    FROM employee LEFT JOIN company ON company.companyid = employee.company_id
+                    LEFT JOIN position ON position.position_id = employee.position_id
+                    LEFT JOIN section ON section.sect_id = employee.section_id
+                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+                    LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
 @app.route('/edit_project_mobile', methods=['POST'])
 @connect_sql()
 def edit_project_mobile(cursor):
