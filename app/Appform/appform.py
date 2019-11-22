@@ -1285,7 +1285,7 @@ def Export_Employee_Appform(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
             # return jsonify(result)
-                    
+
         isSuccess = True
         reasonCode = 200
         reasonText = ""
@@ -1311,6 +1311,40 @@ def Export_Employee_Appform(cursor):
         # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
         # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
         # return jsonify(toDict(displayData,displayColumns))
+        return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/Export_Birthday', methods=['GET'])
+@connect_sql3()
+def Export_Birthday(cursor):
+    try:
+        sql = """SELECT NameTh,SurnameTh,Birthdate FROM Personal"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Birthdate.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Birthday.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['NameTh']
+                sheet['B'+str(offset + i)] = result[i]['SurnameTh']
+                sheet['C'+str(offset + i)] =  result[i]['Birthdate']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+
         return 'success'
     except Exception as e:
         logserver(e)
