@@ -620,3 +620,21 @@ def Qry_user_board_mobile(cursor,employee_id):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/Gen_uuid', methods=['POST'])
+@connect_sql()
+def Gen_uuid(cursor):
+    try:
+        sql_select_accessor = """SELECT * FROM `assessor_kpi`"""
+        cursor.execute(sql_select_accessor)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        for employee in result:
+            uuid_onechat = str(uuid.uuid4())
+            sql_be = "UPDATE assessor_kpi SET uuid_onechat=%s WHERE employeeid=%s"
+            cursor.execute(sql_be,(uuid_onechat,employee['employeeid']))
+        return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
