@@ -638,3 +638,25 @@ def Gen_uuid(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/api_check_employee/<employeeid>', methods=['GET'])
+@connect_sql()
+def api_check_employee(cursor,employeeid):
+    try:
+        sql_update_status = """SELECT * FROM `employee` WHERE employeeid =%s"""
+        cursor.execute(sql_update_status,(employeeid))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        if len(result) != 0:
+            employee = {
+                        "employee_detail":result,
+                        "service_name": "one_chat"
+                        }
+            return jsonify(employee)
+        else:
+            massage = { "message": "GET employee fail"}
+            return massage
+    except Exception as e:
+        logserver(e)
+        print str(e)
+        return "fail"
