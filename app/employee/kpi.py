@@ -893,7 +893,7 @@ def Update_grade_hr(cursor):
 
         ## onechat ##
         try:
-            sqlcheck = """SELECT employee_kpi.employeeid, employee_kpi.pass_hr, position.position_detail  FROM `employee_kpi`
+            sqlcheck = """SELECT employee_kpi.employeeid, employee_kpi.pass_hr, employee_kpi.name, employee_kpi.surname, position.position_detail  FROM `employee_kpi`
                           LEFT JOIN position ON position.position_id = employee_kpi.positionChange
                           WHERE employeeid=%s AND year=%s AND term=%s"""
             cursor.execute(sqlcheck,(data_new['employeeid'],data_new['year'],data_new['term']))
@@ -918,7 +918,7 @@ def Update_grade_hr(cursor):
                 "bot_id":bot_id,
                 "to": ond_id,
                 "type":"text",
-                "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
             }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -938,7 +938,7 @@ def Update_grade_hr(cursor):
                     "bot_id":bot_id,
                     "to": ond_id_leader,
                     "type":"text",
-                    "message": "ผลการประเมินของ: " +data_new['employeeid']+ " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                    "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                 headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
