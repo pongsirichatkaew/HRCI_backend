@@ -30,7 +30,7 @@ def api_notice_list_employee(cursor):
                 payload_msg =  {
                                 "to" : ond_id_leader,
                                 "bot_id" : bot_id,
-                                "message": "ขณะนี้อยู่ในช่วงการตรวจสอบรายชื่อพนักงานใต้บังคับบัญชา \nโปรดเลือกเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "message": "ขณะนี้อยู่ในช่วงการตรวจสอบรายชื่อพนักงานใต้บังคับบัญชา\n\nสามารถตรวจสอบผ่านแอป \none chat ได้จนถึงวันที่ 1 ธันวาคม 2562 (หากต้องการแก้ไขหลังจากวันดังกล่าวสามารถทำผ่านเว็บไซต์ https://hr-management.inet.co.th) \n\nโปรดเลือกเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
                                 "quick_reply" :  quick_reply_element
                             }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
