@@ -6,7 +6,7 @@ from dbConfig import *
 @connect_sql()
 def checkuuidAccessor(cursor,uuid):
     try:
-        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s"""
+        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s AND status = 'active' """
         cursor.execute(sql_update_status,(uuid))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -21,7 +21,7 @@ def checkuuidAccessor(cursor,uuid):
 @connect_sql()
 def checkuuidBoard(cursor,uuid):
     try:
-        sql_update_status = """SELECT * FROM `board_kpi_v2` WHERE uuid_onechat =%s"""
+        sql_update_status = """SELECT * FROM `board_kpi_v2` WHERE uuid_onechat =%s AND validstatus = 1 """
         cursor.execute(sql_update_status,(uuid))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -42,7 +42,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
-        year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'"'
+        year_term = "WHERE employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" OR  employee_kpi.em_id_leader_default= '+str(employee['employeeid'])
         print 'year_term',year_term
         resultJson = {}
         resultJson.update({'status_onechat':employee['status_onechat']})
@@ -50,7 +50,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         # หัวหน้า บอลูก
         if (employee['type']=='main')and(str(employee['companyid'])!='23'):
             print 'yearterm',year_term
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
             "+year_term+" GROUP BY employee_kpi.employeeid"
@@ -82,7 +82,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         # หัวหน้า inet
         elif (employee['type']=='main')and(str(employee['companyid'])=='23'):
             print 'yearterm',year_term,'elseif'
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
             "+year_term+" "
@@ -112,7 +112,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
             return jsonify(resultJson)
         ### submain only
         else:
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
             "+year_term+" GROUP BY employee_kpi.employeeid"
