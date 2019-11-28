@@ -42,7 +42,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
-        year_term = "WHERE employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" OR  employee_kpi.em_id_leader_default= "'+str(employee['employeeid'])+'"'
+        year_term = "WHERE employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'"AND employee_kpi.year = 2562 AND employee_kpi.term = "lateYear" OR  employee_kpi.em_id_leader_default= "'+str(employee['employeeid'])+'"'
         print 'year_term',year_term
         resultJson = {}
         resultJson.update({'status_onechat':employee['status_onechat']})
@@ -487,7 +487,7 @@ def Qry_user_present_mobile(cursor,employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
-        year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'" AND employee_kpi.present_kpi ="active"'
+        year_term = "WHERE employee_kpi.em_id_leader="+'"'+employee['employeeid']+'" AND employee_kpi.present_kpi ="active" AND employee_kpi.year = 2562 AND employee_kpi.term = "lateYear"'
         print 'year_term',year_term
         resultJson = {}
         resultJson.update({'status_onechat':employee['status_onechat']})
@@ -610,7 +610,7 @@ def Qry_user_board_mobile(cursor,employee_id):
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
         resultJson = {}
-        year_term = "WHERE employee_kpi.present_kpi = 'active'"
+        year_term = "WHERE employee_kpi.present_kpi = 'active' AND employee_kpi.year = 2562 AND employee_kpi.term = 'lateYear'"
         sql = """SELECT employee_kpi.validstatus,employee_kpi.em_id_leader,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange_GM,
                     employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,
                     employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,
