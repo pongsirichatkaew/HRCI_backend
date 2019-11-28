@@ -29,7 +29,7 @@ def api_notice_list_employee(cursor):
                 payload_msg =  {
                                 "to" : ond_id_leader,
                                 "bot_id" : bot_id,
-                                "message": "สามารถตรวจสอบและแก้ไขรายชื่อพนักงานใต้บังคับบัญชา ผ่านแอป one chat \n\nได้จนถึงวันที่ 1 ธันวาคม 2562 (หากต้องการแก้ไขหลังจากวันดังกล่าวสามารถทำผ่านเว็บไซต์ https://hr-management.inet.co.th) \n\nโปรดเลือกเมนูด้านล่างเพื่อตรวจสอบและแก้ไขรายชื่อพนักงาน \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                                "message": "โปรดเลือกเมนูด้านล่างเพื่อตรวจสอบและแก้ไขรายชื่อพนักงาน \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ \n\nสามารถตรวจสอบและแก้ไขรายชื่อพนักงานใต้บังคับบัญชา ผ่านแอป one chat \n\nได้จนถึงวันที่ 1 ธันวาคม 2562 (หากต้องการแก้ไขหลังจากวันดังกล่าวสามารถทำผ่านเว็บไซต์ https://hr-management.inet.co.th)",
                                 "quick_reply" :  quick_reply_element
                             }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
