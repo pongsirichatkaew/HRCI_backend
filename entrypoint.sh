@@ -46,9 +46,9 @@ server {
   listen 5000 ssl;
   listen [::]:5000 ssl;
 
-  # server_name hr-management.inet.co.th;
-  # ssl_certificate /app/ssl/inet.crt;
-  # ssl_certificate_key /app/ssl/inet.key;
+  server_name hr-management.inet.co.th;
+  ssl_certificate /app/ssl/inet.crt;
+  ssl_certificate_key /app/ssl/inet.key;
 
   location / {
         try_files \$uri @app;
