@@ -2,9 +2,8 @@
 version: '2'
 
 services:
-    hrci_state:
+    hrci_back:
         image: hrci_back
-        container_name: hrci_state
         ports:
             - "5000:5000"
         environment:
