@@ -5,7 +5,7 @@ from dbConfig import *
 @connect_sql()
 def api_notice_list_employee(cursor):
     try:
-        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND type = 'main'"""
+        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND type = 'main' AND status_onechat = 0"""
         cursor.execute(sql_assessor)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
