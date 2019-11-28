@@ -899,29 +899,32 @@ def Update_grade_hr(cursor):
             cursor.execute(sqlcheck,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result2 = toJson(cursor.fetchall(),columns)
-
-            payload = {"staff_id": data_new['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-            ond_id =  response_onechat_id['staff_data']['one_id']
-            bot_id = botId()
-            tokenBot = botToken()
-
             try:
-                if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
-                    position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
-                else:
-                    position_change = "ไม่ปรับตำแหน่ง"
-            except Exception as e:
-                print str(e)
+                payload = {"staff_id": data_new['employeeid']}
+                response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+data_new['employeeid']).json()
+                ond_id =  response_onechat_id['oneid']
+                bot_id = botId()
+                tokenBot = botToken()
 
-            payload_msg =  {
-                "bot_id":bot_id,
-                "to": ond_id,
-                "type":"text",
-                "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
-            }
-            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                try:
+                    if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
+                        position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
+                    else:
+                        position_change = "ไม่ปรับตำแหน่ง"
+                except Exception as e:
+                    print str(e)
+
+                payload_msg =  {
+                    "bot_id":bot_id,
+                    "to": ond_id,
+                    "type":"text",
+                    "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            except Exception as e:
+                pass
+
             #assessor
             sql_assessor = """SELECT em_id_leader_default  FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(2,3)"""
             cursor.execute(sql_assessor,(data_new['employeeid'],data_new['year'],data_new['term']))
@@ -929,19 +932,22 @@ def Update_grade_hr(cursor):
             result3 = toJson(cursor.fetchall(),columns)
             for employee_assessor in result3:
                 payload = {"staff_id": employee_assessor['em_id_leader_default']}
-                response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-                ond_id_leader =  response_onechat_id['staff_data']['one_id']
-                bot_id = botId()
-                tokenBot = botToken()
+                try:
+                    response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['em_id_leader_default']).json()
+                    ond_id_leader =  response_onechat_id['oneid']
+                    bot_id = botId()
+                    tokenBot = botToken()
 
-                payload_msg =  {
-                    "bot_id":bot_id,
-                    "to": ond_id_leader,
-                    "type":"text",
-                    "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
-                }
-                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                    payload_msg =  {
+                        "bot_id":bot_id,
+                        "to": ond_id_leader,
+                        "type":"text",
+                        "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                    }
+                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                except Exception as e:
+                    pass
 
         except Exception as e:
             pass
