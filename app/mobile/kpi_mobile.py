@@ -279,8 +279,8 @@ def transfer_kpi_mobile(cursor):
             uuid_onechat = result[0]['uuid_onechat']
 
             payload = {"staff_id": str(employeeid_leadernew)}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
-            ond_id_leader =  response_onechat_id['staff_data']['one_id']
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+str(employeeid_leadernew)).json()
+            ond_id_leader =  response_onechat_id['oneid']
             bot_id = botId()
             tokenBot = botToken()
 
@@ -325,7 +325,7 @@ def confirm_all_kpi(cursor):
         logserver(e)
         print str(e)
         return "fail"
-    
+
 # @app.route('/confirm_all_emp_kpi_mobile', methods=['POST'])
 # @connect_sql()
 # def confirm_all_emp_kpi_mobile(cursor):
