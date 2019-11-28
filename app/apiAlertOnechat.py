@@ -11,10 +11,9 @@ def api_notice_list_employee(cursor):
         result = toJson(cursor.fetchall(),columns)
 
         for employee_assessor in result:
-            payload = {"staff_id": employee_assessor['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['employeeid']).json()
             try:
-                ond_id_leader =  response_onechat_id['staff_data']['one_id']
+                ond_id_leader =  response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
                 uuid_onechat = employee_assessor['uuid_onechat']
@@ -54,7 +53,7 @@ def api_notice_estimate_employee(cursor):
 
         for employee_assessor in result:
             payload = {"staff_id": employee_assessor['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 ond_id_leader =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -98,7 +97,7 @@ def api_notice_grade_employee(cursor):
         result = toJson(cursor.fetchall(),columns)
         for employee in result:
             payload = {"staff_id": employee['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 ond_id =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -142,7 +141,7 @@ def api_notice_employee_present(cursor):
         result = toJson(cursor.fetchall(),columns)
         for employee in result:
             payload = {"staff_id": employee['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 ond_id =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -179,7 +178,7 @@ def api_notice_board(cursor):
         result = toJson(cursor.fetchall(), columns)
         for employee in result:
             payload = {"staff_id": employee['employeeid_board']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -214,7 +213,7 @@ def api_notice_board_before_present(cursor):
         result = toJson(cursor.fetchall(), columns)
         for employee in result:
             payload = {"staff_id": employee['employeeid_board']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -249,7 +248,7 @@ def api_notice_board_present(cursor):
 
         for employee in result:
             payload = {"staff_id": employee['employeeid_board']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 one_id_board = response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -291,7 +290,7 @@ def api_notice_upload_present(cursor):
 
         for employee_assessor in result:
             payload = {"staff_id": employee_assessor['employeeid']}
-            response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
             try:
                 ond_id_leader =  response_onechat_id['staff_data']['one_id']
                 bot_id = botId()
@@ -351,7 +350,7 @@ def api_notice_estimate_employee_timeout(cursor):
                 if check_estimate!=0:
                     print check_estimate
                     payload = {"staff_id": employee_assessor['employeeid']}
-                    response_onechat_id = requests.request("POST", url="http://203.151.50.47:9988/search_user_inet", json=payload, timeout=(60 * 1)).json()
+                    response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet", json=payload, timeout=(60 * 1)).json()
                     try:
                         ond_id_leader =  response_onechat_id['staff_data']['one_id']
                         bot_id = botId()
