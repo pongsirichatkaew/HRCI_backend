@@ -42,7 +42,7 @@ def Qry_user_kpi_mobile(cursor,employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         employee = result[0]
-        year_term = "WHERE employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" OR  employee_kpi.em_id_leader_default= '+str(employee['employeeid'])
+        year_term = "WHERE employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" OR  employee_kpi.em_id_leader_default= "'+str(employee['employeeid'])+'"'
         print 'year_term',year_term
         resultJson = {}
         resultJson.update({'status_onechat':employee['status_onechat']})
