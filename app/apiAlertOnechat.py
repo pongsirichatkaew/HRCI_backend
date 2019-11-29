@@ -1,6 +1,49 @@
 # -*- coding: utf-8 -*
 from dbConfig import *
 
+@app.route('/api_notice_list_employee_one', methods=['POST'])
+@connect_sql()
+def api_notice_list_employee_one(cursor):
+    try:
+        employee_assessor = "62724"
+
+        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND type = 'main' AND status_onechat = 0 AND employeeid=%s"""
+        cursor.execute(sql_assessor,(employee_assessor))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor).json()
+        try:
+            ond_id_leader =  response_onechat_id['oneid']
+            bot_id = botId()
+            tokenBot = botToken()
+            uuid_onechat = result[0]['uuid_onechat']
+            quick_reply_element = []
+            url = webmobile()
+            quick_reply_element.append({
+            "label" : "ตรวจสอบรายชื่อพนักงาน",
+            "type" : "webview",
+            "url" : url+"/accessor/"+uuid_onechat,
+            "size" : "full"
+            })
+
+            payload_msg =  {
+                            "to" : ond_id_leader,
+                            "bot_id" : bot_id,
+                            "message": "โปรดเลือกเมนูด้านล่างเพื่อตรวจสอบและแก้ไขรายชื่อพนักงาน \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ \n\nสามารถตรวจสอบและแก้ไขรายชื่อพนักงานใต้บังคับบัญชา ผ่านแอป one chat \n\nได้จนถึงวันที่ 1 ธันวาคม 2562 (หากต้องการแก้ไขหลังจากวันดังกล่าวสามารถทำผ่านเว็บไซต์ https://hr-management.inet.co.th)",
+                            "quick_reply" :  quick_reply_element
+                        }
+            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            print employee_assessor, response_msg
+        except Exception as e:
+            pass
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+
 @app.route('/api_notice_list_employee', methods=['POST'])
 @connect_sql()
 def api_notice_list_employee(cursor):
