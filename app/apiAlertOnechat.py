@@ -48,7 +48,7 @@ def api_notice_list_employee_one(cursor):
 @connect_sql()
 def api_notice_list_employee(cursor):
     try:
-        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND type = 'main' AND status_onechat = 0"""
+        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND status_onechat = 0"""
         cursor.execute(sql_assessor)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -89,7 +89,7 @@ def api_notice_list_employee(cursor):
 @connect_sql()
 def api_notice_estimate_employee(cursor):
     try:
-        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND type = 'main'"""
+        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active'"""
         cursor.execute(sql_assessor)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -119,6 +119,7 @@ def api_notice_estimate_employee(cursor):
                             }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
                 headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                print employee_assessor['employeeid'], response_msg
             except Exception as e:
                 pass
         return "Success"
