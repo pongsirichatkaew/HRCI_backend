@@ -41,7 +41,7 @@ app.config['ALLOWED_EXTENSIONS'] = set(['xls', 'xlsm', 'xlsx', 'csv', 'txt', 'xm
 
 app.config['MYSQL_DATABASE_USER'] = "root"
 app.config['MYSQL_DATABASE_PASSWORD'] = "^dglnvg8hkw,j0y[,nv-"
-app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management'
+app.config['MYSQL_DATABASE_DB'] = 'HRCI_Management_stateging'
 app.config['MYSQL_DATABASE_HOST'] = '203.151.50.137'
 
 # app.config['MYSQL_DATABASE_USER'] = "root"
@@ -72,7 +72,7 @@ app3 = Flask(__name__)
 # app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
 app3.config['MYSQL_DATABASE_USER'] = "root"
 app3.config['MYSQL_DATABASE_PASSWORD'] = "vpjk.shCyo8bf"
-app3.config['MYSQL_DATABASE_DB'] = 'applicationform'
+app3.config['MYSQL_DATABASE_DB'] = 'applicationform_dev'
 app3.config['MYSQL_DATABASE_HOST'] = '203.154.71.156'
 mysql3 = MySQL()
 mysql3.init_app(app3)
@@ -272,13 +272,13 @@ def allowed_file(filename):
     filename.rsplit('.', 1)[1] in app.config['ALLOWED_EXTENSIONS']
 
 def botId():
-    bot_id = "B8c7ab7357ed5506eade2e932cb0e2102"
+    bot_id = "B0ff34ea97e845aa097d37a4e2c18696c"
     return bot_id
 
 def botToken():
-    token_bot = 'Bearer Aafb3999ded975541ad59d798392beae94d02ee0a68fb4108a9a9db4ef9213cd4306b174554db4db6ba89e269a7686b45'
+    token_bot = 'Bearer A2d011e83b0cc5a9ca4595ac2999ec065771615c167094eb38fb8ac19b604a0ce58a2f17296e246cf8c5cbc3f0ece2264'
     return token_bot
 
 def webmobile():
-    webmobile = "https://hr-managemobile.inet.co.th"
+    webmobile = "http://203.150.37.130:82"
     return webmobile
