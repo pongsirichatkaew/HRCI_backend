@@ -450,10 +450,7 @@ def api_notice_estimate_employee_timeout(cursor):
 @connect_sql()
 def api_send_file_kpi(cursor):
     try:
-        files = {'file': open('kpi_2019.pdf'.encode('utf-8'), 'rb')}
-        files2 = {'file': open('kpi_outsource_2019.pdf'.encode('utf-8'), 'rb')}
-
-        sql_employee = """SELECT * FROM `assessor_kpi` WHERE status = 'active' """
+        sql_employee = """SELECT * FROM `assessor_kpi` WHERE status = 'active'  """
         cursor.execute(sql_employee)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
@@ -461,6 +458,8 @@ def api_send_file_kpi(cursor):
             response_onechat_id = requests.request(
                 "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee['employeeid']).json()
             try:
+                files = {'file': open('kpi_2019.pdf'.encode('utf-8'), 'rb')}
+                files2 = {'file': open('kpi_outsource_2019.pdf'.encode('utf-8'), 'rb')}
                 one_id = response_onechat_id['oneid']
                 print 'ond_id', one_id
                 bot_id = botId()
@@ -471,7 +470,7 @@ def api_send_file_kpi(cursor):
                     "type": "text",
                     "message": "หลักเกณฑ์การประเมินผลปลายปี 2019"
                 }
-                print payload_msg
+                # print payload_msg
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
                                                 headers={'Authorization': tokenBot}).json()
                 payload_msg = {
@@ -479,10 +478,10 @@ def api_send_file_kpi(cursor):
                     "to": one_id,
                     "type": "file"
                 }
-                print payload_msg
+                print payload_msg, 'success1'
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", data=payload_msg, files=files,
                                                 headers={'Authorization': tokenBot}).json()
-                print employee['employeeid'], response_msg
+                # print employee['employeeid'], response_msg
                 
                 payload_msg = {
                     "bot_id": bot_id,
@@ -490,7 +489,7 @@ def api_send_file_kpi(cursor):
                     "type": "text",
                     "message": "หลักเกณฑ์การประเมินผลปลายปี 2019 กลุ่มงาน Outsource"
                 }
-                print payload_msg
+                # print payload_msg
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
                                                 headers={'Authorization': tokenBot}).json()
                 payload_msg = {
@@ -498,10 +497,10 @@ def api_send_file_kpi(cursor):
                     "to": one_id,
                     "type": "file"
                 }
-                print payload_msg
+                # print payload_msg
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", data=payload_msg, files=files2,
                                                 headers={'Authorization': tokenBot}).json()
-                # print employee['employeeid'], response_msg
+                print employee['employeeid'], 'success2'
             except Exception as e:
                 print employee['employeeid']+'not found/error'
                 logserver(e)
