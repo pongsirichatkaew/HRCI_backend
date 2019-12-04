@@ -450,8 +450,6 @@ def api_notice_estimate_employee_timeout(cursor):
 @connect_sql()
 def api_send_file_kpi(cursor):
     try:
-
-
         sql_employee = """SELECT * FROM `assessor_kpi` WHERE status = 'active'  """
         cursor.execute(sql_employee)
         columns = [column[0] for column in cursor.description]
