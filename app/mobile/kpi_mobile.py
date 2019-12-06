@@ -423,7 +423,11 @@ def transfer_kpi_mobile(cursor):
             cursor.execute(sql_select_uuid, (employeeid_leadernew))
             columns = [column[0] for column in cursor.description]
             result_select = toJson(cursor.fetchall(), columns)
-            uuid_onechat = result_select[0]['uuid_onechat']
+
+            sql_select_oldleader = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
+            cursor.execute(sql_select_oldleader, (data_new['createby']))
+            columns = [column[0] for column in cursor.description]
+            result_select_oldleader = toJson(cursor.fetchall(), columns)
 
             payload = {"staff_id": str(employeeid_leadernew)}
             response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+str(employeeid_leadernew)).json()
@@ -435,7 +439,7 @@ def transfer_kpi_mobile(cursor):
                 "bot_id":bot_id,
                 "to": ond_id_leader,
                 "type":"text",
-                "message": result_select[0]['name_asp']+' '+result_select[0]['surname_asp']+" ได้โอนพนักงาน "+result[0]['employeeid']+" "+result[0]['name']+" "+result[0]['surname']+" มาให้คุณ \nกรุณาคลิกเมนูประเมินพนักงาน"
+                "message": result_select_oldleader[0]['name_asp']+' '+result_select_oldleader[0]['surname_asp']+" ได้โอนพนักงาน "+result[0]['employeeid']+" "+result[0]['name']+" "+result[0]['surname']+" มาให้คุณ \nกรุณาคลิกเมนูประเมินพนักงาน"
             }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
