@@ -393,20 +393,20 @@ def api_notice_estimate_employee_timeout(cursor):
         n = str(delta).split(" ")[0]
         print delta
         if (n == '7' or n == '5' or n == '3' or n == '2' or n == '1'):
-            # for employee_assessor in result:
-            #     sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE em_id_leader = %s"""
-            #     cursor.execute(
-            #         sql_all_count, (employee_assessor['employeeid']))
-            #     columns = [column[0] for column in cursor.description]
-            #     allCount = toJson(cursor.fetchall(), columns)
-            #
-            #     sql_count = """SELECT COUNT(em_id_leader) as count FROM employee_kpi WHERE em_id_leader = %s AND validstatus IN(2,3)"""
-            #     cursor.execute(sql_count, (employee_assessor['employeeid']))
-            #     columns = [column[0] for column in cursor.description]
-            #     count = toJson(cursor.fetchall(), columns)
-            #
-            #     check_estimate = int(
-            #         allCount[0]['all_count']) - int(count[0]['count'])
+            for employee_assessor in result:
+                sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE em_id_leader = %s"""
+                cursor.execute(
+                    sql_all_count, (employee_assessor['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                allCount = toJson(cursor.fetchall(), columns)
+
+                sql_count = """SELECT COUNT(em_id_leader) as count FROM employee_kpi WHERE em_id_leader = %s AND validstatus IN(2,3)"""
+                cursor.execute(sql_count, (employee_assessor['employeeid']))
+                columns = [column[0] for column in cursor.description]
+                count = toJson(cursor.fetchall(), columns)
+
+                check_estimate = int(
+                    allCount[0]['all_count']) - int(count[0]['count'])
             #
             #     if check_estimate != 0:
             #         print check_estimate
