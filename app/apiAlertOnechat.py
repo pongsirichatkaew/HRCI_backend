@@ -393,52 +393,52 @@ def api_notice_estimate_employee_timeout(cursor):
         n = str(delta).split(" ")[0]
         print delta
         if (n == '7' or n == '5' or n == '3' or n == '2' or n == '1'):
-            for employee_assessor in result:
-                sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE em_id_leader = %s"""
-                cursor.execute(
-                    sql_all_count, (employee_assessor['employeeid']))
-                columns = [column[0] for column in cursor.description]
-                allCount = toJson(cursor.fetchall(), columns)
-
-                sql_count = """SELECT COUNT(em_id_leader) as count FROM employee_kpi WHERE em_id_leader = %s AND validstatus IN(2,3)"""
-                cursor.execute(sql_count, (employee_assessor['employeeid']))
-                columns = [column[0] for column in cursor.description]
-                count = toJson(cursor.fetchall(), columns)
-
-                check_estimate = int(
-                    allCount[0]['all_count']) - int(count[0]['count'])
-
-                if check_estimate != 0:
-                    print check_estimate
-                    payload = {"staff_id": employee_assessor['employeeid']}
-                    response_onechat_id = requests.request(
-                        "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['employeeid']).json()
-                    try:
-                        ond_id_leader = response_onechat_id['oneid']
-                        bot_id = botId()
-                        tokenBot = botToken()
-                        url = webmobile()
-                        uuid_onechat = employee_assessor['uuid_onechat']
-                        quick_reply_element = []
-                        date = '12 ธันวาคม 2562'
-                        quick_reply_element.append({
-                            "label": "ประเมินผล",
-                            "type": "webview",
-                            "url":  url+"/kpionline/"+uuid_onechat,
-                            "size": "full"
-                        })
-
-                        payload_msg = {
-                            "to": ond_id_leader,
-                            "bot_id": bot_id,
-                            "message": "ขณะนี้เหลือเวลาในการประเมินอีก " + str(n) + " วัน \nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                            "quick_reply":  quick_reply_element
-                        }
-                        response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
-                                                        headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-                    except Exception as e:
-                        print e
-                        pass
+            # for employee_assessor in result:
+            #     sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE em_id_leader = %s"""
+            #     cursor.execute(
+            #         sql_all_count, (employee_assessor['employeeid']))
+            #     columns = [column[0] for column in cursor.description]
+            #     allCount = toJson(cursor.fetchall(), columns)
+            #
+            #     sql_count = """SELECT COUNT(em_id_leader) as count FROM employee_kpi WHERE em_id_leader = %s AND validstatus IN(2,3)"""
+            #     cursor.execute(sql_count, (employee_assessor['employeeid']))
+            #     columns = [column[0] for column in cursor.description]
+            #     count = toJson(cursor.fetchall(), columns)
+            #
+            #     check_estimate = int(
+            #         allCount[0]['all_count']) - int(count[0]['count'])
+            #
+            #     if check_estimate != 0:
+            #         print check_estimate
+            #         payload = {"staff_id": employee_assessor['employeeid']}
+            #         response_onechat_id = requests.request(
+            #             "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['employeeid']).json()
+            #         try:
+            #             ond_id_leader = response_onechat_id['oneid']
+            #             bot_id = botId()
+            #             tokenBot = botToken()
+            #             url = webmobile()
+            #             uuid_onechat = employee_assessor['uuid_onechat']
+            #             quick_reply_element = []
+            #             date = '12 ธันวาคม 2562'
+            #             quick_reply_element.append({
+            #                 "label": "ประเมินผล",
+            #                 "type": "webview",
+            #                 "url":  url+"/kpionline/"+uuid_onechat,
+            #                 "size": "full"
+            #             })
+            #
+            #             payload_msg = {
+            #                 "to": ond_id_leader,
+            #                 "bot_id": bot_id,
+            #                 "message": "ขณะนี้เหลือเวลาในการประเมินอีก " + str(n) + " วัน \nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+            #                 "quick_reply":  quick_reply_element
+            #             }
+            #             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+            #                                             headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            #         except Exception as e:
+            #             print e
+            #             pass
 
         return "Success"
     except Exception as e:
