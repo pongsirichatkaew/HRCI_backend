@@ -373,8 +373,8 @@ def api_notice_estimate_employee_timeout(cursor):
 
         delta = datetime(2019,12,12) - datetime.now()
         n = str(delta).split(" ")[0]
-
-        if (n == 7 or n == 5 or n == 3 or n == 2 or n == 1):
+        print delta
+        if (n == '7' or n == '5' or n == '3' or n == '2' or n == '1'):
             for employee_assessor in result:
                 sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE em_id_leader = %s"""
                 cursor.execute(sql_all_count,(employee_assessor['employeeid']))
@@ -419,6 +419,55 @@ def api_notice_estimate_employee_timeout(cursor):
                         print e
                         pass
 
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/api_notice_list_template', methods=['POST'])
+@connect_sql()
+def api_notice_list_template(cursor):
+    try:
+        employee_assessor = "62511"
+
+        sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid=%s"""
+        cursor.execute(sql_assessor,(employee_assessor))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+
+        response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor).json()
+        try:
+            ond_id_leader =  response_onechat_id['oneid']
+            bot_id = botId()
+            tokenBot = botToken()
+            uuid_onechat = result[0]['uuid_onechat']
+            quick_reply_element = []
+            url = webmobile()
+
+            pl = {}
+            pl['bot_id'] = bot_id
+            pl['to'] = ond_id_leader
+            pl['type'] = 'template'
+            pl['elements'] = [
+                {
+                    "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                    "title":"ประเมินพนักงาน",
+                    "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                    "choice":[
+                        {
+                            "label" : "ประเมินพนักงาน",
+                            "type" : "webview",
+                            "url" : url+"/kpionline/"+uuid_onechat,
+                            "size" : "full"
+                        }
+                    ]
+                }
+            ]
+
+            response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+            print employee_assessor, response
+        except Exception as e:
+            print 'error',e
         return "Success"
     except Exception as e:
         logserver(e)
