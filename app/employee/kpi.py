@@ -336,14 +336,14 @@ def QryEmployee_kpi_one(cursor):
         except Exception as e:
             result_ass = ''
         try:
-            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            encoded_Image=str("http://203.150.37.130:7000/getImage/"+str(data_new['employeeid'])+".jpg")
             open_path_ = urllib.urlopen(encoded_Image)
             htmlSource = open_path_.read()
             open_path_.close()
             test= htmlSource.decode('utf-8')
-            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+"s.jpg")
+            encoded_Image=str("http://203.150.37.130:7000/getImage/"+str(data_new['employeeid'])+"s.jpg")
         except Exception as e:
-            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
+            encoded_Image=str("http://203.150.37.130:7000/getImage/"+str(data_new['employeeid'])+".jpg")
 
         try:
             # encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".jpg")
@@ -351,7 +351,7 @@ def QryEmployee_kpi_one(cursor):
             htmlSource = open_path_.read()
             open_path_.close()
             test= htmlSource.decode('utf-8')
-            encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(data_new['employeeid'])+".JPG")
+            encoded_Image=str("http://203.150.37.130:7000/getImage/"+str(data_new['employeeid'])+".JPG")
         except Exception as e:
             pass
 
