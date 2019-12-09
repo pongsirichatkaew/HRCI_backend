@@ -122,7 +122,7 @@ def QryAssessor_kpi(cursor):
         for i1 in result:
             employee = []
             kpi_ful = []
-            sql2 = "SELECT (SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s) AS total\
+            sql2 = "SELECT (SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND NOT validstatus=5) AS total\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND validstatus=2) AS Do\
                           ,(SELECT COUNT(employeeid) FROM employee_kpi WHERE em_id_leader=%s AND validstatus=1 ) AS Not_Do\
             FROM assessor_kpi LIMIT 1"

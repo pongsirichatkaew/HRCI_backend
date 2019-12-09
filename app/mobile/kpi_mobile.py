@@ -178,9 +178,10 @@ def Qry_kpi_mobile(cursor, employee_id):
         # หัวหน้า บอลูก
         if (employee['type'] == 'main')and(str(employee['companyid']) != '23'):
             print 'yearterm', year_term
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,leader.name_th,leader.surname_th,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN employee leader ON employee_kpi.em_id_leader = leader.employeeid \
                                                                                             LEFT JOIN employee ON employee_kpi.employeeid = employee.employeeid\
                                                                                             LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
             "+year_term+" "
@@ -195,17 +196,7 @@ def Qry_kpi_mobile(cursor, employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
-                # try:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     open_path_ = urllib.urlopen(encoded_Image)
-                #     htmlSource = open_path_.read()
-                #     open_path_.close()
-                #     test= htmlSource.decode('utf-8')
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
-                #     employee.update({'image':encoded_Image})
-                # except Exception as e:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     employee.update({'image':encoded_Image})
+              
 
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
@@ -213,9 +204,10 @@ def Qry_kpi_mobile(cursor, employee_id):
         # หัวหน้า inet
         elif (employee['type'] == 'main')and(str(employee['companyid']) == '23'):
             print 'yearterm', year_term, 'elseif'
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,leader.name_th,leader.surname_th,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN employee leader ON employee_kpi.em_id_leader = leader.employeeid \
                                                                                             LEFT JOIN employee ON employee_kpi.employeeid = employee.employeeid\
                                                                                             LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
             "+year_term+" "
@@ -230,25 +222,15 @@ def Qry_kpi_mobile(cursor, employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
-                # try:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     open_path_ = urllib.urlopen(encoded_Image)
-                #     htmlSource = open_path_.read()
-                #     open_path_.close()
-                #     test= htmlSource.decode('utf-8')
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
-                #     employee.update({'image':encoded_Image})
-                # except Exception as e:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     employee.update({'image':encoded_Image})
 
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
         # submain only
         else:
-            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.validstatus,employee_kpi.status_onechat,Personal.NicknameTh,employee_kpi.em_id_leader,leader.name_th,leader.surname_th,employee_kpi.em_id_leader_default,employee_kpi.structure_salary,employee_kpi.date_bet,employee_kpi.newKpiDescriptions,employee_kpi.newKpiDescriptions_GM,employee_kpi.specialMoney_GM,employee_kpi.positionChange,employee_kpi.positionChange_GM,employee_kpi.status_GM,employee_kpi.old_grade_GM,employee_kpi.createby,employee_kpi.comment_cancel,employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.companyid AS company_short_name,employee_kpi.surname,org_name.org_name_detail,position.position_detail,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                             LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                             LEFT JOIN position ON employee_kpi.position = position.position_id\
+                                                                                            LEFT JOIN employee leader ON employee_kpi.em_id_leader = leader.employeeid \
                                                                                             LEFT JOIN employee ON employee_kpi.employeeid = employee.employeeid\
                                                                                             LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid\
             "+year_term+" "
@@ -263,17 +245,7 @@ def Qry_kpi_mobile(cursor, employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
-                # try:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     open_path_ = urllib.urlopen(encoded_Image)
-                #     htmlSource = open_path_.read()
-                #     open_path_.close()
-                #     test= htmlSource.decode('utf-8')
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+"s.jpg")
-                #     employee.update({'image':encoded_Image})
-                # except Exception as e:
-                #     encoded_Image=str("http://intranet.inet.co.th/assets/upload/staff/"+str(employee['employeeid'])+".jpg")
-                #     employee.update({'image':encoded_Image})
+               
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -435,6 +407,7 @@ def transfer_kpi_mobile(cursor):
             bot_id = botId()
             tokenBot = botToken()
             url = webmobile()
+            uuid_onechat = result_select[0]['uuid_onechat']
             payload_msg =  {
                 "bot_id":bot_id,
                 "to": ond_id_leader,
@@ -518,12 +491,70 @@ def confirm_all_emp_kpi_mobile(cursor):
         date = datetime.now()
         sql_confirm = """INSERT INTO `employee_kpi_approved`(`year`, `term`, `em_id_leader`, `status`, `create_at`)
                             VALUES (%s,%s,%s,1,%s)"""
-        cursor.execute(
-            sql_confirm, (data_new['year'], data_new['term'], data_new['employeeid'], date))
+        cursor.execute(sql_confirm, (data_new['year'], data_new['term'], data_new['employeeid'], date))
 
         sql_update = """UPDATE `assessor_kpi` SET `status_onechat`=2 WHERE employeeid = %s AND status ='active' """
         cursor.execute(sql_update, (data_new['employeeid']))
 
+        sql_leader = """SELECT * FROM employee_kpi WHERE em_id_leader=%s AND year=%s AND term=%s GROUP BY em_id_leader_default"""
+        cursor.execute(sql_leader,(data_new['employeeid'], data_new['year'], data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result_leader = toJson(cursor.fetchall(),columns)
+
+        for employee_leader in result_leader:
+            if employee_leader['em_id_leader'] != employee_leader['em_id_leader_default']:
+                sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid=%s"""
+                cursor.execute(sql_assessor,(employee_leader['em_id_leader_default']))
+                columns = [column[0] for column in cursor.description]
+                result = toJson(cursor.fetchall(),columns)
+
+                sql_select_leader = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
+                cursor.execute(sql_select_leader, (employee_leader['em_id_leader']))
+                columns = [column[0] for column in cursor.description]
+                result_select_leader = toJson(cursor.fetchall(), columns)
+
+                response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader_default']).json()
+                try:
+                    ond_id_leader =  response_onechat_id['oneid']
+                    bot_id = botId()
+                    tokenBot = botToken()
+                    uuid_onechat = result[0]['uuid_onechat']
+                    quick_reply_element = []
+                    url = webmobile()
+
+                    payload_msg =  {
+                        "bot_id":bot_id,
+                        "to": ond_id_leader,
+                        "type":"text",
+                        "message": result_select_leader[0]['name_asp']+' '+result_select_leader[0]['surname_asp']+' '+result_select_leader[0]['employeeid']+" ได้ประเมินพนักงานที่คุณได้โอนสิทธิ์ครบแล้ว \nกรุณาคลิกเมนูประเมินพนักงานเพื่อตรวจสอบความถูกต้อง"
+                    }
+                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+
+                    pl = {}
+                    pl['bot_id'] = bot_id
+                    pl['to'] = ond_id_leader
+                    pl['type'] = 'template'
+                    pl['elements'] = [
+                        {
+                            "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                            "title":"ประเมินพนักงาน",
+                            "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                            "choice":[
+                                {
+                                    "label" : "ประเมินพนักงาน",
+                                    "type" : "webview",
+                                    "url" : url+"/kpionline/"+uuid_onechat,
+                                    "size" : "full"
+                                }
+                            ]
+                        }
+                    ]
+
+                    response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                    print employee_assessor, response
+                except Exception as e:
+                    print 'error',e
         return "Success"
     except Exception as e:
         logserver(e)
