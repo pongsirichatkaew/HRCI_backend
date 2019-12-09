@@ -94,7 +94,7 @@ def test_upload(cursor):
         year = request.form.get('year','')
         term = request.form.get('term','')
         path = 'static/'+ year +'/' + term +'/'+ 'present'
-        if not os.path.exists(path):  
+        if not os.path.exists(path):
             os.makedirs(path)
         if request.method == 'POST':
             f= request.files['present']
@@ -114,7 +114,7 @@ def test_upload(cursor):
 @app.route('/userGetPresent/<year>/<term>/<fileName>', methods=['GET'])
 def userGetPresent(year,term,fileName):
     try:
-        path = '../static/'+ year +'/' + term +'/'+ 'present'   
+        path = '../static/'+ year +'/' + term +'/'+ 'present'
         print path
         return send_from_directory(path, fileName)
     except Exception as e:
@@ -125,7 +125,7 @@ def userGetPresent(year,term,fileName):
 # @app.route('/add_main_menu', methods=['POST'])
 # @connect_sql()
 # def add_main_menu(cursor):
-    
+
 #     id_branch = request.form['id_branch']
 #     id_place = request.form['id_place']
 #     name = request.form['name']
@@ -135,7 +135,7 @@ def userGetPresent(year,term,fileName):
 #     # ------------------------------- gen foder
 #     print('tes',id_branch)
 #     path = 'static/img/'+ id_place +'/' + id_branch +'/'+ 'product'
-#     if not os.path.exists(path):  
+#     if not os.path.exists(path):
 #         os.makedirs(path)
 #     if status_img == '1':
 #         file = request.files['file']
@@ -155,7 +155,7 @@ def userGetPresent(year,term,fileName):
 #         sql = "INSERT INTO product_main (id_place,name,price,picture) VALUES (%s,%s,%s,%s)"
 #         cursor.execute(sql, (id_place,name,price,"not"))
 #         last_id_main = cursor.lastrowid
-#     # ------------------------------- add to branch_menu 
+#     # ------------------------------- add to branch_menu
 #     sql = "INSERT INTO product_branch (id_branch,id_product_main,price,status) VALUES (%s,%s,%s,%s)"
 #     cursor.execute(sql, (id_branch,last_id_main,price,'active'))
 #     return 'success'
@@ -197,7 +197,7 @@ def Edit_project(cursor):
                 cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 # except Exception as e:
                 #     pass
-                
+
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
             except Exception as e:
@@ -392,7 +392,7 @@ def Add_emp_kpi_tranfer(cursor):
                 assessor_kpi_id_last = result_ass[0]['assessor_kpi_id']+1
             except Exception as e:
                 assessor_kpi_id_last = 1
-                
+
             uuid_onechat = str(uuid.uuid4())
             type = 'submain'
             sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
@@ -423,6 +423,58 @@ def Add_emp_kpi_tranfer(cursor):
         sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,em_id_leader_default,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
         cursor.execute(sqlIn_main,(result[0]['year'],result[0]['term'],result[0]['companyid'],employeeid_leadernew,result[0]['em_id_leader_default'],result[0]['structure_salary'],result[0]['employeeid'],result[0]['name'],result[0]['surname'],result[0]['org_name'],result[0]['position'],result[0]['work_date'],result[0]['work_month'],result[0]['work_year'],result[0]['old_grade'],result[0]['star_date_kpi'],result[0]['status'],data_new['createby']))
 
+        try:
+            sql_select_uuid = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
+            cursor.execute(sql_select_uuid, (employeeid_leadernew))
+            columns = [column[0] for column in cursor.description]
+            result_select = toJson(cursor.fetchall(), columns)
+
+            sql_select_oldleader = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
+            cursor.execute(sql_select_oldleader, (data_new['createby']))
+            columns = [column[0] for column in cursor.description]
+            result_select_oldleader = toJson(cursor.fetchall(), columns)
+
+            payload = {"staff_id": str(employeeid_leadernew)}
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+str(employeeid_leadernew)).json()
+            ond_id_leader = response_onechat_id['oneid']
+            bot_id = botId()
+            tokenBot = botToken()
+            url = webmobile()
+            uuid_onechat = result_select[0]['uuid_onechat']
+            payload_msg =  {
+                "bot_id":bot_id,
+                "to": ond_id_leader,
+                "type":"text",
+                "message": result_select_oldleader[0]['name_asp']+' '+result_select_oldleader[0]['surname_asp']+" ได้โอนพนักงาน "+result[0]['employeeid']+" "+result[0]['name']+" "+result[0]['surname']+" มาให้คุณ \nกรุณาคลิกเมนูประเมินพนักงาน"
+            }
+            response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+
+
+            pl = {}
+            pl['bot_id'] = bot_id
+            pl['to'] = ond_id_leader
+            pl['type'] = 'template'
+            pl['elements'] = [
+                {
+                    "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                    "title":"ประเมินพนักงาน",
+                    "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                    "choice":[
+                        {
+                            "label" : "ประเมินพนักงาน",
+                            "type" : "webview",
+                            "url" : url+"/kpionline/"+uuid_onechat,
+                            "size" : "full"
+                        }
+                    ]
+                }
+            ]
+
+            response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+            print response
+        except Exception as e:
+            print e
         return "Success"
     except Exception as e:
         logserver(e)

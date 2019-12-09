@@ -56,8 +56,7 @@ def api_notice_list_employee(cursor):
         result = toJson(cursor.fetchall(), columns)
 
         for employee_assessor in result:
-            response_onechat_id = requests.request(
-                "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['employeeid']).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['employeeid']).json()
             try:
                 ond_id_leader = response_onechat_id['oneid']
                 bot_id = botId()
@@ -394,7 +393,7 @@ def api_notice_estimate_employee_timeout(cursor):
         n = int(n) + 2
         if (n == 7 or n == 5 or n == 3 or n == 2 or n == 1):
             for employee_assessor in result:
-                sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE (em_id_leader = %s OR em_id_leader_default = %s)"""
+                sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE (em_id_leader = %s OR em_id_leader_default = %s) AND NOT validstatus=5"""
                 cursor.execute(sql_all_count, (employee_assessor['employeeid'], employee_assessor['employeeid']))
                 columns = [column[0] for column in cursor.description]
                 allCount = toJson(cursor.fetchall(), columns)
@@ -428,7 +427,7 @@ def api_notice_estimate_employee_timeout(cursor):
                         # print payload_msg
                         response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
                                                         headers={'Authorization': tokenBot}).json()
-                        
+
                         pl = {}
                         pl['bot_id'] = bot_id
                         pl['to'] = ond_id_leader
