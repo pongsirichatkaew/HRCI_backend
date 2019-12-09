@@ -445,13 +445,12 @@ def api_notice_upload_present(cursor):
         cursor.execute(sql_leader, (data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result_leader = toJson(cursor.fetchall(), columns)
-
         for employee_leader in result_leader:
             sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid =%s"""
             cursor.execute(sql_assessor,(employee_leader['em_id_leader']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
-
+            print result
             payload = {"staff_id": employee_leader['em_id_leader']}
             response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader']).json()
             try:
@@ -465,7 +464,7 @@ def api_notice_upload_present(cursor):
                     "bot_id": bot_id,
                     "to": ond_id_leader,
                     "type": "text",
-                    "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง "+date+" "+time+" "+room+" \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                    "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง "+date+" \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
                 }
                 # print payload_msg
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
