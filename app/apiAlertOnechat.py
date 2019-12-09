@@ -515,8 +515,10 @@ def api_notice_estimate_employee_timeout(cursor):
         delta = datetime(2019, 12, 12) - datetime.now()
         n = str(delta).split(" ")[0]
         n = int(n) + 2
+        print delta
         if (n == 7 or n == 5 or n == 3 or n == 2 or n == 1):
             for employee_assessor in result:
+                print n
                 sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE (em_id_leader = %s OR em_id_leader_default = %s) AND NOT validstatus=5"""
                 cursor.execute(sql_all_count, (employee_assessor['employeeid'], employee_assessor['employeeid']))
                 columns = [column[0] for column in cursor.description]
@@ -541,12 +543,16 @@ def api_notice_estimate_employee_timeout(cursor):
                         uuid_onechat = employee_assessor['uuid_onechat']
                         quick_reply_element = []
                         date = '12 ธันวาคม 2562'
+                        if n == 1:
+                            message = "ขณะนี้เป็นวันสุดท้ายในการประเมิน\nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ"
+                        else:
+                            message = "ขณะนี้เหลือเวลาในการประเมินอีก " + str(n) + " วัน \nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ"
 
                         payload_msg = {
                             "bot_id": bot_id,
                             "to": ond_id_leader,
                             "type": "text",
-                            "message": "ขณะนี้เหลือเวลาในการประเมินอีก " + str(n) + " วัน \nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                            "message": message,
                         }
                         # print payload_msg
                         response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
@@ -574,20 +580,6 @@ def api_notice_estimate_employee_timeout(cursor):
 
                         response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
                         print employee_assessor['employeeid'], response
-                        # quick_reply_element.append({
-                        #     "label": "ประเมินผล",
-                        #     "type": "webview",
-                        #     "url":  url+"/kpionline/"+uuid_onechat,
-                        #     "size": "full"
-                        # })
-                        # payload_msg = {
-                        #     "to": ond_id_leader,
-                        #     "bot_id": bot_id,
-                        #     "message": "ขณะนี้เหลือเวลาในการประเมินอีก " + str(n) + " วัน \nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                        #     "quick_reply":  quick_reply_element
-                        # }
-                        # response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
-                        #                                 headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
                     except Exception as e:
                         print e
                         pass
