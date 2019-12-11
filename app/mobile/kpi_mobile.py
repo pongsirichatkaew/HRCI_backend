@@ -7,12 +7,12 @@ from dbConfig import *
 @connect_sql()
 def checkuuidAccessor(cursor, uuid):
     try:
-        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s AND status = 'active' """
+        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s """
         cursor.execute(sql_update_status, (uuid))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
         print result[0]['employeeid']
-        return jsonify(result[0]['employeeid'])
+        return jsonify(result[0])
     except Exception as e:
         logserver(e)
         print str(e)
@@ -638,6 +638,7 @@ def edit_project_mobile(cursor):
         i = 0
         for i in xrange(len(data_new['portfolioLists'])):
             try:
+                print data_new['portfolioLists'][i]['project_kpi_id']
                 sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
                 cursor.execute(sql, (data_new['employeeid'], data_new['portfolioLists']
                                      [i]['project_kpi_id'], data_new['year'], data_new['term']))
@@ -651,13 +652,11 @@ def edit_project_mobile(cursor):
                     cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], data_new['portfolioLists'][i]['project_kpi_id'], result[0]['expectedPortfolio'], result[0]
                                             ['ExpectedLevel'], result[0]['CanDoLevel'], result[0]['summaryLevel'], result[0]['weightPortfolio'], result[0]['totalPoint'], result[0]['commentLevel_B_Up'], type_action))
                 except Exception as e:
-                    sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                    cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
-                                           [i]['project_kpi_id'], data_new['year'], data_new['term']))
+                    sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+                    cursor.execute(sqlde, (data_new['employeeid'], data_new['year'], data_new['term']))
                 # try:
-                sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
-                                       [i]['project_kpi_id'], data_new['year'], data_new['term']))
+                sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND year=%s AND term=%s"
+                cursor.execute(sqlde, (data_new['employeeid'], data_new['year'], data_new['term']))
                 # except Exception as e:
                 #     pass
 
