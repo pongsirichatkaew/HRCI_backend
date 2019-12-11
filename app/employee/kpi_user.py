@@ -175,7 +175,27 @@ def Edit_project(cursor):
 
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
-
+       
+        sql_project = """SELECT * FROM `project_kpi` WHERE `employeeid` =%s AND year = %s AND term = %s"""
+        cursor.execute(sql_project,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result_project = toJson(cursor.fetchall(),columns)
+        
+        setA = []
+        setB = []
+        for project in result_project:
+            setA.append(project['project_kpi_id'])
+        for p in data_new['portfolioLists']:
+            try:
+                setB.append(p['project_kpi_id'])
+            except Exception as e:
+                pass
+        print set(setA)
+        print set(setB)
+        diff_set = list(set(setA)-set(setB))
+        for diff in diff_set:
+            sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+            cursor.execute(sqlde,(data_new['employeeid'],diff,data_new['year'],data_new['term']))
         i=0
         for i in xrange(len(data_new['portfolioLists'])):
             try:

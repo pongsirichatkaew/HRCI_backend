@@ -7,12 +7,12 @@ from dbConfig import *
 @connect_sql()
 def checkuuidAccessor(cursor, uuid):
     try:
-        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s AND status = 'active' """
+        sql_update_status = """SELECT * FROM `assessor_kpi` WHERE uuid_onechat =%s """
         cursor.execute(sql_update_status, (uuid))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
         print result[0]['employeeid']
-        return jsonify(result[0]['employeeid'])
+        return jsonify(result[0])
     except Exception as e:
         logserver(e)
         print str(e)
@@ -629,47 +629,61 @@ def edit_project_mobile(cursor):
         source = dataInput['source']
         data_new = source
         employeeid = data_new['employeeid']
-        print data_new
-
+        # print data_new
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp, (data_new['totalGrade'], data_new['totalGradePercent'], data_new['oldgrade'], data_new['gradeCompareWithPoint'], data_new['status'],
-                               data_new['positionChange'], data_new['specialMoney'], data_new['newKpiDescriptions'], data_new['date_bet'], data_new['employeeid'], data_new['year'], data_new['term']))
-
-        i = 0
+        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
+        
+        sql_project = """SELECT * FROM `project_kpi` WHERE `employeeid` =%s AND year = %s AND term = %s"""
+        cursor.execute(sql_project,(data_new['employeeid'],data_new['year'],data_new['term']))
+        columns = [column[0] for column in cursor.description]
+        result_project = toJson(cursor.fetchall(),columns)
+        
+        setA = []
+        setB = []
+        for project in result_project:
+            setA.append(project['project_kpi_id'])
+        for p in data_new['portfolioLists']:
+            try:
+                setB.append(p['project_kpi_id'])
+            except Exception as e:
+                pass
+        print set(setA)
+        print set(setB)
+        diff_set = list(set(setA)-set(setB))
+        for diff in diff_set:
+            sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
+            cursor.execute(sqlde,(data_new['employeeid'],diff,data_new['year'],data_new['term']))
+            
+        i=0
         for i in xrange(len(data_new['portfolioLists'])):
             try:
                 sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sql, (data_new['employeeid'], data_new['portfolioLists']
-                                     [i]['project_kpi_id'], data_new['year'], data_new['term']))
+                cursor.execute(sql,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(), columns)
+                result = toJson(cursor.fetchall(),columns)
 
                 type_action = "Edit"
 
                 try:
                     sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], data_new['portfolioLists'][i]['project_kpi_id'], result[0]['expectedPortfolio'], result[0]
-                                            ['ExpectedLevel'], result[0]['CanDoLevel'], result[0]['summaryLevel'], result[0]['weightPortfolio'], result[0]['totalPoint'], result[0]['commentLevel_B_Up'], type_action))
+                    cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],result[0]['expectedPortfolio'],result[0]['ExpectedLevel'],result[0]['CanDoLevel'],result[0]['summaryLevel'],result[0]['weightPortfolio'],result[0]['totalPoint'],result[0]['commentLevel_B_Up'],type_action))
                 except Exception as e:
                     sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                    cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
-                                           [i]['project_kpi_id'], data_new['year'], data_new['term']))
+                    cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 # try:
                 sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
-                                       [i]['project_kpi_id'], data_new['year'], data_new['term']))
+                cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
                 # except Exception as e:
                 #     pass
 
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'], data_new['portfolioLists'][i]['project_kpi_id'], data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'],
-                                       data_new['portfolioLists'][i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
+                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
             except Exception as e:
                 try:
                     sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
                     cursor.execute(sqlQry)
                     columns = [column[0] for column in cursor.description]
-                    result = toJson(cursor.fetchall(), columns)
+                    result = toJson(cursor.fetchall(),columns)
                     project_kpi_id_last = int(result[0]['project_kpi_id'])+1
                 except Exception as e:
                     project_kpi_id_last = 1
@@ -677,13 +691,11 @@ def edit_project_mobile(cursor):
                 type_action = "ADD"
 
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
-                                       [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
+                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
 
                 sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
-                                        [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up'], type_action))
-
+                cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up'],type_action))
+                   
         return "Success"
     except Exception as e:
         logserver(e)
