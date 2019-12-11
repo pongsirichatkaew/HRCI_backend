@@ -660,6 +660,11 @@ def edit_project_mobile(cursor):
             sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'],project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'],
                                     data_new['portfolioLists'][i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
+            type_action = "ADD"
+
+            sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
+            cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
+                            [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up'], type_action))
             # except Exception as e:
             #     try:
             #         sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
@@ -670,15 +675,12 @@ def edit_project_mobile(cursor):
             #     except Exception as e:
             #         project_kpi_id_last = 1
 
-            #     type_action = "ADD"
 
             #     sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
             #     cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
             #                            [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
 
-            #     sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            #     cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
-            #                             [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up'], type_action))
+           
         return "Success"
     except Exception as e:
         logserver(e)
