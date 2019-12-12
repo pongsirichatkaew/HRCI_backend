@@ -447,7 +447,7 @@ def api_notice_upload_present(cursor):
         columns = [column[0] for column in cursor.description]
         result_leader = toJson(cursor.fetchall(), columns)
         for employee_leader in result_leader:
-            sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid =%s"""
+            sql_assessor = """SELECT * FROM `assessor_kpi` WHERE employeeid =%s"""
             cursor.execute(sql_assessor,(employee_leader['em_id_leader']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
