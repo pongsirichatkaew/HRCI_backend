@@ -118,10 +118,11 @@ def api_notice_estimate_employee(cursor):
                 payload_msg = {
                     "to": ond_id_leader,
                     "bot_id": bot_id,
-                    "message": "โปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
-                    "quick_reply":  quick_reply_element
+                    "type": "text",
+                    "message": "เนื่องจากมีพนักงานจำนวนมากที่ยังไม่ได้รับการประเมิน ทาง HR จึงขยายระยะเวลาการประเมินไปถึงวันจันทร์ที่ 16 ธันวาคม 2562 เวลา 12.00 น. ค่ะ"
+
                 }
-                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_quickreply",
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
                 print employee_assessor['employeeid'], response_msg
             except Exception as e:
@@ -446,7 +447,7 @@ def api_notice_upload_present(cursor):
         columns = [column[0] for column in cursor.description]
         result_leader = toJson(cursor.fetchall(), columns)
         for employee_leader in result_leader:
-            sql_assessor = """SELECT * FROM `assessor_kpi` WHERE employeeid =%s"""
+            sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid =%s"""
             cursor.execute(sql_assessor,(employee_leader['em_id_leader']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
