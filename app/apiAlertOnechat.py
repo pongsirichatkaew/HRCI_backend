@@ -514,10 +514,10 @@ def api_notice_estimate_employee_timeout(cursor):
         delta = datetime(2019, 12, 12) - datetime.now()
         n = str(delta).split(" ")[0]
         n = int(n) + 2
-        print delta
+
         if (n == 7 or n == 5 or n == 3 or n == 2 or n == 1):
             for employee_assessor in result:
-                print n
+
                 sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE (em_id_leader = %s OR em_id_leader_default = %s) AND NOT validstatus=5"""
                 cursor.execute(sql_all_count, (employee_assessor['employeeid'], employee_assessor['employeeid']))
                 columns = [column[0] for column in cursor.description]
