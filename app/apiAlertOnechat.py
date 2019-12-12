@@ -512,7 +512,7 @@ def api_notice_estimate_employee_timeout(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
 
-        delta = datetime(2019, 12, 12) - datetime.now()
+        delta = datetime(2019, 12, 16) - datetime.now()
         n = str(delta).split(" ")[0]
         n = int(n) + 2
 
@@ -542,7 +542,7 @@ def api_notice_estimate_employee_timeout(cursor):
                         url = webmobile()
                         uuid_onechat = employee_assessor['uuid_onechat']
                         quick_reply_element = []
-                        date = '12 ธันวาคม 2562'
+                        date = '16 ธันวาคม 2562 เวลา 12.00 น.'
                         if n == 1:
                             message = "ขณะนี้เป็นวันสุดท้ายในการประเมิน\nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ"
                         else:
