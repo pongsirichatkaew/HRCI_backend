@@ -701,3 +701,21 @@ def api_notice_list_template(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/check_leader_duplicate', methods=['POST'])
+@connect_sql()
+def check_leader_duplicate(cursor):
+    sql = """SELECT * FROM `assessor_kpi`"""
+    cursor.execute(sql)
+    columns = [column[0] for column in cursor.description]
+    result = toJson(cursor.fetchall(), columns)
+
+    for employee in result:
+        print employee['employeeid']
+        sql2 = """SELECT * FROM `employee_kpi` WHERE em_id_leader=%s AND employeeid=%s"""
+        cursor.execute(sql2, (employee['employeeid'], employee['employeeid']))
+        columns = [column[0] for column in cursor.description]
+        result2 = toJson(cursor.fetchall(), columns)
+        print result2
+
+    return 'succes'
