@@ -119,7 +119,7 @@ def api_notice_estimate_employee(cursor):
                     "to": ond_id_leader,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "วันนี้เป็นวันสุดท้ายในการส่งผลประเมินนะคะ รบกวนหัวหน้างานทุกท่านส่งผลประเมินภายในเวลา 12.00 น. ค่ะ"
+                    "message": "เหลือเวลาส่งผลประเมินอีก 30 นาทีนะคะ รบกวนหัวหน้างานทุกท่านส่งผลประเมินภายในเวลา 12.00 น. ค่ะ"
 
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
