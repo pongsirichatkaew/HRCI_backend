@@ -1316,11 +1316,11 @@ def Export_Employee_Appform(cursor):
         logserver(e)
         return "fail"
 
-@app.route('/Export_Birthday', methods=['GET'])
+@app.route('/Export_Appform', methods=['GET'])
 @connect_sql3()
-def Export_Birthday(cursor):
+def Export_Appform(cursor):
     try:
-        sql = """SELECT NameTh,SurnameTh,Birthdate FROM Personal"""
+        sql = """SELECT * FROM Personal"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1329,18 +1329,43 @@ def Export_Birthday(cursor):
         reasonText = ""
         now = datetime.now()
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
-        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Birthdate.xlsx'))
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Appform.xlsx'))
 
-        wb = load_workbook('../app/Template/Template_Birthday.xlsx')
+        wb = load_workbook('../app/Template/Template_Appform.xlsx')
         if len(result) > 0:
             sheet = wb['Sheet1']
             offset = 2
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['NameTh']
-                sheet['B'+str(offset + i)] = result[i]['SurnameTh']
-                sheet['C'+str(offset + i)] =  result[i]['Birthdate']
-                i = i + 1
+                try:
+                    date = result[i]['Birthdate'].split("-")
+                    date_day = int(date[0])
+                    date_month = int(date[1])
+                    date_year = int(date[2]) + 543
+                    sql_add = """SELECT Address.HouseNo, Address.Street, districts.DISTRICT_NAME, amphures.AMPHUR_NAME, provinces.PROVINCE_NAME,Address.PostCode, Address.Tel FROM Address
+                             LEFT JOIN districts ON Address.DISTRICT_ID = districts.DISTRICT_CODE
+                             LEFT JOIN amphures ON Address.AMPHUR_ID = amphures.AMPHUR_ID
+                             LEFT JOIN provinces ON Address.PROVINCE_ID = provinces.PROVINCE_ID
+                             WHERE EmploymentAppNo = %s AND AddressType = 'Home'"""
+                    cursor.execute(sql_add,(result[i]['EmploymentAppNo']))
+                    columns = [column[0] for column in cursor.description]
+                    result_add = toJson(cursor.fetchall(),columns)
+
+                    sheet['A'+str(offset + i)] = result[i]['NameTh'] +' '+result[i]['SurnameTh']
+                    sheet['B'+str(offset + i)] = result[i]['NameEn'] +' '+result[i]['SurnameEn']
+                    sheet['C'+str(offset + i)] =  str(date_day) +'-'+str(date_month)+'-'+str(date_year)
+                    sheet['D'+str(offset + i)] =  result[i]['Citizenship']
+                    sheet['E'+str(offset + i)] =  result[i]['ID_CardNo']
+                    sheet['F'+str(offset + i)] =  result[i]['IssueDate']
+                    sheet['G'+str(offset + i)] =  result[i]['ExpiryDate']
+                    sheet['H'+str(offset + i)] =  result_add[0]['HouseNo']+'ถนน/ซอย '+result_add[0]['Street']+'ตำบล/แขวง '+result_add[0]['DISTRICT_NAME']+'อำเภอ/เขต '+result_add[0]['AMPHUR_NAME']+'จังหวัด '+result_add[0]['PROVINCE_NAME']+'รหัสไปรษณีย์ '+result_add[0]['PostCode']
+                    sheet['I'+str(offset + i)] =  result_add[0]['Tel']
+                    sheet['J'+str(offset + i)] =  result[i]['Mobile']
+                    i = i + 1
+                    print i
+                except Exception as e:
+                    print e
+
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
