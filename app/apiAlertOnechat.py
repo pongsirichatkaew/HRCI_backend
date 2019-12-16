@@ -119,12 +119,34 @@ def api_notice_estimate_employee(cursor):
                     "to": ond_id_leader,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "เนื่องจากมีพนักงานจำนวนมากที่ยังไม่ได้รับการประเมิน ทาง HR จึงขยายระยะเวลาการประเมินไปถึงวันจันทร์ที่ 16 ธันวาคม 2562 เวลา 12.00 น. ค่ะ"
+                    "message": "วันนี้เป็นวันสุดท้ายในการส่งผลประเมินนะคะ รบกวนหัวหน้างานทุกท่านส่งผลประเมินภายในเวลา 12.00 น. ค่ะ"
 
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-                print employee_assessor['employeeid'], response_msg
+
+                pl = {}
+                pl['bot_id'] = bot_id
+                pl['to'] = ond_id_leader
+                pl['type'] = 'template'
+                pl['elements'] = [
+                    {
+                        "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                        "title":"ประเมินพนักงาน",
+                        "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                        "choice":[
+                            {
+                                "label" : "ประเมินพนักงาน",
+                                "type" : "webview",
+                                "url" : url+"/kpionline/"+uuid_onechat,
+                                "size" : "full"
+                            }
+                        ]
+                    }
+                ]
+
+                response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                print employee_assessor['employeeid'], response
             except Exception as e:
                 pass
         return "Success"
