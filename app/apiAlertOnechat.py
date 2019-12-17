@@ -537,8 +537,8 @@ def api_notice_estimate_employee_timeout(cursor):
         delta = datetime(2019, 12, 16) - datetime.now()
         n = str(delta).split(" ")[0]
         n = int(n) + 2
-
-        if (n !=0 ):
+        print n
+        if (n == 0 ):
             for employee_assessor in result:
 
                 sql_all_count = """SELECT COUNT(em_id_leader) as all_count FROM employee_kpi WHERE (em_id_leader = %s OR em_id_leader_default = %s) AND NOT validstatus=5"""
@@ -565,8 +565,8 @@ def api_notice_estimate_employee_timeout(cursor):
                         uuid_onechat = employee_assessor['uuid_onechat']
                         quick_reply_element = []
                         date = '16 ธันวาคม 2562 เวลา 12.00 น.เท่านั้น'
-                        if n == 1:
-                            message = "ขณะนี้เป็นวันสุดท้ายในการประเมิน\nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชา \nโดยเลือกจากเมนูด้านล่าง (ประเมินได้ตั้งแต่วันนี้ จนถึง "+date+") \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ"
+                        if n == 0:
+                            message = "ขณะนี้สิ้นสุดการประเมินแล้ว\nท่านยังเหลือพนักงานที่ยังไม่ได้ประเมินจำนวน "+str(check_estimate)+" คน"+"\nโปรดประเมินพนักงานใต้บังคับบัญชาภายในวันนี้เวลา 12.00 น. \nโดยเลือกจากเมนูด้านล่าง \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ"
                         else:
                             message = "ขณะนี้ HR ได้ขยายเวลาการประเมินผลการปฏิบัติงานปลายปี เป็นวันที่ 16 ธันวาคม 2562 เวลา 12.00 น.เท่านั้น \nขอความร่วมมือหัวหน้างานทุกท่านกรอกแบบประเมินผลการปฏิบัติงานของพนักงานในสังกัดท่านตามวันและเวลาที่กำหนดด้วยค่ะ"
 
