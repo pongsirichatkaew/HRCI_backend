@@ -2264,7 +2264,7 @@ def send_email(cursor):
 
     # TODO Send Probation
     try:
-        sqlselect_emp_pro_1 = """SELECT * FROM Emp_probation INNER JOIN approve_probation 
+        sqlselect_emp_pro_1 = """SELECT * FROM Emp_probation INNER JOIN approve_probation
                                 ON (Emp_probation.employeeid = approve_probation.employeeid AND Emp_probation.version = approve_probation.version)
                                 WHERE Emp_probation.validstatus = 1"""
         cursor.execute(sqlselect_emp_pro_1)
@@ -2644,14 +2644,13 @@ def Export_Employee_Probation(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        print data_new
         year=str(int(data_new['year']) - 543)
         month=str(data_new['month'])
         try:
-            sql = """SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,table1.position_detail as old_position, table1.org_name_detail as old_org_name,
+            sql = """SELECT Emp_probation.employeeid, Emp_probation.name_th, Emp_probation.surname_th,Emp_probation.name_eng, Emp_probation.surname_eng,table1.position_detail as old_position, table1.org_name_detail as old_org_name,
                     Emp_probation.start_work, Emp_probation.EndWork_probation, Emp_probation.status_result, position.position_detail,section.sect_detail, org_name.org_name_detail,
-                    benefit_1.pro_values AS value_1,benefit_2.pro_values AS value_2,
-                    benefit_6.sales_volume FROM `Emp_probation`
+                    benefit_1.pro_values AS value_1,benefit_2.pro_values AS value_2,benefit_3.pro_values AS value_3,benefit_4.pro_values AS value_4,benefit_5.pro_values AS value_5,
+                    benefit_6.sales_volume,benefit_6.date_con FROM `Emp_probation`
                     LEFT JOIN position ON position.position_id = Emp_probation.position_id
                     LEFT JOIN section ON section.sect_id = Emp_probation.section_id
                     LEFT JOIN org_name ON org_name.org_name_id = Emp_probation.org_name_id
@@ -2659,21 +2658,35 @@ def Export_Employee_Probation(cursor):
                                LEFT JOIN position ON position.position_id = Emp_probation_log.position_id
                                LEFT JOIN org_name ON org_name.org_name_id = Emp_probation_log.org_name_id ) as table1)
                                ON table1.employeeid = Emp_probation.employeeid
-                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, employee_pro.pro_values FROM `Emp_probation`
-                               LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_1 )
-                               ON benefit_1.employeeid = Emp_probation.employeeid
-                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q, employee_pro.pro_values FROM `Emp_probation`
-                              LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid ) as benefit_2 )
-                              ON benefit_2.employeeid = Emp_probation.employeeid
-                    LEFT JOIN ((SELECT Contract_log_sales.ID_CardNo, Contract_log_sales.sales_volume FROM Emp_probation
-                    		   LEFT JOIN Contract_log_sales ON Contract_log_sales.ID_CardNo = Emp_probation.citizenid ) as benefit_6 )
-                               ON benefit_6.ID_CardNo = Emp_probation.citizenid
-                    WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND Emp_probation.status_result = 'ขยายเวลาทดลองงาน' AND benefit_1.question_pro_id = 24 AND benefit_2.question_pro_id = 26
+                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q,employee_pro.pro_values FROM `Emp_probation`
+                           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_1 )
+                           ON benefit_1.employeeid = Emp_probation.employeeid
+                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q,employee_pro.pro_values FROM `Emp_probation`
+                           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_2 )
+                           ON benefit_2.employeeid = Emp_probation.employeeid
+                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q,employee_pro.pro_values FROM `Emp_probation`
+                           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_3 )
+                           ON benefit_3.employeeid = Emp_probation.employeeid
+                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q,employee_pro.pro_values FROM `Emp_probation`
+                           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_4 )
+                           ON benefit_4.employeeid = Emp_probation.employeeid
+                    LEFT JOIN ((SELECT Emp_probation.employeeid, employee_pro.question_pro_id, employee_pro.group_q,employee_pro.pro_values FROM `Emp_probation`
+                           LEFT JOIN employee_pro ON employee_pro.employeeid = Emp_probation.employeeid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_5 )
+                           ON benefit_5.employeeid = Emp_probation.employeeid
+                    LEFT JOIN ((SELECT Contract_log_sales.ID_CardNo, Contract_log_sales.sales_volume,Contract_log_sales.date_con FROM Emp_probation
+                    	   LEFT JOIN Contract_log_sales ON Contract_log_sales.ID_CardNo = Emp_probation.citizenid
+                           WHERE Emp_probation.validstatus = 10 AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """') as benefit_6 )
+                           ON benefit_6.ID_CardNo = Emp_probation.citizenid
+                    WHERE table1.type_action = 'ADD_appform' AND Emp_probation.validstatus = 10 AND benefit_1.question_pro_id = 24 AND benefit_2.question_pro_id = 26 AND benefit_3.question_pro_id = 25 AND benefit_4.question_pro_id = 28 AND benefit_5.question_pro_id = 27
                     AND Emp_probation.EndWork_probation LIKE '%""" + month + """-""" + year + """' """
             cursor.execute(sql)
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
-            return jsonify(result)
         except Exception as e:
             logserver(e)
             return "No_Data"
@@ -2682,16 +2695,14 @@ def Export_Employee_Probation(cursor):
         reasonText = ""
         now = datetime.now()
         datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
-        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Template_Employee_Probation.xlsx'))
-
-        wb = load_workbook('Template/Template_Employee_Probation.xlsx')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee_Probation.xlsx'))
+        wb = load_workbook('Template/Template_Employee_Probation_Payroll.xlsx')
         if len(result) > 0:
-
             sheet = wb['Sheet1']
-            sheet['D'+str(2)] = year + '/' + month
-            # sheet['C'+str(3)] = companyname_
-            offset = 6
+            sheet['A'+str(1)] = 'สรุปประเมินผลทดลองงาน เดือน '+month+'/'+year+' (New Staff)'
+            offset = 4
             i = 0
+            print len(result)
             for i in xrange(len(result)):
                 date1 = result[i]['EndWork_probation']
                 one_date = 1
@@ -2709,16 +2720,36 @@ def Export_Employee_Probation(cursor):
 
                 sheet['A'+str(offset + i)] = i+1
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
-                sheet['C'+str(offset + i)] = result[i]['name_th'] + ' ' + result[i]['surname_th']
-                sheet['D'+str(offset + i)] = result[i]['old_position']
-                sheet['E'+str(offset + i)] = result[i]['old_org_name']
-                sheet['F'+str(offset + i)] = result[i]['start_work']
-                sheet['G'+str(offset + i)] = result[i]['EndWork_probation']
-                sheet['H'+str(offset + i)] = result[i]['status_result']
-                sheet['I'+str(offset + i)] = result[i]['position_detail']
-                sheet['J'+str(offset + i)] = result[i]['sect_detail']
-                sheet['K'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['L'+str(offset + i)] = End_probation_date
+                sheet['C'+str(offset + i)] = result[i]['name_th']
+                sheet['D'+str(offset + i)] = result[i]['surname_th']
+                # sheet['E'+str(offset + i)] = result[i]['name_eng']
+                sheet['F'+str(offset + i)] = result[i]['name_eng']
+                sheet['G'+str(offset + i)] = result[i]['surname_eng']
+                # sheet['H'+str(offset + i)] = result[i]['status_result']
+                sheet['I'+str(offset + i)] = result[i]['old_position']
+                sheet['J'+str(offset + i)] = result[i]['old_org_name']
+                sheet['K'+str(offset + i)] = result[i]['start_work']
+                sheet['L'+str(offset + i)] = result[i]['EndWork_probation']
+                if result[i]['status_result'] != 'ขยายเวลาทดลองงาน':
+                    sheet['M'+str(offset + i)] = result[i]['status_result']
+                else:
+                    sheet['N'+str(offset + i)] = result[i]['status_result']
+                sheet['O'+str(offset + i)] = result[i]['value_1']
+                sheet['P'+str(offset + i)] = result[i]['value_2']
+                sheet['Q'+str(offset + i)] = result[i]['value_3']
+                sheet['R'+str(offset + i)] = result[i]['value_4']
+                sheet['S'+str(offset + i)] = result[i]['value_5']
+                try:
+                    sheet['T'+str(offset + i)] = result[i]['sales_volume ']
+                except Exception as e:
+                    print e
+                sheet['U'+str(offset + i)] = result[i]['date_con']
+                sheet['V'+str(offset + i)] = result[i]['position_detail']
+                sheet['W'+str(offset + i)] = result[i]['sect_detail']
+                sheet['X'+str(offset + i)] = result[i]['org_name_detail']
+                # sheet['Y'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['Z'+str(offset + i)] = End_probation_date
+
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -2730,4 +2761,5 @@ def Export_Employee_Probation(cursor):
         # return 'success'
     except Exception as e:
         logserver(e)
+        print e
         return "fail"

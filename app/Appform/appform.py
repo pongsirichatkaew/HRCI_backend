@@ -1374,3 +1374,40 @@ def Export_Appform(cursor):
     except Exception as e:
         logserver(e)
         return "fail"
+
+@app.route('/Export_Employee_hrci', methods=['GET'])
+@connect_sql2()
+def Export_Employee_hrci(cursor):
+    try:
+        sql = """SELECT * FROM hrci WHERE workstatus = 'Active'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+            # return jsonify(result)
+
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee_All_Hrci.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee_Hrci.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['code']
+                sheet['B'+str(offset + i)] = result[i]['thainame']
+                sheet['C'+str(offset + i)] = result[i]['email']
+                sheet['D'+str(offset + i)] = result[i]['email']
+                sheet['E'+str(offset + i)] = result[i]['phonenumber']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
