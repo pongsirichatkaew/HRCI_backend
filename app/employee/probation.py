@@ -2702,7 +2702,6 @@ def Export_Employee_Probation(cursor):
             sheet['A'+str(1)] = 'สรุปประเมินผลทดลองงาน เดือน '+month+'/'+year+' (New Staff)'
             offset = 4
             i = 0
-            print len(result)
             for i in xrange(len(result)):
                 date1 = result[i]['EndWork_probation']
                 one_date = 1
@@ -2722,33 +2721,32 @@ def Export_Employee_Probation(cursor):
                 sheet['B'+str(offset + i)] = result[i]['employeeid']
                 sheet['C'+str(offset + i)] = result[i]['name_th']
                 sheet['D'+str(offset + i)] = result[i]['surname_th']
-                # sheet['E'+str(offset + i)] = result[i]['name_eng']
-                sheet['F'+str(offset + i)] = result[i]['name_eng']
-                sheet['G'+str(offset + i)] = result[i]['surname_eng']
-                # sheet['H'+str(offset + i)] = result[i]['status_result']
-                sheet['I'+str(offset + i)] = result[i]['old_position']
-                sheet['J'+str(offset + i)] = result[i]['old_org_name']
-                sheet['K'+str(offset + i)] = result[i]['start_work']
-                sheet['L'+str(offset + i)] = result[i]['EndWork_probation']
+                sheet['E'+str(offset + i)] = result[i]['name_eng']
+                sheet['F'+str(offset + i)] = result[i]['surname_eng']
+                sheet['G'+str(offset + i)] = result[i]['old_position']
+                sheet['H'+str(offset + i)] = result[i]['old_org_name']
+                sheet['I'+str(offset + i)] = result[i]['start_work']
+                sheet['J'+str(offset + i)] = result[i]['EndWork_probation']
                 if result[i]['status_result'] != 'ขยายเวลาทดลองงาน':
-                    sheet['M'+str(offset + i)] = result[i]['status_result']
+                    sheet['K'+str(offset + i)] = result[i]['status_result']
                 else:
-                    sheet['N'+str(offset + i)] = result[i]['status_result']
-                sheet['O'+str(offset + i)] = result[i]['value_1']
-                sheet['P'+str(offset + i)] = result[i]['value_2']
-                sheet['Q'+str(offset + i)] = result[i]['value_3']
-                sheet['R'+str(offset + i)] = result[i]['value_4']
-                sheet['S'+str(offset + i)] = result[i]['value_5']
+                    sheet['L'+str(offset + i)] = result[i]['status_result']
+
+                sheet['M'+str(offset + i)] = result[i]['value_1']
+                sheet['N'+str(offset + i)] = result[i]['value_2']
+                sheet['O'+str(offset + i)] = result[i]['value_3']
+                sheet['P'+str(offset + i)] = result[i]['value_4']
+                sheet['Q'+str(offset + i)] = result[i]['value_5']
                 try:
-                    sheet['T'+str(offset + i)] = result[i]['sales_volume ']
+                    sheet['R'+str(offset + i)] = result[i]['sales_volume']
                 except Exception as e:
                     print e
-                sheet['U'+str(offset + i)] = result[i]['date_con']
-                sheet['V'+str(offset + i)] = result[i]['position_detail']
-                sheet['W'+str(offset + i)] = result[i]['sect_detail']
-                sheet['X'+str(offset + i)] = result[i]['org_name_detail']
-                # sheet['Y'+str(offset + i)] = result[i]['org_name_detail']
-                sheet['Z'+str(offset + i)] = End_probation_date
+                sheet['S'+str(offset + i)] = result[i]['date_con']
+                sheet['T'+str(offset + i)] = result[i]['position_detail']
+                sheet['U'+str(offset + i)] = result[i]['sect_detail']
+                sheet['V'+str(offset + i)] = result[i]['org_name_detail']
+                # sheet['W'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['X'+str(offset + i)] = End_probation_date
 
                 i = i + 1
         wb.save(filename_tmp)
