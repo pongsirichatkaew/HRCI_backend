@@ -162,36 +162,40 @@ def api_notice_grade_employee(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql_employee = """SELECT employeeid, gradeCompareWithPoint, present_kpi FROM `employee_kpi` WHERE validstatus IN(2,3) AND year=%s AND term=%s"""
+        sql_employee = """SELECT employeeid, name, surname, gradeCompareWithPoint, present_kpi FROM `employee_kpi` WHERE validstatus IN(2,3) AND year=%s AND term=%s AND employeeid = 62511"""
         cursor.execute(sql_employee, (data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
         for employee in result:
-            response_onechat_id = requests.request(
-                "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee['employeeid']).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee['employeeid']).json()
             try:
-                ond_id = response_onechat_id['oneid']
+                ond_id =  response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
-                try:
-                    if employee['present_kpi'] == 'active':
-                        payload_msg = {
-                            "bot_id": bot_id,
-                            "to": ond_id,
-                            "type": "text",
-                            "message": "ในการประเมินปลายปี 2562 คุณได้รับเกรด: " + employee['gradeCompareWithPoint']+"\nคุณได้รับสิทธิ์ในการเข้าพรีเซนต์ผลงาน \n\nรอน้องบอทติดต่อกลับเพื่อแจ้งรายละเอียดตารางเวลาและสถานที่พรีเซนต์ผลงานภายหลังนะคะ \n\nอย่าลืม!! จัดทำสไลด์พรีเซนต์ผลงานตนเองแล้วส่งมอบให้หัวหน้างานน้าาา"
-                        }
-                    else:
-                        payload_msg = {
-                            "bot_id": bot_id,
-                            "to": ond_id,
-                            "type": "text",
-                            "message": "ในการประเมินปลายปี 2562 คุณได้รับเกรด: " + employee['gradeCompareWithPoint']
-                        }
-                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                                                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-                except Exception as e:
-                    pass
+                url = webmobile()
+
+                pl = {}
+                pl['bot_id'] = bot_id
+                pl['to'] = ond_id
+                pl['type'] = 'template'
+                pl['elements'] = [
+                    {
+                        "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                        "title":"แจ้งผลการประเมิน",
+                        "detail":"กรุณากดปุ่มด้านล่างเพื่ออ่านผลการประเมินและรับทราบการประกาศ",
+                        "choice":[
+                            {
+                                "label" : "รายละเอียด",
+                                "type" : "webview",
+                                "url" : url+"/kpisuccess/"+employee['employeeid']+'/'+data_new['year']+'/'+data_new['term'],
+                                "size" : "full"
+                            }
+                        ]
+                    }
+                ]
+                print pl
+                response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                print employee['employeeid'], response
             except Exception as e:
                 logserver(e)
         return "Success"
@@ -692,7 +696,6 @@ def api_notice_list_template(cursor):
             bot_id = botId()
             tokenBot = botToken()
             uuid_onechat = result[0]['uuid_onechat']
-            quick_reply_element = []
             url = webmobile()
 
             pl = {}

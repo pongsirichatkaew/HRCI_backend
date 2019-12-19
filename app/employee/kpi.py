@@ -2083,6 +2083,42 @@ def export_employee(cursor):
         logserver(e)
         return "fail"
 
+@app.route('/export_employee_no_salary', methods=['GET'])
+@connect_sql()
+def export_employee_no_salary(cursor):
+    try:
+        sql = """SELECT * FROM `employee_kpi` WHERE `structure_salary` = '0'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_no_salary.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name']
+                sheet['C'+str(offset + i)] =  result[i]['surname']
+
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        # os.remove(filename_tmp)
+        # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify("aaa")
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):
