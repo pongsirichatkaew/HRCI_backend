@@ -2083,6 +2083,88 @@ def export_employee(cursor):
         logserver(e)
         return "fail"
 
+@app.route('/export_employee_no_salary', methods=['GET'])
+@connect_sql()
+def export_employee_no_salary(cursor):
+    try:
+        sql = """SELECT *  FROM `employee_kpi` WHERE `validstatus` = 2 AND old_grade = '' AND NOT gradeCompareWithPoint = 'Null'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_no_salary.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['em_id_leader']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name']
+                sheet['D'+str(offset + i)] = result[i]['surname']
+                sheet['E'+str(offset + i)] = result[i]['structure_salary']
+                sheet['F'+str(offset + i)] =  result[i]['gradeCompareWithPoint']
+
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        # os.remove(filename_tmp)
+        # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify("aaa")
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/export_employee_kpi', methods=['GET'])
+@connect_sql()
+def export_employee_kpi(cursor):
+    try:
+        sql = """SELECT employee_kpi.employeeid,employee_kpi.name, employee_kpi.surname,position.position_detail,org_name.org_name_detail ,employee_kpi.em_id_leader_default FROM `employee_kpi`
+                    LEFT JOIN position ON employee_kpi.position = position.position_id
+                    LEFT JOIN org_name ON employee_kpi.org_name = org_name.org_name_id
+                    WHERE `year` = '2562' AND `term` = 'lateYear' AND NOT validstatus =4"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee_kpi.xlsx'))
+
+        wb = load_workbook('../app/Template/Template_Employee_Kpi.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name']
+                sheet['C'+str(offset + i)] = result[i]['surname']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['F'+str(offset + i)] =  result[i]['em_id_leader_default']
+
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        # os.remove(filename_tmp)
+        # displayColumns = ['isSuccess','reasonCode','reasonText','excel_base64']
+        # displayData = [(isSuccess,reasonCode,reasonText,encoded_string)]
+        return jsonify("aaa")
+    except Exception as e:
+        logserver(e)
+        return "fail"
 
 @app.route('/userGetKpiFile/<path>', methods=['GET'])
 def userGetKpiFile(path):

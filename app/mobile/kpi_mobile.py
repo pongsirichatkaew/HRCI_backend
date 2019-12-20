@@ -196,7 +196,7 @@ def Qry_kpi_mobile(cursor, employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
-              
+
 
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
@@ -245,7 +245,7 @@ def Qry_kpi_mobile(cursor, employee_id):
                 columns = [column[0] for column in cursor.description]
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
-               
+
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
         return jsonify(resultJson)
@@ -480,6 +480,35 @@ def confirm_transfer_kpi_one(cursor):
         print str(e)
         return "fail"
 
+@app.route('/confirm_grade_kpi_one', methods=['POST'])
+@connect_sql()
+def confirm_grade_kpi_one(cursor):
+    try:
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+        sql_update_status = """UPDATE `employee_kpi` SET `status_confirm`=1 WHERE employeeid = %s AND term = %s  AND year = %s"""
+        cursor.execute(sql_update_status, (data_new['employeeid'], data_new['term'], data_new['year']))
+        return "Success"
+    except Exception as e:
+        logserver(e)
+        print str(e)
+        return "fail"
+
+@app.route('/Qry_employee_kpi_one/<employeeid>/<year>/<term>', methods=['GET'])
+@connect_sql()
+def Qry_employee_kpi_one(cursor, employeeid, year, term):
+    try:
+        sql_employee = """SELECT * FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s"""
+        cursor.execute(sql_employee, (employeeid, year, term))
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(), columns)
+        return jsonify(result[0])
+    except Exception as e:
+        logserver(e)
+        print str(e)
+        return "fail"
+
 
 @app.route('/confirm_all_emp_kpi_mobile', methods=['POST'])
 @connect_sql()
@@ -632,12 +661,12 @@ def edit_project_mobile(cursor):
         # print data_new
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
-        
+
         sql_project = """SELECT * FROM `project_kpi` WHERE `employeeid` =%s AND year = %s AND term = %s"""
         cursor.execute(sql_project,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result_project = toJson(cursor.fetchall(),columns)
-        
+
         setA = []
         setB = []
         for project in result_project:
@@ -653,7 +682,7 @@ def edit_project_mobile(cursor):
         for diff in diff_set:
             sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
             cursor.execute(sqlde,(data_new['employeeid'],diff,data_new['year'],data_new['term']))
-            
+
         i=0
         for i in xrange(len(data_new['portfolioLists'])):
             try:
@@ -695,7 +724,7 @@ def edit_project_mobile(cursor):
 
                 sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
                 cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up'],type_action))
-                   
+
         return "Success"
     except Exception as e:
         logserver(e)
