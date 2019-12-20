@@ -2087,7 +2087,7 @@ def export_employee(cursor):
 @connect_sql()
 def export_employee_no_salary(cursor):
     try:
-        sql = """SELECT * FROM `employee_kpi` WHERE `structure_salary` = '0'"""
+        sql = """SELECT *  FROM `employee_kpi` WHERE `validstatus` = 2 AND old_grade = '' AND NOT gradeCompareWithPoint = 'Null'"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -2104,9 +2104,12 @@ def export_employee_no_salary(cursor):
             offset = 2
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['employeeid']
-                sheet['B'+str(offset + i)] = result[i]['name']
-                sheet['C'+str(offset + i)] =  result[i]['surname']
+                sheet['A'+str(offset + i)] = result[i]['em_id_leader']
+                sheet['B'+str(offset + i)] = result[i]['employeeid']
+                sheet['C'+str(offset + i)] = result[i]['name']
+                sheet['D'+str(offset + i)] = result[i]['surname']
+                sheet['E'+str(offset + i)] = result[i]['structure_salary']
+                sheet['F'+str(offset + i)] =  result[i]['gradeCompareWithPoint']
 
                 i = i + 1
         wb.save(filename_tmp)
