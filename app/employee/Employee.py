@@ -359,12 +359,12 @@ def EditIntranetEmployee(cursor,employee,position_detail,org_name_detail,cost_ce
                                position_detail,org_name_detail,cost_center_name,sect_detail,
                                employee['NicknameTh'],employee['Email'],
                                employee['phone_company'],employee['employeeid']))
-    
+
     sql_update_email = """ Update user SET name = %s ,username =%s ,department=%s WHERE userid =%s """
     cursor.execute(sql_update_email,(firstname+' '+employee['SurnameEn'],employee['Email'],org_name_detail,employee['employeeid']))
     # columns = [column[0] for column in cursor.description]
     # result = toJson(cursor.fetchall(),columns)
-    
+
 
 @app.route('/EditEmployee', methods=['POST'])
 @connect_sql()
@@ -374,12 +374,12 @@ def EditEmployee(cursor):
         source = dataInput['source']
         data_new = source
         # print 'editEmploye',data_new
-        
+
         sql = """SELECT * FROM employee WHERE employeeid = %s"""
         cursor.execute(sql,data_new['employeeid'])
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-        
+
         # print 'resultEm',result
         type_action = "Edit"
 
@@ -525,22 +525,22 @@ def EditEmployee(cursor):
             cursor.execute(sql_position,(data_new['position_id']))
             columns = [column[0] for column in cursor.description]
             result_position = toJson(cursor.fetchall(),columns)
-            
+
             sql_org_name = """SELECT * FROM org_name WHERE org_name_id = %s"""
             cursor.execute(sql_org_name,(data_new['org_name_id']))
             columns = [column[0] for column in cursor.description]
             result_org_name = toJson(cursor.fetchall(),columns)
-            
+
             sql_cost_center = """SELECT * FROM cost_center_name WHERE cost_center_name_id = %s"""
             cursor.execute(sql_cost_center,(data_new['cost_center_name_id']))
             columns = [column[0] for column in cursor.description]
             result_cost_center = toJson(cursor.fetchall(),columns)
-            
+
             sql_section = """SELECT * FROM section WHERE sect_id = %s"""
             cursor.execute(sql_section,(data_new['section_id']))
             columns = [column[0] for column in cursor.description]
             result_section = toJson(cursor.fetchall(),columns)
-            
+
             EditIntranetEmployee(data_new,result_position[0]['position_detail'].encode("utf-8"),result_org_name[0]['org_name_detail'].encode("utf-8"),result_cost_center[0]['cost_detail'].encode("utf-8"),result_section[0]['sect_detail'].encode("utf-8"))
         except Exception as e:
             print (str(e))
@@ -1062,7 +1062,7 @@ def EditEmployee_TrainingCourse(cursor):
 #     # cursor.execute(sql,employee['employeeid'])
 #     # columns = [column[0] for column in cursor.description]
 #     # result = toJson(cursor.fetchall(),columns)
-    
+
 @app.route('/EditEmployee_Employeeid', methods=['POST'])
 @connect_sql()
 def EditEmployee_Employeeid(cursor):
@@ -1533,7 +1533,7 @@ def Export_Employee_All_company(cursor):
                     i = i + 1
                 except Exception as e:
                     print str(e)
-               
+
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
             encoded_string = base64.b64encode(f.read())
@@ -2522,6 +2522,61 @@ def Qry_Employee_GA(cursor):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/Export_Employee_app', methods=['GET'])
+@connect_sql()
+def Export_Employee_app(cursor):
+    try:
+        sql = """SELECT employee.employeeid,employee.name_th,employee.surname_th,position.position_detail,section.sect_detail,org_name.org_name_detail,cost_center_name.cost_detail,employee_kpi.em_id_leader_default,approve_request.employeeid_reques,Education.EducationLevel,Education.Qualification,Education.Major FROM employee
+                    LEFT JOIN position ON position.position_id = employee.position_id
+                    LEFT JOIN section ON section.sect_id = employee.section_id
+                    LEFT JOIN org_name ON org_name.org_name_id = employee.org_name_id
+                    LEFT JOIN cost_center_name ON cost_center_name.cost_center_name_id = employee.cost_center_name_id
+                    LEFT JOIN Education ON Education.ID_CardNo = employee.citizenid
+                    LEFT JOIN employee_kpi ON employee_kpi.employeeid = employee.employeeid
+                    LEFT JOIN approve_request ON approve_request.employeeid = employee.employeeid
+                    WHERE approve_request.tier_approve = 'L1' AND NOT employee.EmploymentAppNo = 'Null'"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+            # return jsonify(result)
+
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee_App.xlsx'))
+
+        wb = load_workbook('../app/Template/Emp_app.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th']
+                sheet['C'+str(offset + i)] = result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['position_detail']
+                sheet['E'+str(offset + i)] = result[i]['sect_detail']
+                sheet['F'+str(offset + i)] = result[i]['org_name_detail']
+                sheet['G'+str(offset + i)] = result[i]['cost_detail']
+                if (result[i]['em_id_leader_default'] != None):
+                    sheet['H'+str(offset + i)] = result[i]['em_id_leader_default']
+                else:
+                    print result[i]['employeeid_reques']
+                    sheet['H'+str(offset + i)] = result[i]['employeeid_reques']
+                sheet['I'+str(offset + i)] = result[i]['EducationLevel']
+                sheet['J'+str(offset + i)] = result[i]['Qualification']
+                sheet['K'+str(offset + i)] = result[i]['Major']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        return 'success'
     except Exception as e:
         logserver(e)
         return "fail"

@@ -584,8 +584,8 @@ def QryDatbaseAppform():
         columnsblack = [column[0] for column in cursor.description]
         resultblacklist = toJson(cursor.fetchall(),columnsblack)
 
-        sqlemployee = "SELECT citizenid FROM employee WHERE citizenid=%s"
-        cursor.execute(sqlemployee,ID_CardNo)
+        sqlemployee = "SELECT citizenid FROM employee WHERE citizenid=%s AND company_id=%s"
+        cursor.execute(sqlemployee,(ID_CardNo,data_new['company_id']))
         columnsemployee = [column[0] for column in cursor.description]
         resultemployee = toJson(cursor.fetchall(),columnsemployee)
         connection.commit()
@@ -1403,6 +1403,43 @@ def Export_Employee_hrci(cursor):
                 sheet['C'+str(offset + i)] = result[i]['email']
                 sheet['D'+str(offset + i)] = result[i]['email']
                 sheet['E'+str(offset + i)] = result[i]['phonenumber']
+                i = i + 1
+        wb.save(filename_tmp)
+        with open(filename_tmp, "rb") as f:
+            encoded_string = base64.b64encode(f.read())
+        return 'success'
+    except Exception as e:
+        logserver(e)
+        return "fail"
+
+@app.route('/Export_Employee_Birth', methods=['GET'])
+@connect_sql()
+def Export_Employee_Birth(cursor):
+    try:
+        sql = """SELECT employee.employeeid, employee.name_th, employee.surname_th,Personal.Birthdate,Personal.Birthdate_name FROM `employee` LEFT JOIN Personal ON Personal.ID_CardNo = employee.citizenid"""
+        cursor.execute(sql)
+        columns = [column[0] for column in cursor.description]
+        result = toJson(cursor.fetchall(),columns)
+            # return jsonify(result)
+
+        isSuccess = True
+        reasonCode = 200
+        reasonText = ""
+        now = datetime.now()
+        datetimeStr = now.strftime('%Y%m%d_%H%M%S%f')
+        filename_tmp = secure_filename('{}_{}'.format(datetimeStr, 'Employee_Birth.xlsx'))
+
+        wb = load_workbook('../app/Template/Birthday.xlsx')
+        if len(result) > 0:
+            sheet = wb['Sheet1']
+            offset = 2
+            i = 0
+            for i in xrange(len(result)):
+                sheet['A'+str(offset + i)] = result[i]['employeeid']
+                sheet['B'+str(offset + i)] = result[i]['name_th']
+                sheet['C'+str(offset + i)] = result[i]['surname_th']
+                sheet['D'+str(offset + i)] = result[i]['Birthdate']
+                sheet['E'+str(offset + i)] = result[i]['Birthdate_name']
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
