@@ -180,81 +180,81 @@ def QryEmployee_one_person(cursor):
         resultEmployee_Email = toJson(cursor.fetchall(),columnsEmployeeEmail)
 
         try:
-            sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s AND Address.AddressType='Home'"
-            cursor.execute(sqlEm,resultEmployee[0]['citizenid'])
+            sqlEm = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address \
+            INNER JOIN employee ON employee.citizenid=Address.ID_CardNo WHERE employee.citizenid=%s AND employee.employeeid=%s AND Address.AddressType='Home'"
+            cursor.execute(sqlEm,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columnsEm = [column[0] for column in cursor.description]
             resultAddress_home = toJson(cursor.fetchall(),columnsEm)
         except Exception as e:
             resultAddress_home = ""
         try:
-            sqlEm_persent = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address INNER JOIN Personal ON Personal.ID_CardNo=Address.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s AND Address.AddressType='Present'"
-            cursor.execute(sqlEm_persent,resultEmployee[0]['citizenid'])
+            sqlEm_persent = "SELECT Address.AddressType,Address.HouseNo,Address.Street,Address.DISTRICT_ID,Address.AMPHUR_ID,Address.PROVINCE_ID,Address.PostCode,Address.Tel,Address.Fax FROM Address \
+            INNER JOIN employee ON employee.citizenid=Address.ID_CardNo WHERE employee.citizenid=%s AND employee.employeeid=%s AND Address.AddressType='Present'"
+            cursor.execute(sqlEm_persent,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columnsEmAD = [column[0] for column in cursor.description]
             resultAddress_Present = toJson(cursor.fetchall(),columnsEmAD)
         except Exception as e:
             resultAddress_Present = ""
         try:
-            sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN Personal ON Personal.ID_CardNo=Attachment.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql4,resultEmployee[0]['citizenid'])
+            sql4 = "SELECT Attachment.Type,Attachment.PathFile FROM Attachment INNER JOIN employee ON employee.citizenid=Attachment.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql4,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns4 = [column[0] for column in cursor.description]
             result4 = toJson(cursor.fetchall(),columns4)
         except Exception as e:
             result4 = ""
         try:
-            sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON Personal.ID_CardNo=ComputerSkill.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql6,resultEmployee[0]['citizenid'])
+            sql6 = "SELECT ComputerSkill.ComSkill,ComputerSkill.Level FROM ComputerSkill INNER JOIN Personal ON employee ON employee.citizenid=ComputerSkill.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql6,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns6 = [column[0] for column in cursor.description]
             result6 = toJson(cursor.fetchall(),columns6)
         except Exception as e:
             result6 = ""
         try:
-            sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN Personal ON Personal.ID_CardNo=Education.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql9,resultEmployee[0]['citizenid'])
+            sql9 = "SELECT Education.EducationLevel,Education.Institute,Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM Education INNER JOIN employee ON employee.citizenid=Education.ID_CardNo \
+                    WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql9,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns9 = [column[0] for column in cursor.description]
             result9 = toJson(cursor.fetchall(),columns9)
         except Exception as e:
             result9 = ""
         try:
-            sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON Personal.ID_CardNo=Employment.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql10,resultEmployee[0]['citizenid'])
+            sql10 = "SELECT Employment.CompanyName,Employment.CompanyAddress,Employment.PositionHeld,Employment.StartSalary,Employment.EndSalary,Employment.StartYear,Employment.EndYear,Employment.Responsibility,Employment.ReasonOfLeaving,Employment.Descriptionofwork FROM Employment INNER JOIN Personal ON employee ON employee.citizenid=Employment.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql10,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns10 = [column[0] for column in cursor.description]
             result10 = toJson(cursor.fetchall(),columns10)
         except Exception as e:
             result10 = ""
         try:
-            sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
-            WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother')AND Personal.ID_CardNo=%s"
-            cursor.execute(sqlfa,resultEmployee[0]['citizenid'])
+            sqlfa = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN employee ON employee.citizenid=Family.ID_CardNo \
+            WHERE (Family.MemberType = 'Father' OR Family.MemberType = 'Mother') AND employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sqlfa,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columnsfa = [column[0] for column in cursor.description]
             resultfa = toJson(cursor.fetchall(),columnsfa)
         except Exception as e:
             resultfa = ""
         try:
-            sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN Personal ON Personal.ID_CardNo=Family.ID_CardNo \
-            WHERE Family.MemberType = 'BrotherSister' AND Personal.ID_CardNo=%s"
-            cursor.execute(sqlbro,resultEmployee[0]['citizenid'])
+            sqlbro = "SELECT Family.MemberType,Family.Name,Family.Surname,Family.Occupation,Family.Address,Family.Tel,Family.Fax FROM Family INNER JOIN employee ON employee.citizenid=Family.ID_CardNo \
+            WHERE Family.MemberType = 'BrotherSister' AND employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sqlbro,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columnsbro = [column[0] for column in cursor.description]
             resultbro = toJson(cursor.fetchall(),columnsbro)
         except Exception as e:
             resultbro = ""
         try:
-            sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN Personal ON Personal.ID_CardNo=LanguagesSkill.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql13,resultEmployee[0]['citizenid'])
+            sql13 = "SELECT LanguagesSkill.Languages,LanguagesSkill.Speaking,LanguagesSkill.Reading,LanguagesSkill.Writting FROM LanguagesSkill INNER JOIN employee ON employee.citizenid=LanguagesSkill.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql13,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns13 = [column[0] for column in cursor.description]
             result13 = toJson(cursor.fetchall(),columns13)
         except Exception as e:
             result13 = ""
         try:
-            sql14 = "SELECT * FROM Personal \
-            WHERE ID_CardNo=%s"
-            cursor.execute(sql14,resultEmployee[0]['citizenid'])
+            sql14 = "SELECT * FROM Personal INNER JOIN employee ON employee.citizenid=Personal.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql14,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns14 = [column[0] for column in cursor.description]
             result_Personal = toJson(cursor.fetchall(),columns14)
         except Exception as e:
@@ -278,33 +278,33 @@ def QryEmployee_one_person(cursor):
         except Exception as e:
             pass
         try:
-            sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN Personal ON Personal.ID_CardNo=Reference.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql17,resultEmployee[0]['citizenid'])
+            sql17 = "SELECT Reference.RelativeName,Reference.RelativeSurname,Reference.RelativePosition,Reference.RelativeRelationship,Reference.PhysicalHandicap,Reference.PhysicalHandicapDetail,Reference.KnowFrom FROM Reference INNER JOIN employee ON employee.citizenid=Reference.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql17,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns17 = [column[0] for column in cursor.description]
             result17 = toJson(cursor.fetchall(),columns17)
         except Exception as e:
             result17 = ""
         try:
-            sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN Personal ON Personal.ID_CardNo=RefPerson.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql18,resultEmployee[0]['citizenid'])
+            sql18 = "SELECT RefPerson.RefName,RefPerson.RefPosition,RefPerson.RefAddress,RefPerson.RefTel FROM RefPerson INNER JOIN employee ON employee.citizenid=RefPerson.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql18,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns18 = [column[0] for column in cursor.description]
             result18 = toJson(cursor.fetchall(),columns18)
         except Exception as e:
             result18 = ""
         try:
-            sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN Personal ON Personal.ID_CardNo=SpecialSkill.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql20,resultEmployee[0]['citizenid'])
+            sql20 = "SELECT SpecialSkill.CarDrivingLicense,SpecialSkill.MotorBicycleDrivingLicense,SpecialSkill.OwnCar,SpecialSkill.OwnMotorBicycle,SpecialSkill.WorkUpCountry,SpecialSkill.StartWorkEarliest,SpecialSkill.PhysicalDisabilityOrDisease,SpecialSkill.DischargeFromEmployment,SpecialSkill.DischargeFromEmploymentReason,SpecialSkill.Arrested,SpecialSkill.ArrestedReason FROM SpecialSkill INNER JOIN employee ON employee.citizenid=SpecialSkill.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql20,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns20 = [column[0] for column in cursor.description]
             result20 = toJson(cursor.fetchall(),columns20)
         except Exception as e:
             result20 = ""
         try:
-            sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN Personal ON Personal.ID_CardNo=TrainingCourse.ID_CardNo \
-            WHERE Personal.ID_CardNo=%s"
-            cursor.execute(sql23,resultEmployee[0]['citizenid'])
+            sql23 = "SELECT TrainingCourse.Subject,TrainingCourse.Place,TrainingCourse.StartDate,TrainingCourse.EndDate FROM TrainingCourse INNER JOIN employee ON employee.citizenid=TrainingCourse.ID_CardNo \
+            WHERE employee.citizenid=%s AND employee.employeeid=%s"
+            cursor.execute(sql23,(resultEmployee[0]['citizenid'],data_new['employeeid']))
             columns23 = [column[0] for column in cursor.description]
             result23 = toJson(cursor.fetchall(),columns23)
         except Exception as e:
@@ -373,7 +373,7 @@ def EditEmployee(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        # print 'editEmploye',data_new
+        print 'editEmploye',data_new
 
         sql = """SELECT * FROM employee WHERE employeeid = %s"""
         cursor.execute(sql,data_new['employeeid'])
@@ -2517,8 +2517,8 @@ def Qry_Employee_GA(cursor):
         result_em = toJson(cursor.fetchall(),columns)
 
         sql = "SELECT benefits.benefits_detail,benefits.type_benefits,employee_benefits.benefits_id,employee_benefits.benefits_values,employee_benefits.type_check FROM employee_benefits LEFT JOIN benefits ON employee_benefits.benefits_id = benefits.benefits_id \
-         WHERE employee_benefits.citizenid=%s"
-        cursor.execute(sql,result_em[0]['citizenid'])
+         WHERE employee_benefits.citizenid=%s AND employeeid=%s"
+        cursor.execute(sql,(result_em[0]['citizenid'],data_new['employeeid']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
         return jsonify(result)
