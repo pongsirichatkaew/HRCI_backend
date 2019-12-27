@@ -4,9 +4,9 @@ from dbConfig import *
 def readExcel(cursor):
     try:
         loc = ("../app/1.xlsx")
-        wb = xlrd.open_workbook(loc) 
-        sheet = wb.sheet_by_index(0) 
-        sheet.cell_value(0, 0) 
+        wb = xlrd.open_workbook(loc)
+        sheet = wb.sheet_by_index(0)
+        sheet.cell_value(0, 0)
         print sheet.cell_value(0, 1),sheet.cell_value(0, 2)
         # arr_em_id = []
         for i in range(sheet.nrows):
@@ -15,21 +15,21 @@ def readExcel(cursor):
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(),columns)
             if(len(result)>0):
-                # print(result[0]['employeeid']) 
-                sql_update = "UPDATE employee_kpi SET present_kpi = 'active' WHERE employeeid = %s AND year = %s AND term = %s"
+                # print(result[0]['employeeid'])
+                sql_update = "UPDATE employee_kpi SET present_kpi = 'active',status_confirm = 0 WHERE employeeid = %s AND year = %s AND term = %s"
                 cursor.execute(sql_update,(result[0]['employeeid'],int(sheet.cell_value(0, 1)),sheet.cell_value(0, 2)))
                 print 'update {}'.format(result[0]['employeeid'])
         print 'success'
-        
-        
-        sql_board="""SELECT board_kpi_v2.year,board_kpi_v2.term,board_kpi_v2.employeeid_board,employee.name_th,employee.surname_th,position.position_detail FROM `board_kpi_v2` 
+
+
+        sql_board="""SELECT board_kpi_v2.year,board_kpi_v2.term,board_kpi_v2.employeeid_board,employee.name_th,employee.surname_th,position.position_detail FROM `board_kpi_v2`
                         LEFT JOIN employee ON board_kpi_v2.employeeid_board = employee.employeeid
                         LEFT JOIN position ON employee.position_id = position.position_id
                         WHERE year = %s AND term = %s AND validstatus = 1"""
         cursor.execute(sql_board,(int(sheet.cell_value(0, 1)),sheet.cell_value(0, 2)))
         columns = [column[0] for column in cursor.description]
         result_board = toJson(cursor.fetchall(),columns)
-        
+
         group_kpi_id = 'WHERE year='+'"'+str(int(sheet.cell_value(0, 1)))+'"'+' AND term='+'"'+str(sheet.cell_value(0, 2))+'" AND present_kpi = "active" '
         for board in result_board:
             try:

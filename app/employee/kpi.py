@@ -904,6 +904,7 @@ def Update_grade_hr(cursor):
                 ond_id =  response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
+                url = webmobile()
 
                 try:
                     if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
@@ -913,14 +914,27 @@ def Update_grade_hr(cursor):
                 except Exception as e:
                     print str(e)
 
-                payload_msg =  {
-                    "bot_id":bot_id,
-                    "to": ond_id,
-                    "type":"text",
-                    "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
-                }
-                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                pl = {}
+                pl['bot_id'] = bot_id
+                pl['to'] = ond_id
+                pl['type'] = 'template'
+                pl['elements'] = [
+                    {
+                        "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                        "title":"แจ้งผลการประเมิน",
+                        "detail":"กรุณากดปุ่มด้านล่างเพื่ออ่านผลการประเมินและรับทราบการประกาศ",
+                        "choice":[
+                            {
+                                "label" : "รายละเอียด",
+                                "type" : "webview",
+                                "url" : url+"/kpisuccess/"+employee['employeeid']+'/'+data_new['year']+'/'+data_new['term'],
+                                "size" : "full"
+                            }
+                        ]
+                    }
+                ]
+                response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                print employee['employeeid'], response
             except Exception as e:
                 pass
 
