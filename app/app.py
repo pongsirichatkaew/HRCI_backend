@@ -53,7 +53,8 @@ def login():
     data_new = source
     username = data_new['username']
     password = data_new['password']
-    Gen_token = uuid.uuid4().hex
+    # Gen_token = uuid.uuid4().hex
+    Gen_token = ''
     connection = mysql2.connect()
     cursor = connection.cursor()
     sql_employee = "SELECT code FROM hrci WHERE email = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
