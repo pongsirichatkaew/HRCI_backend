@@ -1,6 +1,6 @@
 Flask
 requests
-flask-mysql
+Flask-MySQL==1.4.0
 flask-cors
 flask-moment
 flask_socketio
