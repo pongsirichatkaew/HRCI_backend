@@ -53,23 +53,22 @@ def login():
     data_new = source
     username = data_new['username']
     password = data_new['password']
-    # Gen_token = uuid.uuid4().hex
-    Gen_token = ''
-    connection = mysql2.connect()
-    cursor = connection.cursor()
+    Gen_token = uuid.uuid4().hex
+    connection2 = mysql2.connect()
+    cursor2 = connection2.cursor()
     sql_employee = "SELECT code FROM hrci WHERE email = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
-    cursor.execute(sql_employee,(username))
-    data = cursor.fetchall()
-    columns = [column[0] for column in cursor.description]
+    cursor2.execute(sql_employee,(username))
+    data = cursor2.fetchall()
+    columns = [column[0] for column in cursor2.description]
     check_employeeid = toJson(data, columns)
     print check_employeeid
     sql = "SELECT * FROM user WHERE username = %s and password = %s and userid=%s ORDER BY id ASC LIMIT 1"
-    cursor.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
-    data = cursor.fetchall()
-    columns = [column[0] for column in cursor.description]
+    cursor2.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
+    data = cursor2.fetchall()
+    columns = [column[0] for column in cursor2.description]
     _output = toJson(data, columns)
-    connection.commit()
-    connection.close()
+    connection2.commit()
+    connection2.close()
     # _output = []
     # _output.append({})
     # _output[0]['userid']='61330'
