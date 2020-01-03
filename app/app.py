@@ -75,50 +75,51 @@ def login():
             code = _output[0]['userid']
 
         except Exception as e:
-            payload =   {
-                            "grant_type":"password",
-                            "client_id":"151",
-                            "client_secret":"lJO7R2FwahEp5fppIDvh7M1OLARBjHXmfOrHr1z1",
-                            "username":username,
-                            "password":password
-                        }
-            response = callServer("https://one.th/api/oauth/getpwd",payload)
-
-            if response['status'] == 'success':
-                response = response['response'].json()
-
-                if 'result' in response :
-                    if response['result'] == 'Fail':
-                        return jsonify({'status':'fail','message':"Wrong Username / Password"})
-
-                    if 'token_type' in response and 'access_token' in response:
-                        accessTokenOneID = response['token_type']+' '+response['access_token']
-                        refresh_token = response['refresh_token']
-                        access_token = response['access_token']
-                    else:
-                        print '##################### access_token not found ##################'
-                        return jsonify({'status':'fail','message':"access_token not found"})
-                else:
-                    print '##################### No result from oneid ##################'
-
-                    return jsonify({'status':'fail','message':"No result from oneid"})
-
-                authenticationOneID = getAuthorizationAPI("https://one.th/api/account_and_biz_detail",accessTokenOneID)
-
-
-                if authenticationOneID['status'] == 'success':
-                    authenticationOneID = authenticationOneID['response'].json()
-                    onemail = authenticationOneID['thai_email2']
-                    connection = mysql2.connect()
-                    cursor = connection.cursor()
-                    sql_employee = "SELECT * FROM hrci WHERE onemail = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
-                    cursor.execute(sql_employee,onemail)
-                    data = cursor.fetchall()
-                    columns = [column[0] for column in cursor.description]
-                    check_employeeid = toJson(data, columns)
-                    username = check_employeeid[0]['email']
-                    name = check_employeeid[0]['engname']
-                    code = check_employeeid[0]['code']
+            print e
+            # payload =   {
+            #                 "grant_type":"password",
+            #                 "client_id":"151",
+            #                 "client_secret":"lJO7R2FwahEp5fppIDvh7M1OLARBjHXmfOrHr1z1",
+            #                 "username":username,
+            #                 "password":password
+            #             }
+            # response = callServer("https://one.th/api/oauth/getpwd",payload)
+            #
+            # if response['status'] == 'success':
+            #     response = response['response'].json()
+            #
+            #     if 'result' in response :
+            #         if response['result'] == 'Fail':
+            #             return jsonify({'status':'fail','message':"Wrong Username / Password"})
+            #
+            #         if 'token_type' in response and 'access_token' in response:
+            #             accessTokenOneID = response['token_type']+' '+response['access_token']
+            #             refresh_token = response['refresh_token']
+            #             access_token = response['access_token']
+            #         else:
+            #             print '##################### access_token not found ##################'
+            #             return jsonify({'status':'fail','message':"access_token not found"})
+            #     else:
+            #         print '##################### No result from oneid ##################'
+            #
+            #         return jsonify({'status':'fail','message':"No result from oneid"})
+            #
+            #     authenticationOneID = getAuthorizationAPI("https://one.th/api/account_and_biz_detail",accessTokenOneID)
+            #
+            #
+            #     if authenticationOneID['status'] == 'success':
+            #         authenticationOneID = authenticationOneID['response'].json()
+            #         onemail = authenticationOneID['thai_email2']
+            #         connection = mysql2.connect()
+            #         cursor = connection.cursor()
+            #         sql_employee = "SELECT * FROM hrci WHERE onemail = %s AND workstatus='Active' ORDER BY id ASC LIMIT 1"
+            #         cursor.execute(sql_employee,onemail)
+            #         data = cursor.fetchall()
+            #         columns = [column[0] for column in cursor.description]
+            #         check_employeeid = toJson(data, columns)
+            #         username = check_employeeid[0]['email']
+            #         name = check_employeeid[0]['engname']
+            #         code = check_employeeid[0]['code']
         # _output = []
         # _output.append({})
         # _output[0]['userid']='61330'
