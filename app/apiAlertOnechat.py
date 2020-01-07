@@ -488,12 +488,12 @@ def api_notice_upload_present(cursor):
                 tokenBot = botToken()
                 url = webmobile()
                 uuid_onechat = result[0]['uuid_onechat']
-                date = "8 มกราคม 2563"
+                date = "9 มกราคม 2563 เวลา 9.00 น."
                 payload_msg = {
                     "bot_id": bot_id,
                     "to": ond_id_leader,
                     "type": "text",
-                    "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้ จนถึง "+date+" \nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
+                    "message": "อัปโหลดสไลด์ผลงานของพนักงานใต้บังคับบัญชาที่มีสิทธิ์เข้าพรีเซนต์ \nโดยสามารถอัปโหลดได้ตั้งแต่วันนี้\n\nโปรดเลือกเมนูด้านล่างเพื่ออัปโหลดสไลด์ \nหากไม่พบเมนู ลองทักน้องบอทมาใหม่นะคะ",
                 }
                 # print payload_msg
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message", json=payload_msg,
