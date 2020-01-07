@@ -472,12 +472,14 @@ def api_notice_upload_present(cursor):
         cursor.execute(sql_leader, (data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result_leader = toJson(cursor.fetchall(), columns)
+        i = 0
         for employee_leader in result_leader:
             sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid =%s"""
             cursor.execute(sql_assessor,(employee_leader['em_id_leader']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
-            print result
+            print employee_leader['em_id_leader']
+            i+=1
             payload = {"staff_id": employee_leader['em_id_leader']}
             response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader']).json()
             try:
@@ -523,6 +525,7 @@ def api_notice_upload_present(cursor):
             except Exception as e:
                 print e
                 pass
+        print i
         return "Success"
     except Exception as e:
         logserver(e)
