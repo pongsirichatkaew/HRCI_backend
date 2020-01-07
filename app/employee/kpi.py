@@ -1603,7 +1603,7 @@ def Export_kpi(cursor):
         data_new = source
         print data_new
         try:
-            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail AS org_name,position.position_detail AS position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
+            sql = "SELECT employee_kpi.year,employee_kpi.term,employee_kpi.employeeid,employee_kpi.name,employee_kpi.surname,org_name.org_name_detail AS org_name,position.position_detail AS position,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.grade,employee_kpi.comment_hr,employee_kpi.present_kpi,employee_kpi.star_date_kpi,employee_kpi.status FROM employee_kpi\
                                                                                 INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                 INNER JOIN position ON employee_kpi.position = position.position_id\
             WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.present_kpi='active'"
@@ -1648,7 +1648,11 @@ def Export_kpi(cursor):
                 sheet['I'+str(offset + i)] = result[i]['work_year']
                 sheet['J'+str(offset + i)] = result[i]['star_date_kpi']
                 sheet['K'+str(offset + i)] = result[i]['present_kpi']
-                sheet['L'+str(offset + i)] = result[i]['old_grade']
+                if result[i]['old_grade_GM'] != None:
+                    sheet['L'+str(offset + i)] = result[i]['old_grade_GM']
+                else:
+                    sheet['L'+str(offset + i)] = result[i]['old_grade']
+
                 sheet['M'+str(offset + i)] = result[i]['status']
                 sheet['N'+str(offset + i)] = result[i]['grade']
                 try:
@@ -1741,7 +1745,7 @@ def Export_kpi_hr(cursor):
             print companyId,typeUser
             if (str(typeUser)=='main')and(str(companyId)!='23'):
                 try:
-                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
                     WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid=%s GROUP BY employee_kpi.employeeid "
@@ -1795,12 +1799,12 @@ def Export_kpi_hr(cursor):
             elif (str(typeUser)=='main')and(str(companyId)=='23'):
                 try:
                     print 'inet'
-                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                         INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                         INNER JOIN position ON employee_kpi.position = position.position_id\
                     WHERE employee_kpi.year=%s AND employee_kpi.term=%s AND employee_kpi.companyid = %s GROUP BY employee_kpi.employeeid\
                     UNION \
-                    SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
+                    SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
                     FROM employee_kpi \
                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                     INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -1859,7 +1863,7 @@ def Export_kpi_hr(cursor):
             elif (str(typeUser)=='submain')and(str(companyId)=='23'):
                 try:
                     print 'inet submain'
-                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
+                    sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent  \
                     FROM employee_kpi \
                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                     INNER JOIN position ON employee_kpi.position = position.position_id\
@@ -1917,7 +1921,7 @@ def Export_kpi_hr(cursor):
                     return "No_Data"
         else:
             try:
-                sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
+                sql = "SELECT employee_kpi.comment_cancel,employee_kpi.positionChange_bet,employee_kpi.date_bet,employee_kpi.comment_pass,employee_kpi.Pass,employee_kpi.grade,employee_kpi.name,employee_kpi.surname,employee_kpi.work_date,employee_kpi.work_month,employee_kpi.work_year,employee_kpi.old_grade,employee_kpi.old_grade_GM,employee_kpi.gradeCompareWithPoint,employee_kpi.structure_salary,employee_kpi.status,employee_kpi.em_id_leader,employee_kpi.specialMoney,employee_kpi.positionChange,position.position_detail,org_name.org_name_detail,employee_kpi.employeeid,employee_kpi.companyid,employee_kpi.totalGradePercent FROM employee_kpi\
                                                                                     INNER JOIN org_name ON employee_kpi.org_name = org_name.org_name_id\
                                                                                     INNER JOIN position ON employee_kpi.position = position.position_id\
                 WHERE employee_kpi.year=%s AND employee_kpi.term=%s "
@@ -2023,7 +2027,12 @@ def Export_kpi_hr(cursor):
                 sheet['P'+str(offset + i)] = result[i]['gradeCompareWithPoint']
                 sheet['Q'+str(offset + i)] = result[i]['structure_salary']
                 sheet['R'+str(offset + i)] = result[i]['totalGradePercent']
-                sheet['S'+str(offset + i)] = result[i]['old_grade']
+                
+                if result[i]['old_grade_GM'] != None:
+                    sheet['S'+str(offset + i)] = result[i]['old_grade_GM']
+                else:
+                    sheet['S'+str(offset + i)] = result[i]['old_grade']
+
                 sheet['T'+str(offset + i)] = result[i]['grade']
                 sheet['U'+str(offset + i)] = result[i]['status']
                 sheet['V'+str(offset + i)] = result[i]['positionChange']
