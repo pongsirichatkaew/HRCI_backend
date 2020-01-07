@@ -486,7 +486,7 @@ def api_notice_upload_present(cursor):
                 tokenBot = botToken()
                 url = webmobile()
                 uuid_onechat = result[0]['uuid_onechat']
-                date = "15 ธันวาคม 2562"
+                date = "8 มกราคม 2563"
                 payload_msg = {
                     "bot_id": bot_id,
                     "to": ond_id_leader,
