@@ -516,7 +516,7 @@ def api_notice_upload_present(cursor):
                         ]
                     }
                 ]
-
+                print pl['elements'][0]['choice'][0]['url']
                 response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
                 print response
 
