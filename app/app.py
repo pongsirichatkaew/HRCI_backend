@@ -54,6 +54,7 @@ def login():
         username = data_new['username']
         password = data_new['password']
         Gen_token = uuid.uuid4().hex
+        #login with intranet
         try:
             connection = mysql2.connect()
             cursor = connection.cursor()
@@ -62,7 +63,6 @@ def login():
             data = cursor.fetchall()
             columns = [column[0] for column in cursor.description]
             check_employeeid = toJson(data, columns)
-            # print check_employeeid
             sql = "SELECT * FROM user WHERE username = %s and password = %s and userid=%s ORDER BY id ASC LIMIT 1"
             cursor.execute(sql,(username, hashlib.sha512(password).hexdigest(),check_employeeid[0]['code']))
             data = cursor.fetchall()
@@ -73,7 +73,7 @@ def login():
             username = _output[0]['username']
             name = _output[0]['name']
             code = _output[0]['userid']
-
+        #login with oneid
         except Exception as e:
             payload =   {
                             "grant_type":"password",
@@ -102,10 +102,8 @@ def login():
                     print '##################### No result from oneid ##################'
 
                     return jsonify({'status':'fail','message':"No result from oneid"})
-
+                    
                 authenticationOneID = getAuthorizationAPI("https://one.th/api/account_and_biz_detail",accessTokenOneID)
-
-
                 if authenticationOneID['status'] == 'success':
                     authenticationOneID = authenticationOneID['response'].json()
                     onemail = authenticationOneID['thai_email2']
