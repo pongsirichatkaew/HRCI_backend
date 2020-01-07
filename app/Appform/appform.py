@@ -1280,11 +1280,13 @@ def sendMail_starwork(email,star_work,position,contentemail,name,surname,name_hr
 @connect_sql3()
 def Export_Employee_Appform(cursor):
     try:
-        sql = """SELECT * FROM Personal"""
+        sql = """SELECT Personal.EmploymentAppNo, Personal.ID_CardNo, Personal.NameTh,Personal.SurnameTh,Personal.NicknameTh,Education.EducationLevel,Education.Institute,
+                Education.StartYear,Education.EndYear,Education.Qualification,Education.Major,Education.GradeAvg,Education.ExtraCurricularActivities FROM `Personal`
+                LEFT JOIN Education ON Education.EmploymentAppNo = Personal.EmploymentAppNo"""
         cursor.execute(sql)
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
-            # return jsonify(result)
+        # return jsonify(result)
 
         isSuccess = True
         reasonCode = 200
@@ -1299,10 +1301,23 @@ def Export_Employee_Appform(cursor):
             offset = 2
             i = 0
             for i in xrange(len(result)):
-                sheet['A'+str(offset + i)] = result[i]['NameTh']
-                sheet['B'+str(offset + i)] = result[i]['SurnameTh']
-                sheet['C'+str(offset + i)] = result[i]['NicknameTh']
-                sheet['D'+str(offset + i)] = result[i]['Age']
+                try:
+                    sheet['A'+str(offset + i)] = result[i]['ID_CardNo']
+                    sheet['B'+str(offset + i)] = result[i]['NameTh']
+                    sheet['C'+str(offset + i)] = result[i]['SurnameTh']
+                    sheet['D'+str(offset + i)] = result[i]['NicknameTh']
+                    sheet['E'+str(offset + i)] = result[i]['EducationLevel']
+                    sheet['F'+str(offset + i)] = result[i]['Institute']
+                    sheet['G'+str(offset + i)] = result[i]['StartYear']
+                    sheet['H'+str(offset + i)] = result[i]['EndYear']
+                    sheet['I'+str(offset + i)] = result[i]['Qualification']
+                    sheet['J'+str(offset + i)] = result[i]['Major']
+                    sheet['K'+str(offset + i)] = result[i]['GradeAvg']
+                    sheet['L'+str(offset + i)] = result[i]['ExtraCurricularActivities']
+                except Exception as e:
+                    print result[i]['ID_CardNo']
+                    print e
+
                 i = i + 1
         wb.save(filename_tmp)
         with open(filename_tmp, "rb") as f:
@@ -1313,7 +1328,7 @@ def Export_Employee_Appform(cursor):
         # return jsonify(toDict(displayData,displayColumns))
         return 'success'
     except Exception as e:
-        logserver(e)
+        print e
         return "fail"
 
 @app.route('/Export_Appform', methods=['GET'])
