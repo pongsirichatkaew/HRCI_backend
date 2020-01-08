@@ -217,7 +217,7 @@ def api_notice_employee_present(cursor):
         sheet = wb.sheet_by_index(0)
         sheet.cell_value(0, 0)
         for i in range(sheet.nrows):
-            sql_employee = """SELECT employeeid, em_id_leader FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s  """
+            sql_employee = """SELECT employeeid, em_id_leader,name,surname FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s  """
             cursor.execute(sql_employee, (sheet.cell_value(i, 0), data_new['year'], data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
@@ -234,7 +234,7 @@ def api_notice_employee_present(cursor):
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "ในการประเมินปลายปี 2562 คุณได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
+                        "message": "การประเมินปลายปี 2562 \n\nคุณ "+result[0]['name']+" "+result[0]['surname']+"รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -375,12 +375,12 @@ def api_notice_board(cursor):
                 tokenBot = botToken()
                 date = "9 มกราคม 2563"
                 time = str(sheet.cell_value(i, 6))
-                room = "ห้อง Boardroom ชั้น IT"
+                room = "ณ ห้อง Boardroom ชั้น IT"
                 json = {
                     "to": one_id_board,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "คุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 ในวันพฤหัสบดีที่ "+date+" "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
+                    "message": "คุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
