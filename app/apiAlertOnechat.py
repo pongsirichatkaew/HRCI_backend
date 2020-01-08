@@ -517,7 +517,7 @@ def api_notice_upload_present(cursor):
             print employee_leader['em_id_leader']
             i+=1
             payload = {"staff_id": employee_leader['em_id_leader']}
-            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader']).json()
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader_default']).json()
             try:
                 ond_id_leader = response_onechat_id['oneid']
                 bot_id = botId()
