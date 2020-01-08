@@ -87,7 +87,7 @@ def Add_project_bet(cursor):
 @connect_sql()
 def test_upload(cursor):
     try:
-        print request.form
+        # print request.form
         code = request.form.get('code', '')
         project_kpi_id =request.form.get('project_kpi_id','')
         print project_kpi_id
@@ -98,10 +98,10 @@ def test_upload(cursor):
             os.makedirs(path)
         if request.method == 'POST':
             f= request.files['present']
-            print f
+            # print f
             # basedir = os.path.abspath(os.path.dirname(__file__))
             now = datetime.now()
-            print code,now
+            # print code,now
             file_name = code+''+now.strftime('%m-%d-%y%H%M%S')+'.'+f.filename.split('.')[1]
             f.save(os.path.join (path,file_name))
             sql = "UPDATE `employee_kpi` SET present_file=%s WHERE employeeid = %s AND year = %s and term = %s"
@@ -175,12 +175,12 @@ def Edit_project(cursor):
 
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
-       
+
         sql_project = """SELECT * FROM `project_kpi` WHERE `employeeid` =%s AND year = %s AND term = %s"""
         cursor.execute(sql_project,(data_new['employeeid'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result_project = toJson(cursor.fetchall(),columns)
-        
+
         setA = []
         setB = []
         for project in result_project:
