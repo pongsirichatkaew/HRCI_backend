@@ -234,7 +234,7 @@ def api_notice_employee_present(cursor):
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "การประเมินปลายปี 2562 \n\nคุณ "+result[0]['name']+" "+result[0]['surname']+"รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
+                        "message": "การประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -243,26 +243,26 @@ def api_notice_employee_present(cursor):
                     pass
             except Exception as e:
                 logserver(e)
-            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+result[0]['em_id_leader']).json()
-            try:
-                ond_id = response_onechat_id['oneid']
-                bot_id = botId()
-                tokenBot = botToken()
-                date = "9 มกราคม 2563"
-                time = str(sheet.cell_value(i, 2))
-                room = "ห้อง Boardroom ชั้น IT"
-                try:
-                    payload_msg = {
-                        "bot_id": bot_id,
-                        "to": ond_id,
-                        "type": "text",
-                        "message": "ในการประเมินปลายปี 2562 ลูกน้องของคุณรหัสพนักงาน "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
-                    }
-                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                                                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-                    print response_msg
-                except Exception as e:
-                    pass
+            # response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+result[0]['em_id_leader']).json()
+            # try:
+            #     ond_id = response_onechat_id['oneid']
+            #     bot_id = botId()
+            #     tokenBot = botToken()
+            #     date = "9 มกราคม 2563"
+            #     time = str(sheet.cell_value(i, 2))
+            #     room = "ห้อง Boardroom ชั้น IT"
+            #     try:
+            #         payload_msg = {
+            #             "bot_id": bot_id,
+            #             "to": ond_id,
+            #             "type": "text",
+            #             "message": "ในการประเมินปลายปี 2562 ลูกน้องของคุณรหัสพนักงาน "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
+            #         }
+            #         response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+            #                                         headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            #         print response_msg
+            #     except Exception as e:
+            #         pass
             except Exception as e:
                 logserver(e)
         return "Success"
