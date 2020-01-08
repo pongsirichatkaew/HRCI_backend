@@ -217,7 +217,7 @@ def api_notice_employee_present(cursor):
         sheet = wb.sheet_by_index(0)
         sheet.cell_value(0, 0)
         for i in range(sheet.nrows):
-            sql_employee = """SELECT employeeid FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s  """
+            sql_employee = """SELECT employeeid, em_id_leader FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s  """
             cursor.execute(sql_employee, (sheet.cell_value(i, 0), data_new['year'], data_new['term']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
@@ -226,15 +226,37 @@ def api_notice_employee_present(cursor):
                 ond_id = response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
-                date = str(sheet.cell_value(0, 1))
-                time = str(sheet.cell_value(0, 2))
-                room = str(sheet.cell_value(0, 3))
+                date = "9 มกราคม 2563"
+                time = str(sheet.cell_value(i, 2))
+                room = "ห้อง Boardroom ชั้น IT"
                 try:
                     payload_msg = {
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "ในการประเมินปลายปี 2562 คุณได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่"+date+" "+time+" "+room+" \nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
+                        "message": "ในการประเมินปลายปี 2562 คุณได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
+                    }
+                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                                                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                    print response_msg
+                except Exception as e:
+                    pass
+            except Exception as e:
+                logserver(e)
+            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+result[0]['em_id_leader']).json()
+            try:
+                ond_id = response_onechat_id['oneid']
+                bot_id = botId()
+                tokenBot = botToken()
+                date = "9 มกราคม 2563"
+                time = str(sheet.cell_value(i, 2))
+                room = "ห้อง Boardroom ชั้น IT"
+                try:
+                    payload_msg = {
+                        "bot_id": bot_id,
+                        "to": ond_id,
+                        "type": "text",
+                        "message": "ในการประเมินปลายปี 2562 ลูกน้องของคุณรหัสพนักงาน "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -330,26 +352,35 @@ def api_notice_board(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql_employee = """SELECT * FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s"""
-        cursor.execute(sql_employee, (data_new['year'], data_new['term']))
-        columns = [column[0] for column in cursor.description]
-        result = toJson(cursor.fetchall(), columns)
-        for employee in result:
-            payload = {"staff_id": employee['employeeid_board']}
-            response_onechat_id = requests.request(
-                "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee['employeeid_board']).json()
+        dataInput = request.json
+        source = dataInput['source']
+        data_new = source
+
+        loc = ("../app/3.xlsx")
+        wb = xlrd.open_workbook(loc)
+        sheet = wb.sheet_by_index(0)
+        sheet.cell_value(0, 0)
+
+        for i in range(sheet.nrows):
+            print sheet.cell_value(i, 4)
+            sql_employee = """SELECT * FROM board_kpi_v2 WHERE validstatus=1 AND year=%s AND term=%s AND employeeid_board = %s"""
+            cursor.execute(sql_employee, (data_new['year'], data_new['term'], sheet.cell_value(i, 4)))
+            columns = [column[0] for column in cursor.description]
+            result = toJson(cursor.fetchall(), columns)
+
             try:
+                response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+result[0]['employeeid_board']).json()
                 one_id_board = response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
-                date = "15 ธันวาคม 2562"
-                time = "10.30"
-                room = "inet 3"
+                date = "9 มกราคม 2563"
+                time = str(sheet.cell_value(i, 6))
+                room = "ห้อง Boardroom ชั้น IT"
                 json = {
                     "to": one_id_board,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "ในการประเมินปลายปี 2562 คุณเป็นกรรมการในการประเมินพรีเซนต์ผลงาน ใน"+date+" "+time+" "+room+" \n หากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ"
+                    "message": "คุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 ในวันพฤหัสบดีที่ "+date+" "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
