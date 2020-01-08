@@ -499,7 +499,9 @@ def confirm_grade_kpi_one(cursor):
 @connect_sql()
 def Qry_employee_kpi_one(cursor, employeeid, year, term):
     try:
-        sql_employee = """SELECT * FROM `employee_kpi` WHERE employeeid = %s AND year=%s AND term=%s"""
+        sql_employee = """SELECT * FROM `employee_kpi`
+                        LEFT JOIN position ON position.position_id = employee_kpi.positionChange
+                        WHERE employeeid = %s AND year=%s AND term=%s"""
         cursor.execute(sql_employee, (employeeid, year, term))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
