@@ -234,7 +234,7 @@ def api_notice_employee_present(cursor):
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "โปรดอย่าลืม!!!\n\nการประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน \nในวันพฤหัสบดีที่ "+date+"(วันนี้) เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
+                        "message": "โปรดอย่าลืม!!!\n\nการประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน \nในวันพฤหัสบดีที่ "+date+"(วันนี้) เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n0655029219(พิม hr)\0655083816(แป้ง hr)"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -382,8 +382,8 @@ def api_notice_board(cursor):
                     "to": one_id_board,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "โปรดอย่าลืม!!!\n\nคุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" (วันนี้) "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
-                }
+                    "message": "โปรดอย่าลืม!!!\n\nคุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" (วันนี้) "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n0655029219(พิม hr)\0655083816(แป้ง hr)"
+                }0655029219
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
                 pl = {}

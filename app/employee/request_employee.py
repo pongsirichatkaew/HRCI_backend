@@ -1758,9 +1758,9 @@ def sendEmail_request(cursor):
     result = toJson(cursor.fetchall(),columns)
     for i1 in result:
         total_em = []
-        sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
+        sql1_total = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid AND approve_request.tier_approve= assessor_quota.tier_approve\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(2,6) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(2,6) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve='L1'"
         cursor.execute(sql1_total,(i1['employeeid']))
         columns = [column[0] for column in cursor.description]
         data1 = toJson(cursor.fetchall(),columns)
@@ -1775,9 +1775,9 @@ def sendEmail_request(cursor):
     result2 = toJson(cursor.fetchall(),columns)
     for i2 in result2:
         total_em2 = []
-        sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
+        sql1_total2 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid AND approve_request.tier_approve= assessor_quota.tier_approve\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(3,7,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(3,7,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve='L2'"
         cursor.execute(sql1_total2,(i2['employeeid']))
         columns = [column[0] for column in cursor.description]
         data2 = toJson(cursor.fetchall(),columns)
@@ -1792,9 +1792,9 @@ def sendEmail_request(cursor):
     result3 = toJson(cursor.fetchall(),columns)
     for i3 in result3:
         total_em3 = []
-        sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
+        sql1_total3 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid AND approve_request.tier_approve= assessor_quota.tier_approve\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(4,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(4,8) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve='L3'"
         cursor.execute(sql1_total3,(i3['employeeid']))
         columns = [column[0] for column in cursor.description]
         data3 = toJson(cursor.fetchall(),columns)
@@ -1809,9 +1809,9 @@ def sendEmail_request(cursor):
     result4 = toJson(cursor.fetchall(),columns)
     for i4 in result4:
         total_em4 = []
-        sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid\
+        sql1_total4 = "SELECT COUNT(approve_request.employeeid) AS total_em FROM approve_request LEFT JOIN assessor_quota ON approve_request.employeeid_reques = assessor_quota.employeeid AND approve_request.tier_approve= assessor_quota.tier_approve\
                                                                                                     LEFT JOIN employee ON approve_request.employeeid = employee.employeeid\
-                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(5) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL"
+                       WHERE approve_request.employeeid_reques = %s AND employee.validstatus_request IN(5) AND NOT employee.createby='Admin' AND employee.EmploymentAppNo IS NOT NULL AND approve_request.tier_approve='L4'"
         cursor.execute(sql1_total4,(i4['employeeid']))
         columns = [column[0] for column in cursor.description]
         data4 = toJson(cursor.fetchall(),columns)
