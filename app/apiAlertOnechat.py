@@ -234,7 +234,7 @@ def api_notice_employee_present(cursor):
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "การประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน ในวันที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
+                        "message": "โปรดอย่าลืม!!!\n\nการประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน \nในวันพฤหัสบดีที่ "+date+"(วันนี้) เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
@@ -373,6 +373,8 @@ def api_notice_board(cursor):
                 one_id_board = response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
+                url = webmobile()
+                uuid_onechat = result[0]['uuid_onechat']
                 date = "9 มกราคม 2563"
                 time = str(sheet.cell_value(i, 6))
                 room = "ณ ห้อง Boardroom ชั้น IT"
@@ -380,10 +382,32 @@ def api_notice_board(cursor):
                     "to": one_id_board,
                     "bot_id": bot_id,
                     "type": "text",
-                    "message": "คุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
+                    "message": "โปรดอย่าลืม!!!\n\nคุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" (วันนี้) "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n06-3204-9755(เพิร์ล hr)"
                 }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
+                pl = {}
+                pl['bot_id'] = bot_id
+                pl['to'] = one_id_board
+                pl['type'] = 'template'
+                pl['elements'] = [
+                    {
+                        "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                        "title":"ประเมินผล",
+                        "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินผล",
+                        "choice":[
+                            {
+                                "label" : "ประเมินผล",
+                                "type" : "webview",
+                                "url" : url+"/kpiboard/"+uuid_onechat,
+                                "size" : "full"
+                            }
+                        ]
+                    }
+                ]
+
+                response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                print employee['employeeid_board'], response
             except Exception as e:
                 print str(e)
                 pass
