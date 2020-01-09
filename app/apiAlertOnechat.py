@@ -407,7 +407,7 @@ def api_notice_board(cursor):
                 ]
 
                 response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
-                print employee['employeeid_board'], response
+                print result[0]['employeeid_board'], response
             except Exception as e:
                 print str(e)
                 pass
