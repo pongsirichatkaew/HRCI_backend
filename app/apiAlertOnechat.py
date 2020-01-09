@@ -504,17 +504,17 @@ def api_notice_upload_present(cursor):
         dataInput = request.json
         source = dataInput['source']
         data_new = source
-        sql_leader = """SELECT * FROM `employee_kpi` WHERE `present_kpi`='active' AND year=%s AND term=%s GROUP BY `em_id_leader`"""
+        sql_leader = """SELECT * FROM `employee_kpi` WHERE `present_kpi`='active' AND year=%s AND term=%s GROUP BY `em_id_leader_default`"""
         cursor.execute(sql_leader, (data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result_leader = toJson(cursor.fetchall(), columns)
         i = 0
         for employee_leader in result_leader:
             sql_assessor = """SELECT * FROM `assessor_kpi` WHERE employeeid =%s"""
-            cursor.execute(sql_assessor,(employee_leader['em_id_leader']))
+            cursor.execute(sql_assessor,(employee_leader['em_id_leader_default']))
             columns = [column[0] for column in cursor.description]
             result = toJson(cursor.fetchall(), columns)
-            print employee_leader['em_id_leader']
+            print employee_leader['em_id_leader_default']
             i+=1
             payload = {"staff_id": employee_leader['em_id_leader']}
             response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader_default']).json()
