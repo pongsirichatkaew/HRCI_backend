@@ -398,7 +398,7 @@ def api_notice_board(cursor):
                         "choice":[
                             {
                                 "label" : "ประเมินผล",
-                                "type" : "webview",
+                                "type" : "link",
                                 "url" : url+"/kpiboard/"+uuid_onechat,
                                 "size" : "full"
                             }
