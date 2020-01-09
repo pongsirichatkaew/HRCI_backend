@@ -383,7 +383,7 @@ def api_notice_board(cursor):
                     "bot_id": bot_id,
                     "type": "text",
                     "message": "โปรดอย่าลืม!!!\n\nคุณได้รับเชิญเป็นกรรมการในการประเมินพรีเซนต์ผลงานปลายปี 2562 \n\nในวันพฤหัสบดีที่ "+date+" (วันนี้) "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n0655029219(พิม hr)\0655083816(แป้ง hr)"
-                }0655029219
+                }
                 response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                 headers={'Authorization': tokenBot}, json=json, timeout=(60 * 1)).json()
                 pl = {}
