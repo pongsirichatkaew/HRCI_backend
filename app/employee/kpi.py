@@ -905,15 +905,15 @@ def Update_grade_hr(cursor):
                 bot_id = botId()
                 tokenBot = botToken()
                 url = webmobile()
-
+                print result2
                 try:
-                    if result2[0]['pass_hr'].encode('utf-8') == 'ปรับตำแหน่ง':
-                        position_change = "ผ่าน "+ "(" +result2[0]['position_detail']+ ")"
+                    if str(result2[0]['pass_hr']) == 'ปรับตำแหน่ง':
+                        position_change = "ผ่าน "+ "(" +str(result2[0]['position_detail'])+ ")"
                     else:
                         position_change = "ไม่ปรับตำแหน่ง"
                 except Exception as e:
-                    print str(e)
-
+                    print str(e),'ERROR'
+                print '5555'
                 pl = {}
                 pl['bot_id'] = bot_id
                 pl['to'] = ond_id
@@ -927,40 +927,38 @@ def Update_grade_hr(cursor):
                             {
                                 "label" : "รายละเอียด",
                                 "type" : "webview",
-                                "url" : url+"/kpisuccess/"+employee['employeeid']+'/'+data_new['year']+'/'+data_new['term'],
+                                "url" : url+"/kpisuccess/"+data_new['employeeid']+'/'+data_new['year']+'/'+data_new['term'],
                                 "size" : "full"
                             }
                         ]
                     }
                 ]
                 response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
-                print employee['employeeid'], response
+                print data_new['employeeid'], response
             except Exception as e:
-                pass
+                print e
 
             #assessor
             sql_assessor = """SELECT em_id_leader_default  FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s AND validstatus IN(2,3)"""
             cursor.execute(sql_assessor,(data_new['employeeid'],data_new['year'],data_new['term']))
             columns = [column[0] for column in cursor.description]
             result3 = toJson(cursor.fetchall(),columns)
-            for employee_assessor in result3:
-                payload = {"staff_id": employee_assessor['em_id_leader_default']}
-                try:
-                    response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_assessor['em_id_leader_default']).json()
-                    ond_id_leader =  response_onechat_id['oneid']
-                    bot_id = botId()
-                    tokenBot = botToken()
+            try:
+                response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+result3[0]['em_id_leader_default']).json()
+                ond_id_leader =  response_onechat_id['oneid']
+                bot_id = botId()
+                tokenBot = botToken()
 
-                    payload_msg =  {
-                        "bot_id":bot_id,
-                        "to": ond_id_leader,
-                        "type":"text",
-                        "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
-                    }
-                    response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
-                except Exception as e:
-                    pass
+                payload_msg =  {
+                    "bot_id":bot_id,
+                    "to": ond_id_leader,
+                    "type":"text",
+                    "message": "ผลการประเมินของ: " +data_new['employeeid'] + " " +result2[0]['name'] + " " + result2[0]['surname'] + " \nเกรดที่ได้รับ: " +data_new['grade']+ " \nผลการปรับตำแหน่ง: " + position_change
+                }
+                response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
+                headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+            except Exception as e:
+                print e
 
         except Exception as e:
             pass
