@@ -102,7 +102,7 @@ def login():
                     print '##################### No result from oneid ##################'
 
                     return jsonify({'status':'fail','message':"No result from oneid"})
-                    
+
                 authenticationOneID = getAuthorizationAPI("https://one.th/api/account_and_biz_detail",accessTokenOneID)
                 if authenticationOneID['status'] == 'success':
                     authenticationOneID = authenticationOneID['response'].json()
@@ -274,6 +274,6 @@ def getAuthorizationAPI(path, data):
         return {'status': 'fail','message': 'An unexpected error: ' + ex.__str__()}
 
 if __name__ == '__main__':
-    context = ('ssl/inet.crt', 'ssl/inet.key')
-    app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
-    # app.run(debug=True,host='0.0.0.0',threaded=True,port=8888)
+    # context = ('ssl/inet.crt', 'ssl/inet.key')
+    # app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
+    app.run(debug=True,host='0.0.0.0',threaded=True,port=8888)
