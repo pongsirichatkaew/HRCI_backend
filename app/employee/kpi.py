@@ -1468,7 +1468,7 @@ def Update_board_kpi(cursor):
         print source
         if employeeid__==check_board:
             return "employee is board"
-        sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sql = "SELECT employeeid,employeeid_board,grade_board,comment FROM board_kpi WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s"
         cursor.execute(sql,(data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(),columns)
@@ -1492,7 +1492,7 @@ def Update_board_kpi(cursor):
         except Exception as e:
             comment_board = ''
 
-        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2,status_onechat=1 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s AND validstatus=1"
+        sqlUp = "UPDATE board_kpi SET grade_board=%s,pass_board=%s,comment=%s,validstatus=2,status_onechat=1 WHERE employeeid=%s AND employeeid_board=%s AND year=%s AND term=%s"
         cursor.execute(sqlUp,(data_new['grade_board'],data_new['pass_board'],comment_board,data_new['employeeid'],data_new['employeeid_board'],data_new['year'],data_new['term']))
 
         return "Success"
