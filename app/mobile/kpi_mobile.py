@@ -888,7 +888,7 @@ def Qry_user_board_mobile(cursor, employee_id):
         resultEmployeeList = []
         for employee in result:
             try:
-                sql_board = """SELECT * FROM board_kpi WHERE employeeid = %s AND year = %s AND term = %s AND employeeid_board = %s AND status_onechat = 0 AND validstatus = 1"""
+                sql_board = """SELECT * FROM board_kpi WHERE employeeid = %s AND year = %s AND term = %s AND employeeid_board = %s """
                 cursor.execute(
                     sql_board, (employee['employeeid'], employee['year'], employee['term'], employee_id))
                 columns = [column[0] for column in cursor.description]
