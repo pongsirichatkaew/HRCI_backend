@@ -226,15 +226,15 @@ def api_notice_employee_present(cursor):
                 ond_id = response_onechat_id['oneid']
                 bot_id = botId()
                 tokenBot = botToken()
-                date = "17 มกราคม 2563"
+                date = "20 มกราคม 2563"
                 time = str(sheet.cell_value(i, 2))
-                room = "ห้อง 16-2 ชั้น 16"
+                room = "ห้อง 16-3 ชั้น 16"
                 try:
                     payload_msg = {
                         "bot_id": bot_id,
                         "to": ond_id,
                         "type": "text",
-                        "message": "การประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน \nในวันศุกร์ที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n0655029219(พิม hr)\n0655083816(แป้ง hr)"
+                        "message": "การประเมินปลายปี 2562 \n\n"+result[0]['name']+" "+result[0]['surname']+" รหัส "+result[0]['employeeid']+"ได้รับการเข้าประเมินพรีเซนต์ผลงาน \nในวันจันทร์ ที่ "+date+" เวลา "+time+" "+room+" \n\nหากติดปัญหาหรือมีข้อสงสัย แจ้งกับทางhr ได้เลยค่ะ\n0655029219(พิม hr)\n0655083816(แป้ง hr)"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
                                                     headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
