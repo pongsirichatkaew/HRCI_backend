@@ -289,4 +289,4 @@ def getAuthorizationAPI(path, data):
 if __name__ == '__main__':
     # context = ('ssl/inet.crt', 'ssl/inet.key')
     # app.run(debug=True,host='0.0.0.0',ssl_context=context,threaded=True,port=5000)
-    app.run(debug=True, host='0.0.0.0', threaded=True, port=5000)
+    app.run(debug=True, host='0.0.0.0', threaded=True, port=5002)
