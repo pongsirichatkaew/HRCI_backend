@@ -45,8 +45,8 @@ def Qry_user_kpi_mobile(cursor, employee_id):
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
         employee = result[0]
-        year_term = "WHERE (employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" AND employee_kpi.year = 2562 AND employee_kpi.term = "lateYear") OR  (employee_kpi.em_id_leader_default= "'+str(
-            employee['employeeid'])+'" AND employee_kpi.year = 2562 AND employee_kpi.term = "lateYear")'
+        year_term = "WHERE (employee_kpi.em_id_leader=" + ' "'+employee['employeeid']+'" AND employee_kpi.year = 2563 AND employee_kpi.term = "middleYear") OR  (employee_kpi.em_id_leader_default= "'+str(
+            employee['employeeid'])+'" AND employee_kpi.year = 2563 AND employee_kpi.term = "middleYear")'
         print 'year_term', year_term
         resultJson = {}
         resultJson.update({'status_onechat': employee['status_onechat']})
@@ -197,7 +197,6 @@ def Qry_kpi_mobile(cursor, employee_id):
                 result_projects = toJson(cursor.fetchall(), columns)
                 employee.update({'projectKpi': result_projects})
 
-
             resultJson.update({'employeeLists': result})
             return jsonify(resultJson)
 
@@ -337,7 +336,8 @@ def transfer_kpi_mobile(cursor):
         employeeid_leadernew = str(data_new['employeeid_new'])
         try:
             sql44 = "SELECT name FROM employee_kpi WHERE employeeid=%s AND em_id_leader=%s AND year=%s AND term=%s"
-            cursor.execute(sql44, (data_new['employeeid'], employeeid_leadernew, data_new['year'], data_new['term']))
+            cursor.execute(
+                sql44, (data_new['employeeid'], employeeid_leadernew, data_new['year'], data_new['term']))
             columns = [column[0] for column in cursor.description]
             result_44 = toJson(cursor.fetchall(), columns)
             name = result_44[0]['name']
@@ -347,7 +347,8 @@ def transfer_kpi_mobile(cursor):
 
         try:
             sql44 = "SELECT name_asp FROM assessor_kpi WHERE companyid=%s AND employeeid=%s AND org_name_id=%s"
-            cursor.execute(sql44, (data_new['companyid'], employeeid_leadernew, data_new['org_name_id']))
+            cursor.execute(
+                sql44, (data_new['companyid'], employeeid_leadernew, data_new['org_name_id']))
             columns = [column[0] for column in cursor.description]
             result_test = toJson(cursor.fetchall(), columns)
             name_test = result_test[0]['name_asp']
@@ -364,31 +365,38 @@ def transfer_kpi_mobile(cursor):
             uuid_onechat = str(uuid.uuid4())
             type = 'submain'
             sql = "INSERT INTO assessor_kpi (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type,uuid_onechat) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql, (assessor_kpi_id_last, employeeid_leadernew, data_new['companyid'], data_new['name_asp'], data_new['surname_asp'], data_new['org_name_id'], data_new['email_asp'], data_new['createby'], type, uuid_onechat))
+            cursor.execute(sql, (assessor_kpi_id_last, employeeid_leadernew, data_new['companyid'], data_new['name_asp'], data_new[
+                           'surname_asp'], data_new['org_name_id'], data_new['email_asp'], data_new['createby'], type, uuid_onechat))
 
             type_action = "ADDtranfer"
 
             sql_log = "INSERT INTO assessor_kpi_log (assessor_kpi_id,employeeid,companyid,name_asp,surname_asp,org_name_id,email_asp,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-            cursor.execute(sql_log, (assessor_kpi_id_last, employeeid_leadernew, data_new['companyid'], data_new['name_asp'], data_new['surname_asp'], data_new['org_name_id'], data_new['email_asp'], data_new['createby'], type_action))
+            cursor.execute(sql_log, (assessor_kpi_id_last, employeeid_leadernew, data_new['companyid'], data_new['name_asp'], data_new[
+                           'surname_asp'], data_new['org_name_id'], data_new['email_asp'], data_new['createby'], type_action))
 
         sql_test = "SELECT * FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sql_test, (data_new['employeeid'], data_new['year'], data_new['term']))
+        cursor.execute(
+            sql_test, (data_new['employeeid'], data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
         result = toJson(cursor.fetchall(), columns)
 
         type_action = "tranfer"
 
         sqlIn_be2 = "INSERT INTO employee_kpi_log(year,term,companyid,em_id_leader,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_be2, (result[0]['year'], result[0]['term'], result[0]['companyid'], result[0]['employeeid'], result[0]['structure_salary'], data_new['employeeid'], result[0]['name'], result[0]['surname'], result[0]['org_name'], result[0]['position'], result[0]['work_date'], result[0]['work_month'], result[0]['work_year'], result[0]['old_grade'], result[0]['star_date_kpi'], result[0]['status'], data_new['createby'], type_action))
+        cursor.execute(sqlIn_be2, (result[0]['year'], result[0]['term'], result[0]['companyid'], result[0]['employeeid'], result[0]['structure_salary'], data_new['employeeid'], result[0]['name'], result[0]['surname'], result[0]
+                                   ['org_name'], result[0]['position'], result[0]['work_date'], result[0]['work_month'], result[0]['work_year'], result[0]['old_grade'], result[0]['star_date_kpi'], result[0]['status'], data_new['createby'], type_action))
 
         sqlIn_tran = "INSERT INTO employee_kpi_tranfer(year,term,employeeid,em_id_leader,name_asp,surname_asp,createby) VALUES (%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_tran, (result[0]['year'], result[0]['term'], data_new['employeeid'],employeeid_leadernew, data_new['name_asp'], data_new['surname_asp'], data_new['createby']))
+        cursor.execute(sqlIn_tran, (result[0]['year'], result[0]['term'], data_new['employeeid'],
+                                    employeeid_leadernew, data_new['name_asp'], data_new['surname_asp'], data_new['createby']))
 
         sqlI9de = "DELETE FROM employee_kpi WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlI9de, (data_new['employeeid'], data_new['year'], data_new['term']))
+        cursor.execute(
+            sqlI9de, (data_new['employeeid'], data_new['year'], data_new['term']))
 
         sqlIn_main = "INSERT INTO employee_kpi(year,term,companyid,em_id_leader,em_id_leader_default,structure_salary,employeeid,name,surname,org_name,position,work_date,work_month,work_year,old_grade,star_date_kpi,status,createby) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-        cursor.execute(sqlIn_main, (result[0]['year'], result[0]['term'], result[0]['companyid'], employeeid_leadernew, result[0]['em_id_leader_default'], result[0]['structure_salary'], result[0]['employeeid'], result[0]['name'], result[0]['surname'], result[0]['org_name'], result[0]['position'], result[0]['work_date'], result[0]['work_month'], result[0]['work_year'], result[0]['old_grade'], result[0]['star_date_kpi'], result[0]['status'], data_new['createby']))
+        cursor.execute(sqlIn_main, (result[0]['year'], result[0]['term'], result[0]['companyid'], employeeid_leadernew, result[0]['em_id_leader_default'], result[0]['structure_salary'], result[0]['employeeid'], result[0]['name'], result[0]
+                                    ['surname'], result[0]['org_name'], result[0]['position'], result[0]['work_date'], result[0]['work_month'], result[0]['work_year'], result[0]['old_grade'], result[0]['star_date_kpi'], result[0]['status'], data_new['createby']))
 
         try:
             sql_select_uuid = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
@@ -402,20 +410,21 @@ def transfer_kpi_mobile(cursor):
             result_select_oldleader = toJson(cursor.fetchall(), columns)
 
             payload = {"staff_id": str(employeeid_leadernew)}
-            response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+str(employeeid_leadernew)).json()
+            response_onechat_id = requests.request(
+                "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+str(employeeid_leadernew)).json()
             ond_id_leader = response_onechat_id['oneid']
             bot_id = botId()
             tokenBot = botToken()
             url = webmobile()
             uuid_onechat = result_select[0]['uuid_onechat']
-            payload_msg =  {
-                "bot_id":bot_id,
+            payload_msg = {
+                "bot_id": bot_id,
                 "to": ond_id_leader,
-                "type":"text",
+                "type": "text",
                 "message": result_select_oldleader[0]['name_asp']+' '+result_select_oldleader[0]['surname_asp']+" ได้โอนพนักงาน "+result[0]['employeeid']+" "+result[0]['name']+" "+result[0]['surname']+" มาให้คุณ \nกรุณาคลิกเมนูประเมินพนักงาน"
             }
             response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                                            headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
 
             pl = {}
             pl['bot_id'] = bot_id
@@ -423,21 +432,22 @@ def transfer_kpi_mobile(cursor):
             pl['type'] = 'template'
             pl['elements'] = [
                 {
-                    "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
-                    "title":"ประเมินพนักงาน",
-                    "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
-                    "choice":[
+                    "image": "https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                    "title": "ประเมินพนักงาน",
+                    "detail": "กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                    "choice": [
                         {
-                            "label" : "ประเมินพนักงาน",
-                            "type" : "webview",
-                            "url" : url+"/kpionline/"+uuid_onechat,
-                            "size" : "full"
+                            "label": "ประเมินพนักงาน",
+                            "type": "webview",
+                            "url": url+"/kpionline/"+uuid_onechat,
+                            "size": "full"
                         }
                     ]
                 }
             ]
 
-            response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+            response = requests.request("POST", headers={
+                                        'Authorization': tokenBot}, url="https://chat-public.one.th:8034/api/v1/push_message", json=pl, verify=False)
             print response_msg
         except Exception as e:
             print e
@@ -480,6 +490,7 @@ def confirm_transfer_kpi_one(cursor):
         print str(e)
         return "fail"
 
+
 @app.route('/confirm_grade_kpi_one', methods=['POST'])
 @connect_sql()
 def confirm_grade_kpi_one(cursor):
@@ -488,12 +499,14 @@ def confirm_grade_kpi_one(cursor):
         source = dataInput['source']
         data_new = source
         sql_update_status = """UPDATE `employee_kpi` SET `status_confirm`=1 WHERE employeeid = %s AND term = %s  AND year = %s"""
-        cursor.execute(sql_update_status, (data_new['employeeid'], data_new['term'], data_new['year']))
+        cursor.execute(
+            sql_update_status, (data_new['employeeid'], data_new['term'], data_new['year']))
         return "Success"
     except Exception as e:
         logserver(e)
         print str(e)
         return "fail"
+
 
 @app.route('/Qry_employee_kpi_one/<employeeid>/<year>/<term>', methods=['GET'])
 @connect_sql()
@@ -522,45 +535,50 @@ def confirm_all_emp_kpi_mobile(cursor):
         date = datetime.now()
         sql_confirm = """INSERT INTO `employee_kpi_approved`(`year`, `term`, `em_id_leader`, `status`, `create_at`)
                             VALUES (%s,%s,%s,1,%s)"""
-        cursor.execute(sql_confirm, (data_new['year'], data_new['term'], data_new['employeeid'], date))
+        cursor.execute(
+            sql_confirm, (data_new['year'], data_new['term'], data_new['employeeid'], date))
 
         sql_update = """UPDATE `assessor_kpi` SET `status_onechat`=2 WHERE employeeid = %s AND status ='active' """
         cursor.execute(sql_update, (data_new['employeeid']))
 
         sql_leader = """SELECT * FROM employee_kpi WHERE em_id_leader=%s AND year=%s AND term=%s GROUP BY em_id_leader_default"""
-        cursor.execute(sql_leader,(data_new['employeeid'], data_new['year'], data_new['term']))
+        cursor.execute(
+            sql_leader, (data_new['employeeid'], data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
-        result_leader = toJson(cursor.fetchall(),columns)
+        result_leader = toJson(cursor.fetchall(), columns)
 
         for employee_leader in result_leader:
             if employee_leader['em_id_leader'] != employee_leader['em_id_leader_default']:
                 sql_assessor = """SELECT * FROM `assessor_kpi` WHERE status ='active' AND employeeid=%s"""
-                cursor.execute(sql_assessor,(employee_leader['em_id_leader_default']))
+                cursor.execute(
+                    sql_assessor, (employee_leader['em_id_leader_default']))
                 columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(),columns)
+                result = toJson(cursor.fetchall(), columns)
 
                 sql_select_leader = """SELECT * FROM assessor_kpi WHERE employeeid = %s AND status = 'active' """
-                cursor.execute(sql_select_leader, (employee_leader['em_id_leader']))
+                cursor.execute(sql_select_leader,
+                               (employee_leader['em_id_leader']))
                 columns = [column[0] for column in cursor.description]
                 result_select_leader = toJson(cursor.fetchall(), columns)
 
-                response_onechat_id = requests.request("GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader_default']).json()
+                response_onechat_id = requests.request(
+                    "GET", url="https://chat-develop.one.th:8007/search_user_inet/"+employee_leader['em_id_leader_default']).json()
                 try:
-                    ond_id_leader =  response_onechat_id['oneid']
+                    ond_id_leader = response_onechat_id['oneid']
                     bot_id = botId()
                     tokenBot = botToken()
                     uuid_onechat = result[0]['uuid_onechat']
                     quick_reply_element = []
                     url = webmobile()
 
-                    payload_msg =  {
-                        "bot_id":bot_id,
+                    payload_msg = {
+                        "bot_id": bot_id,
                         "to": ond_id_leader,
-                        "type":"text",
+                        "type": "text",
                         "message": result_select_leader[0]['name_asp']+' '+result_select_leader[0]['surname_asp']+' '+result_select_leader[0]['employeeid']+" ได้ประเมินพนักงานที่คุณได้โอนสิทธิ์ครบแล้ว \nกรุณาคลิกเมนูประเมินพนักงานเพื่อตรวจสอบความถูกต้อง"
                     }
                     response_msg = requests.request("POST", url="https://chat-public.one.th:8034/api/v1/push_message",
-                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
+                                                    headers={'Authorization': tokenBot}, json=payload_msg, timeout=(60 * 1)).json()
 
                     pl = {}
                     pl['bot_id'] = bot_id
@@ -568,24 +586,25 @@ def confirm_all_emp_kpi_mobile(cursor):
                     pl['type'] = 'template'
                     pl['elements'] = [
                         {
-                            "image":"https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
-                            "title":"ประเมินพนักงาน",
-                            "detail":"กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
-                            "choice":[
+                            "image": "https://image.freepik.com/free-vector/grades-concept-illustration_114360-618.jpg",
+                            "title": "ประเมินพนักงาน",
+                            "detail": "กรุณากดปุ่มด้านล่างเพื่อประเมินพนักงาน",
+                            "choice": [
                                 {
-                                    "label" : "ประเมินพนักงาน",
-                                    "type" : "webview",
-                                    "url" : url+"/kpionline/"+uuid_onechat,
-                                    "size" : "full"
+                                    "label": "ประเมินพนักงาน",
+                                    "type": "webview",
+                                    "url": url+"/kpionline/"+uuid_onechat,
+                                    "size": "full"
                                 }
                             ]
                         }
                     ]
 
-                    response = requests.request("POST", headers = {'Authorization': tokenBot},url="https://chat-public.one.th:8034/api/v1/push_message", json=pl,verify=False)
+                    response = requests.request("POST", headers={
+                                                'Authorization': tokenBot}, url="https://chat-public.one.th:8034/api/v1/push_message", json=pl, verify=False)
                     print employee_assessor, response
                 except Exception as e:
-                    print 'error',e
+                    print 'error', e
         return "Success"
     except Exception as e:
         logserver(e)
@@ -662,12 +681,14 @@ def edit_project_mobile(cursor):
         employeeid = data_new['employeeid']
         # print data_new
         sqlUp = "UPDATE employee_kpi SET totalGrade=%s,totalGradePercent=%s,old_grade=%s,gradeCompareWithPoint=%s,status=%s,positionChange=%s,specialMoney=%s,newKpiDescriptions=%s,date_bet=%s,validstatus=2 WHERE employeeid=%s AND year=%s AND term=%s"
-        cursor.execute(sqlUp,(data_new['totalGrade'],data_new['totalGradePercent'],data_new['oldgrade'],data_new['gradeCompareWithPoint'],data_new['status'],data_new['positionChange'],data_new['specialMoney'],data_new['newKpiDescriptions'],data_new['date_bet'],data_new['employeeid'],data_new['year'],data_new['term']))
+        cursor.execute(sqlUp, (data_new['totalGrade'], data_new['totalGradePercent'], data_new['oldgrade'], data_new['gradeCompareWithPoint'], data_new['status'],
+                               data_new['positionChange'], data_new['specialMoney'], data_new['newKpiDescriptions'], data_new['date_bet'], data_new['employeeid'], data_new['year'], data_new['term']))
 
         sql_project = """SELECT * FROM `project_kpi` WHERE `employeeid` =%s AND year = %s AND term = %s"""
-        cursor.execute(sql_project,(data_new['employeeid'],data_new['year'],data_new['term']))
+        cursor.execute(
+            sql_project, (data_new['employeeid'], data_new['year'], data_new['term']))
         columns = [column[0] for column in cursor.description]
-        result_project = toJson(cursor.fetchall(),columns)
+        result_project = toJson(cursor.fetchall(), columns)
 
         setA = []
         setB = []
@@ -683,38 +704,44 @@ def edit_project_mobile(cursor):
         diff_set = list(set(setA)-set(setB))
         for diff in diff_set:
             sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-            cursor.execute(sqlde,(data_new['employeeid'],diff,data_new['year'],data_new['term']))
+            cursor.execute(
+                sqlde, (data_new['employeeid'], diff, data_new['year'], data_new['term']))
 
-        i=0
+        i = 0
         for i in xrange(len(data_new['portfolioLists'])):
             try:
                 sql = "SELECT * FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sql,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                cursor.execute(sql, (data_new['employeeid'], data_new['portfolioLists']
+                                     [i]['project_kpi_id'], data_new['year'], data_new['term']))
                 columns = [column[0] for column in cursor.description]
-                result = toJson(cursor.fetchall(),columns)
+                result = toJson(cursor.fetchall(), columns)
 
                 type_action = "Edit"
 
                 try:
                     sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                    cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],result[0]['expectedPortfolio'],result[0]['ExpectedLevel'],result[0]['CanDoLevel'],result[0]['summaryLevel'],result[0]['weightPortfolio'],result[0]['totalPoint'],result[0]['commentLevel_B_Up'],type_action))
+                    cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], data_new['portfolioLists'][i]['project_kpi_id'], result[0]['expectedPortfolio'], result[0]
+                                            ['ExpectedLevel'], result[0]['CanDoLevel'], result[0]['summaryLevel'], result[0]['weightPortfolio'], result[0]['totalPoint'], result[0]['commentLevel_B_Up'], type_action))
                 except Exception as e:
                     sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                    cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                    cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
+                                           [i]['project_kpi_id'], data_new['year'], data_new['term']))
                 # try:
                 sqlde = "DELETE FROM project_kpi WHERE employeeid=%s AND project_kpi_id=%s AND year=%s AND term=%s"
-                cursor.execute(sqlde,(data_new['employeeid'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['year'],data_new['term']))
+                cursor.execute(sqlde, (data_new['employeeid'], data_new['portfolioLists']
+                                       [i]['project_kpi_id'], data_new['year'], data_new['term']))
                 # except Exception as e:
                 #     pass
 
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],data_new['portfolioLists'][i]['project_kpi_id'],data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
+                cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'], data_new['portfolioLists'][i]['project_kpi_id'], data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'],
+                                       data_new['portfolioLists'][i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
             except Exception as e:
                 try:
                     sqlQry = "SELECT project_kpi_id FROM project_kpi ORDER BY project_kpi_id DESC LIMIT 1"
                     cursor.execute(sqlQry)
                     columns = [column[0] for column in cursor.description]
-                    result = toJson(cursor.fetchall(),columns)
+                    result = toJson(cursor.fetchall(), columns)
                     project_kpi_id_last = int(result[0]['project_kpi_id'])+1
                 except Exception as e:
                     project_kpi_id_last = 1
@@ -722,10 +749,12 @@ def edit_project_mobile(cursor):
                 type_action = "ADD"
 
                 sqlIn = "INSERT INTO project_kpi(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up']))
+                cursor.execute(sqlIn, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
+                                       [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up']))
 
                 sqlIn_ = "INSERT INTO project_kpi_log(year,term,employeeid,employeeid_kpi,project_kpi_id,expectedPortfolio,ExpectedLevel,CanDoLevel,summaryLevel,weightPortfolio,totalPoint,commentLevel_B_Up,type_action) VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)"
-                cursor.execute(sqlIn_,(data_new['year'],data_new['term'],employeeid,data_new['createby'],project_kpi_id_last,data_new['portfolioLists'][i]['expectedPortfolio'],data_new['portfolioLists'][i]['ExpectedLevel'],data_new['portfolioLists'][i]['CanDoLevel'],data_new['portfolioLists'][i]['summaryLevel'],data_new['portfolioLists'][i]['weightPortfolio'],data_new['portfolioLists'][i]['totalPoint'],data_new['portfolioLists'][i]['commentLevel_B_Up'],type_action))
+                cursor.execute(sqlIn_, (data_new['year'], data_new['term'], employeeid, data_new['createby'], project_kpi_id_last, data_new['portfolioLists'][i]['expectedPortfolio'], data_new['portfolioLists'][i]['ExpectedLevel'], data_new['portfolioLists']
+                                        [i]['CanDoLevel'], data_new['portfolioLists'][i]['summaryLevel'], data_new['portfolioLists'][i]['weightPortfolio'], data_new['portfolioLists'][i]['totalPoint'], data_new['portfolioLists'][i]['commentLevel_B_Up'], type_action))
 
         return "Success"
     except Exception as e:
@@ -745,7 +774,7 @@ def Qry_user_present_mobile(cursor, employee_id):
         employee = result[0]
         year_term = "WHERE employee_kpi.em_id_leader="+'"' + \
             employee['employeeid'] + \
-            '" AND employee_kpi.present_kpi ="active" AND employee_kpi.year = 2562 AND employee_kpi.term = "lateYear"'
+            '" AND employee_kpi.present_kpi ="active" AND employee_kpi.year = 2563 AND employee_kpi.term = "middleYear"'
         print 'year_term', year_term
         resultJson = {}
         resultJson.update({'status_onechat': employee['status_onechat']})
